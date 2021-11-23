@@ -13,9 +13,9 @@ Annotate offre actuellement plusieurs gammes d’outils aux chercheurs :
 - Une autre palette pour marquer et commenter zones et points d’intérêts dans les images, dénombrer des éléments, transcrire des étiquettes manuscrites ou typographiques.
 - Un tagueur d’images et d’annotations offrant :
    - Un éditeur de modèles d’annotations.
-   Un couplage avec Xper, outil d’identification doté d’un puissant éditeur collaboratif de données descriptives, développé pour la biodiversité et utilisable dans tout autre domaine pour des identifications sur des ensembles de critères catégoriques ou numériques.
-   Un éditeur de métadonnées compatible Dublin Core.
-   Un éditeur de collections virtuelles (en cours de développement) pour constituer des séquences d’images à exposer, écrire sur ces images, éditer leurs cartels, les exporter.
-   Une API et un serveur Recolnat IIIF de présentation (en cours de développement)
+   - Un couplage avec Xper, outil d’identification doté d’un puissant éditeur collaboratif de données descriptives, développé pour la biodiversité et utilisable dans tout autre domaine pour des identifications sur des ensembles de critères catégoriques ou numériques.
+   - Un éditeur de métadonnées compatible Dublin Core.
+   - Un éditeur de collections virtuelles (en cours de développement) pour constituer des séquences d’images à exposer, écrire sur ces images, éditer leurs cartels, les exporter.
+   - Une API et un serveur Recolnat IIIF de présentation (en cours de développement)
 # Annotate-on pour les humanités numériques
 --> à rédiger
