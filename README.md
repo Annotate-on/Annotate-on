@@ -19,3 +19,46 @@ Annotate offre actuellement plusieurs gammes d’outils aux chercheurs :
    - Une API et un serveur Recolnat IIIF de présentation (en cours de développement)
 # Annotate-on pour les humanités numériques
 --> à rédiger
+
+## Technologies
+
+Annotate-on est une [Electron](https://electronjs.org/), [React](https://reactjs.org/), [Redux](https://redux.js.org/) application.
+
+L'application est basée sur le template [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate).
+
+## Installation
+
+1. Installer NodeJS [v12 Erbium](https://nodejs.org/download/release/latest-erbium/) for your platform (https://nodejs.org/download/release/latest-erbium/).
+    
+2. Cloner le code avec le git
+ 
+```bash
+git clone --depth 1 --branch main https://github.com/Annotate-on/Annotate-on
+```
+
+3. Installer [Yarn](https://classic.yarnpkg.com/)
+
+```bash
+npm install --global yarn
+```
+
+4. Installer dépendances:
+
+```bash
+yarn install
+```
+
+## Démarrer le mode développement
+
+Démarrage de l'application dans l'environment `dev`:
+
+```bash
+yarn dev
+```
+
+## Création fichier installation
+
+Pour packager l'application pour la plateforme locale:
+
+```bash
+yarn package
