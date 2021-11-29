@@ -31,7 +31,7 @@ import archiver from 'archiver';
 import TableHeader from "./TableHeader";
 import {remote, shell} from "electron";
 import path from "path";
-import {IMAGE_STORAGE_DIR, MODEL_XPER} from "../constants/constants";
+import {COMMON_TAGS, IMAGE_STORAGE_DIR, MODEL_XPER, TAG_AUTO} from "../constants/constants";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import {
     createAutomaticTags,
@@ -650,11 +650,11 @@ export default class extends PureComponent {
             })
         }
         //check if automatic tags exist
-        const automaticTags = allTags.find(element => element.name === "Automatic tags" && element.hasOwnProperty("type"));
+        const automaticTags = allTags.find(element => element.name === TAG_AUTO && element.hasOwnProperty("type"));
         if(automaticTags !== undefined){
             result.push(automaticTags);
         }else{
-            const isOldAutomaticTagsPresent = allTags.find(element => element.name === "Automatic tags");
+            const isOldAutomaticTagsPresent = allTags.find(element => element.name === TAG_AUTO);
             if(isOldAutomaticTagsPresent !== undefined){
                 const aTags = createAutomaticTags();
                 if(isOldAutomaticTagsPresent.hasOwnProperty("children")){
@@ -667,7 +667,7 @@ export default class extends PureComponent {
         }
 
         //check if common tags already exists if not create new object
-        const commonTags = allTags.find(element => element.name === "Common tags" && element.hasOwnProperty("type")) || createCommonTags();
+        const commonTags = allTags.find(element => element.name === COMMON_TAGS && element.hasOwnProperty("type")) || createCommonTags();
         const oldTags = lvlTags(allTags);
         oldTags.forEach( tag => {
             commonTags.children.push(tag);

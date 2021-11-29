@@ -1,5 +1,6 @@
 import {TYPE_CATEGORY, TYPE_TAG} from "../event/Constants";
 import Chance from 'chance';
+import {COMMON_TAGS, TAG_AUTO} from "../../constants/constants";
 const chance = new Chance();
 
 export const lvlAutomaticTags = (tags) => {
@@ -24,7 +25,7 @@ export const lvlAutomaticTags = (tags) => {
 export const getValidTags = (tags) => {
     let validTags = [];
     tags.forEach( tag => {
-        if (tag.name !== 'Automatic tags' && tag.name !== 'Common tags') {
+        if (tag.name !== TAG_AUTO && tag.name !==  COMMON_TAGS) {
             if (tag.hasOwnProperty("id") && tag.hasOwnProperty("type")) {
                 validTags.push(tag);
             }
@@ -36,7 +37,7 @@ export const getValidTags = (tags) => {
 export const lvlTags = (tags) => {
     let oldTags = [];
     tags.forEach( tag => {
-        if (tag.name !== 'Automatic tags') {
+        if (tag.name !== TAG_AUTO) {
             if (!tag.hasOwnProperty("id") || !tag.hasOwnProperty("type")) {
                 if(tag.name !== undefined){
                 oldTags.push({

@@ -8,6 +8,7 @@ import {
 } from 'reactstrap';
 import {remote} from "electron";
 import TagManager from "../containers/TagManager";
+import {TAG_AUTO} from "../constants/constants";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const EDIT_TAG = require('./pictures/edit-tag.svg');
@@ -65,7 +66,7 @@ export default class extends Component {
     _extractChildren = (tags, tagsList) => {
         if (tags) {
             tags.map(tag => {
-                if (tag.name !== 'Automatic tags'){
+                if (tag.name !== TAG_AUTO){
                     const {name, creationDate, creationTimestamp} = tag;
                     tagsList.push({name, creationDate, creationTimestamp});
                     if (tag.children) {

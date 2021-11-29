@@ -130,7 +130,7 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
     CARTEL,
-    CATEGORICAL,
+    CATEGORICAL, COMMON_TAGS,
     IMAGE_STORAGE_DIR,
     INTEREST,
     LIST_VIEW,
@@ -140,7 +140,7 @@ import {
     NUMERICAL,
     RESOURCE_TYPE_EVENT,
     SORT_ALPHABETIC_DESC,
-    SORT_DATE_DESC,
+    SORT_DATE_DESC, TAG_AUTO,
     TAGS_SELECTION_MODE_OR
 } from '../constants/constants';
 import {findPictures} from '../utils/tags';
@@ -1117,11 +1117,11 @@ export default (state = {}, action) => {
                 })
             }
             //check if automatic tags exist
-            const automaticTags = allTags.find(element => element.name === "Automatic tags" && element.hasOwnProperty("type"));
+            const automaticTags = allTags.find(element => element.name === TAG_AUTO && element.hasOwnProperty("type"));
             if(automaticTags !== undefined){
                 result.push(automaticTags);
             }else{
-                const isOldAutomaticTagsPresent = allTags.find(element => element.name === "Automatic tags");
+                const isOldAutomaticTagsPresent = allTags.find(element => element.name === TAG_AUTO);
                 if(isOldAutomaticTagsPresent !== undefined){
                    const aTags = createAutomaticTags();
                    if(isOldAutomaticTagsPresent.hasOwnProperty("children")){
@@ -1134,7 +1134,7 @@ export default (state = {}, action) => {
             }
 
             //check if common tags already exists if not create new object
-            const commonTags = allTags.find(element => element.name === "Common tags" && element.hasOwnProperty("type")) || createCommonTags();
+            const commonTags = allTags.find(element => element.name === COMMON_TAGS && element.hasOwnProperty("type")) || createCommonTags();
             const oldTags = lvlTags(allTags);
             oldTags.forEach( tag => {
                 commonTags.children.push(tag);
@@ -1156,7 +1156,7 @@ export default (state = {}, action) => {
         case CREATE_CATEGORY: {
             if (!action.category.name) return state;
             if (categoryExists(state.tags, action.category.name)) {
-                if(action.category.name !== 'Automatic tags'){
+                if(action.category.name !== TAG_AUTO){
                     ee.emit(EVENT_SHOW_ALERT , 'category with name ' + action.category.name + ' already exists')
                 }
                 return state;
@@ -1240,7 +1240,7 @@ export default (state = {}, action) => {
             else{
                 const tags = getTagsOnly(parent.children);
                 if (checkItemInParentCategory(tags, action.item.name)) {
-                    if(parentName !== 'Automatic tags'){
+                    if(parentName !== TAG_AUTO){
                         ee.emit(EVENT_SHOW_ALERT, 'tag with that name already exists in category: ' + parentName);
                     }
                     return state;

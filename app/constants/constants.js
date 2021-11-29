@@ -73,7 +73,8 @@ export const HIGHLIGHT_OPTIONS = {highlight: true, color: '#fffd1e'};
 
 export const MANUAL_ORDER = "manual_order";
 
-export const TAG_AUTO = "Automatic tags";
+export const COMMON_TAGS = "Common keywords";
+export const TAG_AUTO = "Automatic keywords";
 export const TAG_DPI_NO = "DPI: no";
 export const TAG_MODE_LANDSCAPE = "Mode: landscape";
 export const TAG_MODE_PORTRAIT = "Mode: portrait";

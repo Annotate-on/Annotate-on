@@ -15,6 +15,7 @@ import {
     getUserWorkspace
 } from './config';
 import {
+    COMMON_TAGS,
     IMAGE_STORAGE_DIR,
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
@@ -469,7 +470,7 @@ export const getProjectVersion = () => {
 export const createAutomaticTags = () => {
     return  {
         id: chance.guid(),
-        name: "Automatic tags",
+        name: TAG_AUTO,
         type: TYPE_CATEGORY,
         showChildren: false,
         children: []
@@ -479,7 +480,7 @@ export const createAutomaticTags = () => {
 export const createCommonTags = () => {
     return {
         id: chance.guid(),
-        name: "Common tags",
+        name: COMMON_TAGS,
         type: TYPE_CATEGORY,
         showChildren: false,
         children: []
