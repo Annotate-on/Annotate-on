@@ -20,7 +20,7 @@ Annotate offre actuellement plusieurs gammes d’outils aux chercheurs :
 # Annotate-on pour les humanités numériques
 --> à rédiger
 
-## Technologies
+# Technologies
 
 Annotate-on est une [Electron](https://electronjs.org/), [React](https://reactjs.org/), [Redux](https://redux.js.org/) application.
 
@@ -28,7 +28,7 @@ L'application est basée sur le template [electron-react-boilerplate](https://gi
 
 ## Installation
 
-1. Installer NodeJS [v12 Erbium](https://nodejs.org/download/release/latest-erbium/) for your platform (https://nodejs.org/download/release/latest-erbium/).
+1. Installer NodeJS [v12 Erbium](https://nodejs.org/download/release/latest-erbium/) pour votre plateforme (https://nodejs.org/download/release/latest-erbium/).
     
 2. Cloner le code avec le git
  
