@@ -19,7 +19,7 @@ import {
     IMAGE_STORAGE_DIR,
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
-    SUPPORTED_VIDEO_FORMAT_REGEXP,
+    SUPPORTED_VIDEO_FORMAT_REGEXP, TAG_AUTO,
     THUMBNAIL_COUNT
 } from "../constants/constants";
 import {getMetadata, getXmpMetadata} from "./erecolnat-metadata";
