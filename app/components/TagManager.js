@@ -147,6 +147,12 @@ class TagManager extends Component {
             });
         }
 
+        if(nextProps.tags && nextProps.tags.length === 0){
+           this.setState({
+               rootCategories: []
+           })
+        }
+
         if (this.state.selectedCategories.length > 0 && this.state.justDeleted !== null){
             const catName = this.state.justDeleted;
             const isRootCategory = this._isRootCategory(catName);
@@ -491,6 +497,7 @@ class TagManager extends Component {
     }
 
     deleteTagOrCategory = (data) => {
+        console.log('delete' , data);
         if (data.type === TYPE_TAG){
             this.props.deleteTag(data.item.id);
         }else{
