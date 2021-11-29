@@ -1,0 +1,313 @@
+{
+  "selected_menu": "HOME",
+  "annotations_measures_linear": {
+    "583b7b2ce5c72fcbd9382cbac5b251f981718206": [
+      {
+        "pictureId": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+        "value_in_mm": 11.106333167144692,
+        "vertices": [
+          {
+            "x": 1954.6598351821892,
+            "y": 2064.228431219675
+          },
+          {
+            "x": 1933.7891293606997,
+            "y": 1935.648928100996
+          }
+        ],
+        "id": "926df6a6-e5e0-591a-89f2-a92b7a974e7f",
+        "annotationType": "simple-line",
+        "creationDate": "2020-03-04T13:56:42.120Z",
+        "creationTimestamp": 1583330202120,
+        "title": "LIN-1",
+        "measure": "mm"
+      }
+    ]
+  },
+  "annotations_points_of_interest": {},
+  "annotations_rectangular": {},
+  "annotations_polygon": {
+    "583b7b2ce5c72fcbd9382cbac5b251f981718206": [
+      {
+        "pictureId": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+        "vertices": [
+          {
+            "x": 24.139059834596736,
+            "y": 672.0462410816904
+          },
+          {
+            "x": 24.139059834596736,
+            "y": 500.6591485189154
+          },
+          {
+            "x": 502.37182393948615,
+            "y": 293.5664116722294
+          },
+          {
+            "x": 866.3997488551482,
+            "y": 893.421235641941
+          },
+          {
+            "x": 1508.801969294552,
+            "y": 1457.5704153277416
+          },
+          {
+            "x": 1451.6995496999389,
+            "y": 1564.6873481794757
+          },
+          {
+            "x": 488.09621904083264,
+            "y": 1064.8083282047155
+          }
+        ],
+        "area": 4265.19413135164,
+        "id": "054bc9f1-3a91-526d-af98-9d55944535e0",
+        "annotationType": "polygon",
+        "creationDate": "2020-03-04T13:56:07.799Z",
+        "creationTimestamp": 1583330167799,
+        "title": "POL-2",
+        "measure": "mm²"
+      },
+      {
+        "pictureId": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+        "vertices": [
+          {
+            "x": 2531.5378515322004,
+            "y": 1528.447599455286
+          },
+          {
+            "x": 2527.0767250013714,
+            "y": 1518.1822267236616
+          },
+          {
+            "x": 2536.8912033691954,
+            "y": 1502.5610073494504
+          },
+          {
+            "x": 2611.8381290871257,
+            "y": 1456.1436697803656
+          },
+          {
+            "x": 2612.284241740209,
+            "y": 1458.3752725481102
+          },
+          {
+            "x": 2615.8531429648724,
+            "y": 1457.4826314410122
+          },
+          {
+            "x": 2600.23920010697,
+            "y": 1494.0809168320213
+          },
+          {
+            "x": 2546.2595690839366,
+            "y": 1525.323355580444
+          }
+        ],
+        "area": 16.202750129540505,
+        "id": "f3c014f6-da19-5fbd-a946-d97ee6147958",
+        "annotationType": "polygon",
+        "creationDate": "2020-03-04T13:43:29.906Z",
+        "creationTimestamp": 1583329409906,
+        "title": "POL-1",
+        "measure": "mm²"
+      }
+    ]
+  },
+  "annotations_angle": {},
+  "annotations_occurrence": {},
+  "annotations_color_picker": {},
+  "annotations_ratio": {},
+  "annotations_transcription": {
+    "583b7b2ce5c72fcbd9382cbac5b251f981718206": [
+      {
+        "pictureId": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+        "vertices": [
+          {
+            "x": 1612.284619890632,
+            "y": 4696.800468779162
+          },
+          {
+            "x": 1612.284619890632,
+            "y": 4444.323436781277
+          },
+          {
+            "x": 2202.8056761092294,
+            "y": 4444.323436781277
+          },
+          {
+            "x": 2202.8056761092294,
+            "y": 4696.800468779162
+          }
+        ],
+        "id": "cbc61f1d-2362-5347-8ab6-3d52ad50a70a",
+        "annotationType": "transcription",
+        "creationDate": "2020-03-04T13:42:45.827Z",
+        "creationTimestamp": 1583329365827,
+        "title": "TRA-2",
+        "value": "transcription demo",
+        "area": 1068.7649134073108
+      },
+      {
+        "pictureId": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+        "vertices": [
+          {
+            "x": 2535.9930130587754,
+            "y": 4724.6712253483165
+          },
+          {
+            "x": 2535.9930130587754,
+            "y": 4564.761413663676
+          },
+          {
+            "x": 3118.7259656345045,
+            "y": 4564.761413663676
+          },
+          {
+            "x": 3118.7259656345045,
+            "y": 4724.6712253483165
+          }
+        ],
+        "id": "10601ff6-7e1f-5ae7-931e-893abd043edc",
+        "annotationType": "transcription",
+        "creationDate": "2020-03-04T13:42:17.361Z",
+        "creationTimestamp": 1583329337361,
+        "title": "TRA-1",
+        "value": "Zea mays",
+        "area": 667.9894647984656
+      }
+    ]
+  },
+  "annotations_categorical": {},
+  "annotations_richtext": {},
+  "cartel_by_picture": {},
+  "counter": 2,
+  "focused_annotation": null,
+  "pictures": {
+    "583b7b2ce5c72fcbd9382cbac5b251f981718206": {
+      "file": "/recolnat-demo/6086272f-f52b-482b-97a7-8b511ba7729e.jpeg",
+      "file_basename": "6086272f-f52b-482b-97a7-8b511ba7729e.jpeg",
+      "thumbnail": "/583b7b2ce5c72fcbd9382cbac5b251f981718206.jpg",
+      "exifDate": null,
+      "exifPlace": "",
+      "width": 3168,
+      "height": 5128,
+      "sha1": "583b7b2ce5c72fcbd9382cbac5b251f981718206",
+      "dpix": 300,
+      "dpiy": 300,
+      "erecolnatMetadata": {
+        "determinations": [
+          {
+            "identificationid": "f53de737-70c6-457d-a769-21132dfc6112",
+            "identificationverificationstatus": 0,
+            "taxonid": "2a0da659-5d64-4fae-bc16-f1c03d556243",
+            "scientificname": "Zea mais",
+            "scientificnameauthorship": "Anonymous",
+            "specificepithet": "mais",
+            "higherclassification": "Zea;Poaceae",
+            "family": "Poaceae",
+            "genus": "Zea",
+            "created": "2015-08-20T14:22:24.000+02:00",
+            "modified": "Jun 4, 2019 4:57:21 PM"
+          },
+          {
+            "identificationid": "8489d039-a414-4617-a7ba-30580a0661a6",
+            "identificationverificationstatus": 0,
+            "taxonid": "91581675-a385-4374-bc3d-da8d8a2438fd",
+            "scientificname": "Zea mays",
+            "scientificnameauthorship": "L.",
+            "specificepithet": "mays",
+            "higherclassification": "Zea;Poaceae",
+            "family": "Poaceae",
+            "genus": "Zea",
+            "created": "2015-08-20T14:22:24.000+02:00",
+            "modified": "Jun 4, 2019 4:57:21 PM"
+          }
+        ],
+        "basisofrecord": "PreservedSpecimen",
+        "catalognumber": "P00265433",
+        "collectioncode": "P",
+        "collectionid": 2,
+        "collectionname": "Vascular plants collection (P) of the Muséum national d'Histoire Naturelle (MNHN - Paris)",
+        "dwcaid": "http://coldb.mnhn.fr/catalognumber/mnhn/p/p00265433",
+        "family": "Poaceae",
+        "genus": "Zea",
+        "institutioncode": "MNHN",
+        "institutionid": 1,
+        "institutionname": "Muséum National d'Histoire Naturelle",
+        "modified": "2015-08-20T13:55:26.000+02:00",
+        "scientificname": ["Zea mays", "Zea mais"],
+        "specificepithet": ["mays", "mais"],
+        "recordedby": "Schleicher, J.C."
+      }
+    }
+  },
+  "pictures_by_tag": {},
+  "selected_tags": [],
+  "standard_deviation": null,
+  "tags_by_annotation": {},
+  "tags_by_picture": {},
+  "tags": [],
+  "tags_selection_mode": "OR",
+  "calibrations": [],
+  "pictures_by_calibration": {},
+  "sort_table_by": {
+    "field": "",
+    "direction": ""
+  },
+  "leaflet_position_by_picture": {},
+  "selected_tab": null,
+  "annotations_by_tag": {},
+  "open_tabs": {
+    "Selection 1": {
+      "view": "library",
+      "subview": "LIST_VIEW",
+      "selected_folders": ["recolnat-demo"],
+      "selected_tags": [],
+      "pictures_selection": ["583b7b2ce5c72fcbd9382cbac5b251f981718206"],
+      "folder_pictures_selection": ["583b7b2ce5c72fcbd9382cbac5b251f981718206"],
+      "tags_selection_mode": "OR",
+      "sortDirection": "sort_alphabetic_desc",
+      "sortDirectionAnnotation": "sort_date_desc",
+      "current_picture_index_in_selection": 0,
+      "manualOrderLock": false,
+      "taxonomyInstance": {},
+      "showMozaicDetails": false,
+      "showMozaicCollection": false,
+      "activeTab": "3",
+      "selected_sha1": "583b7b2ce5c72fcbd9382cbac5b251f981718206"
+    }
+  },
+  "taxonomies": [
+    {
+      "id": "121c102a-9694-55ec-80c9-fd2c12e0afb2",
+      "name": "Fleurs",
+      "importDate": "2020-03-04T13:44:36.425Z",
+      "isActive": false,
+      "sddPath": "121c102a-9694-55ec-80c9-fd2c12e0afb2-sdd.xml",
+      "model": "MODEL_XPER",
+      "version": 2019100201
+    },
+    {
+      "id": "17404f70-5f43-5619-b696-21b74f52223c",
+      "name": "Feuilles",
+      "importDate": "2020-03-04T13:44:36.574Z",
+      "isActive": false,
+      "sddPath": "17404f70-5f43-5619-b696-21b74f52223c-sdd.xml",
+      "model": "MODEL_XPER",
+      "version": 2019100301
+    },
+    {
+      "id": "2f32c02c-2e2a-5199-b9a7-df90ef262fee",
+      "name": "Fougères",
+      "importDate": "2020-03-04T13:44:36.905Z",
+      "isActive": false,
+      "sddPath": "2f32c02c-2e2a-5199-b9a7-df90ef262fee-sdd.xml",
+      "model": "MODEL_XPER",
+      "version": 2019100201
+    }
+  ],
+  "selectedTaxonomy": null,
+  "leafletSettings": {},
+  "selectedProjectName": "Demo"
+}

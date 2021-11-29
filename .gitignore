@@ -1,0 +1,9 @@
+.idea
+/node_modules
+/app/dist
+/dll
+/release
+main.prod.js.map
+main.prod.js
+yarn.lock
+package-lock.json

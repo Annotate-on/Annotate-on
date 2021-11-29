@@ -1,0 +1,248 @@
+.rcn_credits {
+  overflow-y: scroll;
+  height: 100%;
+  .content {
+    overflow-y: scroll;
+    height: calc(100vh - 80px);
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  }
+
+  .content-table {
+    overflow-y: scroll;
+    height: calc(100vh - 90px);
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  }
+
+  .file-name {
+    font-size: 18pt;
+    color: maroon;
+  }
+
+  .outline {
+    min-height: 100px;
+    border: 1px groove #ddd !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow: 0px 0px 0px 0px #000;
+    box-shadow: 0px 0px 0px 0px #000;
+  }
+
+  legend {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    width: initial;
+    padding: 0 10px;
+    border-bottom: none;
+  }
+
+  .group-item {
+    border-bottom: 1px solid;
+    padding-bottom: 10px;
+    padding-top: 10px;
+  }
+
+  .item-label {
+    color: gray;
+  }
+
+  .item-text {
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .item-text-values {
+    font-size: 14px;
+
+  }
+  .imageCnt {
+    border: 2px solid #ccc;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+
+  .version{
+    margin-left: 10px;
+    font-size: 12px;
+    color:#000;
+    padding-bottom: 3px;
+    //position: absolute;
+    //bottom: 0;
+  }
+  .citation{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color:#000;
+    font-weight: bold;
+    //position: absolute;
+    //bottom: 0;
+  }
+}
+
+.creditsCard{
+  height: 112px;
+  width: 100px;
+  margin-left: 10px;
+  margin-right: 40px;
+  margin-bottom: 15px;
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+.imageContainer{
+  width: 100%;
+  height: 105px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  margin: auto auto 8px;
+}
+
+.logoContainer{
+  width: 100%;
+  height: 105px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  vertical-align: middle;
+  margin: auto auto 8px;
+}
+
+.logo-on {
+  height: 100px;
+}
+
+.imageMedia{
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  margin: auto;
+  cursor: pointer
+}
+
+.recolnat-logo{
+  height: 120px;
+  width: 200px;
+}
+
+.lobex-imageContainer{
+  width: 100%;
+  height: 75px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  margin-bottom: 5px;
+}
+
+.lobex-logo{
+  height: 100px;
+  width: 220px;
+  margin-top: 10px;
+}
+
+.social-media-div{
+  text-align: center;
+  p,i {
+    cursor: pointer;
+  }
+}
+.tw-icon{
+  color: #1DA1F2;
+}
+
+.members-title{
+  padding: 20px;
+  font-size: 21px;
+}
+
+.members-row{
+  margin-bottom: 80px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.row-two{
+  margin-bottom: 40px;
+  padding-left:  25px;
+  padding-right: 25px;
+}
+
+.read-more-div{
+  padding: 20px 20px 0px 20px;
+  width: 100%;
+  font-size: 16px;
+  span{
+    cursor: pointer;
+  }
+  a{
+    padding-left: 5px;
+    cursor: pointer;
+  }
+}
+
+.dicen-div{
+
+}
+
+.dicen-section{
+  margin-bottom: 25px
+}
+
+.presek-logo{
+  height: 50px;
+  width: 120px;
+}
+
+.presek-div{
+  height: 25px;
+  width: 100%;
+  margin-bottom: 25px;
+  h5{
+    padding: 20px;
+    font-size: 21px;
+  }
+}
+
+.dc-title{
+  height: 25px;
+  width: 100%;
+  h5{
+    padding: 20px;
+    font-size: 21px;
+  }
+  span {
+    font-size: 16px;
+    cursor: pointer;
+  }
+  a{
+    cursor: pointer;
+    padding-left: 5px;
+  }
+}
+
+.opahText{
+  padding: 20px !important;
+  font-size: 16px !important;
+  margin-top: 10px !important;
+  margin-bottom: 5px !important;
+}
+
+.iiif-title{
+  margin-top: 40px;
+  font-size: 21px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}

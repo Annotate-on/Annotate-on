@@ -1,0 +1,48 @@
+.rcn_targets {
+
+  overflow: hidden;
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  input[type="radio"]:checked + label {
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: #fff;
+    border: 2px solid #666;
+    color: #666;
+    text-align: center;
+    display: inline-block;
+    font: initial;
+    margin-left: -4px;
+    margin-bottom: -4px;
+  }
+
+  input[type="radio"] + label span {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .radio-button {
+    margin: 12px;
+  }
+
+  .color-circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  #includeInCalculation {
+    margin-top: 1px;
+  }
+
+}

@@ -1,0 +1,51 @@
+.loading {
+  text-align: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 9999;
+
+  .loader,
+  .full-logo {
+    margin-top: 50px;
+  }
+
+  .loader-label {
+    margin-top: 50px;
+    color: #999;
+    line-height: 2;
+    font-size: 1.3rem;
+  }
+
+  .inline-label {
+    color: #999;
+    line-height: 3;
+    font-size: 1.3rem;
+  }
+
+  .inline-value {
+    color: #333;
+    line-height: 3;
+    font-size: 1.3rem;
+  }
+
+  .row {
+    margin: 0;
+  }
+}
+
+.splash {
+  position: relative;
+
+  .content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .logo {
+    margin-bottom: 40px;
+  }
+}

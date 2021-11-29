@@ -1,0 +1,97 @@
+.calibration {
+  height: calc(100vh - 117px);
+  overflow-y: scroll;
+  .no-calibrations {
+    margin-top: 15px;
+    color: #999999;
+  }
+
+  .calibration-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    color: #333333;
+  }
+
+  .form-check-input {
+    margin-top: 0;
+  }
+
+  .row {
+    margin-top: 10px;
+  }
+
+  .length-value {
+    //width: 50px;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+
+  .delete-dpi,
+  .dpi {
+    padding-top: 0.375rem;
+    padding-right: 0;
+    line-height: 1.5;
+  }
+
+  .list-item {
+    height: 40px;
+    border-radius: 2px;
+    background-color: #eeeeee;
+    margin: 10px 1px 0 1px;
+    color: #333;
+    display: flex;
+    text-align: right;
+
+    div:first-child {
+      display: flex;
+    }
+
+    img {
+      cursor: pointer;
+    }
+
+    .edit-tag-col {
+      padding: 0;
+    }
+  }
+
+  .list-item * {
+    margin: auto;
+  }
+
+  .list-item.row div span:first-child {
+    display: inline-block;
+    float: left;
+    text-align: left;
+  }
+
+  .selected-calibration
+   {
+    background-color: #1d70f7;
+    color: #fff;
+  }
+  .list-item:hover {
+    background-color: #6c757d;
+    color: #fff;
+  }
+
+  button > img {
+    margin: auto;
+    margin-right: 10px;
+  }
+
+  .calibration-name {
+    cursor: pointer;
+    margin-left: 0;
+  }
+
+  .action-bar {
+    margin-right: 10px;
+  }
+
+  .calibration-subtitle {
+    margin-top: 25px;
+    margin-bottom: 15px;
+  }
+}

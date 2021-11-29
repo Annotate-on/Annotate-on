@@ -1,0 +1,28 @@
+.metadata-pane {
+  .metadata-list {
+    list-style-type: circle;
+    margin: 0 0 0 20px;
+    padding: 0;
+  }
+  .metadata-value {
+    color: #333;
+    width: 100%;
+    word-break: break-all;
+    margin-bottom: 10px;
+    font-size: 10pt;
+  }
+  .subtitle {
+    color: darkorange;
+    font-weight: bold;
+  }
+
+  #metadata-form input[type=text] {
+    color: black;
+    font-weight: bold;
+  }
+  .form-control::-webkit-input-placeholder { color: #c3c3c3; font-weight: lighter;}  /* WebKit, Blink, Edge */
+  .form-control:-moz-placeholder { color: #c3c3c3; font-weight: lighter; }  /* Mozilla Firefox 4 to 18 */
+  .form-control::-moz-placeholder { color: #c3c3c3; font-weight: lighter;}  /* Mozilla Firefox 19+ */
+  .form-control:-ms-input-placeholder { color: #c3c3c3;font-weight: lighter; }  /* Internet Explorer 10-11 */
+  .form-control::-ms-input-placeholder { color: #c3c3c3; font-weight: lighter;}
+}

@@ -1,0 +1,388 @@
+
+
+.rcn_inspector {
+  height: 100%;
+  width: 310px;
+
+  color: #333333;
+
+  .main-row {
+    height: 100%;
+  }
+
+  .navigation {
+    display: flex;
+    height: 3.5%;
+    text-align: center;
+    box-shadow: inset 0 -0.5px 0 0 #dddddd;
+
+  }
+
+  .navigation-buttons {
+    margin: auto;
+  }
+
+  .navigation-buttons > img {
+    vertical-align: middle;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+
+  .navigation-title {
+    margin: 0 20px;
+    min-width: 500px;
+    display: inline-block;
+  }
+
+  .tab-subtitle {
+    text-align: center;
+    font-size: 16pt;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .local-title {
+    color: #999999;
+    font-size: 14pt;
+    padding: 10px;
+  }
+
+  .tags-panel {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    width: -webkit-fill-available;
+  }
+
+  .metadata-title {
+    color: #999999;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    font-size: 10pt;
+  }
+
+  .metadata-value {
+    color: #333333;
+    word-break: break-all;
+    margin-bottom: 5px;
+    font-size: 10pt;
+  }
+
+  .link-pane {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .link-value {
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    a {
+      cursor: pointer;
+    }
+
+    a:hover {
+      color: #333;
+    }
+
+    color: #1d70f7
+  }
+
+  .react-contextmenu-wrapper.row {
+    padding: 0 15px 10px 15px;
+    min-height: 60px;
+    border-bottom: 1px solid #dddddd;
+    font-size: 10pt;
+
+    &:hover {
+      background-color: #eee;
+    }
+
+    div[class*="col"] {
+      padding: 3px 0px 0px 0px;
+      margin: auto;
+    }
+
+    div[class*="col"]:nth-child(2) {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 5px;
+    }
+
+    div[class*="col"]:nth-child(4) {
+      font-weight: 700;
+      text-align: right;
+      padding-left: 5px;
+    }
+
+    select {
+      width: 100%;
+      height: 23px;
+      //  background-color: #eeeeee;
+      border-color: #eaeaea;
+      border-radius: 4px;
+      //padding: 4px;
+      //border-radius: 0px;
+      //color: #000;
+      //-webkit-appearance: none;
+      //outline: none;
+      //border-top: none;
+      //border-left: none;
+      //border-right: none;
+    }
+
+    .action-row {
+      text-align: right;
+      padding-top: 3px;
+
+      img {
+        margin-right: 3px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
+
+  .annotations-tab {
+    height: calc(100vh - 117px);
+    display: grid;
+    grid-template-rows: auto 220px;
+  }
+
+  .tab-pane {
+    height: 100%;
+  }
+
+  .targets-list {
+    //height: 200px;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+
+    .col:not(:first-child) {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .sub {
+      font-weight: normal;
+      color: #6c757d;
+      font-size: 13px;
+    }
+
+    .target-row {
+      margin-top: 5px;
+    }
+  }
+
+  .annotations-list {
+    //height: 68%;
+    overflow: scroll;
+  }
+
+  .annotations-list::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+
+  .annotation-tag {
+    background-color: #ff9800;
+    color: #ffffff;
+    border-radius: 4px;
+
+    padding: 4px 5px 3px 5px;
+    margin-top: 3px;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+  }
+
+  .annotation-tag-controls {
+    background-color: #ff9800;
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 3px 12px 3px 5px;
+    margin: 3px 3px 0px 0px;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+
+  }
+
+  .delete-tag {
+    margin-right: -7px;
+    cursor: pointer;
+  }
+
+  .select-place-holder {
+    color: #999999;
+  }
+
+  .targets-title {
+    height: 30px;
+    background-color: #cccccc;
+    color: #000;
+    line-height: 29px;
+  }
+
+  .targets-title div {
+    text-align: center;
+  }
+
+  .metadata-pane {
+    height: calc(100vh - 117px);
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      background: transparent;
+    }
+  }
+
+  .metadata-fix-pane {
+    height: 20%;
+  }
+
+  .metadata-scroll-pane {
+    height: 70%;
+    overflow: scroll;
+  }
+
+  .add-tag-btn {
+    background-color: #eeeeee;
+  }
+
+  .orderIcon {
+    padding: 15px 0 0 10px;
+  }
+
+  .orderSelect {
+    padding: 7px 20px 0 0;
+  }
+
+  .annotationHeaderSeparator {
+    border-bottom: 1px solid #1d70f7;
+    padding-bottom: 8px;
+  }
+
+  .annotation {
+    display: grid;
+    grid-template-columns: 100px auto;
+  }
+
+  .btn_menu {
+    margin-left: 7px;
+    margin-bottom: 2px;
+    opacity: 0.7;
+  }
+
+  .annotation_title {
+
+    text-align: left;
+    font-weight: bold;
+    margin: 3px 0px 5px 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    //padding-left: 10px;
+
+  }
+
+  .annotation_target {
+
+    //margin-left: 22px;
+  }
+
+  .annotation_value {
+    text-align: right;
+    font-weight: bold;
+    color: #000;
+    margin-right: 7px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .inputEdit {
+    width: 100%;
+    height: 17px;
+  }
+
+  .sort-dialog {
+    width: 195px;
+    //height: 152px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px 0 rgba(51, 51, 51, 0.16);
+    border: solid 1px #cccccc;
+    background-color: #ffffff;
+    position: absolute;
+    top: 30px;
+    right: 10px;
+    z-index: 999;
+  }
+
+  .dialog-item {
+    margin: 16px;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.23;
+    letter-spacing: normal;
+    color: #333333;
+    cursor: pointer;
+
+    img {
+      visibility: hidden;
+    }
+  }
+
+  .dialog-item-selected {
+    color: #1d70f7;
+
+    img {
+      visibility: visible;
+      float: right;
+      margin-top: 4px;
+    }
+  }
+
+}
+.comboUnknownValues{
+  margin: 0px 0px 10px 0px;
+  span{
+
+  }
+}
+.targetValues{
+  margin: 0px 0px 0px 15px;
+  div, .form-check-input{
+    margin-top: 1px;
+  }
+}
+
+.sup-calibration {
+  font-size: 14px;
+  color: red;
+}
+
+.sup-calibration-picked {
+  font-size: 14px;
+  color: green;
+}

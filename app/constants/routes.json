@@ -1,0 +1,21 @@
+{
+  "ROOT": "/",
+  "IMPORT": "/import/:folderName",
+  "SETTINGS": "/settings",
+  "CREDITS": "/credits",
+  "SELECTION": "/selection",
+  "IMPORTWIZARD": "/importwizard/:folderName",
+  "IMPORTVIDEOWIZARD": "/importVideoWizard/:folderName",
+  "IMPORTEVENTWIZARD": "/importEventWizard/:folderName/:tabName?",
+  "XPER": "/xper",
+  "TAXONOMIES": "/taxonomies",
+  "COLLECTIONEXPORT": "/collection-export/:tabName?",
+  "COLLECTIONS": "/collections",
+  "XMPMETADATA": "/xmpmetadata",
+  "ADD_NEW_PROJECT": "/add-project",
+  "IMPORT_EXISTING_PROJECT": "/import-existing-project",
+  "IMPORT_PROJECT_AS_ZIP": "/import-project-as-zip",
+  "TAG_MANAGER": "/tagManager",
+  "IIIF": "/iiif",
+  "EVENT_HOME": "/eventHome"
+}

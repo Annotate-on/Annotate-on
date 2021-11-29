@@ -1,0 +1,519 @@
+@import '~font-awesome/css/font-awesome.css';
+@import '~react-virtualized/styles.css';
+@import '../node_modules/leaflet-minimap/dist/Control.MiniMap.min.css';
+@import "~normalize.css/normalize.css";
+@import "~leaflet/dist/leaflet.css";
+@import "~leaflet-draw/dist/leaflet.draw.css";
+@import "~leaflet-contextmenu/dist/leaflet.contextmenu.css";
+@import "~video.js/dist/video-js.css";
+
+@font-face {
+  font-family: 'OSC';
+  src: url('./fonts/OpenSans-CondLight.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'HelveticaNeue';
+  src: url('./fonts/HelveticaNeue.woff2') format('woff2');
+}
+
+/* GLOBAL ADJUSTMENTS */
+
+* {
+  cursor: default;
+  outline-style: none;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+html,
+body,
+
+main,
+nav {
+  /*box-sizing: border-box;*/
+  font-size: 10pt;
+}
+
+/* SIZING */
+
+body {
+  height: 100vh;
+  overflow-y: hidden;
+  position: relative;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+#root > div {
+  height: 100%;
+  width: 100%;
+}
+
+/* TYPOGRAPHY */
+
+html {
+  font-family: HelveticaNeue;
+}
+
+button,
+input,
+textarea {
+  font-family: HelveticaNeue !important;
+  font-size: 1em;
+}
+
+/* REACT-VIRTUALIZED TABLE */
+
+.Table {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.headerRow {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.evenRow,
+.oddRow {
+  box-shadow: inset 0 -0.5px 0 0 #dddddd;
+
+  /*background-color: #fafafa;*/
+}
+
+.ReactVirtualized__Table__headerRow.headerRow,
+.headerColumn {
+  text-transform: none;
+  background-color: #eee;
+  color: #999;
+}
+.table-column {
+  color: #333;
+}
+.checkboxLabel {
+  margin-left: 0.5rem;
+}
+
+.checkboxLabel:first-of-type {
+  margin-left: 0;
+}
+
+.noRows {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  color: #bdbdbd;
+}
+
+.leaflet-draw-guide-dash {
+  z-index: 999;
+}
+
+.react-contextmenu {
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: .25rem;
+  color: #373a3c;
+  font-size: 16px;
+  margin: 2px 0 0;
+  min-width: 160px;
+  outline: none;
+  opacity: 0;
+  padding: 5px 0;
+  pointer-events: none;
+  text-align: left;
+  transition: opacity 250ms ease !important;
+}
+
+.react-contextmenu.react-contextmenu--visible {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+.react-contextmenu-item {
+  background: 0 0;
+  border: 0;
+  color: #373a3c;
+  cursor: pointer;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 3px 20px;
+  text-align: inherit;
+  white-space: nowrap;
+}
+
+.react-contextmenu-item.react-contextmenu-item--active,
+.react-contextmenu-item.react-contextmenu-item--selected {
+  color: #fff;
+  background-color: #20a0ff;
+  border-color: #20a0ff;
+  text-decoration: none;
+}
+
+.react-contextmenu-item.react-contextmenu-item--disabled,
+.react-contextmenu-item.react-contextmenu-item--disabled:hover {
+  background-color: transparent;
+  border-color: rgba(0, 0, 0, .15);
+  color: #878a8c;
+}
+
+.react-contextmenu-item--divider {
+  border-bottom: 1px solid rgba(0, 0, 0, .15);
+  cursor: inherit;
+  margin-bottom: 3px;
+  padding: 2px 0;
+}
+
+.react-contextmenu-item--divider:hover {
+  background-color: transparent;
+  border-color: rgba(0, 0, 0, .15);
+}
+
+.react-contextmenu-item.react-contextmenu-submenu {
+  padding: 0;
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item {
+}
+
+.react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item:after {
+  content: "▶";
+  display: inline-block;
+  position: absolute;
+  right: 7px;
+}
+
+.leaflet-control-zoom.leaflet-bar.leaflet-control .leaflet-control-zoom-in,
+.leaflet-control-zoom.leaflet-bar.leaflet-control .leaflet-control-zoom-out {
+  color: #333;
+}
+
+.leaflet-control-zoom.leaflet-bar.leaflet-control .leaflet-control-zoom-in:hover,
+.leaflet-control-zoom.leaflet-bar.leaflet-control .leaflet-control-zoom-out:hover {
+  color: #fff;
+}
+
+.leaflet-bar.leaflet-control .current-zoom {
+  color: #333;
+  font-weight: bold;
+}
+
+.leaflet-bar.leaflet-control .current-zoom:hover {
+  color: #fff;
+}
+
+.fit-to-view {
+  background-image: linear-gradient(transparent, transparent), url('./components/pictures/fit-to-view.svg');
+  background-repeat: no-repeat;
+  background-size: 17px 17px;
+  background-clip: padding-box;
+}
+
+.fit-to-view:hover {
+  background-image: linear-gradient(transparent, transparent), url('./components/pictures/fit-to-view_white.svg');
+}
+
+.one-to-one-view {
+  background-image: linear-gradient(transparent, transparent), url('./components/pictures/one-to-one.svg');
+  background-repeat: no-repeat;
+  background-clip: padding-box;
+  background-size: 20px 20px;
+}
+.one-to-one-view:hover {
+  background-image: linear-gradient(transparent, transparent), url('./components/pictures/one-to-one_white.svg');
+}
+
+.leaflet-draw-guide-dash {
+  font-size: 1%;
+  opacity: 0.6;
+  position: absolute;
+  width: 2px;
+  height: 2px;
+}
+
+.leaflet-div-icon {
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid #000;
+}
+
+.zoi-tooltip:before,
+.zoi-tooltip {
+  /*background: rgba(255, 0, 0, 0.5);*/
+  /*border: none;*/
+  /*box-shadow: none;*/
+  /*color: #fff;*/
+  /*font-weight: bold;*/
+  /*font-size: 10px;*/
+  /*padding: 2px;*/
+
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  box-shadow: none;
+  color: #ffffff;
+  /* font-weight: bold; */
+  font-size: 10px;
+  /* padding: 2px; */
+}
+
+.poi-tooltip:before,
+.poi-tooltip {
+  background: none;
+  border: none;
+  box-shadow: none;
+  color: #ff0000;
+  font-weight: bold;
+}
+
+.rt-tooltip:before,
+.rt-tooltip {
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  box-shadow: none;
+  color: #ff0000;
+  font-size: 16px;
+}
+
+.targets-table {
+  padding: 20px;
+}
+
+.bst .action-bar {
+  margin: 5px 5px 5px 0px;
+}
+
+.leaflet-container {
+  background-color: #eeeeee;
+  border: solid 0.5px #dddddd;
+}
+
+.leaflet-bar .leaflet-draw-toolbar-button-enabled,
+.leaflet-bar a:hover {
+  background-color: #1d70f7;
+}
+
+.selected-image-for-dnd {
+  background-color: red;
+  color:white;
+  border-radius: 5px;
+}
+
+.leaflet-control-easyPrint.leaflet-bar.leaflet-control {
+  display: none;
+}
+
+.recolnat-print,
+.easyPrintHolder .recolnat-lf-print {
+  background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8cGF0aCBkPSJNMTI4LDMyaDI1NnY2NEgxMjhWMzJ6IE00ODAsMTI4SDMyYy0xNy42LDAtMzIsMTQuNC0zMiwzMnYxNjBjMCwxNy42LDE0LjM5OCwzMiwzMiwzMmg5NnYxMjhoMjU2VjM1Mmg5NiAgIGMxNy42LDAsMzItMTQuNCwzMi0zMlYxNjBDNTEyLDE0Mi40LDQ5Ny42LDEyOCw0ODAsMTI4eiBNMzUyLDQ0OEgxNjBWMjg4aDE5MlY0NDh6IE00ODcuMTk5LDE3NmMwLDEyLjgxMy0xMC4zODcsMjMuMi0yMy4xOTcsMjMuMiAgIGMtMTIuODEyLDAtMjMuMjAxLTEwLjM4Ny0yMy4yMDEtMjMuMnMxMC4zODktMjMuMiwyMy4xOTktMjMuMkM0NzYuODE0LDE1Mi44LDQ4Ny4xOTksMTYzLjE4Nyw0ODcuMTk5LDE3NnoiIGZpbGw9IiMwMDAwMDAiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
+}
+
+.recolnat-zoi-export,
+.easyPrintHolder .recolnat-lf-print {
+  background-image: url(components/pictures/exportZOI.svg);
+}
+
+/*Leaflet draw toolbar icons override*/
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-marker {
+  margin-top: 10px;
+  border-top-width: 0;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  background-position: 7px 7px;
+  background-size: 17px 17px;
+  background-image: url(components/pictures/poi.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-marker.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-marker:hover {
+  background-image: url(components/pictures/poi_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-rectangle {
+  background-position: 8px 7px;
+  background-size: 15px 15px;
+  background-image: url(components/pictures/rectangle.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-rectangle.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-rectangle:hover {
+  background-image: url(components/pictures/rectangle_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygon {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/polygon.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygon.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygon:hover {
+  background-image: url(components/pictures/polygon_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-occurrence {
+  border-bottom-width: 0;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/hash.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-occurrence.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-occurrence:hover {
+  background-image: url(components/pictures/hash_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-simple-line {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/simple-line.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-simple-line.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-simple-line:hover {
+  background-image: url(components/pictures/simple-line_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-angle {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/angle.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-angle.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-angle:hover {
+  background-image: url(components/pictures/angle_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polyline {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/polyline.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polyline.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polyline:hover {
+  /*background-image: url(components/pictures/polyline_white.svg) !important;*/
+}
+
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-colorPicker {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/color_picker.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-colorPicker.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-colorPicker:hover {
+  background-image: url(components/pictures/color_picker_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-ratio {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/ratio_icon.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-ratio.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-ratio:hover {
+  background-image: url(components/pictures/ratio_icon_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-transcription {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/transcription.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-transcription.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-transcription:hover {
+  background-image: url(components/pictures/transcription_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-categorical {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/categorical.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-categorical.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-categorical:hover {
+  background-image: url(components/pictures/categorical_white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-richtext {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/text.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-richtext.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-richtext:hover {
+  background-image: url(components/pictures/text-white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-cartel {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/cartel.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-cartel.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-cartel:hover {
+  background-image: url(components/pictures/cartel_white.svg) !important;
+}
+
+.leaflet-div-color-picker.leaflet-editing-color-picker {
+  background: url(components/pictures/color_picker.svg) 50% 50% no-repeat !important;
+  -webkit-background-size: 16px 16px;
+  background-size: 16px 16px;
+  border: none;
+  background-blend-mode: lighten;
+  background-position: center center;
+}
+
+.bst .nav-link {
+  display: block;
+  padding: 8px 12px; }
+
+.currentImageM{
+  background-color: #eeeeee;
+}
+.targetValueM{
+  text-align: right;
+}
+.targetName{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+  border: none;
+}
+
+.recolnat-control-menu {
+  background-image: url(components/pictures/repeat.svg);
+}
+.recolnat-control-menu:hover,
+.recolnat-control-menu.enabled {
+  background-image: url(components/pictures/repeat-white.svg);
+  background-color: #1d70f7;
+}

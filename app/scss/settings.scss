@@ -1,0 +1,50 @@
+.hide-overflow {
+  white-space: nowrap;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.corrupted-project-check{
+  border-color: #b30f0f !important;
+}
+
+.corrupted-project-row{
+}
+
+.active-project {
+  background-color: #eee;
+}
+
+.corrupted-project-label{
+  color: #b30f0f;
+  font-size: 16px;
+  //font-style: italic;
+}
+
+.tltp {
+  position: relative;
+  //display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tltp .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: relative;
+  z-index: 5000;
+  top: -20px;
+  left: -20%;
+}
+
+.tltp:hover .tooltiptext {
+  visibility: visible;
+}

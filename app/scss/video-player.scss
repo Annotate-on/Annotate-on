@@ -1,0 +1,480 @@
+.rcn_video {
+  display: grid;
+  grid-template-rows: auto 180px;
+  height: calc(100% - 41px);
+
+  .timeline {
+    display: grid;
+    grid-template-columns: 220px auto;
+    overflow: hidden;
+    background-color: #ffffff;
+
+    .highlight-annotation {
+      background-color: yellow !important;
+    }
+
+    .controls {
+      //display: grid;
+      //justify-items: center;
+
+      .rowContainer{
+        width: 100%;
+      }
+
+      .timerControl{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        font-size: 14px;
+        line-height: 19px;
+        align-self: center;
+        padding: 3px;
+        width: 100%;
+        font-weight: 700;
+        border-top: 1px solid #cccccc;
+        border-bottom: 1px solid #cccccc;
+        //border-right: 1px solid #6c757d;
+        .currentTime{
+        margin:  0px 2px 0px 2px;
+          color: #1d70f7;
+          font-weight: bold;
+        }
+        .totalTime{
+          color: #333;
+          margin:  0px 2px 0px 2px;
+        }
+
+      }
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        position: relative;
+        margin:5px;
+
+
+        .play-button{
+          font-size: 60px;
+          cursor: pointer;
+          margin: 0px 10px 0px 10px;
+        }
+        .action-button {
+          font-size: 20px;
+          //margin-right: 5px;
+          margin-left: 5px;
+
+          i {
+            cursor: pointer;
+          }
+
+
+        }
+      }
+    }
+
+
+    .timeline-display {
+      display: grid;
+      grid-template-rows: 20px auto;
+
+      .video-progress {
+        width: 100%;
+        background-color: #ccc;
+        position: relative;
+        z-index: 1;
+        height: 25px;
+      }
+
+      .elapsed-time {
+        background-color: red;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
+        height:5px;
+        margin-top:10px;
+      }
+
+      .scrubber {
+        position: absolute;
+        border: 12px solid red;
+        z-index: 3;
+        cursor: pointer;
+        height: 25px;
+        width: 25px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        left: -11px;
+
+        .vertical-needle {
+          top: 14px;
+          position: absolute;
+          width: 1px;
+          background-color: orangered;
+          height: 300px;
+        }
+      }
+
+      .tracks {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 135px auto;
+
+        .track {
+          display: flex;
+          align-items: center;
+        }
+
+        //.track:not(:last-child) {
+        //  border-bottom: 1px solid white;
+        //}
+      }
+
+      .track-wrapper {
+        position: relative;
+        background-color: #4c4c4c;
+        overflow-x: hidden;
+        height: 100%;
+
+        &::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+          background: #0c5460;
+        }
+      }
+
+      .timeseek {
+        width: 100%;
+        display: inline-block;
+      }
+
+      .track-annotation {
+        background-color: #6597e3;
+        position: absolute;
+        border: 1px solid #436799;
+        align-self: center;
+        opacity: .85;
+        height: 80px;
+        border-radius: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #FFF;
+      }
+    }
+  }
+}
+
+.track-annotation-drawing {
+  background-color: yellow;
+  position: absolute;
+  border: 1px solid yellowgreen;
+  align-self: center;
+  opacity: .85;
+  height: 80px;
+  border-radius: 5px;
+}
+
+.timeline-ruler {
+  width: 100%;
+  display: flex;
+  //background: pink;
+}
+
+.start-stop-event-button{
+  height: 56px !important;
+  margin: 5px !important;
+  background: red !important;
+}
+
+.epc-action-button-div {
+  width: 100%;
+  text-align: center;
+  padding: 16px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.epc-action-buttons {
+  height: 145px !important;
+  display: block !important;
+  margin: 0 !important;
+}
+
+#epc-current-time{
+  font-size: 20px !important;
+}
+
+.timeline-item{
+  border-left: 1px solid black;
+  border-bottom: 2px dotted;
+  background: #ccc;
+  position: relative;
+  color: #000000;
+  font-size: 12px;
+}
+.timeline-item-top{
+  border-left: 1px solid black;
+  border-bottom: 2px dotted;
+  background: #FFF;
+  position: relative;
+  color: #000000;
+  font-size: 12px;
+}
+
+.timeline-item-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-left: 5px;
+  margin-bottom: 3px;
+  font-weight: bold;
+}
+
+.timeline-item-content-last {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-left: 5px;
+  margin-bottom: 3px;
+  font-weight: bold;
+}
+
+//.timeline-item-content:last-child {
+//  position: absolute;
+//  bottom: 0;
+//  right: 0;
+//}
+
+.timeline-item:last-child{
+  border-right: 2px solid black;
+}
+
+.active-control {
+  color: #1d70f7;
+}
+
+.action-button{
+  i:hover {
+    color: #1d70f7;
+  }
+}
+
+.play-button:hover {
+  color: #1d70f7;
+  i {
+    cursor: pointer;
+  }
+}
+
+.add-annotation-button{
+  border-radius: 4px;
+  border: solid 1px #cccccc;
+  background-color: #1d70f7;
+  display: flex;
+  cursor: pointer;
+  margin: 10px 5px 5px 5px;
+  img {
+    cursor: pointer;
+  }
+
+}
+
+.action-buttons-two {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  .play-button{
+    font-size: 40px;
+    i {
+      cursor: pointer;
+    }
+  }
+  .action-button {
+    font-size: 20px;
+    margin-right: 5px;
+    margin-left: 10px;
+
+    i {
+      cursor: pointer;
+    }
+
+    small {
+      font-size: 40%;
+      display: block;
+      text-align: center;
+    }
+  }
+}
+
+.zoom-slidecontainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  margin-top: 5px;
+
+    i {
+      cursor: pointer;
+    }
+
+
+}
+
+.zoom-slider {
+  -webkit-appearance: none;
+  width: 120px;
+  height: 7px;
+  border-radius: 5px;
+  background: #fff;
+  outline: none;
+  //opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  //line-height: 24px;
+  //transform: rotate(270deg);
+}
+
+.zoom-slider:hover {
+  opacity: 1;
+  border-color: #1d70f7;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #1d70f7;
+  cursor: pointer;
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.showAction-div {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.showAction-div-wrapper {
+  width: 100%;
+  height: 21px;
+}
+
+
+.skipTime{
+  display: flex;
+  justify-content: center;
+  input{
+    width: 70%;
+  }
+}
+
+.maskShell {
+  input{
+    width: 100%;
+  }
+}
+.active-action-button{
+  color: #1d70f7;
+}
+.active-action-button:hover{
+  color: black;
+}
+
+.add-annotation-picture{
+  height:25px;
+}
+
+.epc-zoom {
+  padding-top: 8px!important;
+  position: absolute !important;
+  bottom: 0 !important;
+}
+
+.event-icon-padding{
+  padding-top: 8px !important;
+}
+
+.action-icons {
+  display: flex;
+  align-items: center;
+  //justify-content: space-evenly;
+  position: relative;
+  margin-top: 1px;
+  margin-left: 15px;
+
+  .action-icon {
+    font-size: 20px;
+    margin-right: 5px;
+    margin-left: 10px;
+
+    i {
+      cursor: pointer;
+    }
+
+    small {
+      font-size: 40%;
+      display: block;
+      text-align: center;
+    }
+  }
+}
+.range_value{
+  font-size: 12px;
+  font-weight: 700;
+  margin-left: 5px;
+
+}
+
+.event-bottom-player-container{
+  height: 100%;
+  border-top: 1px solid #999;
+  background: #ccc;
+  border-bottom: 1px solid #999;
+}
+
+.epc-bottom-player-container{
+  height: 100%;
+  margin-top: 0px;
+  border-top: 1px solid #999;
+  background: #ccc;
+  border-bottom: 1px solid #999;
+}
+
+.bottom-player-container{
+  margin-top: 0px;
+  border-top: 1px solid #999;
+  background: #ccc;
+  border-bottom: 1px solid #999;
+}
+
+.timeline_annotation_header{
+  font-size: 14px;
+  color: #000000;
+  font-weight: 700;
+  padding: 5px;
+  background: white;
+}
+.timeline_annotation_body{
+  font-size: 12px;
+  color: #000000;
+  //font-weight: 700;
+  padding: 5px;
+  //background: white;
+}
+
+.timeline_annotation_tags{
+  font-size: 16px;
+  color: white;
+}
