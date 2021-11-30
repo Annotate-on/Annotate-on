@@ -284,9 +284,9 @@ export const setWorkspace = (_, label) => {
 };
 
 const SetBackupProject = () => {
-    let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'collaboratoire-workspace');
+    let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
     config = {
-        workspace: path.join(path.dirname(remote.app.getAppPath()), 'collaboratoire-workspace'),
+        workspace: path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace'),
         projects: [{path: demoProjectPath, active: true}]
     };
     yaml.sync(config_file_path, config);
@@ -296,15 +296,16 @@ export const getUserWorkspace = () => config.workspace;
 
 export const setConfigFilePath = () => {
 
+    debugger
     const old_config_file_path = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
     config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
 
 
     console.log(config_file_path, fs.existsSync(config_file_path));
     if (!fs.existsSync(config_file_path)) {
-        let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'collaboratoire-workspace');
+        let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
         config = {
-            workspace: path.join(path.dirname(remote.app.getAppPath()), 'collaboratoire-workspace'),
+            workspace: path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace'),
             projects: [{path: demoProjectPath, active: true}]
         };
         yaml.sync(config_file_path, config);
@@ -399,7 +400,9 @@ export const setConfigFilePath = () => {
  */
 export const fromConfigFile = () => {
     // Default workspace location.
-    const USER_DATA_DIR = path.join(path.dirname(remote.app.getAppPath()), 'collaboratoire-workspace');
+    debugger
+    const USER_DATA_DIR = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
+    console.log(USER_DATA_DIR);
     try {
         config = configYaml(config_file_path);
         if (!config.hasOwnProperty('workspace')) {
@@ -423,6 +426,7 @@ export const fromConfigFile = () => {
  */
 const initWorkSpace = () => {
 
+    debugger
     const wsDescriptorPath = path.join(config.workspace, WORK_SPACE_DESCRIPTOR);
     //project page disable default workspace
     ws_descriptor = [];

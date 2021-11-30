@@ -67,7 +67,7 @@
       "app/main.prod.js.map",
       "package.json"
     ],
-    "extraResources": ["./collaboratoire-workspace", "./.ExifTool_config"],
+    "extraResources": ["./demo-workspace", "./.ExifTool_config"],
     "dmg": {
       "contents": [
         {
