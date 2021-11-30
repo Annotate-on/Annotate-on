@@ -296,7 +296,6 @@ export const getUserWorkspace = () => config.workspace;
 
 export const setConfigFilePath = () => {
 
-    debugger
     const old_config_file_path = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
     config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
 
@@ -400,7 +399,6 @@ export const setConfigFilePath = () => {
  */
 export const fromConfigFile = () => {
     // Default workspace location.
-    debugger
     const USER_DATA_DIR = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
     console.log(USER_DATA_DIR);
     try {
@@ -426,7 +424,6 @@ export const fromConfigFile = () => {
  */
 const initWorkSpace = () => {
 
-    debugger
     const wsDescriptorPath = path.join(config.workspace, WORK_SPACE_DESCRIPTOR);
     //project page disable default workspace
     ws_descriptor = [];
