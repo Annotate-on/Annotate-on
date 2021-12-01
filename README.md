@@ -17,8 +17,15 @@ Annotate offre actuellement plusieurs gammes d’outils aux chercheurs :
    - Un éditeur de métadonnées compatible Dublin Core.
    - Un éditeur de collections virtuelles (en cours de développement) pour constituer des séquences d’images à exposer, écrire sur ces images, éditer leurs cartels, les exporter.
    - Une API et un serveur Recolnat IIIF de présentation (en cours de développement)
+En 2022-2023, un mode Annotation 3D sera implémenté.
+
 # Annotate-on pour les humanités numériques
---> à rédiger
+Anntate-on permet d'annoter des corpus hétérogènes composés à la fois d'images fixes et de films.
+En plus de ses fonctions d'annotation d'images, Annotate-on propose 2 autres modes d'annotation. 
+Un mode "Annotation chrono-thématique" de vidéos qui permet de segmenter un film téléchargé en séquences temporelles, ceci selon un modèle classique en archives (dans les institutions françaises (Archives nationales, BnF).
+Un mode "Event" pour annoter chronologiquement en direct un événement, en même temps que cet événement se déroule, parallèlement à sa captation vidéo ou audio. ce mode a été développé pour les procès filmés. Il est mis en oeuvre actuellement pour le procès des Attentats du 13 novembre 2015. L'évolution vers davantage de procès filmés rend a priori pertinent cette fonctionnalité.
+Un 3e mode sera développé en 2022 pour annoter et suivre des objets à l'intérieur d'une séquence filmée (un personnage par exemple).
+
 
 # Technologies
 
