@@ -17,6 +17,7 @@ Annotate offre actuellement plusieurs gammes d’outils aux chercheurs :
    - Un éditeur de métadonnées compatible Dublin Core.
    - Un éditeur de collections virtuelles (en cours de développement) pour constituer des séquences d’images à exposer, écrire sur ces images, éditer leurs cartels, les exporter.
    - Une API et un serveur Recolnat IIIF de présentation (en cours de développement)
+
 En 2022-2023, un mode Annotation 3D sera implémenté.
 
 # Annotate-on pour les humanités numériques
