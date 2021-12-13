@@ -25,6 +25,14 @@ let cache_dir;
 let taxomony_dir;
 let metadata_dir;
 
+let installatio_root_dir;
+if (process.env.NODE_ENV === 'production') {
+    installatio_root_dir = path.dirname(remote.app.getAppPath())
+} else {
+    installatio_root_dir = process.env.INIT_CWD;
+}
+
+
 export const WORK_SPACE_DESCRIPTOR = 'workspace.json';
 export const PROJECT_INFO_DESCRIPTOR = 'project-info.json';
 
@@ -39,8 +47,8 @@ export const get = () => config;
 export const set = _ => (config = _);
 const now = formatDate(new Date());
 
-export  const getYaml = () => {
-    return  configYaml(config_file_path);
+export const getYaml = () => {
+    return configYaml(config_file_path);
 }
 
 /**
@@ -141,7 +149,7 @@ export const unlockProject = () => {
     console.log(`Lock/unlock file with user `, os.userInfo())
     const project = JSON.parse(fs.readFileSync(getProjectInfoFile()));
     const id = crypto.createHash('sha1').update(os.userInfo().username).digest('hex');
-    if(project.locked === id) {
+    if (project.locked === id) {
         delete project.locked;
         delete project.lockedBy;
         fs.writeFileSync(getProjectInfoFile(), JSON.stringify({...project, path: undefined}));
@@ -151,7 +159,7 @@ export const unlockProject = () => {
 export const lockProject = (wsPath) => {
     const projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR);
     const projectToActivate = JSON.parse(fs.readFileSync(projectPath));
-    if(!('locked' in projectToActivate)) {
+    if (!('locked' in projectToActivate)) {
         projectToActivate.locked = crypto.createHash('sha1').update(os.userInfo().username).digest('hex');
         projectToActivate.lockedBy = os.userInfo().username;
         fs.writeFileSync(projectPath, JSON.stringify({
@@ -241,11 +249,11 @@ export const setWorkspace = (_, label) => {
             tmpState.taxonomyInstance = taxonomyInstance;
 
             let correctStructure = true;
-            if (!tmpState.hasOwnProperty("annotations_chronothematique")){
+            if (!tmpState.hasOwnProperty("annotations_chronothematique")) {
                 console.log('project from previous version , adding chronothematique annotation')
                 tmpState["annotations_chronothematique"] = {};
             }
-            if (!tmpState.hasOwnProperty("annotations_eventAnnotations")){
+            if (!tmpState.hasOwnProperty("annotations_eventAnnotations")) {
                 console.log('project from previous version , annotations_eventAnnotations')
                 tmpState["annotations_eventAnnotations"] = {};
             }
@@ -284,9 +292,9 @@ export const setWorkspace = (_, label) => {
 };
 
 const SetBackupProject = () => {
-    let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
+    let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
     config = {
-        workspace: path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace'),
+        workspace: path.join(installatio_root_dir, 'demo-workspace'),
         projects: [{path: demoProjectPath, active: true}]
     };
     yaml.sync(config_file_path, config);
@@ -302,51 +310,51 @@ export const setConfigFilePath = () => {
 
     console.log(config_file_path, fs.existsSync(config_file_path));
     if (!fs.existsSync(config_file_path)) {
-        let demoProjectPath = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
+        let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
         config = {
-            workspace: path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace'),
+            workspace: path.join(installatio_root_dir, 'demo-workspace'),
             projects: [{path: demoProjectPath, active: true}]
         };
         yaml.sync(config_file_path, config);
-    }else{
+    } else {
         try {
             const readYml = configYaml(config_file_path);
-            if (!readYml.workspace || !fs.existsSync(readYml.workspace)){
+            if (!readYml.workspace || !fs.existsSync(readYml.workspace)) {
                 const projects = readYml.projects;
-                if (projects === undefined || projects.length <= 1){
+                if (projects === undefined || projects.length <= 1) {
                     SetBackupProject();
-                }else{
+                } else {
                     let checkedProjects = [];
                     let workspacePath = null;
-                    projects.forEach( project => {
-                        console.log(fs.existsSync(path.join(project.path , 'project-info.json')));
-                        if (fs.existsSync(path.join(project.path , 'project-info.json'))){
-                            if (workspacePath === null){
+                    projects.forEach(project => {
+                        console.log(fs.existsSync(path.join(project.path, 'project-info.json')));
+                        if (fs.existsSync(path.join(project.path, 'project-info.json'))) {
+                            if (workspacePath === null) {
                                 project.active = true;
                                 workspacePath = project.path;
-                            }else{
+                            } else {
                                 project.active = false;
                             }
                             checkedProjects.push(project);
-                        }else{
+                        } else {
                             project.corrupted = true;
                             checkedProjects.push(project);
                         }
                     })
-                    console.log('checked projects' , checkedProjects);
-                    console.log('workspace' , workspacePath)
-                    if (workspacePath !== null && checkedProjects.length > 0){
+                    console.log('checked projects', checkedProjects);
+                    console.log('workspace', workspacePath)
+                    if (workspacePath !== null && checkedProjects.length > 0) {
                         config = {
                             workspace: workspacePath,
                             projects: checkedProjects
                         };
                         yaml.sync(config_file_path, config);
-                    }else{
+                    } else {
                         SetBackupProject();
                     }
                 }
             }
-        }catch (e){
+        } catch (e) {
             console.log(e.message);
             alert('fatal error while reading yml file , restoring yml file to init state.')
             SetBackupProject();
@@ -356,11 +364,11 @@ export const setConfigFilePath = () => {
     // check exiftool config file
     const exifConf = path.join(remote.app.getPath('home'), '.ExifTool_config');
     if (process.env.NODE_ENV === 'production') {
-        const newExif = fs.readFileSync(path.join(path.dirname(remote.app.getAppPath()), '.ExifTool_config'));
+        const newExif = fs.readFileSync(path.join(installatio_root_dir, '.ExifTool_config'));
         fs.writeFileSync(exifConf, newExif);
     }
     if (!fs.existsSync(exifConf)) {
-        fs.copySync(path.join(path.dirname(remote.app.getAppPath()), '.ExifTool_config'), exifConf);
+        fs.copySync(path.join(installatio_root_dir, '.ExifTool_config'), exifConf);
     }
 
     if (fs.existsSync(old_config_file_path)) {
@@ -399,7 +407,7 @@ export const setConfigFilePath = () => {
  */
 export const fromConfigFile = () => {
     // Default workspace location.
-    const USER_DATA_DIR = path.join(path.dirname(remote.app.getAppPath()), 'demo-workspace');
+    const USER_DATA_DIR = path.join(installatio_root_dir, 'demo-workspace');
     console.log(USER_DATA_DIR);
     try {
         config = configYaml(config_file_path);
@@ -475,47 +483,47 @@ export const updateTargetTypes = (rootDir) => {
 
     //TODO: check if this cause bug that causes group lose on targets in custom annotate models
 
-    if (fs.existsSync(cache_dir) && fs.existsSync(taxomony_dir)){
+    if (fs.existsSync(cache_dir) && fs.existsSync(taxomony_dir)) {
         try {
-            const project_cache = JSON.parse(fs.readFileSync(path.join(cache_dir , 'current-work.json')));
+            const project_cache = JSON.parse(fs.readFileSync(path.join(cache_dir, 'current-work.json')));
             const taxonomies = project_cache.taxonomies;
 
-            if (taxonomies && taxonomies.length > 0){
-                taxonomies.map( at => {
+            if (taxonomies && taxonomies.length > 0) {
+                taxonomies.map(at => {
                     if (at.model === 'MODEL_ANNOTATE') {
                         let fileName = at.id + '.json';
                         const filePath = path.join(taxomony_dir, fileName);
                         if (fs.existsSync(filePath)) {
                             const taxonomy = JSON.parse(fs.readFileSync(filePath));
                             at.targetTypes = getTargetTypes(taxonomy);
-                        }else{
-                            console.log(filePath  + 'does not exist...')
+                        } else {
+                            console.log(filePath + 'does not exist...')
                         }
                     }
                     return at;
                 });
             }
-            console.log('taxonomies updated --> ' , taxonomies)
+            console.log('taxonomies updated --> ', taxonomies)
             project_cache.taxonomies = taxonomies;
-            fs.writeFileSync(path.join(cache_dir , 'current-work.json'), JSON.stringify(project_cache));
-        }catch(err) {
+            fs.writeFileSync(path.join(cache_dir, 'current-work.json'), JSON.stringify(project_cache));
+        } catch (err) {
             console.error(err)
         }
-    }else{
-        console.log('folders: ' + cache_dir  + ' and ' + taxomony_dir + 'do not exist');
+    } else {
+        console.log('folders: ' + cache_dir + ' and ' + taxomony_dir + 'do not exist');
     }
 }
 
 const getTargetTypes = (taxonomy) => {
     let targetTypes = [];
-    if (taxonomy && taxonomy.length > 0){
-        taxonomy.forEach( descriptor => {
-            if (!targetTypes.includes(descriptor.targetType) && descriptor.targetType !== ''){
+    if (taxonomy && taxonomy.length > 0) {
+        taxonomy.forEach(descriptor => {
+            if (!targetTypes.includes(descriptor.targetType) && descriptor.targetType !== '') {
                 targetTypes.push(descriptor.targetType);
             }
         })
     }
-    console.log('targetTypes -> ' , targetTypes)
+    console.log('targetTypes -> ', targetTypes)
     return targetTypes;
 }
 

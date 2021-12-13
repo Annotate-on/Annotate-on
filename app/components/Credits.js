@@ -325,7 +325,7 @@ export default class Credits extends PureComponent {
                         <div className="presek-logo">
                             <a onClick={ () =>
                                 shell.openExternal(
-                                    `www.presek-i.com`
+                                    `https://www.presek-i.com`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
                                      title="open link in external browser">

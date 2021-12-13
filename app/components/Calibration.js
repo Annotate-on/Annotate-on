@@ -85,6 +85,19 @@ export default class extends PureComponent {
             });
             return;
         }
+        if (applyToAll) {
+            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                type: 'question',
+                buttons: ['Yes', 'No'],
+                message: `Confirm calibration`,
+                cancelId: 1,
+                detail: `This calibration will be applied to all images in selection. Are you sure to continue?`
+            });
+
+            if (result === 1)
+                return;
+        }
+
         if (this.state.dpiX !== 0 && this.state.dpiY !== 0 && this.state.measureName.length > 0) {
             if (this.state.editCalibration) {
                 const calibration = this.props.calibrations.find(c => c.calibrationId === this.state.editCalibrationId)
@@ -361,17 +374,17 @@ export default class extends PureComponent {
                        }}/>
             </FormGroup>
             <Row>
-                <Col md={12}>
-                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in
-                        selection</Button>
-                </Col>
-            </Row>
-            <Row>
                 <Col md={3}>
                     <Button color="primary" size="md" onClick={() => this.saveCalibration(false)}>Save</Button>
                 </Col>
                 <Col md={3}>
                     <Button color="gray" size="md" onClick={this.cancel}>Cancel</Button>
+                </Col>
+            </Row>
+            <Row><Col md={12}><br /></Col></Row>
+            <Row>
+                <Col md={12}>
+                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in selection</Button>
                 </Col>
             </Row>
         </Container>
@@ -451,16 +464,17 @@ export default class extends PureComponent {
                        }}/>
             </FormGroup>
             <Row>
-                <Col md={12}>
-                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in selection</Button>
-                </Col>
-            </Row>
-            <Row>
                 <Col md={3}>
                     <Button color="primary" size="md" onClick={ () => this.saveCalibration(false)}>Save</Button>
                 </Col>
                 <Col md={3}>
                     <Button color="gray" size="md" onClick={this.cancel}>Cancel</Button>
+                </Col>
+            </Row>
+            <Row><Col md={12}><br /></Col></Row>
+            <Row>
+                <Col md={12}>
+                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in selection</Button>
                 </Col>
             </Row>
         </Container>
