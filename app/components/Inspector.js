@@ -1079,7 +1079,7 @@ export default class extends Component {
             //undefined
             if (annotation.annotationType === ANNOTATION_OCCURRENCE)
                 value = annotation.value;
-            else if ('value_in_mm' in annotation)
+            else if ('value_in_mm' in annotation && annotation.value_in_mm != undefined )
                 value = annotation.value_in_mm;
             else if ('value_in_deg' in annotation)
                 value = annotation.value_in_deg;
