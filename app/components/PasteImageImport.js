@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Button} from 'reactstrap';
+import {Button, Input} from 'reactstrap';
 import {ee, EVENT_SELECT_TAB, EVENT_SHOW_LOADING_ON_RESOURCE_IMPORT} from "../utils/library";
 
 export default class extends PureComponent {
@@ -38,18 +38,27 @@ export default class extends PureComponent {
 
     render() {
         return (
-            <div className="bst rcn_urldownloader">
+            <div className="bst rcn_urldownloader" >
                 <div className="file-drop-zone">
-                    {this.state.pastedImage ? <div>
-                        <img className="img-fluid" src={this.state.pastedImage}/>
-                        <br/>
-                        <input type="text" onChange={(event) => {
-                            this.setState({
-                                fileName: event.target.value
-                            })
-                        }} />
-                    </div>: <span>Paste here.</span>}
+                    {this.state.pastedImage ? <div className="">
+                        <img className="img-fluid clipboard-img-container " src={this.state.pastedImage}/>
+                        {/*<br/>*/}
+                        {/*<input type="text" onChange={(event) => {*/}
+                            {/*this.setState({*/}
+                                {/*fileName: event.target.value*/}
+                            {/*})*/}
+                        {/*}} />*/}
+                    </div>: <span>Use CTRL+V on Windows, Command+V on MacOS  ).</span>}
                 </div>
+                {this.state.pastedImage ?<div className="mt-3 ">
+                    {/*<span className="h5">Name of clipboard image:</span>*/}
+                    <input autoFocus placeholder="Enter clipboard image name and hit 'Save'" type="text" className="form-control"  onChange={(event) => {
+                    this.setState({
+                        fileName: event.target.value
+                    })
+                    }} />
+                </div>: ""}
+                <div className="mt-3">
                 <Button
                     className="btn btn-success"
                     disabled={this.state.pastedImage === null || this.props.parentFolder === null
@@ -71,6 +80,7 @@ export default class extends PureComponent {
                 >
                     Cancel
                 </Button>
+                </div>
             </div>
         );
     }

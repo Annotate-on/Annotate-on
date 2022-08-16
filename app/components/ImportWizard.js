@@ -235,9 +235,13 @@ export default class extends Component {
                                             </legend>
                                             <DragAndDropImport parentFolder={this.state.parentFolder}
                                                                saveImages={this._saveImages}/></fieldset>}
-
-                                    <PasteImageImport parentFolder={this.state.parentFolder}
+                                    <fieldset className="import-fieldset">
+                                    <legend className="import-legend">Paste images from clipboard
+                                    </legend>
+                                    <PasteImageImport  parentFolder={this.state.parentFolder}
                                                       saveImage={this._saveImageFromClipboard} />
+
+                                    </fieldset>
                                 </Col>
                             </Row>
                         </Container>
