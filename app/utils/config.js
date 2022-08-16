@@ -12,6 +12,7 @@ import os from 'os';
 import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
+import Chance from "chance";
 
 let config;
 // path to global app config
@@ -738,6 +739,26 @@ export const importResources = (resources, parent) => {
 
         toConfigFileWithoutRefresh();
         resolve(copiedPaths);
+    });
+};
+
+/**
+ * Import clipboard resource into parent folder inside workspace.
+ * @param resources
+ * @param parent
+ * @returns {Promise<unknown>}
+ */
+export const importClipboardResource = (resources, parent) => {
+    return new Promise((resolve, reject) => {
+        let destinationFolder = path.join(config.workspace, IMAGE_STORAGE_DIR, parent);
+        const chance = new Chance();
+        const fileName = path.join(destinationFolder, `${chance.guid()}.png`);
+
+        const buffer = new Buffer(resources)
+        fs.writeFileSync(fileName, buffer);
+
+        toConfigFileWithoutRefresh();
+        resolve([fileName]);
     });
 };
 

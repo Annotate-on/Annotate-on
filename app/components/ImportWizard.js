@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import Tags from '../containers/Tags';
 import {DOC_FG, DOC_ICON, DOC_ICON_HOVER} from '../constants/constants';
-import {importFolder, importResources} from '../utils/config'
+import {importClipboardResource, importFolder, importResources} from '../utils/config'
 import {Button, Col, Container, Row} from 'reactstrap';
 import path from "path";
 import Folders from "../containers/Folders";
@@ -11,6 +11,7 @@ import UrlImageImport from "../containers/UrlImageImport";
 import DragAndDropImport from "../containers/DragAndDropImport";
 import {ee, EVENT_HIDE_LOADING, EVENT_SELECT_TAB, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
 import {attachDefaultTags} from "../utils/tags";
+import PasteImageImport from "../containers/PasteImageImport";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 
@@ -73,6 +74,15 @@ export default class extends Component {
         ee.emit(EVENT_SHOW_LOADING, files.length);
 
         importResources(files, this.state.parentFolder).then(images => {
+            this._loadImages(images, [this.state.parentFolder]);
+        });
+    };
+
+    _saveImageFromClipboard = (resource) => {
+        // Display loading overlay.
+        ee.emit(EVENT_SHOW_LOADING, 1);
+
+        importClipboardResource(resource, this.state.parentFolder).then(images => {
             this._loadImages(images, [this.state.parentFolder]);
         });
     };
@@ -225,6 +235,9 @@ export default class extends Component {
                                             </legend>
                                             <DragAndDropImport parentFolder={this.state.parentFolder}
                                                                saveImages={this._saveImages}/></fieldset>}
+
+                                    <PasteImageImport parentFolder={this.state.parentFolder}
+                                                      saveImage={this._saveImageFromClipboard} />
                                 </Col>
                             </Row>
                         </Container>
