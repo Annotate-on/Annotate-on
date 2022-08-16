@@ -78,11 +78,11 @@ export default class extends Component {
         });
     };
 
-    _saveImageFromClipboard = (resource) => {
+    _saveImageFromClipboard = (resource, fileName) => {
         // Display loading overlay.
         ee.emit(EVENT_SHOW_LOADING, 1);
 
-        importClipboardResource(resource, this.state.parentFolder).then(images => {
+        importClipboardResource(resource, this.state.parentFolder, fileName).then(images => {
             this._loadImages(images, [this.state.parentFolder]);
         });
     };

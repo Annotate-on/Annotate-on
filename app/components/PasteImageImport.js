@@ -6,7 +6,7 @@ export default class extends PureComponent {
 
     constructor(props) {
         super(props);
-        this.state = {pastedImage: null};
+        this.state = {pastedImage: null, fileName: ''};
     }
 
     componentDidMount() {
@@ -20,19 +20,19 @@ export default class extends PureComponent {
     onPaste = (pasteEvent) => {
         pasteEvent.preventDefault();
         const item = pasteEvent.clipboardData.items[0];
-        console.log("paste..." + item.type)
+        console.debug("paste..." + item.type)
         if (item.type.indexOf("image") === 0) {
-            const blob = item.getAsFile();
+            const file = item.getAsFile();
 
             const reader = new FileReader();
             reader.onload = (event) => {
                 this.setState({
-                    pastedImage: event.target.result
+                    pastedImage: event.target.result,
+                    file
                 });
-                // document.getElementById("container").src = event.target.result;
             };
 
-            reader.readAsDataURL(blob);
+            reader.readAsDataURL(file);
         }
     }
 
@@ -40,15 +40,24 @@ export default class extends PureComponent {
         return (
             <div className="bst rcn_urldownloader">
                 <div className="file-drop-zone">
-                    {this.state.pastedImage ? <img src={this.state.pastedImage}/> : <span>Paste here.</span>}
+                    {this.state.pastedImage ? <div>
+                        <img className="img-fluid" src={this.state.pastedImage}/>
+                        <br/>
+                        <input type="text" onChange={(event) => {
+                            this.setState({
+                                fileName: event.target.value
+                            })
+                        }} />
+                    </div>: <span>Paste here.</span>}
                 </div>
                 <Button
                     className="btn btn-success"
-                    disabled={this.state.pastedImage === null || this.props.parentFolder === null}
+                    disabled={this.state.pastedImage === null || this.props.parentFolder === null
+                || this.state.fileName === ''}
                     onClick={() => {
                         ee.emit(EVENT_SHOW_LOADING_ON_RESOURCE_IMPORT);
                         setTimeout(() => {
-                            this.props.saveImage(this.state.pastedImage);
+                            this.props.saveImage(this.state.file, this.state.fileName);
                         }, 30)
                     }}
                 >Save</Button>

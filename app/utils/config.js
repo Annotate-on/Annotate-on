@@ -12,7 +12,6 @@ import os from 'os';
 import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
-import Chance from "chance";
 
 let config;
 // path to global app config
@@ -748,17 +747,17 @@ export const importResources = (resources, parent) => {
  * @param parent
  * @returns {Promise<unknown>}
  */
-export const importClipboardResource = (resources, parent) => {
+export const importClipboardResource = (resources, parent, fileName) => {
     return new Promise((resolve, reject) => {
-        let destinationFolder = path.join(config.workspace, IMAGE_STORAGE_DIR, parent);
-        const chance = new Chance();
-        const fileName = path.join(destinationFolder, `${chance.guid()}.png`);
+        const destFile = path.join(path.join(config.workspace, IMAGE_STORAGE_DIR, parent), `${fileName}.png`);
 
-        const buffer = new Buffer(resources)
-        fs.writeFileSync(fileName, buffer);
-
-        toConfigFileWithoutRefresh();
-        resolve([fileName]);
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            fs.writeFileSync(destFile, Buffer.from(event.target.result));
+            toConfigFileWithoutRefresh();
+            resolve([destFile]);
+        }
+        reader.readAsArrayBuffer(resources);
     });
 };
 
