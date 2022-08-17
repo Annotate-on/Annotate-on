@@ -1,5 +1,16 @@
 {
   "translation": {
+    "menu": {
+      "library": "FR_Library",
+      "projects": "FR_Projects",
+      "credits": "FR_Credits",
+      "annotate": "FR_Annotate",
+      "event": "FR_Event",
+      "results": "FR_Results",
+      "iiif": "FR_IIIF",
+      "models": "FR_Models",
+      "keywords": "FR_Keywords"
+    },
     "library": {
       "select_resources": "FR_Select resources to import"
     }

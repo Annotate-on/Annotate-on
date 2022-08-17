@@ -30,7 +30,6 @@ import Nothing from "./Nothing";
 import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
-import { withTranslation } from 'react-i18next';
 
 
 
