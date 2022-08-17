@@ -1,6 +1,8 @@
 import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 import lodash from 'lodash';
+import { withTranslation } from 'react-i18next';
+
 
 import {
     deleteAnnotateEvent,
@@ -108,4 +110,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

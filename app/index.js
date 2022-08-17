@@ -25,6 +25,7 @@ import Splash from "./components/Splash";
 import {IMAGE_STORAGE_DIR} from "./constants/constants";
 import {formatDateForFileName} from "./utils/js";
 import lodash from 'lodash';
+import './i18n';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 

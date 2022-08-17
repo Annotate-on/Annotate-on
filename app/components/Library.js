@@ -30,6 +30,9 @@ import Nothing from "./Nothing";
 import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
+import { withTranslation } from 'react-i18next';
+
+
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
@@ -307,6 +310,7 @@ export default class extends Component {
 
 
     render() {
+        const { t } = this.props;
         let key = 0;
         return (
             <_Root className="bst rcn_library">
@@ -588,7 +592,7 @@ export default class extends Component {
                                     <Nothing message={'There are no pictures for selected tags.'}/>
                                     :
                                     <div>
-                                        <div className="center-button">Select ressources to import</div>
+                                        <div className="center-button">{t('library.select_resources')}</div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
                                                     onClick={() => {
@@ -602,7 +606,15 @@ export default class extends Component {
                                                             this.props.goToImportWizard(folders.length ? folders[0].path : null);
                                                         }
                                                     }}
-                                            >Import images</Button>
+                                            >Import images</Button><br />
+                                            <Button className="btn btn-primary" color="primary"
+                                                    onClick={event=>{
+                                                            this.props.i18n.changeLanguage('en')
+                                            }}>Change EN</Button>
+                                            <Button className="btn btn-primary" color="primary"
+                                                    onClick={event=>{
+                                                        this.props.i18n.changeLanguage('fr')
+                                                    }}>Change FR</Button>
                                         </div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
