@@ -751,13 +751,17 @@ export const importClipboardResource = (resources, parent, fileName) => {
     return new Promise((resolve, reject) => {
         const destFile = path.join(path.join(config.workspace, IMAGE_STORAGE_DIR, parent), `${fileName}.png`);
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            fs.writeFileSync(destFile, Buffer.from(event.target.result));
-            toConfigFileWithoutRefresh();
-            resolve([destFile]);
+        if (fs.existsSync(destFile)) {
+            reject("Duplicate file");
+        } else {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                fs.writeFileSync(destFile, Buffer.from(event.target.result));
+                toConfigFileWithoutRefresh();
+                resolve([destFile]);
+            }
+            reader.readAsArrayBuffer(resources);
         }
-        reader.readAsArrayBuffer(resources);
     });
 };
 

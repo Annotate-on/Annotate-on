@@ -84,6 +84,9 @@ export default class extends Component {
 
         importClipboardResource(resource, this.state.parentFolder, fileName).then(images => {
             this._loadImages(images, [this.state.parentFolder]);
+        }).catch(error=> {
+            ee.emit(EVENT_HIDE_LOADING);
+            remote.dialog.showErrorBox('Error', error);
         });
     };
 
