@@ -392,7 +392,7 @@ export default class AppMenu extends Component {
                            }} title="Library to keywords and select images for annotating">
                         <div className="nav_box">
                             <div className="box"/>
-                            <div className="right-menu-title">{t('menu.library')}</div>
+                            <div className="right-menu-title">{t('main_navbar.library')}</div>
                         </div>
                     </_Link>
                     <_Link className={(this.state.selectedMenu === SETTINGS ? 'active-menu-item' : '') + ' menu-item'}
@@ -409,7 +409,7 @@ export default class AppMenu extends Component {
                            }} title="Projects">
                         <div className="nav_box">
                             <div className="settings"/>
-                            <div className="right-menu-title">{t('menu.projects')}</div>
+                            <div className="right-menu-title">{t('main_navbar.projects')}</div>
                         </div>
                     </_Link>
                     <_Link className={(this.state.selectedMenu === CREDITS ? 'active-menu-item' : '') + ' menu-item'}
@@ -425,7 +425,7 @@ export default class AppMenu extends Component {
                                }
                            }} title="Credits">
                         <div className="credits"/>
-                        <div className="right-menu-title">{t('menu.credits')}</div>
+                        <div className="right-menu-title">{t('main_navbar.credits')}</div>
                     </_Link>
                     <div className="menu_separator"/>
                     <_Link className={(this.state.selectedMenu === IMAGE ? 'active-menu-item' : '') + ' menu-item'}
@@ -442,7 +442,7 @@ export default class AppMenu extends Component {
                            }} title="Annotate on selection">
                         <div className="nav_box">
                             <div className="image"/>
-                            <div className="right-menu-title">{t('menu.annotate')}</div>
+                            <div className="right-menu-title">{t('main_navbar.annotate')}</div>
                         </div>
                     </_Link>
                     <_Link
@@ -463,7 +463,7 @@ export default class AppMenu extends Component {
                            }} title="Create new event">
                         <div className="nav_box">
                             <div className="event"/>
-                            <div className="right-menu-title">{t('menu.event')}</div>
+                            <div className="right-menu-title">{t('main_navbar.event')}</div>
                         </div>
                     </_Link>
                     <div className="menu_separator"/>
@@ -481,7 +481,7 @@ export default class AppMenu extends Component {
                            }} title="View and export results of annotations">
                         <div className="nav_box">
                             <div className="list"/>
-                            <div className="right-menu-title">{t('menu.results')}</div>
+                            <div className="right-menu-title">{t('main_navbar.results')}</div>
                         </div>
                     </_Link>
                     <_Link
@@ -491,7 +491,7 @@ export default class AppMenu extends Component {
                            onClick={() => {}} title="IIIF">
                         <div className="nav_box">
                             <div className="iiif"/>
-                            <div className="right-menu-title">{t('menu.iiif')}</div>
+                            <div className="right-menu-title">{t('main_navbar.iiif')}</div>
                         </div>
 
                     </_Link>
@@ -510,7 +510,7 @@ export default class AppMenu extends Component {
                            }} title="Annotations models">
                         <div className="nav_box">
                             <div className="models"/>
-                            <div className="right-menu-title">{t('menu.models')}</div>
+                            <div className="right-menu-title">{t('main_navbar.models')}</div>
                         </div>
                     </_Link>
                     <_Link
@@ -528,7 +528,7 @@ export default class AppMenu extends Component {
                            }} title="Tag manager">
                         <div className="nav_box">
                             <div className="tags-menu"/>
-                            <div className="right-menu-title">{t('menu.keywords')}</div>
+                            <div className="right-menu-title">{t('main_navbar.keywords')}</div>
                         </div>
                     </_Link>
                     <div className="menu_separator"/>

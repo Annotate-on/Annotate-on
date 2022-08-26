@@ -76,7 +76,6 @@ class TagManager extends Component {
         this.handleEditTagOrCategory = this.handleEditTagOrCategory.bind(this);
         this.saveCategoryOrTag = this.saveCategoryOrTag.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
-
     }
 
     setInitState = () => {
@@ -95,7 +94,6 @@ class TagManager extends Component {
             isNavigationView: this.props.isNavView ? this.props.isNavView : true,
         })
     }
-
 
     _calculateTagsContentHeight = () => {
         const h1 = document.getElementById('tm-wrapper-id').clientHeight;
@@ -185,8 +183,6 @@ class TagManager extends Component {
         }
     }
 
-
-
     handleNameChange = (value) => {
         this.setState({
             name: value
@@ -243,7 +239,6 @@ class TagManager extends Component {
                 selectedCategories: [category],
                 tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
             })
-
         }
         else if (!this.isAlreadyInList(category.name)) {
             //check if it is direct sibiling
@@ -341,17 +336,19 @@ class TagManager extends Component {
 
     saveCategoryOrTag = (e) => {
         e.preventDefault();
+
         const id = chance.guid();
+        const { t } = this.props;
 
         if (containsOnlyWhiteSpace(this.state.name)){
-            ee.emit(EVENT_SHOW_ALERT , 'name only contains whitespace (ie. spaces, tabs or line breaks')
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_name_is_whitespace'));
             return false;
         }
 
         if (this.state.type === TYPE_TAG && this.state.selectedCategory !== null){
             const newTag = createNewTag(id , this.state.name);
             if(getTagsOnly(this.state.selectedCategory.children).some( child => child.name.toUpperCase() === newTag.name.toUpperCase())){
-                ee.emit(EVENT_SHOW_ALERT , 'tag with name ' + newTag.name + ' already exists in selected category.');
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_tag_already_exit_in_selected_category', { name: newTag.name}));
             }else{
                 this.props.addSubCategory(this.state.selectedCategory.name, newTag, false , this.state.selectedCategory.id)
                 this.refreshState()
@@ -363,15 +360,15 @@ class TagManager extends Component {
                 if (!checkItemInParentCategory(this.props.tags , newCategory.name)){
                     this.props.createCategory(newCategory)
                 }else{
-                    ee.emit(EVENT_SHOW_ALERT , 'category with name ' + newCategory.name + ' already exists in selected category.')
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newCategory.name}));
                 }
             }else{
                 if (this.state.selectedCategory.type !== TYPE_CATEGORY){
-                    ee.emit(EVENT_SHOW_ALERT , 'you can not add category to non category object')
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_cannot_add_category_to_non_category'));
                     return false;
                 }else{
                     if(this.state.selectedCategory.children.filter(cat => cat.type === TYPE_CATEGORY).some( child => child.name.toUpperCase() === newCategory.name.toUpperCase())){
-                        ee.emit(EVENT_SHOW_ALERT , 'category with name ' +  '\'' + newCategory.name + '\'' + ' already exists in selected category.')
+                        ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newCategory.name}));
                     }else{
                         this.props.addSubCategory(this.state.selectedCategory.name , newCategory , true , this.state.selectedCategory.id)
                     }
@@ -398,10 +395,11 @@ class TagManager extends Component {
 
     handleEditTagOrCategory = (e , oldName , newName , item) => {
         e.preventDefault();
+        const { t } = this.props;
         //no selected categories
         if (this._isRootCategory(newName)){
             if (this.props.tags.some(cat => cat.name === newName)){
-                ee.emit(EVENT_SHOW_ALERT , 'category name already exists!');
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_name_already_exit'));
                 return false;
             }else{
                 this.props.editCategoryById(item, newName);
@@ -426,20 +424,19 @@ class TagManager extends Component {
 
         const levelTags = getTagsOnly(this.state.selectedCategory.children);
 
-
         if (newName.length === 0){
-            ee.emit(EVENT_SHOW_ALERT , 'You can not submit empty name.')
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_name_is_empty'));
             return false;
         }
 
         if (containsOnlyWhiteSpace(newName)){
-            ee.emit(EVENT_SHOW_ALERT , 'name only contains whitespace (ie. spaces, tabs or line breaks')
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_name_is_whitespace'));
             return false;
         }
 
         if (item.type === TYPE_TAG) {
             if (levelTags.some(tag => tag.name === newName)) {
-                ee.emit(EVENT_SHOW_ALERT, 'tag with that name already exists in selected category')
+                ee.emit(EVENT_SHOW_ALERT, t('keywords.dialog_modify_category.alert_tag_already_exit_in_selected_category', { name: newName}));
                 return false;
             }else{
                 this.props.editTagById(item , newName)
@@ -447,14 +444,14 @@ class TagManager extends Component {
         }else{
             if (parent !== null){
                 if(parent.children.some( cat => cat.name === newName)){
-                    ee.emit(EVENT_SHOW_ALERT, 'category with that name already exists in selected category');
+                    ee.emit(EVENT_SHOW_ALERT, t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newName}));
                     return false;
                 }else{
                     this.props.editCategoryById(item, newName);
                 }
             }else{
                 if (this.props.tags.some(cat => cat.name === newName)){
-                    ee.emit(EVENT_SHOW_ALERT, 'category with that name already exists in selected category');
+                    ee.emit(EVENT_SHOW_ALERT, t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newName}));
                 }else{
                     this.props.editCategoryById(item, newName);
                 }
@@ -471,6 +468,7 @@ class TagManager extends Component {
     }
 
     handleContextMenu =  (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
                 this.setState({
@@ -487,7 +485,7 @@ class TagManager extends Component {
                     buttons: ['Yes', 'No'],
                     message: `${data.type}: "${data.tagName}"`,
                     cancelId: 1,
-                    detail: `Are you sure you want to delete it?`
+                    detail: t('global.delete_confirmation')
                 });
                 if (result === 0) {
                     this.deleteTagOrCategory(data)
@@ -567,7 +565,6 @@ class TagManager extends Component {
         }
     }
 
-
     createTagModelFromCSV = (f) => {
 
         let newTagModel = [];
@@ -601,7 +598,7 @@ class TagManager extends Component {
     }
 
     _importCSV = async () => {
-
+        const { t } = this.props;
         const f = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'xlsx explore file', extensions: ['csv']}]
@@ -613,7 +610,7 @@ class TagManager extends Component {
         setTimeout( ()=> {
             validateTagList(newModelFromCSV).then((isValid) => {
                 if (newModelFromCSV.length === 0) {
-                    ee.emit(EVENT_SHOW_ALERT , 'csv file contains empty content.')
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_csv_empty_content'));
                     return false;
                 }
                 if (isValid) {
@@ -633,16 +630,14 @@ class TagManager extends Component {
                         this.setInitState();
                     }, 50)
                 } else {
-                    ee.emit(EVENT_SHOW_ALERT , 'json file is not valid , some keywords are missing name property');
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_json_file_is_not_valid_bad_format'));
                 }
             });
         } , 100);
-
-
     }
 
     _importTags = async () => {
-
+        const { t } = this.props;
         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'JSON explore file', extensions: ['json']}]
@@ -650,10 +645,8 @@ class TagManager extends Component {
         if (!_ || _.length < 1) return;
 
         try {
-
             const newModel = await JSON.parse(fs.readFileSync(_.pop(), 'utf8'));
             await validateTagList(newModel).then( (isValid)=> {
-
                 if (isValid){
                     let currentTagModel = this.props.tags;
                     const rootCats = getRootCategoriesNames(currentTagModel);
@@ -670,17 +663,18 @@ class TagManager extends Component {
                     this.props.importTagModel(currentTagModel);
                     this.setInitState();
                 }else{
-                    ee.emit(EVENT_SHOW_ALERT , 'json file is not valid , some keywords are missing name property');
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_json_file_is_not_valid_bad_format'));
                 }
             });
         }catch (e){
             console.log(e)
-            ee.emit(EVENT_SHOW_ALERT , 'json file is not valid !');
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_json_file_is_not_valid'));
         }
     }
 
     _exportTags = () => {
         const tagsToExport = this.props.tags;
+        const { t } = this.props;
 
         const now = new Date();
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
@@ -702,17 +696,15 @@ class TagManager extends Component {
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'info',
             detail: file,
-            message: `Export finished`,
-            buttons: ['OK', 'Open folder'],
+            message: t('global.export_finished'),
+            buttons: ['OK', t('global.open_folder')],
             cancelId: 1
         });
 
         if (result === 1) {
             shell.showItemInFolder(file);
         }
-
     }
-
 
     _handleOnSortChange = (sortBy) => {
         if (this.state.selectedCategory !== null){
@@ -727,27 +719,25 @@ class TagManager extends Component {
         return this.state.sortDirection === SORT_ALPHABETIC_DESC || this.state.sortDirection === SORT_ALPHABETIC_ASC;
     }
 
-
     validateDropAction = (draggedItem, category) => {
+        const { t } = this.props;
         let isValid = true;
         const name =  draggedItem.name;
         const id =  draggedItem.id;
         const type =  draggedItem.type;
 
         if (!name || !id || !type){
-            ee.emit(EVENT_SHOW_ALERT , 'missing some of the  properties {name,id,type}');
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_missing_properties'));
             return false;
         }
         if (category.type !== TYPE_CATEGORY){
-            ee.emit(EVENT_SHOW_ALERT , 'categories and tags can only be added to another category');
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_must_be_added_to_category'));
             return  false;
         }
-
         if (category.id === draggedItem.id){
-            ee.emit(EVENT_SHOW_ALERT , 'You can not add category to its self');
+            ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_can_not_add_category_to_its_self'));
             return  false;
         }
-
         return isValid;
     }
 
@@ -769,7 +759,7 @@ class TagManager extends Component {
     }
 
     _onDrop = (e, category) => {
-
+        const { t } = this.props;
         const draggedItem = JSON.parse(e.dataTransfer.getData("item"));
         const targetId = category.id;
         let parent = null;
@@ -794,20 +784,20 @@ class TagManager extends Component {
             if (!items.some(item => item.name === draggedItem.name)){
                 this.props.mergeTMTags(targetId , draggedItem , parent.id);
             }else{
-                ee.emit(EVENT_SHOW_ALERT , `${draggedItem.type} already exits!!`)
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_item_already_exits', { type: draggedItem.type}));
                 return false;
             }
         }else{
             //if dragged item is father of category drop zone
             if (isChild(draggedItem.children , category.id)){
-                ee.emit(EVENT_SHOW_ALERT , 'You can not move category to its subcategory');
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_can_not_move_category_to_subcategory'));
                 return false;
             }
 
             const items = category.children.filter(item => item.type === draggedItem.type);
             if(this._isRootCategory(draggedItem.name)){
                 if (this.props.tags.length === 1){
-                    ee.emit(EVENT_SHOW_ALERT , 'There has to be at least one root category');
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_must_be_one_root_category'));
                     return false;
                 }
                 parent = {id: 'root'};
@@ -823,7 +813,6 @@ class TagManager extends Component {
                         }
                     })
                 }
-
                 findParent(this.props.tags);
             }
 
@@ -831,7 +820,7 @@ class TagManager extends Component {
                 this.props.mergeTMTags(targetId , draggedItem , parent.id);
                 this.refreshAfterMerge(draggedItem.name);
             }else{
-                ee.emit(EVENT_SHOW_ALERT , `${draggedItem.type} already exits!!`)
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_item_already_exits', { type: draggedItem.type}));
                 return false;
             }
         }
@@ -935,6 +924,7 @@ class TagManager extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <Container className="bst tm-container" >
                 {!this.props.isModalOrTab ? <div>
@@ -943,11 +933,11 @@ class TagManager extends Component {
                             <a onClick={() => {
                                 this.props.goToLibrary();
                             }}>
-                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/>
+                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                             </a>
                         </div>
                         <div className="tm-title">
-                            Manage keywords and categories
+                            {t('keywords.title')}
                         </div>
                     </div>
                     <Row className="vertical-spread">
@@ -956,23 +946,23 @@ class TagManager extends Component {
                             <div className="tagManager-buttonGroups">
                                 <Button color="primary" className="tm-import-button" onClick={ ()=> this._importTags()}>
                                     <img src={require('./pictures/add-folder.svg')} width={16} alt="import keywords"/>
-                                    Import keywords
+                                    {t('keywords.btn_import_keywords')}
                                 </Button>
                                 <Button color="primary" className="tm-import-button" onClick={ ()=> this._exportTags()}>
                                     <img src={require('./pictures/add-folder.svg')} width={16} alt="export keywords"/>
-                                    Export keywords
+                                    {t('keywords.btn_export_keywords')}
                                 </Button>
                                 <Button color="primary"  className="tm-import-button" onClick={ ()=> this._importCSV("csv")}>
                                     <img src={require('./pictures/add-folder.svg')} width={16} alt="export keywords"/>
-                                    Import CSV
+                                    {t('keywords.btn_import_csv')}
                                 </Button>
                             </div>
                         </Col>
                         <Col sm={6} md={6} lg={6}>
                             <div className="category-tag-info-list">
-                                <CategoryTagInfo text="Category" color="#2f78ce"/>
-                                <CategoryTagInfo text="Selected Category" color="#333333"/>
-                                <CategoryTagInfo text="Keyword" color="#ff9800"/>
+                                <CategoryTagInfo text={t('keywords.lbl_category')} color="#2f78ce"/>
+                                <CategoryTagInfo text={t('keywords.lbl_selected_category')} color="#333333"/>
+                                <CategoryTagInfo text={t('keywords.lbl_keyword')} color="#ff9800"/>
                             </div>
                         </Col>
                     </Row>
@@ -994,7 +984,7 @@ class TagManager extends Component {
                                                         categoriesSortDirection: SORT_ALPHABETIC_DESC,
                                                         rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_DESC)
                                                     });
-                                                }}>Alphabetical
+                                                }}>{t('popup_sort.alphabetical')}
                                                 <img src={SELECTED_ICON} alt="checked"/>
                                             </div>
                                             <div
@@ -1006,7 +996,7 @@ class TagManager extends Component {
                                                         categoriesSortDirection: SORT_ALPHABETIC_ASC,
                                                         rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_ASC)
                                                     });
-                                                }}>Alphabetical inverted
+                                                }}>{t('popup_sort.alphabetical_inverted')}
                                                 <img src={SELECTED_ICON} alt="checked"/>
                                             </div>
                                             <div
@@ -1018,7 +1008,7 @@ class TagManager extends Component {
                                                         categoriesSortDirection: SORT_DATE_DESC,
                                                         rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_DESC)
                                                     });
-                                                }}>Newest to oldest
+                                                }}>{t('popup_sort.newest_to_oldest')}
                                                 <img src={SELECTED_ICON} alt="checked"/>
                                             </div>
                                             <div
@@ -1030,17 +1020,17 @@ class TagManager extends Component {
                                                         categoriesSortDirection: SORT_DATE_ASC,
                                                         rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_ASC)
                                                     });
-                                                }}>Oldest to newest
+                                                }}>{t('popup_sort.oldest_to_newest')}
                                                 <img src={SELECTED_ICON} alt="checked"/>
                                             </div>
                                         </div>
                                         : null
                                 }
                             </div>
-                            <span className="centerTextMiddle sc-label">Selected Categories:</span>
+                            <span className="centerTextMiddle sc-label">{t('keywords.lbl_selected_categories')}:</span>
                             <div  className="tm-home">
                                 <div className="path-items">
-                                    <span className="centerTextMiddle goHome" onClick={ ()=> this._backToInitState()}>Home</span>
+                                    <span className="centerTextMiddle goHome" onClick={ ()=> this._backToInitState()}>{t('global.home')}</span>
                                     <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span>
                                 </div>
                             </div>
@@ -1063,7 +1053,7 @@ class TagManager extends Component {
                                         }
                                     </div> : <div  className="tm-breadcrumb"/>
                             }
-                            <span title="Sort categories"
+                            <span title={t('keywords.sort_tooltip_categories')}
                                   className={classnames("sort-icon" , "si-tm" , {'sort-selected-icon': this.state.showDialog === SORT_CATEGORY_DIALOG})}
                                   onClick={_ => {
                                       if (this.state.showDialog === SORT_CATEGORY_DIALOG)
@@ -1111,17 +1101,17 @@ class TagManager extends Component {
                         }
                         <Row>
                             <div className="tag-filter">
-                                <span className="tags-text-center"><b>Keywords</b></span>
+                                <span className="tags-text-center"><b>{t('keywords.lbl_keywords')}</b></span>
                                 <div className="search">
                                     <div className="searchButton">
                                         <i className="fa fa-search margin-auto"/>
                                     </div>
-                                    <input type="text" className="searchTerm" placeholder="Search keywords" onChange={ (e) => this._filterTags(e.target.value)}/>
+                                    <input type="text" className="searchTerm" placeholder= {t('keywords.textbox_placeholder_search_keywords')} onChange={ (e) => this._filterTags(e.target.value)}/>
                                     {/*<i className={`${this.state.sortUp ? 'fa fa-sort-alpha-asc' : 'fa fa-sort-alpha-desc'} tm-sort-icon`} onClick={ (event)=> {*/}
                                     {/*    sortTags();*/}
                                     {/*}}/>*/}
                                     <div className="sort-tags-tm">
-                                    <span title="Sort tags"
+                                    <span title={t('keywords.sort_tooltip_tags')}
                                           className={classnames("sort-icon" , "si-tm-tags" , {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
                                           onClick={_ => {
                                               if (this.state.showDialog === SORT_DIALOG)
@@ -1136,7 +1126,7 @@ class TagManager extends Component {
                                                     onClick={_ => {
                                                         this._handleOnSortChange(SORT_ALPHABETIC_DESC);
                                                         this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_DESC});
-                                                    }}>Alphabetical
+                                                    }}>{t('popup_sort.alphabetical')}
                                                     <img src={SELECTED_ICON} alt="checked"/>
                                                 </div>
                                                 <div
@@ -1144,7 +1134,7 @@ class TagManager extends Component {
                                                     onClick={_ => {
                                                         this._handleOnSortChange(SORT_ALPHABETIC_ASC);
                                                         this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_ASC});
-                                                    }}>Alphabetical inverted
+                                                    }}>{t('popup_sort.alphabetical_inverted')}
                                                     <img src={SELECTED_ICON} alt="checked"/>
                                                 </div>
                                                 <div
@@ -1152,7 +1142,7 @@ class TagManager extends Component {
                                                     onClick={_ => {
                                                         this._handleOnSortChange(SORT_DATE_DESC);
                                                         this.setState({showDialog: '' , sortDirection: SORT_DATE_DESC});
-                                                    }}>Newest to oldest
+                                                    }}>{t('popup_sort.newest_to_oldest')}
                                                     <img src={SELECTED_ICON} alt="checked"/>
                                                 </div>
                                                 <div
@@ -1160,7 +1150,7 @@ class TagManager extends Component {
                                                     onClick={_ => {
                                                         this._handleOnSortChange(SORT_DATE_ASC);
                                                         this.setState({showDialog: '' , sortDirection: SORT_DATE_ASC});
-                                                    }}>Oldest to newest
+                                                    }}>{t('popup_sort.oldest_to_newest')}
                                                     <img src={SELECTED_ICON} alt="checked"/>
                                                 </div>
                                             </div> : ''
@@ -1225,10 +1215,10 @@ class TagManager extends Component {
                                         <InputGroupAddon addonType="append">
                                             {
                                                 this.state.editedItemName !== null ?
-                                                    <Button type="submit" color="primary" onClick={(e) => this.handleEditTagOrCategory(e , this.state.editedItemName , this.state.name , this.state.editedItem)}>Save</Button> :
+                                                    <Button type="submit" color="primary" onClick={(e) => this.handleEditTagOrCategory(e , this.state.editedItemName , this.state.name , this.state.editedItem)}>{t('global.save')}</Button> :
 
                                                     <Button type="submit" color="primary"
-                                                            onClick={(e) => this.saveCategoryOrTag(e)}>Save</Button>
+                                                            onClick={(e) => this.saveCategoryOrTag(e)}>{t('global.save')}</Button>
                                             }
                                         </InputGroupAddon>
                                     </InputGroup>
@@ -1242,11 +1232,11 @@ class TagManager extends Component {
                     <div>
                         <ContextMenu id="tag-list-context-menu">
                             <MenuItem data={{action: 'edit'}} onClick={this.handleContextMenu}>
-                                Edit
+                                {t('global.edit')}
                             </MenuItem>
                             <MenuItem divider />
                             <MenuItem data={{action: 'delete'}} onClick={this.handleContextMenu}>
-                                Delete
+                                {t('global.delete')}
                             </MenuItem>
                         </ContextMenu>
                     </div>

@@ -1,18 +1,78 @@
 {
   "translation": {
-    "menu": {
-      "library": "FR_Library",
-      "projects": "FR_Projects",
-      "credits": "FR_Credits",
-      "annotate": "FR_Annotate",
-      "event": "FR_Event",
-      "results": "FR_Results",
-      "iiif": "FR_IIIF",
-      "models": "FR_Models",
-      "keywords": "FR_Keywords"
+    "global": {
+      "logo_tooltip_go_to_home_page": "Go back to home page",
+      "home": "Home",
+      "save": "Save",
+      "edit": "Edit",
+      "delete": "Delete",
+      "close": "Close",
+      "delete_confirmation": "Are you sure you want to delete it?",
+      "export_finished": "Export finished",
+      "open_folder": "Open folder"
     },
-    "library": {
-      "select_resources": "FR_Select resources to import"
+    "main_navbar": {
+      "library": "FR Library",
+      "projects": "FR Projects",
+      "credits": "FR Credits",
+      "annotate": "FR Annotate",
+      "event": "FR Event",
+      "results": "FR Results",
+      "iiif": "FR IIIF",
+      "models": "FR Models",
+      "keywords": "FR Keywords"
+    },
+    "popup_sort": {
+      "alphabetical": "Alphabetical",
+      "alphabetical_inverted": "Alphabetical inverted",
+      "newest_to_oldest": "Newest to oldest",
+      "oldest_to_newest": "Oldest to newest"
+    },
+    "library": {},
+    "projects": {},
+    "credits": {},
+    "annotate": {},
+    "event": {},
+    "results": {},
+    "iiif": {},
+    "models": {},
+    "keywords": {
+      "title": "Manage keywords and categories",
+      "btn_import_keywords": "Import keywords",
+      "btn_export_keywords": "Export keywords",
+      "btn_import_csv": "Import CSV",
+      "lbl_category": "Category",
+      "lbl_selected_category": "Selected category",
+      "lbl_selected_categories": "Selected categories",
+      "lbl_keyword": "Keyword",
+      "sort_tooltip_categories": "Sort categories",
+      "btn_add_new_category": "Add new category",
+      "btn_add_new_keyword": "Add new keyword",
+      "lbl_keywords": "Keywords",
+      "textbox_placeholder_search_keywords": "Search keywords",
+      "sort_tooltip_tags": "Sort tags",
+      "alert_csv_empty_content": "csv file contains empty content.",
+      "alert_json_file_is_not_valid_bad_format": "json file is not valid , some keywords are missing name property.",
+      "alert_json_file_is_not_valid": "json file is not valid !",
+      "alert_missing_properties": "missing some of the properties {name,id,type}",
+      "alert_must_be_added_to_category": "categories and tags can only be added to another category",
+      "alert_can_not_add_category_to_its_self": "You can not add category to its self",
+      "alert_item_already_exits": "{{type}} already exits!!",
+      "alert_can_not_move_category_to_subcategory": "You can not move category to its subcategory",
+      "alert_must_be_one_root_category": "There has to be at least one root category",
+      "alert_category_with_name_already_exit": "category with name '{{name}}' already exists",
+      "alert_tag_already_exit_in_category": "tag with that name already exists in category: '{{parent}}'",
+      "alert_can_not_add_tag_or_subcategory_without_parent": "error you can not add tag or subcategory without parent category!",
+      "dialog_modify_category": {
+        "title_edit_new_category": "Edit category",
+        "title_create_new_category": "Create category",
+        "alert_category_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)",
+        "alert_category_name_is_empty": "You can not submit empty name.",
+        "alert_tag_already_exit_in_selected_category": "tag with name '{{name}}' already exists in selected category.",
+        "alert_category_already_exit_selected_category": "category with name '{{name}}' already exists in selected category.",
+        "alert_category_name_already_exit": "category name already exists!",
+        "alert_cannot_add_category_to_non_category": "you can not add category to non category object"
+      }
     }
   }
 }
