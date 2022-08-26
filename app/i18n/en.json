@@ -4,12 +4,21 @@
       "logo_tooltip_go_to_home_page": "Go back to home page",
       "home": "Home",
       "save": "Save",
+      "view": "View",
       "edit": "Edit",
       "delete": "Delete",
       "close": "Close",
+      "cancel": "Cancel",
+      "error": "Error",
       "delete_confirmation": "Are you sure you want to delete it?",
+      "export": "Export",
+      "ok": "OK",
+      "yes": "Yes",
+      "no": "No",
       "export_finished": "Export finished",
-      "open_folder": "Open folder"
+      "open_folder": "Open folder",
+      "lbl_project": "Project",
+      "lbl_model": "Model"
     },
     "main_navbar": {
       "library": "Library",
@@ -35,7 +44,64 @@
     "event": {},
     "results": {},
     "iiif": {},
-    "models": {},
+    "models": {
+      "title": "Annotations models",
+      "btn_new_model": "New model",
+      "btn_import_from_xper": "Import from Xper",
+      "btn_import_a_model": "Import a model",
+      "btn_export_selected_model": "Export selected model",
+      "lbl_active_model": "Active model",
+      "btn_deactivate": "Deactivate",
+      "thead_tooltip_sort_order": "Ascendant or descendant order",
+      "thead_column_title_select": "Select",
+      "thead_column_title_model_name": "Model name",
+      "thead_column_title_type": "Type",
+      "thead_column_title_version": "Version",
+      "thead_column_title_date_imported_created": "Date imported/created",
+      "dialog_create_model": {
+        "title_create_model": "Create model",
+        "lbl_model_name": "Model name",
+        "lbl_model_type": "Model type"
+      },
+      "dialog_export_model": {
+        "title_save_taxonomy": "Save taxonomy to"
+      },
+      "wait_message_exporting_to_a_file": "Exporting to a file...",
+      "alert_taxonomy_already_exist": "Taxonomy already exist!",
+      "delete_taxonomy_message": "Taxonomy: {{taxonomy}}",
+      "alert.cannot_export_taxonomy": "You cannot export XPER taxonomy",
+      "target_descriptors": {
+        "title": "Target descriptors",
+        "btn_add_new_character": "Add new character",
+        "btn_tooltip_add_new_character": "Create a new character",
+        "btn_return_to_list_of_models": "Return to list of models",
+        "thead_column_title_character_name": "Character name",
+        "thead_column_title_character_group": "Character group",
+        "thead_column_title_annotation_type": "Annotation type",
+        "thead_column_title_color": "Color",
+        "dialog_edit": {
+          "title_new_character": "New character",
+          "title_edit_character": "Edit character",
+          "lbl_model_name": "Model name",
+          "lbl_character_name": "Character name",
+          "lbl_character_group": "Character group",
+          "lbl_annotation_type": "Annotation type",
+          "lbl_unit": "Unit",
+          "lbl_color": "Color",
+          "lbl_checkbox_include_in_calculation": "Calculate standard deviation and average value",
+          "alert_select_target_group_to_delete": "please select target group you want to delete.",
+          "alert_select_target_group_to_edit": "please select target group you want to edit."
+        },
+        "dialog_create_new_character_group": {
+          "title": "Create new character group",
+          "lbl_character_group": "Character group"
+        },
+        "dialog_edit_character_group": {
+          "title": "Edit character group name",
+          "lbl_group_name": "New group name"
+        }
+      }
+    },
     "keywords": {
       "title": "Manage keywords and categories",
       "btn_import_keywords": "Import keywords",

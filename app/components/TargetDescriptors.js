@@ -175,8 +175,9 @@ class TargetDescriptors extends PureComponent {
     };
 
     _deleteTargetType = () => {
+        const { t } = this.props;
         if (!this.state.form.targetType){
-            alert('please select target group you want to delete.')
+            alert(t('models.target_descriptors.dialog_edit.alert_select_target_group_to_delete'));
         }else{
             this.props.deleteTargetType(this.props.taxonomyModel.id, this.state.form.targetType);
             this.setState(prevState => ({
@@ -189,8 +190,9 @@ class TargetDescriptors extends PureComponent {
     };
 
     _editTargetType = () => {
+        const { t } = this.props;
         if (!this.state.form.targetType){
-            alert('please select target group you want to edit.')
+            alert(t('models.target_descriptors.dialog_edit.alert_select_target_group_to_edit'));
         }else{
             this.props.editTargetType(this.props.taxonomyModel.id, this.state.form.targetType , this.state.targetTypeInputEdit);
             this.setState(prevState => ({
@@ -259,8 +261,9 @@ class TargetDescriptors extends PureComponent {
     };
 
     _cancel = () => {
+        const { t } = this.props;
         this.setState({
-            modalTitle: 'New character',
+            modalTitle: t('models.target_descriptors.dialog_edit.title_new_character'),
             form: {
                 id: '',
                 targetName: '',
@@ -304,20 +307,20 @@ class TargetDescriptors extends PureComponent {
     }
 
     handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
-                const t = this.state.descriptors.find(target => data.atarget === target.id);
-
+                const target = this.state.descriptors.find(target => data.atarget === target.id);
                 this.setState({
-                    modalTitle: 'Edit character',
+                    modalTitle: t('models.target_descriptors.dialog_edit.title_edit_character'),
                     form: {
-                        id: t.id,
-                        targetName: t.targetName,
-                        targetType: t.targetType,
-                        targetColor: t.targetColor,
-                        unit: t.unit,
-                        annotationType: t.annotationType,
-                        includeInCalculation: t.includeInCalculation
+                        id: target.id,
+                        targetName: target.targetName,
+                        targetType: target.targetType,
+                        targetColor: target.targetColor,
+                        unit: target.unit,
+                        annotationType: target.annotationType,
+                        includeInCalculation: target.includeInCalculation
                     }
                 });
                 this.toggle();
@@ -340,14 +343,15 @@ class TargetDescriptors extends PureComponent {
 
     render() {
         let key = 0;
+        const { t } = this.props;
         return (
             <div className="bst rcn_targets">
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary();
-                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/>
+                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
-                    <span className="title">Target descriptors</span>
+                    <span className="title">{t('models.target_descriptors.title')}</span>
                 </div>
                 <br/>
                 <Row>
@@ -358,14 +362,14 @@ class TargetDescriptors extends PureComponent {
                 <Row className="action-bar">
                     <Col md={12}>
                         {this.state.model !== MODEL_XPER?
-                            <Button  className="btn btn-primary mr-md-3" title="Create a new character"  color="primary" style={{marginLeft: "10px"}}
-                                     disabled={this.state.model === MODEL_XPER} onClick={this.toggle}>Add new character</Button>
+                            <Button  className="btn btn-primary mr-md-3" title={t('models.target_descriptors.btn_tooltip_add_new_character')}  color="primary" style={{marginLeft: "10px"}}
+                                     disabled={this.state.model === MODEL_XPER} onClick={this.toggle}>{t('models.target_descriptors.btn_add_new_character')}</Button>
                             :''}
 
                         <Button  className="btn btn-primary mr-md-3" color="secondary"
                                  onClick={() => {
                                      this.props.goBack();
-                                 }}>Return to list of models
+                                 }}>{t('models.target_descriptors.btn_return_to_list_of_models')}
                         </Button>
                     </Col>
                 </Row>
@@ -376,16 +380,16 @@ class TargetDescriptors extends PureComponent {
                              style={{height: this.state.height}}>
 
                             <Table hover size="sm" className="targets-table">
-                                <thead title="Ascendant or descendant order">
+                                <thead title={t('thead_tooltip_sort_order')}>
                                 <tr>
                                     <th>&nbsp;</th>
-                                    <TableHeader title="Character name" sortKey="name"
+                                    <TableHeader title={t('models.target_descriptors.thead_column_title_character_name')} sortKey="name"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Character group" sortKey="targetType"
+                                    <TableHeader title={t('models.target_descriptors.thead_column_title_character_group')} sortKey="targetType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Annotation type" sortKey="annotationType"
+                                    <TableHeader title={t('models.target_descriptors.thead_column_title_annotation_type')} sortKey="annotationType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Color" sortKey="color"
+                                    <TableHeader title={t('models.target_descriptors.thead_column_title_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                 </tr>
                                 </thead>
@@ -416,7 +420,6 @@ class TargetDescriptors extends PureComponent {
                                                     <span>{target.targetType}</span>
                                                 </ContextMenuTrigger>
                                             </td>
-
                                             <td>{target.annotationType}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
@@ -432,11 +435,11 @@ class TargetDescriptors extends PureComponent {
                 <div>
                     <ContextMenu id="target_context_menu">
                         <MenuItem data={{action: 'edit'}} onClick={this.handleContextMenu}>
-                            <i className="fa fa-pencil" aria-hidden="true"/> Edit
+                            <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}
                         </MenuItem>
                         <MenuItem divider/>
                         <MenuItem data={{action: 'delete'}} onClick={this.handleContextMenu}>
-                            <i className="fa fa-trash" aria-hidden="true"/> Delete
+                            <i className="fa fa-trash" aria-hidden="true"/> {t('global.delete')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
@@ -450,17 +453,17 @@ class TargetDescriptors extends PureComponent {
                                 e.preventDefault();
                             }} ref={_ => (this.form = _)}>
                                 <FormGroup>
-                                    <Label>Model name: {this.props.taxonomyModel.name}</Label>
+                                    <Label>{t('models.target_descriptors.dialog_edit.lbl_model_name')}: {this.props.taxonomyModel.name}</Label>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="targetName">Character name</Label>
+                                    <Label for="targetName">{t('models.target_descriptors.dialog_edit.lbl_character_name')}</Label>
                                     <Input type="text" name="targetName" id="targetName"
                                            defaultValue={this.state.form.targetName}
                                            onChange={this.handleInputChange}
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="targetType">Character group</Label>
+                                    <Label for="targetType">{t('models.target_descriptors.dialog_edit.lbl_character_group')}</Label>
                                     <Row>
                                         <Col md={8}>
                                             <Input type="select" name="targetType" id="targetType"
@@ -481,7 +484,7 @@ class TargetDescriptors extends PureComponent {
                                     </Row>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="annotationType">Annotation type</Label>
+                                    <Label for="annotationType">{t('models.target_descriptors.dialog_edit.lbl_annotation_type')}</Label>
                                     <Input type="select" name="annotationType" id="annotationType"
                                            defaultValue={this.state.form.annotationType}
                                            onChange={this.handleInputChange} disabled={this.state.form.id}>
@@ -493,7 +496,7 @@ class TargetDescriptors extends PureComponent {
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="unit">Unit</Label>
+                                    <Label for="unit">{t('models.target_descriptors.dialog_edit.lbl_unit')}</Label>
                                     <Input type="select" name="unit" id="unit"
                                            defaultValue={this.state.form.unit}
                                            disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
@@ -506,7 +509,7 @@ class TargetDescriptors extends PureComponent {
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="targetColor">Color</Label>
+                                    <Label for="targetColor">{t('models.target_descriptors.dialog_edit.lbl_color')}</Label>
                                     <Row>
                                         {colors.map((color, index) => {
                                             return <Col key={index} md={2} lg={2} sm={2}><span className="radio-button"
@@ -528,27 +531,26 @@ class TargetDescriptors extends PureComponent {
                                                disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
                                                onChange={this.handleInputChange}>
                                         </Input>
-                                        Calculate standard deviation and average value
+                                        {t('models.target_descriptors.dialog_edit.lbl_checkbox_include_in_calculation')}
                                     </Label>
                                 </FormGroup>
                             </Form>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this.saveTarget}>Save</Button>
-                            <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                            <Button color="primary" onClick={this.saveTarget}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggle}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
 
-
                     <Modal isOpen={this.state.targetTypeModal} toggle={this.toggleTargetType}
                            wrapClassName="bst rcn_targets">
-                        <ModalHeader toggle={this.toggleTargetType}>Create new character group</ModalHeader>
+                        <ModalHeader toggle={this.toggleTargetType}>{t('models.target_descriptors.dialog_create_new_character_group.title')}</ModalHeader>
                         <ModalBody>
                             <Form onSubmit={(e) => {
                                 e.preventDefault();
                             }}>
                                 <FormGroup>
-                                    <Label for="targetType">Character group</Label>
+                                    <Label for="targetType">{t('models.target_descriptors.dialog_create_new_character_group.lbl_character_group')}</Label>
                                     <Input type="text" name="targetType" id="targetType"
                                            onChange={this.handleTargetTypeInputChange}
                                     />
@@ -556,21 +558,21 @@ class TargetDescriptors extends PureComponent {
                             </Form>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this._saveTargetType}>Save</Button>
-                            <Button color="secondary" onClick={this.toggleTargetType}>Cancel</Button>
+                            <Button color="primary" onClick={this._saveTargetType}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleTargetType}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
 
                     {/*Edit Target Group*/}
                     <Modal isOpen={this.state.targetTypeModalEdit} toggle={this.toggleTargetTypeEdit}
                            wrapClassName="bst rcn_targets">
-                        <ModalHeader toggle={this.toggleTargetTypeEdit}>Edit character group name</ModalHeader>
+                        <ModalHeader toggle={this.toggleTargetTypeEdit}>{t('models.target_descriptors.dialog_edit_character_group.title')}</ModalHeader>
                         <ModalBody>
                             <Form onSubmit={(e) => {
                                 e.preventDefault();
                             }}>
                                 <FormGroup>
-                                    <Label for="targetTypeEdit">New group name</Label>
+                                    <Label for="targetTypeEdit">{t('models.target_descriptors.dialog_edit_character_group.lbl_group_name')}</Label>
                                     <Input type="text" name="targetTypeEdit" id="targetTypeEdit"
                                            onChange={this.handleTargetTypeInputChangeForEdit}
                                     />
@@ -578,8 +580,8 @@ class TargetDescriptors extends PureComponent {
                             </Form>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this._editTargetType}>Save</Button>
-                            <Button color="secondary" onClick={this.toggleTargetTypeEdit}>Cancel</Button>
+                            <Button color="primary" onClick={this._editTargetType}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleTargetTypeEdit}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
 
@@ -587,8 +589,6 @@ class TargetDescriptors extends PureComponent {
             </div>
         );
     }
-
-
 }
 
 export default TargetDescriptors;
