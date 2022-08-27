@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {createTag, deleteTag, editTag, selectTag, setTagsSelectionMode, tagPicture, unselectTag,
     untagPicture, addSubTag, openInNewTab, mergeTags, saveTagSort} from '../actions/app';
 import Component from '../components/Tags';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -58,4 +59,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

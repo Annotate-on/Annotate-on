@@ -383,13 +383,13 @@ class TargetDescriptors extends PureComponent {
                                 <thead title={t('thead_tooltip_sort_order')}>
                                 <tr>
                                     <th>&nbsp;</th>
-                                    <TableHeader title={t('models.target_descriptors.thead_column_title_character_name')} sortKey="name"
+                                    <TableHeader title={t('models.target_descriptors.table_column_character_name')} sortKey="name"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title={t('models.target_descriptors.thead_column_title_character_group')} sortKey="targetType"
+                                    <TableHeader title={t('models.target_descriptors.table_column_character_group')} sortKey="targetType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title={t('models.target_descriptors.thead_column_title_annotation_type')} sortKey="annotationType"
+                                    <TableHeader title={t('models.target_descriptors.table_column_annotation_type')} sortKey="annotationType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title={t('models.target_descriptors.thead_column_title_color')} sortKey="color"
+                                    <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                 </tr>
                                 </thead>

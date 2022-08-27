@@ -4,6 +4,7 @@ import {push} from 'connected-react-router';
 import {closeTab, createTab, renameTab} from '../actions/app';
 import Component from '../components/TabsHolder';
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
   return {
@@ -34,4 +35,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

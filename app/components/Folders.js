@@ -101,6 +101,7 @@ export default class extends PureComponent {
     };
 
     _drawFolders = (folders) => {
+        const { t } = this.props;
         const enableClicks = this.props.isImport ? true : !this.props.tabData[this.props.tabName].manualOrderLock;
 
         folders.sort((left, right) => left.alias.localeCompare(right.alias));
@@ -137,7 +138,7 @@ export default class extends PureComponent {
                         if (enableClicks)
                             this.handleClickOnFolder(e, dir.path, selected);
                         else {
-                            ee.emit(EVENT_SHOW_ALERT, 'You cannot change selection when manual order is active!')
+                            ee.emit(EVENT_SHOW_ALERT, t('folders.alert_cannot_change_selection_when_manual_order'));
                         }
                     }}>
 
@@ -167,6 +168,7 @@ export default class extends PureComponent {
     };
 
     render() {
+        const { t } = this.props;
         const folders = getAllPicturesDirectories();
         let total = 0;
         const totalSizeOfFolders = (folder) => {
@@ -186,12 +188,12 @@ export default class extends PureComponent {
                     <Col className="folders-title" md={10} lg={10}>
                         <FontAwesomeIcon icon={faPhotoVideo}/>
                         <span> </span>
-                         Resource folders ({numberOfFolders})
+                        {t('folders.lbl_resource_folders')} ({numberOfFolders})
                         <img alt="arrow down" className="toogleCollapse" onClick={this.toggle}
                              src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))}/>
                     </Col>
                     <Col md={1} lg={1} className={classnames({'hidden': !this.state.collapse}, 'tags-actions')}>
-                        <span title="Add new folder" style={{marginTop: '14px'}}
+                        <span title={t('folders.tooltip_add_new_folder')} style={{marginTop: '14px'}}
                               className={classnames("add-icon", {'add-selected-icon': this.state.showDialog === ADD_DIALOG})}
                               onClick={_ => {
                                   if (this.state.showDialog === ADD_DIALOG)
@@ -207,7 +209,7 @@ export default class extends PureComponent {
                             <Col className="action-panel">
                                 {this.state.showDialog === ADD_DIALOG ?
                                     <Form onSubmit={this.handleCreateNewFolderSubmit}>
-                                        <Input autoFocus placeholder="Enter folder name and hit 'Enter'"
+                                        <Input autoFocus placeholder={t('folders.textbox_placeholder_folder_name')}
                                                type="text"
                                                name="name"
                                                value={this.state.newFolderName}
@@ -257,38 +259,38 @@ export default class extends PureComponent {
                         <ContextMenu id="folder_context_menu">
                            <Fragment>
                                 <MenuItem data={{action: 'import_local'}} onClick={this._handleContextMenu}>
-                                    <img alt="download icon" src={DOWNLOAD_ICON}/> Import image
+                                    <img alt="download icon" src={DOWNLOAD_ICON}/> {t('folders.context_menu_import_image')}
                                 </MenuItem>
                                 <MenuItem divider/>
                             </Fragment>
                             <Fragment>
                                 <MenuItem data={{action: 'import_local_video'}} onClick={this._handleContextMenu}>
-                                    <img alt="download icon" src={DOWNLOAD_ICON}/> Import video
+                                    <img alt="download icon" src={DOWNLOAD_ICON}/> {t('folders.context_menu_import_video')}
                                 </MenuItem>
                                 <MenuItem divider/>
                             </Fragment>
                             <Fragment>
                                 <MenuItem data={{action: 'import_local_video'}} disabled={true} onClick={this._handleContextMenu}>
-                                    <img alt="download icon" src={DOWNLOAD_ICON}/> Create keywords language
+                                    <img alt="download icon" src={DOWNLOAD_ICON}/> {t('folders.context_menu_create_keywords_language')}
                                 </MenuItem>
                                 <MenuItem divider/>
                             </Fragment>
                             <Fragment>
                                 <MenuItem data={{action: 'create_new_event'}} onClick={this._handleContextMenu}>
-                                    <img alt="create event" src={DOWNLOAD_ICON}/> Create a new event
+                                    <img alt="create event" src={DOWNLOAD_ICON}/> {t('folders.context_menu_create_a_new_event')}
                                 </MenuItem>
                                 <MenuItem divider/>
                             </Fragment>
                             <MenuItem data={{action: 'select_all'}} onClick={this._handleContextMenu}>
-                                <img alt="select all" className='select-all' src={SELECT_ALL}/> Select/Unselect all
+                                <img alt="select all" className='select-all' src={SELECT_ALL}/> {t('folders.context_menu_select_unselect_all')}
                             </MenuItem>
                             <MenuItem divider/>
                             <MenuItem data={{action: 'edit'}} onClick={this._handleContextMenu}>
-                                <img alt="rename folder" src={EDIT}/> Rename folder
+                                <img alt="rename folder" src={EDIT}/> {t('folders.context_menu_rename_folder')}
                             </MenuItem>
                             <MenuItem divider/>
                             <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                                <img alt="delete folder" src={DELETE}/> Delete folder
+                                <img alt="delete folder" src={DELETE}/> {t('folders.context_menu_delete_folder')}
                             </MenuItem>
                         </ContextMenu>
                             : ''}
@@ -318,6 +320,7 @@ export default class extends PureComponent {
     };
 
     _handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
                 this.setState({
@@ -329,9 +332,9 @@ export default class extends PureComponent {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
-                    message: `Folder: "${data.folder.alias}"`,
+                    message: t('folders.alert_delete_folder_message', {"folder": data.folder.alias}),
                     cancelId: 1,
-                    detail: `Are you sure you want to delete it?`
+                    detail: t('global.delete_confirmation')
                 });
                 if (result === 0) {
                     if (this.props.isImport) {
@@ -374,12 +377,13 @@ export default class extends PureComponent {
     };
 
     handleCreateNewFolderSubmit = (event) => {
+        const { t } = this.props;
         event.preventDefault();
         if (this.state.newFolderName.length === 0)
             return;
 
         if(containsSpecialCharacters(this.state.newFolderName)){
-            alert('folder contains special characters' + '< , > , : , " , /, \\ , | , ? *')
+            alert(t('folders.alert_folder_contains_special_characters'));
             return false;
         }
 

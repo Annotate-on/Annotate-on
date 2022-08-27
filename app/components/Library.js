@@ -165,7 +165,6 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
         if (skipSort) {
             skipSort = false;
             return;
@@ -279,11 +278,12 @@ export default class extends Component {
     }
 
     _navigationHandler = (e, callAction) => {
+        const { t } = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
-                message: 'Info',
-                detail: 'Please close calibration mode.',
+                message: t('global.info'),
+                detail: t('library.alert_please_close_calibration_mode'),
                 cancelId: 1
             });
         } else{
@@ -306,8 +306,6 @@ export default class extends Component {
         }
     }
 
-
-
     render() {
         const { t } = this.props;
         let key = 0;
@@ -316,9 +314,9 @@ export default class extends Component {
                 <div className="bg">
                     <Row>
                         <Col sm={6} className="hide-overflow">
-                            <span className="project-label">Project:</span><span
+                            <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">Model:</span>
+                            <span className="project-label">{t('global.lbl_model')}:</span>
                             <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
@@ -326,13 +324,13 @@ export default class extends Component {
                                  alt="xper3-logo"
                                  src='http://www.xper3.fr/resources/img/xper3-logo.png'>
                             </img> : APP_NAME})
-                        </Fragment> : 'Without model'
+                        </Fragment> : t('library.lbl_without_model')}
                     }
                             </span>
                         </Col>
                         <Col sm={6}>
                             <span
-                                className="title">Library ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
+                                className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
                         </Col>
                     </Row>
 
@@ -366,7 +364,7 @@ export default class extends Component {
                                         <div className="lib-wrap">
                                             <div className="lib-actions">
                                                 <div className="switch-view">
-                                                    <div title="Switch to mozaic view" className="mozaic-view"
+                                                    <div title={t('library.switch_to_mozaic_view_tooltip')} className="mozaic-view"
                                                          onClick={() => {
                                                              this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
                                                              this.setState({picView: MOZAIC_VIEW})
@@ -416,7 +414,7 @@ export default class extends Component {
                                                         >
                                                             <Column
                                                                 dataKey="sort_catalognumber"
-                                                                label="Catalog N1°"
+                                                                label={t('library.table_column_catalog_n1')}
                                                                 minWidth={100}
                                                                 width={0.4 * width}
                                                                 className="table-column"
@@ -472,7 +470,8 @@ export default class extends Component {
                                                                 key={key++}
                                                             />
 
-                                                            <Column dataKey="sort_family" label="Family"
+                                                            <Column dataKey="sort_family"
+                                                                    label={t('library.table_column_family')}
                                                                     width={0.15 * width}
                                                                     key={key++}
                                                                     cellRenderer={({rowData}) => {
@@ -486,7 +485,7 @@ export default class extends Component {
 
                                                             <Column
                                                                 dataKey="sort_modified"
-                                                                label="Date"
+                                                                label={t('library.table_column_date')}
                                                                 width={0.15 * width}
                                                                 key={key++}
                                                                 cellRenderer={({rowData}) => {
@@ -501,7 +500,8 @@ export default class extends Component {
                                                                 }}
                                                             />
 
-                                                            <Column dataKey="sort_type" label="Type"
+                                                            <Column dataKey="sort_type"
+                                                                    label={t('library.table_column_type')}
                                                                     width={0.15 * width}
                                                                     key={key++}
                                                                     cellRenderer={({rowData}) => {
@@ -512,7 +512,7 @@ export default class extends Component {
                                                             />
                                                             <Column
                                                                 dataKey="sort_tags"
-                                                                label="Tags"
+                                                                label={t('library.table_column_tags')}
                                                                 width={0.1 * width}
                                                                 key={key++}
                                                                 cellRenderer={({rowData}) => {
@@ -531,10 +531,11 @@ export default class extends Component {
                                                                 }
                                                                 }
                                                             />
-                                                            <Column dataKey="exifDate" label="EXIF date"
+                                                            <Column dataKey="exifDate"
+                                                                    label={t('library.table_column_exif_date')}
                                                                     width={0.1 * width}
                                                                     key={key++}/>
-                                                            <Column dataKey="exifPlace" label="EXIF place"
+                                                            <Column dataKey="exifPlace" label={t('library.table_column_exif_place')}
                                                                     width={0.1 * width}
                                                                     key={key++}/>
 
@@ -588,10 +589,10 @@ export default class extends Component {
                                 }
                             </_Pictures>
                             : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?
-                                    <Nothing message={'There are no pictures for selected tags.'}/>
+                                    <Nothing message={t('library.lbl_no_pictures_for_selected_tags')}/>
                                     :
                                     <div>
-                                        <div className="center-button">{t('library.select_resources')}</div>
+                                        <div className="center-button">{t('library.lbl_select_resources_to_import')}</div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
                                                     onClick={() => {
@@ -605,7 +606,7 @@ export default class extends Component {
                                                             this.props.goToImportWizard(folders.length ? folders[0].path : null);
                                                         }
                                                     }}
-                                            >Import images</Button><br />
+                                            >{t('library.btn_import_images')}</Button><br />
                                             <Button className="btn btn-primary" color="primary"
                                                     onClick={event=>{
                                                             this.props.i18n.changeLanguage('en')
@@ -628,13 +629,13 @@ export default class extends Component {
                                                             this.props.goToImportVideoWizard(folders.length ? folders[0].path : null);
                                                         }
                                                     }}
-                                            >Import videos</Button>
+                                            >{t('library.btn_import_videos')}</Button>
                                         </div>
                                         <br/>
                                         <hr/>
                                         <br/>
                                         <div className="center-button-events">
-                                            Events
+                                            {t('library.lbl_events')}
                                         </div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="danger"
@@ -649,9 +650,8 @@ export default class extends Component {
                                                             this.props.goToImportEventWizard(folders.length ? folders[0].path : null , this.props.tabName);
                                                         }
                                                     }}
-                                            >Create new event</Button>
+                                            >{t('library.btn_create_new_event')}</Button>
                                         </div>
-
                                     </div>
                             )
                         }
@@ -660,17 +660,16 @@ export default class extends Component {
                 <div>
                     <ContextMenu id="image_context_menu">
                         <MenuItem data={{action: 'select_all'}} onClick={this._handleContextMenu}>
-                            <img alt="select all" className='select-all' src={SELECT_ALL_CONTEXT}/> Select all resources
+                            <img alt="select all" className='select-all' src={SELECT_ALL_CONTEXT}/>{t('library.context_menu_select_all_resources')}
                         </MenuItem>
                         <MenuItem divider/>
                         <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> Delete resource
+                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> {t('library.context_menu_delete_resource')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
             </_Root>
-        )
-            ;
+        );
     }
 
     // TABLE HELPERS
@@ -772,13 +771,13 @@ export default class extends Component {
     _deleteEvents = eventId => {
         console.log('deleting event with id.... -> ' , eventId)
         console.log('dest folder .... -> ' , this._getDestFolder());
-
+        const { t } = this.props;
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
-            message: `Delete image`,
+            message: t('library.alert_delete_event_message'),
             cancelId: 1,
-            detail: `Are you sure you want to delete this event?`
+            detail: t('library.alert_delete_event_confirmation')
         });
 
         if (result === 0) {
@@ -794,18 +793,18 @@ export default class extends Component {
 
     _deleteImages = sha1 => {
         //TODO: when multiple images selected filter delete actions for images/videos & events
+        const { t } = this.props;
         let refresh = false;
         const selectedPictures = sha1 || this.state.selectedPictures;
         if (selectedPictures.length === 0) {
             return;
         }
-
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
-            message: `Delete image`,
+            message: t('library.alert_delete_image_message'),
             cancelId: 1,
-            detail: `Are you sure you want to delete ${selectedPictures.length} ${selectedPictures.length > 1 ? 'images' : 'image'}?`
+            detail: t('library.alert_delete_image_confirmation', {count: selectedPictures.length})
         });
         if (result === 0) {
             for (const sha1 of selectedPictures) {

@@ -321,16 +321,16 @@ export default class extends Component {
                                 <Table hover size="sm" className="targets-table">
                                     <thead title={t('thead_tooltip_sort_order')}>
                                     <tr>
-                                        <TableHeader title={t('models.thead_column_title_select')} sortKey="isActive"
+                                        <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
                                         <th/>
-                                        <TableHeader title={t('models.thead_column_title_model_name')} sortKey="name"
+                                        <TableHeader title={t('models.table_column_model_name')} sortKey="name"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title={t('models.thead_column_title_type')} sortKey="model"
+                                        <TableHeader title={t('models.table_column_type')} sortKey="model"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title={t('models.thead_column_title_version')} sortKey="version"
+                                        <TableHeader title={t('models.table_column_version')} sortKey="version"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title={t('models.thead_column_title_date_imported_created')} sortKey="importDate"
+                                        <TableHeader title={t('models.table_column_date_imported_created')} sortKey="importDate"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
                                     </tr>
                                     </thead>

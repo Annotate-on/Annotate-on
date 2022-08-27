@@ -10,6 +10,7 @@ import {
     updateMozaicToggle
 } from '../actions/app';
 import {push} from "connected-react-router";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -70,4 +71,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));
