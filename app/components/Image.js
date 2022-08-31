@@ -205,7 +205,7 @@ class Image extends PureComponent {
     }
 
     render() {
-
+        const { t } = this.props;
         const toolbarConfig = {
             display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
             INLINE_STYLE_BUTTONS: [
@@ -224,7 +224,7 @@ class Image extends PureComponent {
                 {label: 'OL', style: 'ordered-list-item'}
             ]
         };
-        if (!this.state.currentPicture) return <Nothing message={'No picture'}/>;
+        if (!this.state.currentPicture) return <Nothing message={t('annotate.lbl_no_picture')}/>;
 
         const targetColors = {};
         this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
@@ -237,9 +237,9 @@ class Image extends PureComponent {
                 <div className="bg">
                     <Row>
                         <Col sm={6} className="hide-overflow">
-                            <span className="project-label">Project:</span><span
+                            <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">Model:</span>
+                            <span className="project-label">{t('global.lbl_model')}:</span>
                             <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
@@ -247,12 +247,12 @@ class Image extends PureComponent {
                                  alt="app logo"
                                  src='http://www.xper3.fr/resources/img/xper3-logo.png'>
                             </img> : APP_NAME} )</Fragment>
-                        : 'Without model'
+                        : t('annotate.lbl_without_model')
                     }
                             </span>
                         </Col>
                         <Col sm={6}>
-                            <span className="title">View and annotate</span>
+                            <span className="title">{t('annotate.title')}</span>
                         </Col>
                     </Row>
                 </div>
@@ -328,9 +328,9 @@ class Image extends PureComponent {
                                 <img alt="navigation icon"  src={require('./pictures/step-backward.svg')}
                                      onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}/>
                                 <span className="navigation-title">
-                                    {`Picture ${this.props.currentPictureIndexInSelection + 1}/${this.props.picturesSelection.length} in current selection - Catalog n° ${this.state.catalognumber} - `}
+                                    {t('annotate.lbl_picture_in_current_selection', {index_in_selection: this.props.currentPictureIndexInSelection + 1, pictures_length:this.props.picturesSelection.length, catalog_number: this.state.catalognumber})}
                                     <div title={this.state.currentPicture.file_basename}
-                                         className="file-name">Filename: {this.state.currentPicture.file_basename}</div>
+                                         className="file-name">{t('annotate.lbl_filename')}: {this.state.currentPicture.file_basename}</div>
                                 </span>
                                 <img alt="navigation icon" src={require('./pictures/step-forward.svg')}
                                      onClick={e => this._navigationHandler(e, this.props.nextPictureInSelection)}/>
@@ -394,7 +394,7 @@ class Image extends PureComponent {
                            size="lg"
                            scrollable={true}
                            toggle={this._toggle} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggle}>Enter text</ModalHeader>
+                        <ModalHeader toggle={this._toggle}>{t('annotate.editor.dialog_text_edit_title')}</ModalHeader>
                         <ModalBody>
                             <Form className="rte-container" onSubmit={(e) => {
                                 e.preventDefault();
@@ -412,8 +412,8 @@ class Image extends PureComponent {
                             </Form>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this._saveRichText}>Save</Button>
-                            <Button color="secondary" onClick={() => this._toggle(true)}>Cancel</Button>
+                            <Button color="primary" onClick={this._saveRichText}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={() => this._toggle(true)}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>
@@ -1115,11 +1115,12 @@ class Image extends PureComponent {
     };
 
     _navigationHandler = (e, callAction) => {
+        const { t } = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
-                message: 'Info',
-                detail: 'Please close calibration mode.',
+                message: t('global.info'),
+                detail: t('library.alert_please_close_calibration_mode'),
                 cancelId: 1
             });
         }

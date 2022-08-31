@@ -1,54 +1,6 @@
 //-----------------------------------------------------------------------------------------------------------------------
-/*Changes some of the default text for the toolbar buttons*/
+
 import L from "leaflet";
-
-L.drawLocal.draw.toolbar.buttons.angle = 'Measure an angle';
-L.drawLocal.draw.handlers.angle = {
-    tooltip: {
-        start: 'Click for vertex point to start measuring angle (A)',
-        cont: 'Click to draw first ray (B)',
-        end: 'Click to draw second ray (C)'
-    }
-};
-L.drawLocal.draw.toolbar.buttons.simpleline = 'Measure length';
-L.drawLocal.draw.handlers.simpleline = {
-    tooltip: {
-        start: 'Click to start drawing line',
-        cont: 'Click to finish line',
-        end: 'Click last point to finish line'
-    }
-};
-L.drawLocal.draw.toolbar.buttons.occurrence = 'Count tool';
-L.drawLocal.draw.toolbar.buttons.categorical = 'Categorical tool';
-
-L.drawLocal.draw.toolbar.buttons.colorPicker = 'Color picker tool';
-
-L.drawLocal.draw.toolbar.buttons.ratio = 'Measure ratio';
-L.drawLocal.draw.handlers.ratio = {
-    tooltip: {
-        start: 'Click to start drawing line',
-        cont: 'Click to continue drawing line',
-        end: 'Click last point to finish line'
-    }
-};
-L.drawLocal.draw.toolbar.buttons.transcription = 'Transcription tool';
-L.drawLocal.draw.handlers.transcription = {
-    tooltip: {
-        start: 'Click to start drawing rectangle around the zone to transcript',
-        cont: 'Click to continue drawing line',
-        end: 'Click last point to finish line'
-    }
-};
-
-L.drawLocal.draw.toolbar.buttons.richtext = 'Text tool';
-L.drawLocal.draw.handlers.richtext = {
-    tooltip: {
-        start: 'Click to start drawing rectangle around the zone of rich text',
-        cont: 'Click to continue drawing line',
-        end: 'Click last point to finish line'
-    }
-};
-L.drawLocal.draw.toolbar.buttons.cartel = 'Cartel';
 
 /*Adds new shape types to the options */
 L.DrawToolbar.include({
@@ -143,7 +95,6 @@ L.Edit.PolyVerticesEdit.include({
             i, j, len, marker;
 
         for (i = 0, len = latlngs.length; i < len; i++) {
-
             marker = this._createMarker(latlngs[i], i);
             marker.on('click', this._onMarkerClick, this);
             marker.on('contextmenu', this._onContextMenu, this);

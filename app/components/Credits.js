@@ -21,6 +21,7 @@ import {shell} from "electron";
 import pjson from "../../package";
 const REC_LOGO = require('./pictures/annotate-on_logo.jpg');
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
+import {withTranslation} from "react-i18next";
 
 export default class Credits extends PureComponent {
 
@@ -29,13 +30,14 @@ export default class Credits extends PureComponent {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <Container className="bst rcn_credits">
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary()
                     }}>
-                        <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/>
+                        <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
                 </div>
                 <section className="border-bottom">
@@ -47,7 +49,7 @@ export default class Credits extends PureComponent {
                                 )
                             }>
                                 <div className="logoContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                      <img src={REC_LOGO} className="logo-on"/>
                                     <span className="version">{pjson.version}</span>
                                 </div>
@@ -55,7 +57,7 @@ export default class Credits extends PureComponent {
                         </div>
                     </div>
                     <div className="row justify-content-center -align-center no-margin">
-                        <span className="citation">Citation: RECOLNAT-ANR-11-INBS-0004</span>
+                        <span className="citation">{t('credits.lbl_citation')}: RECOLNAT-ANR-11-INBS-0004</span>
                     </div>
                     <div className="social-media-div">
                         <br/>
@@ -71,7 +73,7 @@ export default class Credits extends PureComponent {
                 <section className="border-bottom">
                     <div className="row justify-content-center -align-center no-margin members-row">
                         <div className="row -align-center justify-content-center">
-                            <h5 className="members-title">Recolnat's members</h5>
+                            <h5 className="members-title">{t('credits.lbl_recolnats_members')}</h5>
                         </div>
                         <div className="row -align-center justify-content-center">
 
@@ -82,7 +84,7 @@ export default class Credits extends PureComponent {
                                     )
                                 }>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={MyPlaceHolderPicture} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -94,7 +96,7 @@ export default class Credits extends PureComponent {
                                         `https://www.umontpellier.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={UMPT} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -106,7 +108,7 @@ export default class Credits extends PureComponent {
                                         `http://www.clermont-universite.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={UCA2} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -118,7 +120,7 @@ export default class Credits extends PureComponent {
                                         `http://www.u-bourgogne.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={UB} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -130,7 +132,7 @@ export default class Credits extends PureComponent {
                                         `https://www.ird.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={IRD} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -142,7 +144,7 @@ export default class Credits extends PureComponent {
                                         `http://collections.antilles.inra.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={INRA} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -154,7 +156,7 @@ export default class Credits extends PureComponent {
                                         `http://www.cnam.fr`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={CNAM} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -169,7 +171,7 @@ export default class Credits extends PureComponent {
                                     `https://www.tela-botanica.org`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={TELA_BOTANICA} className="imageMedia"/>
                                 </div>
                             </a>
@@ -181,7 +183,7 @@ export default class Credits extends PureComponent {
                                     `http://www.agoralogie.fr/`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={AGORALOGIE} className="imageMedia"/>
                                 </div>
                             </a>
@@ -193,7 +195,7 @@ export default class Credits extends PureComponent {
                                     `https://www.gbif.org`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={GBIF} className="imageMedia"/>
                                 </div>
                             </a>
@@ -205,7 +207,7 @@ export default class Credits extends PureComponent {
                                     `http://www.cnrs.fr`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={CNRS} className="imageMedia"/>
                                 </div>
                             </a>
@@ -217,7 +219,7 @@ export default class Credits extends PureComponent {
                                     `https://anr.fr`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={ANR} className="imageMedia"/>
                                 </div>
                             </a>
@@ -230,7 +232,7 @@ export default class Credits extends PureComponent {
                                 )}
                             >
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={PIA} className="imageMedia"/>
                                 </div>
                             </a>
@@ -242,17 +244,17 @@ export default class Credits extends PureComponent {
                                     `http://cerese.univ-lyon1.fr/`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={CRS} className="imageMedia"/>
                                 </div>
                             </a>
                         </div>
                         <div className="row justify-content-center -align-center read-more-div">
-                            <span>And 65 partners institutions </span>
+                            <span>{t('credits.lbl_and_65_partners_institutions')}</span>
                             <span className="btn-link inline-link"
                                   color="primary">
-                                    <a title="Open link in external browser"
-                                       onClick={() => shell.openExternal('https://www.recolnat.org/en/nos-partenaires')}>Read more</a>
+                                    <a title={t('global.open_link_in_external_browser')}
+                                       onClick={() => shell.openExternal('https://www.recolnat.org/en/nos-partenaires')}>{t('credits.lbl_read_more')}</a>
                                 </span>
 
                         </div>
@@ -262,24 +264,22 @@ export default class Credits extends PureComponent {
                 <section className="border-bottom dicen-section">
                     <div className="row justify-content-center -align-center no-margin">
                         <div className="row justify-content-center -align-center dc-title">
-                            <h5>Annotate is a annotation tool created by the
-                                Dicen-Idf research
-                                laboratory for Recolnat.</h5>
+                            <h5>{t('credits.lbl_created_by')}</h5>
                         </div>
                         <br/>
                         <br/>
                         <div className="row justify-content-center -align-center dc-title">
                             <p className="opahText">
-                                <span>The event and video parts are created by Dicen-IdF for the </span>
+                                <span>{t('credits.lbl_event_and_video_parts_created_by')}</span>
                                 <span className="btn-link inline-link"
                                       color="primary">
-                                    <a title="Open link in external browser"
+                                    <a title={t('global.open_link_in_external_browser')}
                                        onClick={ () => shell.openExternal('https://www.dicen-idf.org/projet-recherche-opahh-iiif/')}>OPAHH-IIIF</a>
                                 </span>
-                                <span> from </span>
+                                <span>{t('credits.lbl_from')}</span>
                                 <span className="btn-link inline-link"
                                       color="primary">
-                                    <a title="Open link in external browser"
+                                    <a title={t('global.open_link_in_external_browser')}
                                        onClick={ () => shell.openExternal('http://passes-present.eu')}> Labex Les passés dans le présent</a>
                                 </span>
                             </p>
@@ -296,7 +296,7 @@ export default class Credits extends PureComponent {
                                         `http://passes-present.eu/`
                                     )}>
                                     <div className="lobex-imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={LOBEX} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -309,7 +309,7 @@ export default class Credits extends PureComponent {
                                         `https://www.dicen-idf.org`
                                     )}>
                                     <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                         title="open link in external browser">
+                                         title={t('global.open_link_in_external_browser')}>
                                         <Media src={DICEN} className="imageMedia"/>
                                     </div>
                                 </a>
@@ -320,7 +320,7 @@ export default class Credits extends PureComponent {
                 <section>
                     <div className="row justify-content-center -align-center no-margin">
                         <div className="row justify-content-center -align-center presek-div">
-                            <h5>Software development</h5>
+                            <h5>{t('credits.lbl_software_development')}</h5>
                         </div>
                         <div className="presek-logo">
                             <a onClick={ () =>
@@ -328,7 +328,7 @@ export default class Credits extends PureComponent {
                                     `https://www.presek-i.com`
                                 )}>
                                 <div className="imageContainer" data-toggle="tooltip" data-placement="top"
-                                     title="open link in external browser">
+                                     title={t('global.open_link_in_external_browser')}>
                                     <Media src={PRESEK} className="imageMedia"/>
                                 </div>
                             </a>

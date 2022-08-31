@@ -29,7 +29,8 @@
       "unknown_values": "Unknown values",
       "attention": "Attention",
       "locked": "Locked",
-      "copy_to_clipboard": "Copy to clipboard"
+      "copy_to_clipboard": "Copy to clipboard",
+      "open_link_in_external_browser": "open link in external browser"
     },
     "main_navbar": {
       "library": "Library",
@@ -325,8 +326,65 @@
         "alert_selected_folder_does_not_match_recolnat_project": "Selected folder does not match recolnat project"
       }
     },
-    "credits": {},
-    "annotate": {},
+    "credits": {
+      "lbl_citation": "Citation",
+      "lbl_recolnats_members": "Recolnat's members",
+      "lbl_and_65_partners_institutions": "And 65 partners institutions",
+      "lbl_read_more": "Read more",
+      "lbl_created_by": "Annotate is a annotation tool created by the Dicen-Idf research laboratory for Recolnat.",
+      "lbl_event_and_video_parts_created_by": "The event and video parts are created by Dicen-IdF for the",
+      "lbl_from": " from ",
+      "lbl_software_development": "Software development"
+    },
+    "annotate": {
+      "lbl_no_picture": "No picture",
+      "lbl_without_model": "Without model",
+      "title": "View and annotate",
+      "lbl_picture_in_current_selection": "Picture {{index_in_selection}}/{{pictures_length}} in current selection - Catalog n° {{catalog_number}} - ",
+      "lbl_filename": "Filename",
+      "timeline_alert_error_message": "something went wrong!",
+      "player_controls": {
+        "lbl_backward_5_sec": "Backward 5 sec",
+        "lbl_goto_start": "Goto start",
+        "lbl_forward_5_sec": "Forward 5 sec",
+        "lbl_goto_end": "Goto end",
+        "lbl_annotate": "Annotate"
+      },
+      "editor": {
+        "btn_tooltip_increase_zoom": "Increase zoom",
+        "btn_tooltip_decrease_zoom": "Decrease zoom",
+        "btn_tooltip_length_tool": "Length tool",
+        "btn_tooltip_multiline_length_tool": "Multiline length tool",
+        "btn_tooltip_surface_tool": "Surface tool",
+        "btn_tooltip_angle_tool": "Angle tool",
+        "btn_tooltip_rectangle_of_interest": "Rectangle of interest",
+        "btn_tooltip_point_of_interest": "Point of interest",
+        "lbl_enable_repeat_mode": "Enable repeat mode",
+        "btn_tooltip_fast_measurement": "Switch 'fast measurement' mode",
+        "btn_tooltip_export_zoi_images": "Export ZOI images",
+        "btn_tooltip_export_image_with_annotations": "Export image with annotations",
+        "btn_tooltip_fit_image_to_screen": "Fit image to screen",
+        "btn_tooltip_display_with_scan_resolution": "Display with scan resolution (1 pixel image = 1 pixel to screen)",
+        "btn_tooltip_measure_an_angle": "Measure an angle",
+        "tooltip_angle_click_for_vertex_point": "Click for vertex point to start measuring angle (A)",
+        "tooltip_angle_click_to_draw_first_ray": "Click to draw first ray (B)",
+        "tooltip_angle_click_to_draw_second_ray": "Click to draw second ray (C)",
+        "btn_tooltip_count_tool": "Count tool",
+        "btn_tooltip_categorical_tool": "Categorical tool",
+        "btn_tooltip_color_picker_tool": "Color picker tool",
+        "btn_tooltip_measure_ratio": "Measure ratio",
+        "tooltip_click_to_start_drawing_line": "Click to start drawing line",
+        "tooltip_click_to_finish_line": "Click to finish line",
+        "btn_tooltip_transcription_tool": "Transcription tool",
+        "tooltip_transcription_tool_click_to_start_drawing_rectangle": "Click to start drawing rectangle around the zone to transcript",
+        "tooltip_click_to_continue_drawing_line": "Click to continue drawing line",
+        "tooltip_click_last_point_to_finish_line": "Click last point to finish line",
+        "btn_tooltip_text_tool": "Text tool",
+        "tooltip_text_tool_click_to_start_drawing_rectangle": "Click to start drawing rectangle around the zone of rich text",
+        "btn_tooltip_cartel": "Cartel",
+        "dialog_text_edit_title": "Enter text"
+      }
+    },
     "event": {},
     "results": {},
     "iiif": {},
