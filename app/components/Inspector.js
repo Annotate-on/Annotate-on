@@ -63,6 +63,7 @@ import {
 import RichTextEditor from "react-rte";
 import Select from "react-select";
 import {acceptedTypes} from "../utils/annotationRecording";
+import {withTranslation} from "react-i18next";
 
 const ADD_TAG = require('./pictures/add-tag-annotation.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
@@ -270,6 +271,7 @@ export default class extends Component {
 
     render() {
         let key = 0;
+        const { t } = this.props;
         const cartel = this.props.cartels[this.props.picture.sha1];
 
         const toolbarConfig = {
@@ -402,7 +404,7 @@ export default class extends Component {
                             onClick={() => {
                                 this.selectTab(TAB_METADATA);
                             }}>
-                            Metadata
+                            {t('inspector.tab_metadata')}
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -411,7 +413,7 @@ export default class extends Component {
                             onClick={() => {
                                 this.selectTab(TAB_ANNOTATIONS);
                             }}>
-                            Annotations
+                            {t('inspector.tab_annotations')}
                         </NavLink>
                     </NavItem>
                     <NavItem className={classnames({hidden: this.props.readOnly})}>
@@ -420,7 +422,7 @@ export default class extends Component {
                             onClick={() => {
                                 this.selectTab(TAB_CALIBRATION);
                             }}>
-                            Calibration
+                            {t('inspector.tab_calibration')}
                             {((this.props.picture.dpix && this.props.picture.dpiy) || this.props.picturesByCalibration[this.props.picture.sha1]) ?
                                 '' : <sup className="sup-calibration">*</sup>
                             }
@@ -459,12 +461,12 @@ export default class extends Component {
                                                 <Input type="select" bsSize="md"
                                                        value={this.props.tab.sortDirectionAnnotation}
                                                        onChange={this._handleOnSortChange}>
-                                                    <option value={SORT_DATE_DESC}>Newest to oldest</option>
-                                                    <option value={SORT_DATE_ASC}>Oldest to newest</option>
-                                                    <option value={SORT_ALPHABETIC_DESC}>Alphabetical</option>
-                                                    <option value={SORT_ALPHABETIC_ASC}>Alphabetical inverted</option>
-                                                    <option value={SORT_TYPE_ASC}>By type</option>
-                                                    <option value={SORT_TYPE_DESC}>By type inverted</option>
+                                                    <option value={SORT_DATE_DESC}>{t('popup_sort.newest_to_oldest')}</option>
+                                                    <option value={SORT_DATE_ASC}>{t('popup_sort.oldest_to_newest')}</option>
+                                                    <option value={SORT_ALPHABETIC_DESC}>{t('popup_sort.alphabetical')}</option>
+                                                    <option value={SORT_ALPHABETIC_ASC}>{t('popup_sort.alphabetical_inverted')}</option>
+                                                    <option value={SORT_TYPE_ASC}>{t('popup_sort.by_type')}</option>
+                                                    <option value={SORT_TYPE_DESC}>{t('popup_sort.by_type_inverted')}</option>
                                                 </Input>
                                             </Col>
                                         </Row>
@@ -482,20 +484,21 @@ export default class extends Component {
                                                     <Col cmd={8} lg={8}>
                                                         <div className="annotation_title"
                                                              style={{color: "#333"}}><span
-                                                            title="RCT-1">{cartel.title}</span></div>
+                                                            title="RCT-1">{cartel.title}</span>
+                                                        </div>
                                                     </Col>
                                                     <Col md={3} lg={3} sm={3}
                                                         // className={(!this.props.readOnly && this.state.hover === cartel.id) ? 'action-row' : 'hidden'}>
                                                          className={'action-row'}>
                                                         <img className="btn_menu" src={EDIT_ANNOTATION}
                                                              alt="edit annotation"
-                                                             title="Edit annotation" onClick={event => {
+                                                             title={t('inspector.tooltip_edit_annotation')} onClick={event => {
                                                             event.preventDefault();
                                                             this.editCartel();
                                                         }}/>
                                                         <img className="btn_menu" src={DELETE_ANNOTATION}
                                                              alt="delete annotation"
-                                                             title="Delete annotation"
+                                                             title={t('inspector.tooltip_delete_annotation')}
                                                              onClick={event => {
                                                                  event.preventDefault();
                                                                  this.props.deleteCartel(this.props.picture.sha1, cartel.id);
@@ -518,8 +521,7 @@ export default class extends Component {
                                             this.state.annotations.map(_ => this.makeAnnotation(_, key++, this._deleteAnnotation))}
                                         <Modal isOpen={this.state.modal} toggle={this._toggle} wrapClassName="bst"
                                                autoFocus={false}>
-                                            <ModalHeader toggle={this._toggle}>Select value(s) for
-                                                character </ModalHeader>
+                                            <ModalHeader toggle={this._toggle}>{t('inspector.dialog_title_select_values_for_character')}</ModalHeader>
                                             <ModalBody>
                                                 <Row className="action-bar">
                                                     <Col>
@@ -537,7 +539,7 @@ export default class extends Component {
                                                                                disableCategoricalValues: checked
                                                                            })
                                                                        }}/><span
-                                                                className="stateValue">Unknown values</span>
+                                                                className="stateValue">{t('global.unknown_values')}</span>
                                                             </div>
                                                             {this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
                                                             && this.props.selectedTaxonomy.descriptors.map(target => {
@@ -574,8 +576,8 @@ export default class extends Component {
                                             </ModalBody>
                                             <ModalFooter>
                                                 <Button color="primary"
-                                                        onClick={this._saveCategoricalValue}>Save</Button>
-                                                <Button color="secondary" onClick={this._toggle}>Cancel</Button>
+                                                        onClick={this._saveCategoricalValue}>{t('global.save')}</Button>
+                                                <Button color="secondary" onClick={this._toggle}>{t('global.cancel')}</Button>
                                             </ModalFooter>
                                         </Modal>
 
@@ -585,7 +587,7 @@ export default class extends Component {
                                                    scrollable={true}
                                                    toggle={this._toggleCartelModal} wrapClassName="bst"
                                                    autoFocus={false}>
-                                                <ModalHeader toggle={this._toggleCartelModal}>Enter text</ModalHeader>
+                                                <ModalHeader toggle={this._toggleCartelModal}>{t('inspector.dialog_title_enter_text')}</ModalHeader>
                                                 <ModalBody>
                                                     <Form className="rte-container" onSubmit={(e) => {
                                                         e.preventDefault();
@@ -604,14 +606,12 @@ export default class extends Component {
                                                     </Form>
                                                 </ModalBody>
                                                 <ModalFooter>
-                                                    <Button color="primary" onClick={this._editCartel}>Save</Button>
+                                                    <Button color="primary" onClick={this._editCartel}>{t('global.save')}</Button>
                                                     <Button color="secondary"
-                                                            onClick={() => this._toggleCartelModal()}>Cancel</Button>
+                                                            onClick={() => this._toggleCartelModal()}>{t('global.cancel')}</Button>
                                                 </ModalFooter>
                                             </Modal>
                                         </div>
-
-
                                     </Container>
                                 </div>
                                 {
@@ -724,6 +724,7 @@ export default class extends Component {
         let tags = [];
         if (this.props.tagsByAnnotation)
             tags = this.props.tagsByAnnotation[annotation.id] || [];
+        const { t } = this.props;
         const targetColors = {};
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[annotation.id] ?
             this.props.taxonomyInstance.taxonomyByAnnotation[annotation.id] : {descriptorId: -1};
@@ -734,7 +735,7 @@ export default class extends Component {
             color: "-1",
             targetType: descriptor.type,
             group: descriptor.targetType,
-            label: 'Choose a character'
+            label: t('inspector.select_character_label')
         }];
 
         this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
@@ -803,9 +804,6 @@ export default class extends Component {
         return (
             <div ref={el => {
                 if (el && this.state.highlightAnn === annotation.id && this.state.isFromLeaflet === true) {
-
-                    console.log('jbn anotacija' , annotation);
-
                     setTimeout(_ => {
                         this.annotationListRef.scrollTo({
                             top: el.offsetTop - TOP_OFFSET,
@@ -903,7 +901,7 @@ export default class extends Component {
                             !this.props.isFromLibraryView ? <Col md={3} lg={3} sm={3}
                                 // className={(!this.props.readOnly && this.state.hover === annotation.id) ? 'action-row' : 'hidden'}>
                                                                  className={'action-row'}>
-                                <img alt="add keyword" className="btn_menu" src={ADD_TAG} title="Add keyword" onClick={event => {
+                                <img alt="add keyword" className="btn_menu" src={ADD_TAG} title={t('inspector.tooltip_add_keyword')} onClick={event => {
                                     event.preventDefault();
                                     event.stopPropagation();
                                     if (this.state.isAnnotateEventRecording){
@@ -912,9 +910,9 @@ export default class extends Component {
                                     if (this.props.currentAnnotationTool) {
                                         let options = {
                                             type: "info",
-                                            title: "Attention",
+                                            title: t('global.attention'),
                                             buttons: ["OK"],
-                                            message: "In \"fast measurement\" mode, you can not change the annotation texts and values. To do this, click \"Cancel\" next to selected control toolbar."
+                                            message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                         }
                                         remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
                                     } else {
@@ -923,7 +921,7 @@ export default class extends Component {
                                 }}/>
                                 <img className="btn_menu" src={EDIT_ANNOTATION}
                                      alt="edit annotation"
-                                     title="Edit annotation"
+                                     title={t('inspector.tooltip_edit_annotation')}
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
@@ -933,9 +931,9 @@ export default class extends Component {
                                          if (this.props.currentAnnotationTool) {
                                              let options = {
                                                  type: "info",
-                                                 title: "Attention",
+                                                 title: t('global.attention'),
                                                  buttons: ["OK"],
-                                                 message: "In \"fast measurement\" mode, you can not change the annotation texts and values. To do this, click \"Cancel\" next to selected control toolbar."
+                                                 message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
                                              remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
                                          } else {
@@ -950,7 +948,7 @@ export default class extends Component {
                                      }}/>
                                 <img className="btn_menu" src={DELETE_ANNOTATION}
                                      alt="delete annotation"
-                                     title="Delete annotation"
+                                     title={t('inspector.tooltip_delete_annotation')}
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
@@ -965,13 +963,13 @@ export default class extends Component {
                     {this.props.selectedTaxonomy ?
                         <div>
                             {annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE ? <Row>
-                                <Col md={3} lg={3} sm={3}><span className="btn_menu">Character</span></Col>
+                                <Col md={3} lg={3} sm={3}><span className="btn_menu">{t('inspector.lbl_character')}</span></Col>
                                 <Col md={9} lg={9} sm={9}
                                      onClick={ (e) => {
                                          e.stopPropagation();
                                      }}
                                 >
-                                    <Select className="annotation_target" title="Affect this annotation to a character"
+                                    <Select className="annotation_target" title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
                                             value={defaultValue}
                                             menuShouldBlockScroll={true}
                                             menuPosition={"fixed"}
@@ -988,7 +986,7 @@ export default class extends Component {
                         </div> : ''}
 
                     <Row>
-                        <Col md={3} lg={3} sm={3}><span className="btn_menu">Value</span></Col>
+                        <Col md={3} lg={3} sm={3}><span className="btn_menu">{t('inspector.lbl_value')}</span></Col>
                         <Col md={9} lg={9} sm={9}>
                             <div className="annotation_value text-right">
                                 {annotation.annotationType === ANNOTATION_EVENT_ANNOTATION && annotation.value ? annotation.value : ''}
@@ -1051,6 +1049,7 @@ export default class extends Component {
         console.log(selectedTargetOptions.measure === "-1")
         console.log(selectedTargetOptions.measure === '')
 
+        const { t } = this.props;
         if (selectedTargetOptions.measure === annotation.measure
             || (selectedTargetOptions.measure === "N" && annotation.measure === "#")
             || (selectedTargetOptions.measure === "deg" && annotation.measure === "°")
@@ -1063,7 +1062,7 @@ export default class extends Component {
             ) {
                 remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: 'error',
-                    message: `Categorical descriptor already exist!`,
+                    message: t('inspector.alert_categorical_descriptor_already_exist'),
                     cancelId: 1
                 });
                 selectedTargetOptions.value = "-1";
@@ -1102,7 +1101,7 @@ export default class extends Component {
         } else {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'error',
-                message: `Wrong target type`,
+                message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1
             });
         }

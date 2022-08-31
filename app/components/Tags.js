@@ -510,7 +510,7 @@ export default class extends Component {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
-                    message: t('tags.alert_delete_tag_message', {"tag": data.tagName}),
+                    message: t('tags.alert_delete_tag_message', {tag: data.tagName}),
                     cancelId: 1,
                     detail: t('global.delete_confirmation')
                 });

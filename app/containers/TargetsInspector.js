@@ -6,6 +6,7 @@ import {
     updateAnnotationValueInTaxonomyInstance
 } from "../actions/app";
 import lodash from "lodash";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     let taxonomyInstance = {};
@@ -30,4 +31,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

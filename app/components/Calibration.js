@@ -76,10 +76,12 @@ export default class extends PureComponent {
     };
 
     saveCalibration = (applyToAll = false) => {
+        const { t } = this.props;
+        console.log("saveCalibration")
         if (this.state.measureName.length === 0) {
             remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                 type: 'error',
-                message: `'Argh', 'Enter calibration name!'`,
+                message: t('inspector.calibration.alert_save_message_empty_name'),
                 buttons: ['OK'],
                 cancelId: 1
             });
@@ -89,9 +91,9 @@ export default class extends PureComponent {
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
-                message: `Confirm calibration`,
+                message: t('inspector.calibration.alert_save_confirmation_title'),
                 cancelId: 1,
-                detail: `This calibration will be applied to all images in selection. Are you sure to continue?`
+                detail: t('inspector.calibration.alert_save_confirmation_message')
             });
 
             if (result === 1)
@@ -279,14 +281,15 @@ export default class extends PureComponent {
     };
 
     createTwoDimensionalForm = () => {
+        const { t } = this.props;
         return <Container className="bst calibration">
             <Row>
-                <Col className="calibration-title" sm={9} md={9} lg={9}>New Calibration</Col>
+                <Col className="calibration-title" sm={9} md={9} lg={9}>{t('inspector.calibration.title_new_calibration')}</Col>
                 <Col sm={2} md={2} lg={2}><img alt="close" src={CLOSE} onClick={this.cancel}/></Col>
             </Row>
             <Row>
                 <Col md={6}>
-                    Type:
+                    {t('inspector.calibration.lbl_type')}:
                 </Col>
             </Row>
             <Row>
@@ -297,7 +300,7 @@ export default class extends PureComponent {
                                    value={ONE_DIMENSIONAL}
                                    checked={ONE_DIMENSIONAL === this.state.measureType}
                                    onChange={this._onTypeChange}
-                            />{' '}One dimension
+                            />{' '} {t('inspector.calibration.lbl_one_dimension')}
                         </Label>
                     </FormGroup>
                 </Col>
@@ -310,16 +313,16 @@ export default class extends PureComponent {
                                    value={TWO_DIMENSIONAL}
                                    checked={TWO_DIMENSIONAL === this.state.measureType}
                                    onChange={this._onTypeChange}
-                            />{' '}Two-dimensional
+                            />{' '}{t('inspector.calibration.lbl_two_dimensional')}
                         </Label>
                     </FormGroup>
                 </Col>
             </Row>
             <Row>
-                <Col md={12}>Measure on image:</Col>
+                <Col md={12}>{t('inspector.calibration.lbl_measure_on_image')}:</Col>
             </Row>
             <FormGroup row>
-                <Label for="length" sm={4} md={4} lg={4}>X: {this.state.pxX} is</Label>
+                <Label for="length" sm={4} md={4} lg={4}>{t('inspector.calibration.lbl_x_is', { x:this.state.pxX })}</Label>
                 <Col sm={2} md={2} lg={2} className="length-value">
                     <Input type="text" name="length"  disabled={this.state.pxX <= 0}
                            value={this.state.mmX}
@@ -342,7 +345,7 @@ export default class extends PureComponent {
                 </Col>
             </FormGroup>
             <FormGroup row>
-                <Label for="length" sm={4} md={4} lg={4}>Y: {this.state.pxY} is</Label>
+                <Label for="length" sm={4} md={4} lg={4}>{t('inspector.calibration.lbl_y_is', { y:this.state.pxY })}</Label>
                 <Col sm={2} md={2} lg={2} className="length-value">
                     <Input type="text" name="length"  disabled={this.state.pxY <= 0}
                            value={this.state.mmY}
@@ -365,7 +368,7 @@ export default class extends PureComponent {
                 </Col>
             </FormGroup>
             <FormGroup>
-                <Label for="name">Name</Label>
+                <Label for="name">{t('inspector.calibration.lbl_name')}</Label>
                 <Input type="text" name="name" id="name" value={this.state.measureName}
                        onChange={(event) => {
                            this.setState({
@@ -375,30 +378,31 @@ export default class extends PureComponent {
             </FormGroup>
             <Row>
                 <Col md={3}>
-                    <Button color="primary" size="md" onClick={() => this.saveCalibration(false)}>Save</Button>
+                    <Button color="primary" size="md" onClick={() => this.saveCalibration(false)}></Button>
                 </Col>
                 <Col md={3}>
-                    <Button color="gray" size="md" onClick={this.cancel}>Cancel</Button>
+                    <Button color="gray" size="md" onClick={this.cancel}>{t('global.cancel')}</Button>
                 </Col>
             </Row>
             <Row><Col md={12}><br /></Col></Row>
             <Row>
                 <Col md={12}>
-                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in selection</Button>
+                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>{t('inspector.calibration.btn_name_apply_to_all_images')}</Button>
                 </Col>
             </Row>
         </Container>
     };
 
     createOneDimensionalForm = () => {
+        const { t } = this.props;
         return <Container className="bst calibration">
             <Row>
-                <Col className="calibration-title" sm={9} md={9} lg={9}>New Calibration</Col>
+                <Col className="calibration-title" sm={9} md={9} lg={9}>{t('inspector.calibration.title_new_calibration')}</Col>
                 <Col sm={2} md={2} lg={2}><img alt="close" src={CLOSE} onClick={this.cancel}/></Col>
             </Row>
             <Row>
                 <Col md={6}>
-                    Type:
+                    {t('inspector.calibration.lbl_type')}:
                 </Col>
             </Row>
             <Row>
@@ -409,7 +413,7 @@ export default class extends PureComponent {
                                    value={ONE_DIMENSIONAL}
                                    checked={ONE_DIMENSIONAL === this.state.measureType}
                                    onChange={this._onTypeChange}
-                            />{' '}One dimension
+                            />{' '} {t('inspector.calibration.lbl_one_dimension')}
                         </Label>
                     </FormGroup>
                 </Col>
@@ -422,16 +426,16 @@ export default class extends PureComponent {
                                    value={TWO_DIMENSIONAL}
                                    checked={TWO_DIMENSIONAL === this.state.measureType}
                                    onChange={this._onTypeChange}
-                            />{' '}Two-dimensional
+                            />{' '}{t('inspector.calibration.lbl_two_dimensional')}
                         </Label>
                     </FormGroup>
                 </Col>
             </Row>
             <Row>
-                <Col md={12}>Measure on image:</Col>
+                <Col md={12}>{t('inspector.calibration.lbl_measure_on_image')}:</Col>
             </Row>
             <FormGroup row>
-                <Label for="length" sm={4} md={4} lg={4}>X,Y: {this.state.pxX} is</Label>
+                <Label for="length" sm={4} md={4} lg={4}>{t('inspector.calibration.lbl_x_y_is', { x:this.state.pxX })}</Label>
                 <Col sm={2} md={2} lg={2} className="length-value">
                     <Input type="text" name="length" disabled={this.state.pxX <= 0}
                            value={this.state.mmX}
@@ -455,7 +459,7 @@ export default class extends PureComponent {
                 </Col>
             </FormGroup>
             <FormGroup>
-                <Label for="name">Name</Label>
+                <Label for="name">{t('inspector.calibration.lbl_name')}</Label>
                 <Input type="text" name="name" id="name" value={this.state.measureName}
                        onChange={(event) => {
                            this.setState({
@@ -465,48 +469,50 @@ export default class extends PureComponent {
             </FormGroup>
             <Row>
                 <Col md={3}>
-                    <Button color="primary" size="md" onClick={ () => this.saveCalibration(false)}>Save</Button>
+                    <Button color="primary" size="md" onClick={ () => this.saveCalibration(false)}>{t('global.save')}</Button>
                 </Col>
                 <Col md={3}>
-                    <Button color="gray" size="md" onClick={this.cancel}>Cancel</Button>
+                    <Button color="gray" size="md" onClick={this.cancel}>{t('global.cancel')}</Button>
                 </Col>
             </Row>
             <Row><Col md={12}><br /></Col></Row>
             <Row>
                 <Col md={12}>
-                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>Apply to all images in selection</Button>
+                    <Button color="primary" size="md" onClick={() => this.saveCalibration(true)}>{t('inspector.calibration.btn_name_apply_to_all_images')}</Button>
                 </Col>
             </Row>
         </Container>
     };
 
     render() {
+        const { t } = this.props;
         return !this.state.showCreateForm ? (
                 <Container className="bst calibration">
                     <Row>
                         <Col md={6}>
-                            <Button title="Do a new calibration" size="md" color="primary"
-                                    onClick={this.createNewCalibrationHandler}>New
-                                calibration</Button>
+                            <Button title={t('inspector.calibration.btn_tooltip_new_calibration')} size="md" color="primary"
+                                    onClick={this.createNewCalibrationHandler}>{t('inspector.calibration.btn_new_calibration')}
+                            </Button>
                         </Col>
                         <Col md={6}>
-                            <Button title="Cancel selected calibration and set default" className="pull-right" size="md"
+                            <Button title={t('inspector.calibration.btn_tooltip_deactivate')} className="pull-right" size="md"
                                     color="gray"
-                                    onClick={this._removeCalibration}>Deactivate</Button>
+                                    onClick={this._removeCalibration}>{t('inspector.calibration.btn_deactivate')}
+                            </Button>
                         </Col>
                     </Row>
                     <Row>
                         <Col>
                             {
-                                (this.props.dpix && this.props.dpiy) ? `Original DPI X:${this.props.dpix}, Y:${this.props.dpiy}` :  `Original DPI not detected`
+                                (this.props.dpix && this.props.dpiy) ?
+                                    t('inspector.calibration.lbl_original_dpi_x_y', { x:this.props.dpix, y:this.props.dpiy })
+                                    : t('inspector.calibration.lbl_original_dpi_not_detected')
                             }
-
                         </Col>
                     </Row>
                     {
                         this.props.calibrations.length > 0 ?
-                            (<Row className="calibration-subtitle"><Col md={12}>Select one calibration
-                                below:</Col></Row>) : ''
+                            (<Row className="calibration-subtitle"><Col md={12}>{t('inspector.calibration.lbl_select_one_calibration_below')}</Col></Row>) : ''
                     }
                     {
                         this.props.calibrations.length > 0 ? (
@@ -516,15 +522,13 @@ export default class extends PureComponent {
                                     checked = this.state.selectedCalibration.calibrationId === calibration.calibrationId;
                                 return <Row key={calibration.calibrationId}
                                             className={checked ? 'selected-calibration list-item' : 'list-item'}
-                                            onClick={() => this._selectCalibration(calibration, calibration.dpiX, calibration.dpiY)}
-                                >
+                                            onClick={() => this._selectCalibration(calibration, calibration.dpiX, calibration.dpiY)}>
                                     <Col md={12} lg={12}>
                                         <span className="calibration-name">
                                         {calibration.name}<br />[{calibration.dpiX},{calibration.dpiY}] dpi
                                         </span>
 
                                         <div className="action-bar">
-
                                             <img src={require('./pictures/edit.svg')}
                                                  alt="edit"
                                                  width={17}
@@ -543,9 +547,9 @@ export default class extends PureComponent {
                                                      const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                                                          type: 'question',
                                                          buttons: ['Yes', 'No'],
-                                                         message: `Calibration: "${calibration.name}"`,
+                                                         message: t('inspector.calibration.alert_delete_message', {calibration: calibration.name}),
                                                          cancelId: 1,
-                                                         detail: `Are you sure you want to delete it?`
+                                                         detail: t('global.delete_confirmation')
                                                      });
                                                      if (result === 0) this._deleteCalibration(calibration);
                                                  }}
@@ -556,7 +560,7 @@ export default class extends PureComponent {
                             })) : (
                             <Row>
                                 <Col className="no-calibrations" md={12}>
-                                    There are no calibrations.
+                                    {t('inspector.calibration.lbl_there_are_no_calibrations')}
                                 </Col>
                             </Row>
                         )

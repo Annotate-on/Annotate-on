@@ -332,7 +332,7 @@ export default class extends PureComponent {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
-                    message: t('folders.alert_delete_folder_message', {"folder": data.folder.alias}),
+                    message: t('folders.alert_delete_folder_message', {folder: data.folder.alias}),
                     cancelId: 1,
                     detail: t('global.delete_confirmation')
                 });
