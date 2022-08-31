@@ -68,37 +68,37 @@ export default class extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <_Root className="bst">
                 <div className="bg">
                     <a onClick={ () => {
                         this.props.goToLibrary();
-                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                    <span className="title">Import existing project</span>
+                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page1')}/></a>
+                    <span className="title">{t('projects.import_existing_project.title')}</span>
                 </div>
                 <_Content>
                     <_RightColumn>
                         <Container className="import-wizard">
                             <Row className="iep-row">
                                 <Col sm={6} md={6} lg={6}>
-                                    <h2 className="title_section">Select folder with existing project</h2>
+                                    <h2 className="title_section">{t('projects.import_existing_project.subtitle_select_folder_with_existing_project')}</h2>
                                 </Col>
                             </Row>
                             <br/>
                             <Row>
                                 <Col sm={2} md={2} lg={2}>
-                                    <Label >Select folder on file system</Label>
+                                    <Label>{t('projects.import_existing_project.lbl_select_folder_on_file_system')}</Label>
                                 </Col>
                                 <Col sm={10} md={10} lg={10}>
                                     <Button className="btn btn-primary" color="primary"
-                                            title=" Import existing project"
+                                            title={t('projects.import_existing_project.btn_tooltip_import_existing_project')}
                                             onClick={ () => {
                                                 const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory']});
                                                 if (!_ || _.length < 1) return;
                                                 const label = this.state.label;
                                                 const dir = _.pop();
                                                 fs.ensureDirSync(dir);
-
 
                                                 const path_to_project = path.join(dir, PROJECT_INFO_DESCRIPTOR);
                                                 const project = JSON.parse(fs.readFileSync(path_to_project));
@@ -113,8 +113,8 @@ export default class extends Component {
                                                     updateTargetTypes(dir);
                                                     remote.dialog.showMessageBox({
                                                         type: 'info',
-                                                        detail: `Project is locked by user ${project.lockedBy}`,
-                                                        message: `Locked`,
+                                                        detail: t('projects.alert_project_is_locked', {user:project.lockedBy}),
+                                                        message: t('global.locked'),
                                                         buttons: ['OK'],
                                                         cancelId: 1
                                                     });
@@ -148,16 +148,15 @@ export default class extends Component {
                                                         this.props.goToLibrary();
                                                     },100)
                                                 }else {
-                                                    ee.emit(EVENT_SHOW_ALERT, 'Selected folder does not match recolnat project');
+                                                    ee.emit(EVENT_SHOW_ALERT, t('projects.import_existing_project.alert_selected_folder_does_not_match_recolnat_project'));
                                                 }
                                             }}
-                                    ><img alt="add folder" src={require('./pictures/add-folder.svg')} width={15}/> Import existing project</Button>
+                                    ><img alt="add folder" src={require('./pictures/add-folder.svg')} width={15}/>{t('projects.import_existing_project.btn_import_existing_project')}</Button>
                                     &emsp;
                                     <Button size="md" color="gray" onClick={ () => {
                                         this.props.goToSettings();
                                     }}
-                                    >
-                                        Cancel
+                                    >{t('global.cancel')}
                                     </Button>
                                 </Col>
                             </Row>

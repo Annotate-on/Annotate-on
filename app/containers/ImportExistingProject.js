@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 import Component from '../components/ImportExistingProject';
 import {flatOldTags, setNewState} from "../actions/app";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
     return {
@@ -32,4 +33,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));
