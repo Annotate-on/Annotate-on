@@ -436,7 +436,14 @@ class LeafletImage extends Component {
     /**Changes some of the default text for the toolbar buttons*/
     _overrideDefaults() {
         const { t } = i18next;
-        L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_measure_an_angle');
+        L.drawLocal.draw.toolbar.buttons.simpleline = t('annotate.editor.btn_tooltip_length_tool');
+        L.drawLocal.draw.toolbar.buttons.polyline = t('annotate.editor.btn_tooltip_multiline_length_tool');
+        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
+        L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_angle_tool');
+        L.drawLocal.draw.toolbar.buttons.rectangle = t('annotate.editor.btn_tooltip_rectangle_of_interest');
+        L.drawLocal.draw.toolbar.buttons.circlemarker = t('annotate.editor.btn_tooltip_point_of_interest');
+        L.drawLocal.draw.toolbar.buttons.marker = t('annotate.editor.btn_tooltip_point_of_interest');
+
         L.drawLocal.draw.handlers.angle = {
             tooltip: {
                 start: t('annotate.editor.tooltip_angle_click_for_vertex_point'),
@@ -444,7 +451,6 @@ class LeafletImage extends Component {
                 end: t('annotate.editor.tooltip_angle_click_to_draw_second_ray')
             }
         };
-        L.drawLocal.draw.toolbar.buttons.simpleline = 'Measure length';
         L.drawLocal.draw.handlers.simpleline = {
             tooltip: {
                 start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
@@ -574,13 +580,6 @@ class LeafletImage extends Component {
 
         this._fitToView = L.control.fitToView(bounds).addTo(map);
         // Tradusction of tooltips
-        L.drawLocal.draw.toolbar.buttons.simpleline = t('annotate.editor.btn_tooltip_length_tool');
-        L.drawLocal.draw.toolbar.buttons.polyline = t('annotate.editor.btn_tooltip_multiline_length_tool');
-        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
-        L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_angle_tool');
-        L.drawLocal.draw.toolbar.buttons.rectangle = t('annotate.editor.btn_tooltip_rectangle_of_interest');
-        L.drawLocal.draw.toolbar.buttons.circlemarker = t('annotate.editor.btn_tooltip_point_of_interest');
-        L.drawLocal.draw.toolbar.buttons.marker = t('annotate.editor.btn_tooltip_point_of_interest');
 
         Promise.all([lpp, fdp]).then( () => {
             setTimeout(() => {
