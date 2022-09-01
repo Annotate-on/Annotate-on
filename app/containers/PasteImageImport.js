@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 import Component from '../components/PasteImageImport';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
     return {};
@@ -15,4 +16,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));

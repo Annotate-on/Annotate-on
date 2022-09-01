@@ -14,6 +14,7 @@ export default class extends PureComponent {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <div className="bst rcn_urldownloader">
                 <div className="file-drop-zone"
@@ -56,7 +57,7 @@ export default class extends PureComponent {
                              }));
                          }
                      }}
-                >Drop here files from file system.
+                >{t('library.import_images.lbl_drop_here_files_from_file_system')}
                 </div>
                 <ul className="selected-files">
                     {this.state.droppedFiles.map((file, index) => {
@@ -85,17 +86,15 @@ export default class extends PureComponent {
                             this.props.fileType && this.props.fileType === 'video' ?  this.props._saveVideos(this.state.droppedFiles) : this.props.saveImages(this.state.droppedFiles)
 
                         } , 30)
-                    }}
-                >Save</Button>
+                    }}>{t('global.save')}
+                </Button>
                 &emsp;
                 <Button className="cancel_button btn btn-danger" size="md" color="warning" onClick={() => {
                     this.props.goToLibrary();
                     setTimeout(() => {
                         ee.emit(EVENT_SELECT_TAB, 'library')
                     }, 100)
-                }}
-                >
-                    Cancel
+                }}>{t('global.cancel')}
                 </Button>
             </div>
         );

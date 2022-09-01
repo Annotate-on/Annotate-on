@@ -136,15 +136,18 @@ export default class extends Component {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <_Root className="bst">
-                {this.state.showLoadingSpinner ? <LoadingSpinner text={'Preparing files to import...'}/> :
+                {this.state.showLoadingSpinner ? <LoadingSpinner text={t('library.import_video.loading_preparing_files_to_import')}/> :
                     <div>
                         <div className="bg">
                             <a onClick={() => {
                                 this.props.goToLibrary();
-                            }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                            <span className="title">Import</span>
+                            }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
+                            <span className="title">
+                                {t('library.import_video.title')}
+                            </span>
                         </div>
                         <_Content>
                             <div className="vertical">
@@ -159,16 +162,15 @@ export default class extends Component {
                                             <div className="header_import_recolnat"><h5>Select mode of import
                                                 <Button
                                                     className="btn btn-primary"
-                                                    title="Go back to library"
+                                                    title={t('global.btn_tooltip_go_back_to_library')}
                                                     size="sm" color="blue"
                                                     onClick={() => {
                                                         this.props.goToLibrary();
                                                         setTimeout(() => {
                                                             ee.emit(EVENT_SELECT_TAB, 'library')
                                                         }, 100)
-                                                    }}
-                                                >
-                                                    Cancel
+                                                    }}>
+                                                    {t('global.cancel')}
                                                 </Button>
                                             </h5></div>
                                         </Col>
@@ -177,11 +179,13 @@ export default class extends Component {
                                     <Row>
                                         <Col sm={3} md={3} lg={3}>
                                             <fieldset className="import-fieldset">
-                                                <legend className="import-legend">Import local videos</legend>
+                                                <legend className="import-legend">
+                                                    {t('library.import_video.lbl_import_local_videos')}
+                                                </legend>
                                                 <div className="import-title">
                                                     <Button disabled={this.state.parentFolder === null}
                                                             className="btn btn-secondary btn_import"
-                                                            title="Import local videos"
+                                                            title={t('library.import_video.btn_tooltip_select_videos')}
                                                             onClick={() => {
                                                                 this.setState({
                                                                     showImportRemoteUrl: false ,
@@ -203,21 +207,24 @@ export default class extends Component {
                                                                         this._saveVideos(_);
                                                                     }
                                                                 } , 30);
-
-                                                            }}
-                                                    >Select videos</Button>
+                                                            }}>
+                                                        {t('library.import_video.btn_select_videos')}
+                                                    </Button>
                                                 </div>
                                             </fieldset>
                                             <fieldset className="import-fieldset">
-                                                <legend className="import-legend">Import from URLs list</legend>
+                                                <legend className="import-legend">
+                                                    {t('library.import_images.lbl_import_from_urls')}
+                                                </legend>
                                                 <div className="import-title">
                                                     <Button disabled={this.state.parentFolder === null}
                                                             className="btn btn-secondary btn_import"
-                                                            title="Import videos from urls"
+                                                            title={t('library.import_video.btn_tooltip_paste_urls')}
                                                             onClick={() => {
                                                                 this.setState({showImportRemoteUrl: true});
-                                                            }}
-                                                    >Paste URLs list</Button>
+                                                            }}>
+                                                        {t('library.import_video.btn_paste_urls')}
+                                                    </Button>
                                                 </div>
                                             </fieldset>
                                         </Col>
@@ -228,8 +235,8 @@ export default class extends Component {
                                                                     this.setState({showImportRemoteUrl: false});
                                                                 }}/> :
                                                 <fieldset className="import-fieldset">
-                                                    <legend className="import-legend">Import local videos by drag and
-                                                        drop
+                                                    <legend className="import-legend">
+                                                        {t('library.import_video.lbl_import_local_videos_by_dnd')}
                                                     </legend>
                                                     <DragAndDropImport parentFolder={this.state.parentFolder}
                                                                        _saveVideos={this._saveVideos}

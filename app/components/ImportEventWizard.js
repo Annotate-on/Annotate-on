@@ -96,13 +96,14 @@ export default class extends Component  {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <_Root className="bst">
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary();
-                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                    <span className="title">Import</span>
+                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
+                    <span className="title">{t('event.title')}</span>
                 </div>
                 <_Content>
                     <div className="vertical">
@@ -114,7 +115,7 @@ export default class extends Component  {
                         <Container className="import-wizard">
                             <Row className="first-row">
                                 <Col sm={12} md={12} lg={12}>
-                                    <div className="header_import_recolnat"> <h5>Enter event name and duration to create an event:
+                                    <div className="header_import_recolnat"> <h5>{t('event.lbl_enter_event_name_and_duration')}:
                                     </h5>
                                     </div>
                                 </Col>

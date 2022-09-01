@@ -20,6 +20,7 @@ import {_formatTimeDisplay} from "../../utils/maths";
 import {EVENT_STATUS_FINISHED, EVENT_STATUS_RECORDING} from "./Constants";
 import {Button, Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 import {_formatEventTimeDisplay, mergeAllEventAnnotationTags} from "./utils";
+import i18next from "i18next";
 
 let containerWidth = 0;
 
@@ -92,7 +93,6 @@ class EventTimeline extends Component {
     }
 
     componentDidMount() {
-
         //check for corrupted events
         if (this.state.event.status === EVENT_STATUS_RECORDING && (this.state.syncTimeEnd === null || this.state.syncTimeStart ===  null)){
             this.props.finishCorruptedEvent(this.state.event.sha1 , this.state.event)
@@ -102,7 +102,6 @@ class EventTimeline extends Component {
         ee.on(REFRESH_EVENT_TIMELINE_STATE , this._refreshState)
         ee.on(EVENT_GOTO_ANNOTATION, this._goToEventAnnotation);
         ee.on(EVENT_GET_EVENT_TIMELINE_CURRENT_TIME, this.notifyCurrentTime);
-
 
         if (this.state.currentTime === 0){
             this.setState({
@@ -130,7 +129,6 @@ class EventTimeline extends Component {
             syncTimeEnd: this.props.event.syncTimeEnd
         })
     }
-
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
 
@@ -255,7 +253,6 @@ class EventTimeline extends Component {
         }
     }
 
-
     _createAnn = (resourceId, start, end, duration, text , annId) => {
         this.props.createEventAnnotation(resourceId, start, end, duration, text, annId);
         ee.emit(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION);
@@ -282,7 +279,6 @@ class EventTimeline extends Component {
     }
 
     _updateEditedAnnotationEndtime(eventId , annId , endTime) {
-
         if (this.state.startTime > endTime || endTime === undefined || endTime === false || endTime === '') {
             endTime = this.state.startTime + this.state.startTime * 0.025
         }
@@ -299,7 +295,6 @@ class EventTimeline extends Component {
         })
     }
 
-
     startEventRecording = () => {
         const duration = this.props.event.duration;
         const startDate = new Date();
@@ -311,7 +306,6 @@ class EventTimeline extends Component {
         event.syncTimeStart = syncStart;
 
         this.props.editEvent(event.sha1 , event);
-
 
         this.interval = setInterval(this.tick , this.state.tickDelay);
         ee.emit(EVENT_UPDATE_EVENT_RECORDING_STATUS , true);
@@ -443,7 +437,6 @@ class EventTimeline extends Component {
         })
     }
 
-
     setCurrentTime = (time) => {
         if (time >=  this.state.eventStartTime && time <= this.state.duration){
             this.setState({
@@ -455,7 +448,6 @@ class EventTimeline extends Component {
             })
         }
     }
-
 
     _recordAnnotation = () => {
         this.setState({isAnnotationRecording: !this.state.isAnnotationRecording});
@@ -758,25 +750,23 @@ class EventTimeline extends Component {
         })
     }
 
-
     render() {
-
-
+        const { t } = i18next;
         return (
             <div>
                 <div>
                     <Modal isOpen={this.state.showTimeExtensionAlert} className="myCustomModal" toggle={this.hideAlert} contentClassName="event-stop-modal" wrapClassName="bst rcn_inspector pick-tag"
                            autoFocus={true}>
-                        <ModalHeader toggle={ () => this.setState({showEventFinishModal: false})}>Warning!</ModalHeader>
+                        <ModalHeader toggle={ () => this.setState({showEventFinishModal: false})}>{t('global.warning')}!</ModalHeader>
                         <ModalBody className="warning-modal-body">
-                            The event is about to expire , do you want to extend this event for another 30min?
+                            {t('annotate.event_timeline.dialog_event_to_expire_title')}
                         </ModalBody>
                         <ModalFooter>
                             <Button color="danger" onClick={(e)=> {
                                 e.preventDefault();
                                 this.extendEvent(1800);
-                            }}>Yes</Button>
-                            <Button color="primary" onClick={this.hideAlert}>Cancel</Button>
+                            }}>{t('global.yes')}</Button>
+                            <Button color="primary" onClick={this.hideAlert}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>
@@ -815,7 +805,5 @@ class EventTimeline extends Component {
         );
     }
 }
-
-
 
 export default EventTimeline;

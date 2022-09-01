@@ -8,6 +8,7 @@ import {_formatEventTimeDisplay,} from "./utils";
 
 const ADD_ANNOTATION = require('../pictures/chronothematique.svg');
 const ADD_ANNOTATION_RED = require('../pictures/chronothematique_red.svg');
+import i18next from "i18next";
 
 class EventPlayerControls extends Component {
 
@@ -31,9 +32,9 @@ class EventPlayerControls extends Component {
         }
     }
 
-
     render() {
-       return  this.props.eventStatus === EVENT_STATUS_FINISHED ?
+        const { t } = i18next;
+        return  this.props.eventStatus === EVENT_STATUS_FINISHED ?
            //if edit mode is open
            <div className='controls'>
             <div className='rowContainer'>
@@ -61,18 +62,18 @@ class EventPlayerControls extends Component {
                             }}/>
                         </div>
                         <div className='action-button center1'>
-                            <i title="Backward 5 sec" className="fa fa-backward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_backward_5_sec')} className="fa fa-backward" aria-hidden="true" onClick={() => {
                                 this.props.rewindBackwards(this.state.timeStep)
                             }}/>
-                            <i title="Goto start" className="fa fa-step-backward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_goto_start')} className="fa fa-step-backward" aria-hidden="true" onClick={() => {
                                 this.props.setTime(0)
                             }}/>
                         </div>
                         <div className='action-button center2'>
-                            <i title="Forward 5 sec" className="fa fa-forward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_forward_5_sec')} className="fa fa-forward" aria-hidden="true" onClick={() => {
                                 this.props.rewindForward(this.state.timeStep)
                             }}/>
-                            <i title="Goto end" className="fa fa-step-forward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_goto_end')} className="fa fa-step-forward" aria-hidden="true" onClick={() => {
                                 this.props.setTime(this.props.duration)
                             }}/>
                         </div>
@@ -95,7 +96,7 @@ class EventPlayerControls extends Component {
                                 <img className="add-annotation-picture"
                                      alt={this.props.isAnnotationRecording ? "add annotation red" : "add annotation"}
                                      src={this.props.isAnnotationRecording ? ADD_ANNOTATION_RED : ADD_ANNOTATION}/>
-                                Annotate
+                                {t('annotate.player_controls.lbl_annotate')}
                             </div>
                         </div>
                     </div>
@@ -136,16 +137,16 @@ class EventPlayerControls extends Component {
                    <Modal isOpen={this.state.showEventFinishModal} className="myCustomModal" toggle={() => this.setState({showEventFinishModal: false})} contentClassName="event-stop-modal" wrapClassName="bst rcn_inspector pick-tag"
                           scrollable={true}
                           autoFocus={false}>
-                       <ModalHeader toggle={ () => this.setState({showEventFinishModal: false})}>Stop event ?</ModalHeader>
+                       <ModalHeader toggle={ () => this.setState({showEventFinishModal: false})}>{t('annotate.event_timeline.dialog_stop_event_confirmation_title')}</ModalHeader>
                        <ModalBody className="warning-modal-body">
-                           If you stop the event, we will not be able to continue the analysis. Are you sure you want to stop the event?
+                           {t('annotate.event_timeline.dialog_stop_event_confirmation_message')}
                        </ModalBody>
                        <ModalFooter>
                            <Button color="danger" onClick={(e)=> {
                                e.preventDefault();
                                this.props.saveEvent()
-                           }}>Save</Button>
-                            <Button color="primary" onClick={()=> {this.setState({showEventFinishModal: false})}}>Cancel</Button>
+                           }}>{t('global.save')}</Button>
+                            <Button color="primary" onClick={()=> {this.setState({showEventFinishModal: false})}}>{t('global.cancel')}</Button>
                        </ModalFooter>
                    </Modal>
                </div>
@@ -166,7 +167,7 @@ class EventPlayerControls extends Component {
                                        className="start-stop-event-button"
                                        onClick={ () => {
                                     if (this.props.paused()){
-                                        const dialogResult = extendEventConfirmationDialog('' , 'Do you want to start event');
+                                        const dialogResult = extendEventConfirmationDialog('' , t('annotate.event_timeline.dialog_start_event_confirmation_message'));
                                         if (dialogResult === 0) {
                                             this.props.startEventRecording();
                                         }
@@ -174,7 +175,7 @@ class EventPlayerControls extends Component {
                                         this.setState({showEventFinishModal: true})
                                     }
                                }
-                               }>{this.props.isEventRecording ? "Stop event" : "Start event"}
+                               }>{this.props.isEventRecording ? t('annotate.event_timeline.btn_stop_event') : t('annotate.event_timeline.btn_start_event')}
                                </Button>
                                <div style={{ width: '90px'}} className={this.props.isValidToRecord && this.props.isEventRecording ? "add-annotation-button btn btn-primary" : "add-annotation-button btn btn-primary disabled"} onClick={() => {
                                    if (this.props.isValidToRecord && this.props.isEventRecording) {
@@ -184,7 +185,7 @@ class EventPlayerControls extends Component {
                                    <img className="add-annotation-picture"
                                         alt={this.props.isAnnotationRecording ? "stop recording" : "start recording"}
                                         src={this.props.isAnnotationRecording ? ADD_ANNOTATION_RED : ADD_ANNOTATION}/>
-                                   Annotate
+                                   {t('annotate.player_controls.lbl_annotate')}
                                </div>
                            </div>
 
