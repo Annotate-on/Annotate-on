@@ -16,37 +16,37 @@ class XmpMetadata extends PureComponent {
     constructor(props) {
         super(props);
         const initPicturesList = this.props.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
-
+        const { t } = this.props;
         const tableColumns = [
-            'Catalog #',
-            'Reference',
-            'Family',
-            'Genre',
-            'Scientific name',
-            'Field #',
+            t('results.metadata.table_column_catalog'),
+            t('results.metadata.table_column_reference'),
+            t('results.metadata.table_column_family'),
+            t('results.metadata.table_column_genre'),
+            t('results.metadata.table_column_scientific_name'),
+            t('results.metadata.table_column_field'),
 
-            'Title',
-            'Creator',
-            'Subject/Keywords',
-            'Description',
-            'Publisher',
-            'Contributor',
-            'Date',
-            'Type',
-            'Format',
-            'Identifier',
-            'Source',
-            'Language',
-            'Relation',
-            'Coverage',
-            'Rights',
-            'Contact',
+            t('results.metadata.table_column_title'),
+            t('results.metadata.table_column_creator'),
+            t('results.metadata.table_column_subject_keywords'),
+            t('results.metadata.table_column_description'),
+            t('results.metadata.table_column_publisher'),
+            t('results.metadata.table_column_contributor'),
+            t('results.metadata.table_column_date'),
+            t('results.metadata.table_column_type'),
+            t('results.metadata.table_column_format'),
+            t('results.metadata.table_column_identifier'),
+            t('results.metadata.table_column_source'),
+            t('results.metadata.table_column_language'),
+            t('results.metadata.table_column_relation'),
+            t('results.metadata.table_column_coverage'),
+            t('results.metadata.table_column_rights'),
+            t('results.metadata.table_column_contact'),
 
-            'Dimension X',
-            'Dimension Y',
-            'Resolution X',
-            'Resolution Y',
-            'Orientation'
+            t('results.metadata.table_column_dimension_x'),
+            t('results.metadata.table_column_dimension_y'),
+            t('results.metadata.table_column_resolution_x'),
+            t('results.metadata.table_column_resolution_y'),
+            t('results.metadata.table_column_orientation')
         ];
 
         this.state = {
@@ -75,17 +75,16 @@ class XmpMetadata extends PureComponent {
     }
 
     exportXmpMetadataToCsv(separator) {
+        const { t } = this.props;
         const pictures = this.state.initPicturesList;
 
         if (pictures) {
-
             const now = new Date();
             let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-                title: 'Xmp metadata',
+                title:  t('results.metadata.dialog_title_save_xmp_metadata'),
                 defaultPath: `${formatDateForFileName(now)}`
             });
             if (!file || file.length < 1) return;
-
 
             const data = pictures.map(image => {
 
@@ -124,7 +123,6 @@ class XmpMetadata extends PureComponent {
                         xmp_metadata.exif.orientation
                     ]
                 }
-
             });
 
             const worksheet = XLSX.utils.aoa_to_sheet([this.state.tableColumns, ...data]);
@@ -133,8 +131,8 @@ class XmpMetadata extends PureComponent {
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                 type: 'info',
                 detail: file,
-                message: `Export finished`,
-                buttons: ['OK', 'Open folder'],
+                message: t('global.export_finished'),
+                buttons: ['OK', t('global.open_folder')],
                 cancelId: 1
             });
             if (result === 1) {
@@ -144,6 +142,7 @@ class XmpMetadata extends PureComponent {
     }
 
     exportXmpWithImages() {
+        const { t } = this.props;
         const exiftool = new ExifTool();
         exiftool
             .version()
@@ -224,9 +223,8 @@ class XmpMetadata extends PureComponent {
                     });
 
                     Promise.all(exifWriteJobs).then(result => {
-
                         const saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-                            title: 'Save collection to',
+                            title: t('results.metadata'),
                             defaultPath: `xmp_${formatDateForFileName(now)}`
                         });
                         if (!saverPath || saverPath.length < 1) return;
@@ -239,8 +237,8 @@ class XmpMetadata extends PureComponent {
                         const resultDialog = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                             type: 'info',
                             detail: saverPath,
-                            message: `Export finished`,
-                            buttons: ['OK', 'Open folder'],
+                            message: t('global.export_finished'),
+                            buttons: ['OK', t('global.open_folder')],
                             cancelId: 1
                         });
                         if (resultDialog === 1) {
@@ -261,6 +259,7 @@ class XmpMetadata extends PureComponent {
     render() {
         let key = 0;
         const isDropdownDisabled = this.state.initPicturesList.length === 0;
+        const { t } = this.props;
 
         const metadatas = [];
         this.state.initPicturesList.map((image, index) => {
@@ -275,7 +274,7 @@ class XmpMetadata extends PureComponent {
                 <Row className="action-bar">
                     <Col md={1}>
                         <div>
-                            <Dropdown title="Export the selected targets to a CSV file"
+                            <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')}
                                       style={{marginTop: '6px'}}
                                       isOpen={this.state.dropdownOpen}
                                       size="sm" color="primary" toggle={(event) => {
@@ -284,15 +283,15 @@ class XmpMetadata extends PureComponent {
                                 }));
                             }}>
                                 <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                    Export Xmp metadata
+                                    {t('results.metadata.dropdown_export_xmp_metadata')}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => {
                                         this.exportXmpWithImages();
-                                    }}>Export xmp with images</DropdownItem>
+                                    }}>{t('results.metadata.dropdown_item_export_xmp_with_images')}</DropdownItem>
                                     <DropdownItem onClick={() => {
                                         this.exportXmpMetadataToCsv(',');
-                                    }}>Export xmp to csv</DropdownItem>
+                                    }}>{t('results.metadata.dropdown_item_export_xmp_to_csv')}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -360,8 +359,6 @@ class XmpMetadata extends PureComponent {
                         </div>
                     </Col>
                 </Row>
-
-
             </div>
         )
     }

@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {push} from "connected-react-router";
 import Component from "../components/ChronoThematicAnnotations";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state) => {
     return {
@@ -11,4 +12,4 @@ const mapStateToProps = (state) => {
     }
 };
 
-export default connect(mapStateToProps, null)(Component);
+export default withTranslation()(connect(mapStateToProps, null)(Component));

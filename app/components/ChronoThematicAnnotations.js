@@ -12,25 +12,26 @@ import {
 } from "../utils/common";
 import AnnotationDropdownMenu from "./common/DropdownMenu";
 
-const tableColumns = [
-    'Reference',
-    'File',
-    'Sequence',
-    'Title',
-    'Tcin',
-    'Tcout',
-    'Duration',
-    'Abstract',
-    'Dates',
-    'Person',
-    'Locations',
-    'Keywords'
-];
-
 class ChronoThematicAnnotations extends PureComponent {
 
     constructor(props) {
         super(props);
+        const { t } = this.props;
+        const tableColumns = [
+            t('results.chrono_thematic_annotations.table_column_reference'),
+            t('results.chrono_thematic_annotations.table_column_file'),
+            t('results.chrono_thematic_annotations.table_column_sequence'),
+            t('results.chrono_thematic_annotations.table_column_title'),
+            t('results.chrono_thematic_annotations.table_column_tcin'),
+            t('results.chrono_thematic_annotations.table_column_tcout'),
+            t('results.chrono_thematic_annotations.table_column_duration'),
+            t('results.chrono_thematic_annotations.table_column_abstract'),
+            t('results.chrono_thematic_annotations.table_column_dates'),
+            t('results.chrono_thematic_annotations.table_column_person'),
+            t('results.chrono_thematic_annotations.table_column_locations'),
+            t('results.chrono_thematic_annotations.table_column_keywords')
+        ];
+
         this.exportXlsx = this.exportXlsx.bind(this);
         this.exportToZip = this.exportToZip.bind(this);
 
@@ -81,12 +82,13 @@ class ChronoThematicAnnotations extends PureComponent {
 
     render() {
         let key = 0;
+        const { t } = this.props;
         const isDropdownDisabled = this.state.annotations.length === 0;
         return (
             <div>
                 <Row className="action-bar">
                     <Col md={1}>
-                        <Dropdown title="Export the selected results to a CSV file"
+                        <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')}
                                   isOpen={this.state.dropdownOpen}
                                   size="sm" color="primary"
                                   toggle={() => {
@@ -95,7 +97,7 @@ class ChronoThematicAnnotations extends PureComponent {
                                         }));
                                   }}>
                             <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                Export to CSV
+                                {t('results.chrono_thematic_annotations.dropdown_export_to_csv')}
                             </DropdownToggle>
                             <AnnotationDropdownMenu exportXlsx={this.exportXlsx} exportToZip={this.exportToZip}/>
                         </Dropdown>
@@ -149,9 +151,10 @@ class ChronoThematicAnnotations extends PureComponent {
     }
 
     exportXlsx(separator) {
+        const { t } = this.props;
         const now = new Date();
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-            title: 'Annotations',
+            title: t('results.chrono_thematic_annotations.dialog_title_save'),
             defaultPath: `chronothematic-${formatDateForFileName(now)}.csv`
         });
         if (!file || file.length < 1) return;
@@ -171,14 +174,15 @@ class ChronoThematicAnnotations extends PureComponent {
                 annotation.tags
             ];
         });
-        const worksheet = XLSX.utils.aoa_to_sheet([tableColumns.slice(1), ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([this.state.tableColumns.slice(1), ...data]);
         getXlsx(worksheet , separator , file);
     }
 
     exportToZip(separator) {
+        const { t } = this.props;
         const now = new Date();
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-            title: 'Annotations',
+            title: t('results.chrono_thematic_annotations.dialog_title_save'),
             defaultPath: `chronothematic-${formatDateForFileName(now)}.zip`
         });
         if (!file || file.length < 1) return;
@@ -215,7 +219,7 @@ class ChronoThematicAnnotations extends PureComponent {
                 ]]
             }
         });
-        exportZipForChronoOrEventAnnotations(data, file, separator, tableColumns);
+        exportZipForChronoOrEventAnnotations(data, file, separator, this.state.tableColumns);
     }
 }
 
