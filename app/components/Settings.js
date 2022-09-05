@@ -15,6 +15,7 @@ import {
     Table
 } from 'reactstrap';
 import {
+    updateSelectedLanguage,
     deleteWorkspace,
     editProject,
     getProjectInfo,
@@ -31,7 +32,14 @@ import archiver from 'archiver';
 import TableHeader from "./TableHeader";
 import {remote, shell} from "electron";
 import path from "path";
-import {COMMON_TAGS, IMAGE_STORAGE_DIR, MODEL_XPER, TAG_AUTO} from "../constants/constants";
+import {
+    COMMON_TAGS,
+    IMAGE_STORAGE_DIR,
+    MODEL_XPER, SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC,
+    SORT_DATE_ASC,
+    SORT_DATE_DESC, SORT_TYPE_ASC, SORT_TYPE_DESC,
+    TAG_AUTO
+} from "../constants/constants";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import {
     createAutomaticTags,
@@ -307,6 +315,11 @@ export default class extends PureComponent {
         }
     }
 
+    _handleOnChangeLanguage = (event) => {
+        console.info("selected language = [" + event.target.value + "]" )
+        updateSelectedLanguage(event.target.value)
+    };
+
     render() {
         const { t } = this.props;
         let status = '';
@@ -341,7 +354,7 @@ export default class extends PureComponent {
                 </div>
                 <br/>
                 <Row className="action-bar">
-                    <Col sm={12} md={12} lg={12}>
+                    <Col sm={11} md={11} lg={11}>
                         <Button className="btn btn-primary mr-md-3" color="primary"
                                 title={t('projects.btn_tooltip_create_new_project')}
                                 onClick={() => {
@@ -366,6 +379,14 @@ export default class extends PureComponent {
                                     this.props.goToImportExistingProject();
                                 }}
                         >{t('projects.btn_open_project')}</Button>
+                    </Col>
+                    <Col sm={1} md={1} lg={1}>
+                        <Input type="select" bsSize="md" title="Change application language"
+                               value={this.props.i18n.language}
+                               onChange={this._handleOnChangeLanguage}>
+                            <option value="en" title={t('global.languages.EN')}>EN</option>
+                            <option value="fr" title={t('global.languages.FR')}>FR</option>
+                        </Input>
                     </Col>
                 </Row>
                 <br/>

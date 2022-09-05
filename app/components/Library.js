@@ -607,14 +607,6 @@ export default class extends Component {
                                                         }
                                                     }}
                                             >{t('library.btn_import_images')}</Button><br />
-                                            <Button className="btn btn-primary" color="primary"
-                                                    onClick={event=>{
-                                                            this.props.i18n.changeLanguage('en')
-                                            }}>Change EN</Button>
-                                            <Button className="btn btn-primary" color="primary"
-                                                    onClick={event=>{
-                                                        this.props.i18n.changeLanguage('fr')
-                                                    }}>Change FR</Button>
                                         </div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
