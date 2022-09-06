@@ -13,6 +13,8 @@ import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
 import {changeLanguage} from "i18next";
+import {getDefaultLanguage} from "../i18n";
+
 
 let config;
 // path to global app config
@@ -32,7 +34,6 @@ if (process.env.NODE_ENV === 'production') {
 } else {
     installatio_root_dir = process.env.INIT_CWD;
 }
-
 
 export const WORK_SPACE_DESCRIPTOR = 'workspace.json';
 export const PROJECT_INFO_DESCRIPTOR = 'project-info.json';
@@ -404,15 +405,6 @@ export const setConfigFilePath = () => {
 };
 
 /**
- * Returns default language for applications.
- *
- * @returns {string} default language
- */
-function getDefaultLanguage() {
-    return 'en';
-}
-
-/**
  *  Init basic config. Read existing workspace location or init location for the first time.
  */
 export const fromConfigFile = () => {
@@ -430,14 +422,15 @@ export const fromConfigFile = () => {
             config.workspace = USER_DATA_DIR;
         }
         initWorkSpace();
-        if(!config.language) {
-            config.language = getDefaultLanguage();
+        if(config.language) {
+            changeLanguage(config.language);
+        } else {
+            updateSelectedLanguage(getDefaultLanguage());
         }
-        changeLanguage(config.language);
     } catch (e) {
         fs.ensureDirSync(USER_DATA_DIR);
-        config = {workspace: USER_DATA_DIR, language: getDefaultLanguage()};
-        changeLanguage(config.language);
+        config = {workspace: USER_DATA_DIR};
+        updateSelectedLanguage(getDefaultLanguage());
     }
 };
 
@@ -1006,9 +999,11 @@ export const renameFolder = (oldPath, newPath) => {
  * @param projectPath
  */
 export const updateSelectedLanguage = (lang) => {
+    console.log("updateSelectedLanguage lang " + lang)
     // const readYml = configYaml(config_file_path);
     changeLanguage(lang);
     config.language = lang;
     yaml.sync(config_file_path, config);
 };
+
 

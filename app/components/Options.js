@@ -3,6 +3,7 @@ import {Col, Container, Input, Row} from 'reactstrap';
 
 import {updateSelectedLanguage,} from "../utils/config";
 import RECOLNAT_LOGO from "./pictures/logo.svg";
+import {SUPPORTED_LANGUAGES} from "../i18n";
 
 export default class Options extends Component {
 
@@ -44,8 +45,11 @@ export default class Options extends Component {
                                         <Input type="select" bsSize="md" title={t('global.options.select_language.tooltip')}
                                                value={this.props.i18n.language}
                                                onChange={this._handleOnChangeLanguage}>
-                                            <option value="en" title={t('global.languages.EN')}>{t('global.languages.EN')}</option>
-                                            <option value="fr" title={t('global.languages.FR')}>{t('global.languages.FR')}</option>
+                                            {
+                                                SUPPORTED_LANGUAGES.map(lang => {
+                                                    return <option key={lang} value={lang} title={t('global.languages.'+lang.toUpperCase())}>{t('global.languages.'+lang.toUpperCase())}</option>
+                                                })
+                                            }
                                         </Input>
                                     </Col>
                                     <Col sm={8} md={8} lg={8}/>
