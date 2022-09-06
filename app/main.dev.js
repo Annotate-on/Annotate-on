@@ -60,6 +60,8 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', async () => {
+   // console.log("County code" + app.getLocaleCountryCode());
+   console.log("Locale" + app.getLocale());
   if (
     process.env.NODE_ENV === 'development' ||
     process.env.DEBUG_PROD === 'true'
