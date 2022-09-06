@@ -27,7 +27,7 @@ export const EDIT_EVENT = 'EDIT_EVENT';
 export const DELETE_EVENT = 'DELETE_EVENT';
 
 // SIZES
-export const NAV_SIZE = 50;
+export const NAV_SIZE = 60;
 // COLOURS
 const BG1 = '#333';
 const BG2 = '#666';
