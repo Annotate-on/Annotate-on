@@ -56,7 +56,6 @@ import configYaml from 'config-yaml';
 import lodash from "lodash";
 import packageJson from "../../package.json";
 import {getValidTags, lvlAutomaticTags, lvlTags} from "./tags/tagUtils";
-import i18next from "i18next";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
@@ -315,11 +314,6 @@ export default class extends PureComponent {
         }
     }
 
-    _handleOnChangeLanguage = (event) => {
-        console.info("selected language = [" + event.target.value + "]" )
-        updateSelectedLanguage(event.target.value)
-    };
-
     render() {
         const { t } = this.props;
         let status = '';
@@ -379,14 +373,6 @@ export default class extends PureComponent {
                                     this.props.goToImportExistingProject();
                                 }}
                         >{t('projects.btn_open_project')}</Button>
-                    </Col>
-                    <Col sm={1} md={1} lg={1}>
-                        <Input type="select" bsSize="md" title="Change application language"
-                               value={this.props.i18n.language}
-                               onChange={this._handleOnChangeLanguage}>
-                            <option value="en" title={t('global.languages.EN')}>EN</option>
-                            <option value="fr" title={t('global.languages.FR')}>FR</option>
-                        </Input>
                     </Col>
                 </Row>
                 <br/>

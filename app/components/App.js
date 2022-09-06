@@ -106,6 +106,7 @@ const IMAGE = 'IMAGE';
 const DATA = 'DATA';
 const SETTINGS = 'SETTINGS';
 const TAXONOMIES = 'TAXONOMIES';
+const OPTIONS = 'OPTIONS';
 const ERROR = require('./pictures/error.svg');
 let autoSaveInterval;
 let waitPane;
@@ -526,6 +527,24 @@ export default class AppMenu extends Component {
                         <div className="nav_box">
                             <div className="tags-menu"/>
                             <div className="right-menu-title">{t('main_navbar.keywords')}</div>
+                        </div>
+                    </_Link>
+                    <_Link
+                           className={(this.state.selectedMenu === OPTIONS ? 'active-menu-item' : '') + ' menu-item'}
+                           to="/options"
+                           onClick={(e) => {
+                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
+                                   e.preventDefault();
+                                   this._showEditFormViolationModalWarning();
+                               }else {
+                                   this.setState({
+                                       selectedMenu: OPTIONS
+                                   });
+                               }
+                           }} title={t('main_navbar.tooltip_options')}>
+                        <div className="nav_box">
+                            <div className="options-menu"/>
+                            <div className="right-menu-title">{t('main_navbar.options')}</div>
                         </div>
                     </_Link>
                     <div className="menu_separator"/>

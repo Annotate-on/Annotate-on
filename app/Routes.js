@@ -18,6 +18,7 @@ import ImportVideoWizard from "./containers/ImportVideoWizard";
 import ImportEventWizard from "./containers/ImportEventWizard";
 import TagManager from "./containers/TagManager";
 import IIIF from "./containers/IIIF";
+import Options from "./containers/Options";
 
 export default () => (
     <App>
@@ -38,6 +39,7 @@ export default () => (
             <Route path={routes.IMPORT_PROJECT_AS_ZIP} component={ImportProjectAsZip}/>
             <Route path={routes.TAG_MANAGER} component={TagManager}/>
             <Route path={routes.IIIF} component={IIIF}/>
+            <Route path={routes.OPTIONS} component={Options}/>
             <Redirect
             to={{
                 pathname: "/selection",

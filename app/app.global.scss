@@ -243,6 +243,7 @@
 @import 'scss/settings';
 @import 'scss/video-player';
 @import "scss/tagManager";
+@import "scss/options";
 
 .annotation-tag {
   margin-right: 3px;
@@ -373,6 +374,18 @@
 
   .active-menu-item & {
     background: url(./components/pictures/tags_white.svg) no-repeat center;
+  }
+}
+
+.options-menu {
+  width: 24px;
+  height: 24px;
+  margin: auto;
+  background: url(./components/pictures/options.svg) no-repeat center;
+  cursor: pointer;
+
+  .active-menu-item & {
+    background: url(./components/pictures/options-white.svg) no-repeat center;
   }
 }
 

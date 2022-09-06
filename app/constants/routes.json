@@ -17,5 +17,6 @@
   "IMPORT_PROJECT_AS_ZIP": "/import-project-as-zip",
   "TAG_MANAGER": "/tagManager",
   "IIIF": "/iiif",
-  "EVENT_HOME": "/eventHome"
+  "EVENT_HOME": "/eventHome",
+  "OPTIONS": "/options"
 }

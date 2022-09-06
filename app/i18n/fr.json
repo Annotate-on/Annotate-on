@@ -46,13 +46,18 @@
       "lbl_importing_resources_files_to_folders": "Importing resources files to folders",
       "lbl_resources_files_found": "Resources files found",
       "lbl_collecting_metadata_and_generating_thumbnails": "Collecting metadata and generating thumbnails",
+      "options": {
+        "title": "Options",
+        "lbl_select_language": "Select language",
+        "select_language.tooltip": "Change application language"
+      },
       "languages": {
-        "EN": "FR English",
-        "FR": "FR French"
+        "EN": "English",
+        "FR": "French"
       }
     },
     "main_navbar": {
-      "library": "Fr Library",
+      "library": "FR Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",
@@ -69,7 +74,8 @@
       "models": "Models",
       "tooltip_models": "Annotations models",
       "keywords": "Keywords",
-      "tooltip_keywords": "Tag manager"
+      "tooltip_keywords": "Tag manager",
+      "options": "Options"
     },
     "popup_sort": {
       "alphabetical": "Alphabetical",
