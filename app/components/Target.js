@@ -23,7 +23,7 @@ const COLUMN_MIN = 'Min';
 const COLUMN_MAX = 'Max';
 const COLUMN_COLOR = 'Color';
 
-const COLUMNS = [
+const EXPORT_COLUMNS = [
     COLUMN_CHARACTER_NAME,
     COLUMN_CHARACTER_TYPE,
     COLUMN_CATALOG_NUMBER,
@@ -225,7 +225,7 @@ class Target extends PureComponent {
             ]
         });
 
-        const worksheet = XLSX.utils.aoa_to_sheet([COLUMNS, ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
         getXlsx(worksheet , separator , file);
     };
 

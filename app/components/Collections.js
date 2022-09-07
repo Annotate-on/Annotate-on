@@ -50,29 +50,28 @@ class Collections extends PureComponent {
         });
     }
 
-    generateColumns(image) {
-        const { t } = this.props;
-        const COLUMNS = [
-            t('results.collections.table_column_title'),
-            t('results.collections.table_column_catalog_number'),
-            t('results.collections.table_column_scientific_name'),
-            t('results.collections.table_column_collection_number'),
-            t('results.collections.table_column_author'),
-            t('results.collections.table_column_date'),
-            t('results.collections.table_column_cartel'),
-            t('results.collections.table_column_path'),
-            t('results.collections.table_column_longitude_dd'),
-            t('results.collections.table_column_latitude_dd')
+    generateExportColumns(image) {
+        const EXPORT_COLUMNS = [
+            'Title',
+            'Catalog number',
+            'Scientific name',
+            'Collection number',
+            'Author',
+            'Date',
+            'Cartel',
+            'Path',
+            'LongitudeDD',
+            'LatitudeDD',
         ];
         if (image.anno_counter > 0) {
             for (let i = 0; i < image.anno_counter; i++) {
-                COLUMNS.push('annotation_type_' + (i + 1));
-                COLUMNS.push('annotation_name_' + (i + 1));
-                COLUMNS.push('annotation_value_' + (i + 1));
-                COLUMNS.push('annotation_position_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_type_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_name_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_value_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_position_' + (i + 1));
             }
         }
-        return COLUMNS;
+        return EXPORT_COLUMNS;
     }
 
     _exportCSV(separator, action) {
@@ -234,7 +233,7 @@ class Collections extends PureComponent {
                 });
             }
 
-            const worksheet = XLSX.utils.aoa_to_sheet([this.generateColumns(maxCount), ...data]);
+            const worksheet = XLSX.utils.aoa_to_sheet([this.generateExportColumns(maxCount), ...data]);
             const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
 
             if (action === 'csv_with_images') {

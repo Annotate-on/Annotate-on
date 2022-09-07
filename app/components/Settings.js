@@ -471,7 +471,7 @@ export default class extends PureComponent {
                                                                 locked: project.locked
                                                             };
                                                         }}>
-                                                        {project.corrupted === true ? 'corrupted project' : project.label }
+                                                        {project.corrupted === true ? t('projects.lbl_corrupted_project') : project.label }
                                                     </ContextMenuTrigger>
                                                 </td>
                                                 <td>

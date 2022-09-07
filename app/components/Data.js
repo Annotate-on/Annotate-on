@@ -44,7 +44,7 @@ import ChronoThematicAnnotations from "../containers/ChronoThematicAnnotations";
 import EventAnnotations from "../containers/EventAnnotations";
 import {calculateTableHeight, getXlsx} from "../utils/common";
 
-const COLUMNS = [
+const EXPORT_COLUMNS = [
     'Name',
     'Type',
     'Value',
@@ -825,7 +825,7 @@ class Data extends PureComponent {
             }
         });
 
-        const worksheet = XLSX.utils.aoa_to_sheet([COLUMNS, ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
         getXlsx(worksheet , separator , file);
 
     }

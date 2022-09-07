@@ -12,6 +12,21 @@ import {
 } from "../utils/common";
 import AnnotationDropdownMenu from "./common/DropdownMenu";
 
+const EXPORT_COLUMNS = [
+    'Reference',
+    'File',
+    'Sequence',
+    'Title',
+    'Tcin',
+    'Tcout',
+    'Duration',
+    'Abstract',
+    'Dates',
+    'Person',
+    'Locations',
+    'Keywords'
+];
+
 class ChronoThematicAnnotations extends PureComponent {
 
     constructor(props) {
@@ -174,7 +189,7 @@ class ChronoThematicAnnotations extends PureComponent {
                 annotation.tags
             ];
         });
-        const worksheet = XLSX.utils.aoa_to_sheet([this.state.tableColumns.slice(1), ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS.slice(1), ...data]);
         getXlsx(worksheet , separator , file);
     }
 
@@ -219,7 +234,7 @@ class ChronoThematicAnnotations extends PureComponent {
                 ]]
             }
         });
-        exportZipForChronoOrEventAnnotations(data, file, separator, this.state.tableColumns);
+        exportZipForChronoOrEventAnnotations(data, file, separator, EXPORT_COLUMNS);
     }
 }
 

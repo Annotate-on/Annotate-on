@@ -75,7 +75,8 @@
       "tooltip_models": "Annotations models",
       "keywords": "Keywords",
       "tooltip_keywords": "Tag manager",
-      "options": "Options"
+      "options": "Options",
+      "tooltip_options" : "Global application options"
     },
     "popup_sort": {
       "alphabetical": "Alphabetical",
@@ -389,6 +390,7 @@
       "alert_you_can_not_export_project_in_its_own_workspace": "You cant export project in its own workspace",
       "alert_exporting_to_zip_file": "Exporting to zip file...",
       "dialog_message_export_finished": "Export finished",
+      "lbl_corrupted_project": "corrupted project",
       "create_new_project": {
         "title": "Create new project",
         "lbl_enter_project_title": "Enter project title",
@@ -754,6 +756,11 @@
         "alert_category_name_already_exit": "category name already exists!",
         "alert_cannot_add_category_to_non_category": "you can not add category to non category object"
       }
+    },
+    "options": {
+      "title": "Options",
+      "lbl_select_language": "Select language",
+      "select_language.tooltip": "Change application language"
     }
   }
 }

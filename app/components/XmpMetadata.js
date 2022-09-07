@@ -11,6 +11,38 @@ import {ExifTool} from "exiftool-vendored";
 import {validatePictureFormat} from "../utils/library";
 import {calculateTableHeight} from "../utils/common";
 
+const EXPORT_COLUMNS = [
+    'Catalog #',
+    'Reference',
+    'Family',
+    'Genre',
+    'Scientific name',
+    'Field #',
+
+    'Title',
+    'Creator',
+    'Subject/Keywords',
+    'Description',
+    'Publisher',
+    'Contributor',
+    'Date',
+    'Type',
+    'Format',
+    'Identifier',
+    'Source',
+    'Language',
+    'Relation',
+    'Coverage',
+    'Rights',
+    'Contact',
+
+    'Dimension X',
+    'Dimension Y',
+    'Resolution X',
+    'Resolution Y',
+    'Orientation'
+];
+
 class XmpMetadata extends PureComponent {
 
     constructor(props) {
@@ -125,7 +157,7 @@ class XmpMetadata extends PureComponent {
                 }
             });
 
-            const worksheet = XLSX.utils.aoa_to_sheet([this.state.tableColumns, ...data]);
+            const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
             const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
             stream.pipe(fs.createWriteStream(file + '.csv'));
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{

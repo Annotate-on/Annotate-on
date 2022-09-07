@@ -390,6 +390,7 @@
       "alert_you_can_not_export_project_in_its_own_workspace": "You cant export project in its own workspace",
       "alert_exporting_to_zip_file": "Exporting to zip file...",
       "dialog_message_export_finished": "Export finished",
+      "lbl_corrupted_project": "corrupted project",
       "create_new_project": {
         "title": "Create new project",
         "lbl_enter_project_title": "Enter project title",

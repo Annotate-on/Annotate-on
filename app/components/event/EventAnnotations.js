@@ -8,26 +8,26 @@ import {formatDateForEventAnnotationsExport, formatEventAnnotationTags} from "./
 import {_orderAnnotationsByTcInAndFormatTime, exportZipForChronoOrEventAnnotations, getXlsx} from "../../utils/common";
 import AnnotationDropdownMenu from "../common/DropdownMenu";
 
+const EXPORT_COLUMNS = [
+    'Reference',
+    'Event',
+    'Annotation',
+    'Title',
+    'Topic',
+    'Tcin',
+    'Tcout',
+    'Duration',
+    'Note',
+    'Dates',
+    'Person',
+    'Locations',
+    'General Keywords'
+];
 
 class EventAnnotations extends Component {
     constructor(props) {
         super(props);
         const { t } = this.props;
-        const exportTableColumns = [
-            t('results.event_annotations.table_column_reference'),
-            t('results.event_annotations.table_column_event'),
-            t('results.event_annotations.table_column_annotation'),
-            t('results.event_annotations.table_column_title'),
-            t('results.event_annotations.table_column_topic'),
-            t('results.event_annotations.table_column_tcin'),
-            t('results.event_annotations.table_column_tcout'),
-            t('results.event_annotations.table_column_duration'),
-            t('results.event_annotations.table_column_note'),
-            t('results.event_annotations.table_column_dates'),
-            t('results.event_annotations.table_column_person'),
-            t('results.event_annotations.table_column_locations'),
-            t('results.event_annotations.table_column_general_keywords')
-        ];
 
         const tableColumns = [
             t('results.event_annotations.table_column_ref'),
@@ -80,7 +80,6 @@ class EventAnnotations extends Component {
             })
         }
         this.state = {
-            exportTableColumns,
             tableColumns,
             annotations: _orderAnnotationsByTcInAndFormatTime(annotations),
             pageSize: 20,
@@ -220,7 +219,7 @@ class EventAnnotations extends Component {
             const eventName = this.props.pictures[annotation.eventId].name;
             return this.formatAnnotationForExport(eventName, annotation);
         });
-        const worksheet = XLSX.utils.aoa_to_sheet([this.state.exportTableColumns.slice(1), ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS.slice(1), ...data]);
         getXlsx(worksheet , separator , file);
     }
 
@@ -244,8 +243,8 @@ class EventAnnotations extends Component {
             }
         });
 
-        console.log('export table columns' , this.state.exportTableColumns.slice(1));
-        exportZipForChronoOrEventAnnotations(data, file, separator, tableColumns);
+        // console.log('export table columns' , EXPORT_COLUMNS.slice(1));
+        exportZipForChronoOrEventAnnotations(data, file, separator, EXPORT_COLUMNS);
     }
 }
 
