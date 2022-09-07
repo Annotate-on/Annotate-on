@@ -74,4 +74,3 @@ Pour packager l'application pour la plateforme locale:
 
 ```bash
 yarn package
-
