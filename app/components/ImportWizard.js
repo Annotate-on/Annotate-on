@@ -54,7 +54,6 @@ const _RightColumn = styled.div`
 export default class extends Component {
     constructor(props) {
         super(props);
-
         this.state = {parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName)};
     }
 
@@ -128,13 +127,14 @@ export default class extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <_Root className="bst">
                 <div className="bg">
                     <a onClick={ () => {
                         this.props.goToLibrary();
-                    }}> <img alt="go to homepage" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                    <span className="title">Import</span>
+                    }}> <img alt="go to homepage" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
+                    <span className="title">{t('library.import_images.title')}</span>
                 </div>
                 <_Content>
                     <div className="vertical">
@@ -146,10 +146,10 @@ export default class extends Component {
                         <Container className="import-wizard">
                             <Row className="first-row">
                                 <Col sm={12} md={12} lg={12}>
-                                    <div className="header_import_recolnat"> <h5>Select mode of import
+                                    <div className="header_import_recolnat"> <h5>{t('library.import_images.lbl_select_mode_of_import')}
                                     <Button
                                         className="btn btn-primary"
-                                        title="Go back to library"
+                                        title={t('global.btn_tooltip_go_back_to_library')}
                                         size="sm" color="blue"
                                         onClick={ () => {
                                             this.props.goToLibrary();
@@ -158,7 +158,7 @@ export default class extends Component {
                                             }, 100)
                                         }}
                                     >
-                                        Cancel
+                                        {t('global.cancel')}
                                     </Button>
                                     </h5></div>
                                 </Col>
@@ -167,11 +167,11 @@ export default class extends Component {
                             <Row>
                                 <Col sm={3} md={3} lg={3}>
                                     <fieldset className="import-fieldset">
-                                        <legend className="import-legend">Import local images</legend>
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_local_images')}</legend>
                                         <div className="import-title">
                                             <Button disabled={this.state.parentFolder === null}
                                                     className="btn btn-secondary btn_import"
-                                                    title="Import selected images"
+                                                    title={t('library.import_images.btn_tooltip_select_images')}
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: false});
                                                         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
@@ -183,46 +183,46 @@ export default class extends Component {
                                                         if (!_ || _.length < 1) return;
                                                         this._saveImages(_);
                                                     }}
-                                            >Select images</Button>
+                                            >{t('library.import_images.btn_select_images')}</Button>
                                         </div>
                                     </fieldset>
                                     <fieldset className="import-fieldset">
-                                        <legend className="import-legend">Import from URLs list</legend>
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_from_urls')}</legend>
                                         <div className="import-title">
                                             <Button disabled={this.state.parentFolder === null}
                                                     className="btn btn-secondary btn_import"
-                                                    title="Import images from urls"
+                                                    title={t('library.import_images.btn_tooltip_paste_urls')}
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: true});
                                                     }}
-                                            >Paste URLs list</Button>
+                                            >{t('library.import_images.btn_paste_urls')}</Button>
                                         </div>
                                     </fieldset>
                                     <fieldset className="import-fieldset">
-                                        <legend className="import-legend">Import a full directory</legend>
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_full_directory')}</legend>
                                         <div className="import-title">
                                             <Button disabled={this.state.parentFolder === null}
                                                     className="btn btn-secondary btn_import"
-                                                    title="Import folders with images and subfolders hierarchy from your computer"
+                                                    title={t('library.import_images.btn_tooltip_select_directory')}
                                                     onClick={ () => {
                                                         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
                                                         if (!_ || _.length < 1) return;
 
                                                         this._saveFolder(_.pop());
                                                     }}
-                                            >Select directory</Button>
+                                            >{t('library.import_images.btn_select_directory')}</Button>
                                         </div>
                                     </fieldset>
                                     <fieldset className="import-fieldset">
-                                        <legend className="import-legend">Import from Recolnat</legend>
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_from_recolnat')}</legend>
                                         <div className="import-title">
                                             <Button disabled={this.state.parentFolder === null}
                                                     className="btn btn-secondary btn_import"
-                                                    title="Import images from explore.recolnat.org"
+                                                    title={t('library.import_images.btn_tooltip_import_from_recolnat')}
                                                     onClick={ () => {
                                                         this.props.goToImport(encodeURIComponent(this.state.parentFolder));
                                                     }}
-                                            >Import from Recolnat</Button>
+                                            >{t('library.import_images.btn_import_from_recolnat')}</Button>
                                         </div>
                                     </fieldset>
                                 </Col>
@@ -232,15 +232,12 @@ export default class extends Component {
                                                         onClose={() => {
                                                             this.setState({showImportRemoteUrl: false});
                                                         }}/> :
-
                                         <fieldset className="import-fieldset">
-                                            <legend className="import-legend">Import local images by drag and drop
-                                            </legend>
+                                            <legend className="import-legend">{t('library.import_images.lbl_import_local_images_by_dnd')}</legend>
                                             <DragAndDropImport parentFolder={this.state.parentFolder}
                                                                saveImages={this._saveImages}/></fieldset>}
                                     <fieldset className="import-fieldset">
-                                    <legend className="import-legend">Paste images from clipboard
-                                    </legend>
+                                    <legend className="import-legend">{t('library.import_images.lbl_paste_images_from_clipboard')}</legend>
                                     <PasteImageImport  parentFolder={this.state.parentFolder}
                                                       saveImage={this._saveImageFromClipboard} />
 

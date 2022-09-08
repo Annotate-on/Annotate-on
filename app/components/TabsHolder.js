@@ -89,6 +89,7 @@ export default class extends PureComponent {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <div className="bst rcn_tabsholder">
                 <Nav tabs className="scroll-tabs">
@@ -100,7 +101,7 @@ export default class extends PureComponent {
                             this.props.goToLibrary();
                         }
                     }}>
-                        <img alt="logo" src={require('./pictures/logo.svg')} className="logo" title={"Go back to home page"}/>
+                        <img alt="logo" src={require('./pictures/logo.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
                     {this.state.tabs.map((name, index) => {
                         return <NavItem key={index}>
@@ -181,7 +182,7 @@ export default class extends PureComponent {
                 <div>
                     <ContextMenu id="tab-target_context_menu">
                         <MenuItem data={{action: 'edit'}} onClick={this._handleContextMenu}>
-                            <i className="fa fa-pencil" aria-hidden="true"/> Rename
+                            <i className="fa fa-pencil" aria-hidden="true"/>{t('global.rename')}
                         </MenuItem>
                     </ContextMenu>
                 </div>

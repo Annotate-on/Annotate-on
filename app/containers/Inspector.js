@@ -14,6 +14,7 @@ import {
     deleteAnnotationCategorical, editCartel, unfocusAnnotation
 } from '../actions/app';
 import {push} from "connected-react-router";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     let taxonomyInstance;
@@ -77,4 +78,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

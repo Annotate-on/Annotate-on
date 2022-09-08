@@ -6,6 +6,7 @@ import {_formatEventTimeDisplay, formatDateForMozaicView} from "./event/utils";
 import {EVENT_STATUS_FINISHED} from "./event/Constants";
 let thumbnailSequence = 2;
 let rotateImageInterval;
+import i18next from "i18next";
 
 export default class extends PureComponent {
     constructor(props) {
@@ -62,6 +63,7 @@ export default class extends PureComponent {
     }
 
     render() {
+        const { t } = i18next;
         return (
             <div className="img-grid">
                 {this.props.pic.resourceType === RESOURCE_TYPE_EVENT ?
@@ -98,21 +100,21 @@ export default class extends PureComponent {
                         <Row>
                             <Col sm={12} md={12} lg={12}>
                                 <div className="event-mozaic-item">
-                                    status: <b><span style={{color: this.props.pic.status === EVENT_STATUS_FINISHED ? 'red' : 'blue'}}>{this.props.pic.status.toUpperCase()}</span></b>
+                                    {t('library.mozaic_player.lbl_status')}: <b><span style={{color: this.props.pic.status === EVENT_STATUS_FINISHED ? 'red' : 'blue'}}>{this.props.pic.status.toUpperCase()}</span></b>
                                 </div>
                             </Col>
                         </Row>
                         <Row>
                             <Col sm={12} md={12} lg={12}>
                                 <div className="event-mozaic-item">
-                                    duration: <b>{this.props.pic.status === EVENT_STATUS_FINISHED ? _formatEventTimeDisplay(this.props.pic.duration) : ""}</b>
+                                    {t('library.mozaic_player.lbl_duration')}: <b>{this.props.pic.status === EVENT_STATUS_FINISHED ? _formatEventTimeDisplay(this.props.pic.duration) : ""}</b>
                                 </div>
                             </Col>
                         </Row>
                         <Row>
                             <Col sm={12} md={12} lg={12}>
                                 <div className="event-mozaic-item">
-                                    start date:<b>{this.props.pic.status === EVENT_STATUS_FINISHED ?  formatDateForMozaicView(this.props.pic.startDate) : ""}</b>
+                                    {t('library.mozaic_player.lbl_start date')}:<b>{this.props.pic.status === EVENT_STATUS_FINISHED ?  formatDateForMozaicView(this.props.pic.startDate) : ""}</b>
                                 </div>
                             </Col>
                         </Row>

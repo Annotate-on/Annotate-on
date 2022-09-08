@@ -37,6 +37,7 @@ export default class extends PureComponent {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <div className="bst rcn_urldownloader" >
                 <div className="file-drop-zone">
@@ -48,11 +49,11 @@ export default class extends PureComponent {
                                 {/*fileName: event.target.value*/}
                             {/*})*/}
                         {/*}} />*/}
-                    </div>: <span>Use CTRL+V on Windows, Command+V on MacOS  ).</span>}
+                    </div>: <span>{t('library.import_images.lbl_paste_shortcuts')}</span>}
                 </div>
                 {this.state.pastedImage ?<div className="mt-3 ">
                     {/*<span className="h5">Name of clipboard image:</span>*/}
-                    <input autoFocus placeholder="Enter clipboard image name and hit 'Save'" type="text" className="form-control"  onChange={(event) => {
+                    <input autoFocus placeholder={t('library.import_images.textbox_placeholder_enter_clipboard_image_name_and_save')} type="text" className="form-control"  onChange={(event) => {
                     this.setState({
                         fileName: event.target.value
                     })
@@ -68,17 +69,15 @@ export default class extends PureComponent {
                         setTimeout(() => {
                             this.props.saveImage(this.state.file, this.state.fileName);
                         }, 30)
-                    }}
-                >Save</Button>
+                    }}>{t('global.save')}
+                </Button>
                 &emsp;
                 <Button className="cancel_button btn btn-danger" size="md" color="warning" onClick={() => {
                     this.props.goToLibrary();
                     setTimeout(() => {
                         ee.emit(EVENT_SELECT_TAB, 'library')
                     }, 100)
-                }}
-                >
-                    Cancel
+                }}>{t('global.cancel')}
                 </Button>
                 </div>
             </div>

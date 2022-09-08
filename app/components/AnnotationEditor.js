@@ -371,6 +371,7 @@ export default class extends Component {
 
     render() {
         let key = 0;
+        const { t } = this.props;
 
         const toolbarConfig = {
             display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
@@ -406,11 +407,11 @@ export default class extends Component {
                                             this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
                                                 this.state.targetColor, this.state.descriptor.value, this.state.value,
                                                 this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic);
-                                        }}>Save</Button>
+                                        }}>{t('global.save')}</Button>
                                     </Col>
                                     <Col sm={{ size: 3, offset: 1 }}>
                                         <Button disabled={this.state.title.length < 3} color="primary"
-                                                onClick={this.cancel}>Cancel</Button>
+                                                onClick={this.cancel}>{t('global.cancel')}</Button>
                                     </Col>
                                 </Row>
                         }
@@ -418,12 +419,12 @@ export default class extends Component {
 
                     {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
                         <Row>
-                            <Label sm={3} for="note" className="label-for">Keywords</Label>
+                            <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
                             {/*<Col sm={3} md={3} lg={3} className="tag-title">Tags</Col>*/}
                             <Col sm={9} md={9} lg={9} className="title-button">
                                 <Button className="btn btn-secondary" color="gray" onClick={ () => {
                                     this.setState({pickTagForAnnotation: true});
-                                }}>Edit keywords</Button>
+                                }}>{t('inspector.annotation_editor.btn_edit_keywords')}</Button>
                             </Col>
                         </Row> : null
                     }
@@ -445,7 +446,7 @@ export default class extends Component {
                         </Row> : null
                     }
                     <FormGroup row>
-                        <Label sm={3} for="type" className="label-for">Type</Label>
+                        <Label sm={3} for="type" className="label-for">{t('inspector.annotation_editor.lbl_type')}</Label>
                         <Col sm={9} className="align-bottom">
                             <img className="icon_edit"
                                  src={require('./pictures/' + this.state.annotationType + '.svg')} alt="edit icon"/>
@@ -458,7 +459,7 @@ export default class extends Component {
                                onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                onDrop={ (event) => this.handOnDropEvent(event , "nameTags")}
                     >
-                        <Label sm={3} for="name" className="label-for">Name</Label>
+                        <Label sm={3} for="name" className="label-for">{t('inspector.annotation_editor.lbl_name')}</Label>
                         <Col sm={9}>
                             <Input bsSize="sm" name="name" id="name" autoFocus
                                    value={this.state.title}
@@ -493,7 +494,7 @@ export default class extends Component {
                                onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                onDrop={ (event) => this.handOnDropEvent(event , "titleTags")}
                     >
-                        <Label sm={3} for="values" className="label-for">Title</Label>
+                        <Label sm={3} for="values" className="label-for">{t('inspector.annotation_editor.lbl_title')}</Label>
                         <Col sm={9} className="align-bottom">
                             {(this.props.annotation.annotationType === ANNOTATION_MARKER ||
                                 this.props.annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE ||
@@ -543,7 +544,7 @@ export default class extends Component {
                                            onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                            onDrop={ (event) => this.handOnDropEvent(event , "topicTags")}
                                 >
-                                    <Label sm={3} for="topic" className="label-for">Topic</Label>
+                                    <Label sm={3} for="topic" className="label-for">{t('inspector.annotation_editor.lbl_topic')}</Label>
                                     <Col sm={9} className="align-bottom">
                                         <Input bsSize="sm"
                                                type="textarea" name="topic" id="topic" rows={2}
@@ -574,7 +575,7 @@ export default class extends Component {
                                        onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                        onDrop={ (event) => this.handOnDropEvent(event , "personTags")}
                             >
-                                <Label sm={3} for="person" className="label-for">Person</Label>
+                                <Label sm={3} for="person" className="label-for">{t('inspector.annotation_editor.lbl_person')}</Label>
                                 <Col sm={9} className="align-bottom">
                                     <Input bsSize="sm"
                                            type="textarea" name="person" id="person" rows={2}
@@ -604,7 +605,7 @@ export default class extends Component {
                                        onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                        onDrop={ (event) => this.handOnDropEvent(event , "dateTags")}
                             >
-                                <Label sm={3} for="videoDate" className="label-for">Date</Label>
+                                <Label sm={3} for="videoDate" className="label-for">{t('inspector.annotation_editor.lbl_date')}</Label>
                                 <Col sm={9} className="align-bottom">
                                     <Input bsSize="sm" type="textarea" name="videoDate" id="videoDate" rows={2}
                                            onChange={e => this.setState({videoDate: e.target.value})}
@@ -635,7 +636,7 @@ export default class extends Component {
                                        onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                        onDrop={ (event) => this.handOnDropEvent(event , "locationTags")}
                             >
-                                <Label sm={3} for="videoLocation" className="label-for">Location</Label>
+                                <Label sm={3} for="videoLocation" className="label-for">{t('inspector.annotation_editor.lbl_location')}</Label>
                                 <Col sm={9} className="align-bottom">
                                     <Input bsSize="sm" type="textarea" name="videoLocation" id="videoLocation" rows={2}
                                            onChange={e => this.setState({location: e.target.value})}
@@ -665,7 +666,7 @@ export default class extends Component {
                                        onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                        onDrop={ (event) => this.handOnDropEvent(event , "noteTags")}
                             >
-                                <Label sm={3} for="note" className="label-for">Note</Label>
+                                <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_note')}</Label>
                                 <Col sm={9}>
                                     <Input bsSize="sm" type="textarea" name="note" id="note" rows={2}
                                            onChange={e => this.setState({text: e.target.value})}
@@ -690,10 +691,10 @@ export default class extends Component {
                             </FormGroup>
 
                             <FormGroup row className="tc-position">
-                                <Label sm={3} for="position" className="label-for">Position</Label>
+                                <Label sm={3} for="position" className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
                                 <Col sm={9} data-tip data-for={this.props.annotation.id}>
                                     <div className="position_input">
-                                        <label htmlFor="start">TcIn</label>
+                                        <label htmlFor="start">{t('inspector.annotation_editor.lbl_tc_in')}</label>
                                         <Input disabled={this.props.isAnnotateEventRecording}
                                                readOnly bsSize="sm" name="start" id="start"
                                                className={classnames({'selected': this.state.positionField === 'start'})}
@@ -708,7 +709,7 @@ export default class extends Component {
                                         />
                                     </div>
                                     <div className="position_input">
-                                        <label htmlFor="end">TcOut</label>
+                                        <label htmlFor="end">{t('inspector.annotation_editor.lbl_tc_out')}</label>
                                         <Input readOnly bsSize="sm" name="end" id="end"
                                                disabled={this.props.isAnnotateEventRecording}
                                                className={classnames({'selected': this.state.positionField === 'end'})}
@@ -739,7 +740,7 @@ export default class extends Component {
                             </FormGroup>
                         </Fragment> :
                         <FormGroup row style={{hidden: true}}>
-                            <Label sm={3} for="position" className="label-for">Position</Label>
+                            <Label sm={3} for="position" className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
                             <Col sm={9}>
                                 <Input readOnly data-tip data-for={this.props.annotation.id} plaintext bsSize="sm"
                                        name="position" id="position" value={this.state.vertices}/>
@@ -761,7 +762,7 @@ export default class extends Component {
                         </FormGroup>
                         <hr/>
                         <FormGroup row>
-                            <Label sm={3} for="target" className="label-for">Character</Label>
+                            <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_character')}</Label>
                             <Col sm={9}>
                                 {this._renderTargets()}
                             </Col>
@@ -769,7 +770,7 @@ export default class extends Component {
                     </Fragment> : ''}
                     {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
                         <Row>
-                            <Label sm={3} className="label-for">Values</Label>
+                            <Label sm={3} className="label-for">{t('inspector.annotation_editor.lbl_values')}</Label>
                             <Col sm={8} className="align-bottom">
                                 {this.props.selectedTaxonomy.descriptors.map(_ => {
                                     if (_.id === this.state.descriptor.descriptorId && _.targetType === this.state.descriptorGroup) {
@@ -805,7 +806,7 @@ export default class extends Component {
                                 <Col sm={1} className="no-padding">
                                     <img className="btn_menu"
                                          src={EDIT_ANNOTATION}
-                                         title="Pick a value" alt="pick a value"
+                                         title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
                                          onClick={ () => this._catToggle()}
                                     />
                                 </Col> : ''}
@@ -818,7 +819,7 @@ export default class extends Component {
                                    onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
                                    onDrop={ (event) => this.handOnDropEvent(event , "generalTags")}
                         >
-                            <Label sm={3} for="generalTags" className="label-for">Keywords</Label>
+                            <Label sm={3} for="generalTags" className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
                             <Col sm={9}>
                                 <div className="tags-panel">
                                     {this.props.tags && this.props.tags.map(tag => {
@@ -853,7 +854,7 @@ export default class extends Component {
                     {/* Select value for categorical descriptor */}
                     <Modal isOpen={this.state.catModal} toggle={this._catToggle} wrapClassName="bst"
                            autoFocus={false}>
-                        <ModalHeader toggle={this._catToggle}>Select value for character </ModalHeader>
+                        <ModalHeader toggle={this._catToggle}>{t('inspector.annotation_editor.dialog_title_select_value_for_character')}</ModalHeader>
                         <ModalBody>
                             <Row className="action-bar">
                                 <Col>
@@ -913,8 +914,8 @@ export default class extends Component {
                             </Row>
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this._saveCategoricalValue}>Save</Button>
-                            <Button color="secondary" onClick={this._catToggle}>Cancel</Button>
+                            <Button color="primary" onClick={this._saveCategoricalValue}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this._catToggle}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>
@@ -923,7 +924,7 @@ export default class extends Component {
                            size="lg"
                            scrollable={true}
                            toggle={this._toggleRteModal} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggleRteModal}>Edit text</ModalHeader>
+                        <ModalHeader toggle={this._toggleRteModal}>{t('inspector.annotation_editor.dialog_title_edit_text')}</ModalHeader>
                         <ModalBody>
                             <Form className="rte-container" onSubmit={(e) => {
                                 e.preventDefault();
@@ -951,6 +952,7 @@ export default class extends Component {
     };
 
     handleTargetChange = (annotation, selectedTargetOptions) => {
+        const { t } = this.props;
         if (selectedTargetOptions.measure === annotation.measure
             || selectedTargetOptions.measure === "N" && annotation.measure === "#"
             || selectedTargetOptions.measure === "-1"
@@ -980,7 +982,7 @@ export default class extends Component {
 
                     remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                         type: 'error',
-                        message: `Categorical descriptor already exist!`,
+                        message: t('inspector.alert_categorical_descriptor_already_exist'),
                         cancelId: 1
                     });
 
@@ -1004,7 +1006,7 @@ export default class extends Component {
         } else {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'error',
-                message: `Wrong target type`,
+                message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1
             });
         }
@@ -1048,6 +1050,7 @@ export default class extends Component {
     };
 
     _renderTargets = () => {
+        const { t } = this.props;
         const annotation = this.props.annotation;
         const options = [{
             value: "-1",
@@ -1055,7 +1058,7 @@ export default class extends Component {
             color: "-1",
             targetType: this.state.descriptor.type,
             group: this.state.descriptor.targetType,
-            label: 'Choose a character'
+            label: t('inspector.select_character_label')
         }];
 
         if (this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors) {
@@ -1125,7 +1128,7 @@ export default class extends Component {
             defaultValue = options[0]
         }
 
-        return <Select className="annotation_target" title="Affect this annotation to a character"
+        return <Select className="annotation_target" title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
                        value={defaultValue}
                        menuPosition={"fixed"}
                        styles={customStyles}

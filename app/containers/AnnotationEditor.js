@@ -7,6 +7,7 @@ import {
     untagAnnotation,
     untagEventAnnotation
 } from '../actions/app';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     let taxonomyInstance = null;
@@ -34,4 +35,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

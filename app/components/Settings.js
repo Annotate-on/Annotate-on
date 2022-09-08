@@ -15,6 +15,7 @@ import {
     Table
 } from 'reactstrap';
 import {
+    updateSelectedLanguage,
     deleteWorkspace,
     editProject,
     getProjectInfo,
@@ -31,7 +32,14 @@ import archiver from 'archiver';
 import TableHeader from "./TableHeader";
 import {remote, shell} from "electron";
 import path from "path";
-import {COMMON_TAGS, IMAGE_STORAGE_DIR, MODEL_XPER, TAG_AUTO} from "../constants/constants";
+import {
+    COMMON_TAGS,
+    IMAGE_STORAGE_DIR,
+    MODEL_XPER, SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC,
+    SORT_DATE_ASC,
+    SORT_DATE_DESC, SORT_TYPE_ASC, SORT_TYPE_DESC,
+    TAG_AUTO
+} from "../constants/constants";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import {
     createAutomaticTags,
@@ -129,10 +137,11 @@ export default class extends PureComponent {
     }
 
     _handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
                 if (data.isCorrupted === true){
-                    ee.emit(EVENT_SHOW_ALERT, "you can not edit corrupted project!");
+                    ee.emit(EVENT_SHOW_ALERT, t('projects.alert_you_can_not_edit_corrupted_project'));
                     break;
                 }
                 this._toggle(data.path);
@@ -142,9 +151,9 @@ export default class extends PureComponent {
                 break;
             case 'delete':
                 if (data.isActive) {
-                    alert("You can't delete currently active project.")
+                    alert(t('projects.alert_you_can_not_delete_currently_active_project'));
                 } else if(data.locked !== undefined) {
-                    alert("You can't delete locked project.")
+                    alert(t('projects.alert_you_can_not_delete_locked_project'))
                 } else this._toggle2(data.path, data.isActive);
                 break;
         }
@@ -172,8 +181,9 @@ export default class extends PureComponent {
     };
 
     _toggle2 = (path, isActive) => {
+        const { t } = this.props;
         if(isActive){
-            alert("You can't delete currently active project.");
+            alert(t('projects.alert_you_can_not_delete_currently_active_project'));
             return;
         }
         if (path === undefined) {
@@ -255,8 +265,9 @@ export default class extends PureComponent {
     }
 
     _zipDirectory(source) {
+        const { t } = this.props;
         let saverPath = remote.dialog.showSaveDialog( remote.getCurrentWindow() , {
-            title: 'Save project to',
+            title: t('projects.dialog_save_project_to'),
             defaultPath: path.join(getUserWorkspace(), `${this.state.workspace}.annotate`)
         });
 
@@ -267,12 +278,12 @@ export default class extends PureComponent {
         }
 
         if (this._isForbiddenDirectory(path.dirname(saverPath)) === true) {
-            alert('You cant export project in its own workspace')
+            alert(t('projects.alert_you_can_not_export_project_in_its_own_workspace'))
             return;
         }
 
         try {
-            ee.emit(EVENT_SHOW_WAITING, "Exporting to zip file...");
+            ee.emit(EVENT_SHOW_WAITING, t('projects.alert_exporting_to_zip_file'));
             const archive = archiver('zip', {zlib: {level: 9}});
 
             const stream = fs.createWriteStream(saverPath, {encoding: 'utf8'});
@@ -287,8 +298,8 @@ export default class extends PureComponent {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: saverPath,
-                    message: `Export finished`,
-                    buttons: ['OK', 'Open folder'],
+                    message: t('projects.dialog_message_export_finished'),
+                    buttons: ['OK', t('global.open_folder')],
                     cancelId: 1
                 });
                 if (result === 1) {
@@ -304,6 +315,7 @@ export default class extends PureComponent {
     }
 
     render() {
+        const { t } = this.props;
         let status = '';
 
         return (<Container className="bst rcn_xper">
@@ -313,10 +325,10 @@ export default class extends PureComponent {
                             <a onClick={() => {
                                     this.props.goToLibrary();
                                 }}>
-                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/>
+                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                             </a>
-                            <span className="project-label">Project:</span><span className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">Model:</span>
+                            <span className="project-label">{t('global.lbl_project')}:</span><span className="project-name">{this.props.projectName}</span>
+                            <span className="project-label">{t('global.lbl_model')}:</span>
                             <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>
@@ -330,36 +342,37 @@ export default class extends PureComponent {
                             </span>
                         </Col>
                         <Col sm={6}>
-                            <span className="title">Projects</span>
+                            <span className="title">{t('projects.title')}</span>
                         </Col>
                     </Row>
                 </div>
                 <br/>
                 <Row className="action-bar">
-                    <Col sm={12} md={12} lg={12}>
+                    <Col sm={11} md={11} lg={11}>
                         <Button className="btn btn-primary mr-md-3" color="primary"
-                                title="Create new project"
+                                title={t('projects.btn_tooltip_create_new_project')}
                                 onClick={() => {
                                     this.props.goToAddNewProject();
                                 }}
-                        >Create new project</Button>
+                        >{t('projects.btn_create_new_project')}</Button>
 
                         <Button className="btn btn-primary mr-md-3" color="primary"
-                                title="Save project as .annotate file"
+                                title={t('projects.btn_tooltip_export_project')}
                                 onClick={() => this._zipDirectory(this.state.workspace)}
-                        >Export project</Button>
+                        >{t('projects.btn_export_project')}</Button>
+
                         <Button className="btn btn-primary mr-md-3" color="primary"
-                                title="Select .annotate file to import project"
+                                title={t('projects.btn_tooltip_import_project')}
                                 onClick={() => {
                                     this.props.goToZipImport();
                                 }}
-                        >Import project from .annotate file</Button>
+                        >{t('projects.btn_import_project')}</Button>
                         <Button className="btn btn-primary mr-md-3" color="primary"
-                                title="Select local folder with shared project"
+                                title={t('projects.btn_tooltip_open_project')}
                                 onClick={() => {
                                     this.props.goToImportExistingProject();
                                 }}
-                        >Open project from shared folder</Button>
+                        >{t('projects.btn_open_project')}</Button>
                     </Col>
                 </Row>
                 <br/>
@@ -371,22 +384,22 @@ export default class extends PureComponent {
                                 <thead>
                                 <tr>
                                     {/*<th></th>*/}
-                                    <TableHeader title="Select" sortKey="active"
+                                    <TableHeader title={t('projects.table_column_select')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Lock" sortKey="locked"
+                                    <TableHeader title={t('projects.table_column_lock')} sortKey="locked"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Label' sortKey="label"
+                                    <TableHeader title={t('projects.table_column_label')} sortKey="label"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <th/>
-                                    <TableHeader title='Date' sortKey="date"
+                                    <TableHeader title={t('projects.table_column_date')} sortKey="date"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Folders' sortKey="folders"
+                                    <TableHeader title={t('projects.table_column_folders')} sortKey="folders"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Images' sortKey="images"
+                                    <TableHeader title={t('projects.table_column_images')} sortKey="images"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Status' sortKey="active"
+                                    <TableHeader title={t('projects.table_column_status')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Path' sortKey="path"
+                                    <TableHeader title={t('projects.table_column_path')} sortKey="path"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <th/>
                                 </tr>
@@ -399,7 +412,6 @@ export default class extends PureComponent {
                                         } else {
                                             status = 'active'
                                         }
-
                                         return (
                                             <tr key={index}
                                                 className={`${project.corrupted === true ? 'corrupted-project-row' : ''} ${project.active ? 'active-project' : ''}`}
@@ -414,7 +426,7 @@ export default class extends PureComponent {
                                                     <div className={`check ${project.corrupted === true ? 'corrupted-project-check' : ''}`}
                                                          onClick={() => {
                                                              if (project.corrupted && project.corrupted === true){
-                                                                 ee.emit(EVENT_SHOW_ALERT, "can not switch to corrupted project!");
+                                                                 ee.emit(EVENT_SHOW_ALERT, t('projects.alert_can_not_switch_to_corrupted_project'));
                                                                  return false;
                                                              }
                                                              const path_to_project = path.join(project.path, PROJECT_INFO_DESCRIPTOR);
@@ -425,8 +437,8 @@ export default class extends PureComponent {
                                                              } else {
                                                                  remote.dialog.showMessageBox({
                                                                      type: 'info',
-                                                                     detail: `Project is locked by user ${loadedProject.lockedBy}`,
-                                                                     message: `Locked`,
+                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy}),
+                                                                     message: t('global.locked'),
                                                                      buttons: ['OK'],
                                                                      cancelId: 1
                                                                  });
@@ -459,7 +471,7 @@ export default class extends PureComponent {
                                                                 locked: project.locked
                                                             };
                                                         }}>
-                                                        {project.corrupted === true ? 'corrupted project' : project.label }
+                                                        {project.corrupted === true ? t('projects.lbl_corrupted_project') : project.label }
                                                     </ContextMenuTrigger>
                                                 </td>
                                                 <td>
@@ -545,12 +557,12 @@ export default class extends PureComponent {
                 <div>
                     <ContextMenu id="projects_context_menu">
                         <MenuItem data={{action: 'edit'}} onClick={this._handleContextMenu}>
-                            <img alt="select all" className='select-all' src={EDIT}/> Edit
+                            <img alt="select all" className='select-all' src={EDIT}/>{t('global.edit')}
                         </MenuItem>
                         <MenuItem divider/>
 
                         <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> Delete
+                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/>{t('global.delete')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
@@ -568,20 +580,20 @@ export default class extends PureComponent {
                             <img
                                 alt="copy path"
                                 src={COPY_PATH_IMAGE_CONTEXT}
-                            /> Copy to clipboard
+                            /> {t('global.copy_to_clipboard')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
 
                 <Modal isOpen={this.state.modal} toggle={this._toggle} wrapClassName="bst" autoFocus={false}>
-                    <ModalHeader toggle={this._toggle}>Edit project label</ModalHeader>
+                    <ModalHeader toggle={this._toggle}>{t('projects.dialog_title_edit_project_label')}</ModalHeader>
                     <ModalBody>
                         <Form onSubmit={(e) => {
                             e.preventDefault();
                             this._editProject();
                         }}>
                             <FormGroup row>
-                                <Label for="modelName" sm={5}>new project name</Label>
+                                <Label for="modelName" sm={5}>{t('projects.lbl_new_project_name')}</Label>
                                 <Col sm={7}>
                                     <Input type="text" name="projectName" id="projectName" autoFocus={true}
                                            onChange={(e) => {
@@ -595,22 +607,22 @@ export default class extends PureComponent {
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this._editProject}>Save</Button>
-                        <Button color="secondary" onClick={this._toggle}>Cancel</Button>
+                        <Button color="primary" onClick={this._editProject}>{t('global.save')}</Button>
+                        <Button color="secondary" onClick={this._toggle}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
                 <Modal isOpen={this.state.deleteModal} toggle={this._toggle2} wrapClassName="bst"
                        autoFocus={false}>
-                    <ModalHeader toggle={this._toggle2}>Are you sure you want to delete this project
+                    <ModalHeader toggle={this._toggle2}>{t('projects.dialog_title_delete_confirmation')}
                         ?</ModalHeader>
                     <ModalFooter>
                         <Button color="primary" onClick={(e) => {
                             e.preventDefault();
                             this._deleteSelectedProject(this.state.selectedProjectPath)
                         }
-                        }>Yes</Button>
-                        <Button color="secondary" onClick={this._toggle2}>Cancel</Button>
+                        }>{t('global.yes')}</Button>
+                        <Button color="secondary" onClick={this._toggle2}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
@@ -624,13 +636,12 @@ export default class extends PureComponent {
                         <Button color="primary" onClick={() => {
                             this._copyFilePath(this.state.projectPath);
                             this._closeShowPathModal();
-                        }}>Copy on clipboard</Button>
-                        <Button color="secondary" onClick={this._closeShowPathModal}>Close</Button>
+                        }}>{t('global.copy_to_clipboard')}</Button>
+                        <Button color="secondary" onClick={this._closeShowPathModal}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
 
             </Container>
-
         );
     }
 

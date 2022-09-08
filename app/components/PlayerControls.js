@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import {_formatTimeDisplay} from "../utils/maths";
 import {SHOW_EDIT_MODE_VIOLATION_MODAL , ee} from "../utils/library";
+import i18next from "i18next";
+
 const ADD_ANNOTATION = require('./pictures/chronothematique.svg');
 const ADD_ANNOTATION_RED = require('./pictures/chronothematique_red.svg');
 
@@ -30,8 +32,8 @@ export default class extends Component {
         }
     }
 
-
     render() {
+        const { t } = i18next;
         return <div className='controls'>
             <div className='rowContainer'>
                 <div className='timerControl'>
@@ -47,7 +49,6 @@ export default class extends Component {
             <div className='rowContainer'>
                 <div className='playerControls'>
                     <div className='action-buttons'>
-
                         <div className='play-button left1'>
                             <i className={this.props.player.paused() ? "fa fa-play-circle" : "fa fa-pause-circle-o"}
                                aria-hidden="true" onClick={() => {
@@ -58,18 +59,18 @@ export default class extends Component {
                             }}/>
                         </div>
                         <div className='action-button center1'>
-                            <i title="Backward 5 sec" className="fa fa-backward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_backward_5_sec')} className="fa fa-backward" aria-hidden="true" onClick={() => {
                                 this.props.player.currentTime(this.props.player.currentTime() - this.state.timeStep)
                             }}/>
-                            <i title="Goto start" className="fa fa-step-backward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_goto_start')} className="fa fa-step-backward" aria-hidden="true" onClick={() => {
                                 this.props.player.currentTime(0)
                             }}/>
                         </div>
                         <div className='action-button center2'>
-                            <i title="Forward 5 sec" className="fa fa-forward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_forward_5_sec')} className="fa fa-forward" aria-hidden="true" onClick={() => {
                                 this.props.player.currentTime(this.props.player.currentTime() + this.state.timeStep)
                             }}/>
-                            <i title="Goto end" className="fa fa-step-forward" aria-hidden="true" onClick={() => {
+                            <i title={t('annotate.player_controls.lbl_goto_end')} className="fa fa-step-forward" aria-hidden="true" onClick={() => {
                                 this.props.player.currentTime(this.props.duration)
                             }}/>
                         </div>
@@ -91,7 +92,7 @@ export default class extends Component {
                                 <img className="add-annotation-picture"
                                      alt="add annotation"
                                      src={this.props.isAnnotationRecording ? ADD_ANNOTATION_RED : ADD_ANNOTATION}/>
-                                Annotate
+                                {t('annotate.player_controls.lbl_annotate')}
                             </div>
                         </div>
                     </div>

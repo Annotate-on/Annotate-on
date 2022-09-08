@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import EventForm from "../../containers/EventForm";
 import {ee, EVENT_UPDATE_EVENT_RECORDING_STATUS} from "../../utils/library";
 import TagManager from "../../containers/TagManager";
-
+import i18next from "i18next";
 
 class EventAndTagManager extends Component {
 
@@ -50,6 +50,7 @@ class EventAndTagManager extends Component {
     }
 
     render() {
+        const { t } = i18next;
         return (
             <div style={{background: 'white'}}>
                 <Nav tabs>
@@ -59,7 +60,7 @@ class EventAndTagManager extends Component {
                             disabled={this.state.isEventRecording}
                             onClick={() => { this.toggle('1'); }}
                         >
-                            Event
+                            {t('annotate.tab_event')}
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -67,7 +68,7 @@ class EventAndTagManager extends Component {
                             className={classnames({ active: this.state.activeTab === '2' })}
                             onClick={() => { this.toggle('2'); }}
                         >
-                            Keywords
+                            {t('annotate.tab_keywords')}
                         </NavLink>
                     </NavItem>
                 </Nav>

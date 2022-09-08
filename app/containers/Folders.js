@@ -3,6 +3,7 @@ import PureComponent from '../components/Folders';
 import {moveFolder, prepareFolderForDeletion, renameFolder, selectFolder, unselectFolder} from '../actions/app';
 import {push} from "connected-react-router";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../utils/library";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -49,4 +50,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PureComponent);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(PureComponent));

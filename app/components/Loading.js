@@ -51,6 +51,7 @@ export default class extends PureComponent {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <Container className="bst loading">
                 <Row>
@@ -72,7 +73,7 @@ export default class extends PureComponent {
                 <Row>
                     <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}
                          className="loader-label">
-                        Importing resources files to folders:
+                        {t('global.lbl_importing_resources_files_to_folders')}:
                     </Col>
                 </Row>
                 <Row>
@@ -84,14 +85,14 @@ export default class extends PureComponent {
                 </Row>
                 <Row>
                     <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
-                        <span className="inline-label">Resources files found:  </span><span className="inline-value">
+                        <span className="inline-label">{t('global.lbl_resources_files_found')}:  </span><span className="inline-value">
                         {this.state.picturesFound || <_WaitIconDir className="fa fa-hourglass-o" aria-hidden="true"/>}
                         </span>
                     </Col>
                 </Row>
                 <Row>
                     <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
-                        <span className="inline-label">Collecting metadata and generating thumbnails:  </span><span className="inline-value">
+                        <span className="inline-label">{t('global.lbl_collecting_metadata_and_generating_thumbnails')}:  </span><span className="inline-value">
                               {this.state.picturesMetadataCollectedProgress ? (
                                   `${this.state.picturesMetadataCollectedProgress}%`
                               ) : (

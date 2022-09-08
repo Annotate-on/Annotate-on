@@ -98,8 +98,6 @@ const _Link = styled(Link)`
 };
 `;
 
-export const annRecordingMsg = 'Please finish annotation creation/edit to continue.';
-export const eventRecordingMsg = 'Please finish event recording to continue..';
 const CREDITS = 'CREDITS';
 const TAG_MANAGER = 'TAG_MANAGER';
 const EVENT = 'EVENT';
@@ -108,6 +106,7 @@ const IMAGE = 'IMAGE';
 const DATA = 'DATA';
 const SETTINGS = 'SETTINGS';
 const TAXONOMIES = 'TAXONOMIES';
+const OPTIONS = 'OPTIONS';
 const ERROR = require('./pictures/error.svg');
 let autoSaveInterval;
 let waitPane;
@@ -234,6 +233,7 @@ export default class AppMenu extends Component {
             isEventRecordingLive: false,
         })
     }
+
     updateIsEditModeOpen = (isOpen) => {
         this.setState({
             isEditModeOpen: isOpen
@@ -282,7 +282,6 @@ export default class AppMenu extends Component {
             })
         }, 2000)
     };
-
 
     _showEditFormViolationModalWarning = () => {
         if (this.state.showEditFormViolationModal === false){
@@ -333,7 +332,6 @@ export default class AppMenu extends Component {
     };
 
     _selectComponent = (selection) => {
-
         if (selection === 'eventHome'){
             this.setState({
                 selectedMenu: selection
@@ -346,12 +344,13 @@ export default class AppMenu extends Component {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <_Root >
                 <div className="bst annotate-alert-message-wrapper">
                     <Alert className='annotate-alert-message' isOpen={this.state.showEditFormViolationModal} toggle={ ()=> {this.setState({showEditFormViolationModal: false})}}>
                         <div className="alertText">
-                            {this.state.isEventRecordingLive ? eventRecordingMsg : annRecordingMsg}
+                            {this.state.isEventRecordingLive ? t('global.alert_event_recording_message') : t('global.alert_annotation_recording_message')}
                         </div>
                     </Alert>
                 </div>
@@ -374,8 +373,8 @@ export default class AppMenu extends Component {
                     <Loading files={this.state.files}/> : ''
                 }
                 <_Main>
-
-                    {this.state.hasError ? this._errorDisplay() : this.props.children}</_Main>
+                    {this.state.hasError ? this._errorDisplay() : this.props.children}
+                </_Main>
                 <_Nav>
                     <_Link className={(this.state.selectedMenu === SELECTION ? 'active-menu-item' : '') + ' menu-item'}
                            to="/selection"
@@ -388,10 +387,10 @@ export default class AppMenu extends Component {
                                        ee.emit(EVENT_SELECT_TAB, 'library')
                                    }, 100)
                                }
-                           }} title="Library to keywords and select images for annotating">
+                           }} title={t('main_navbar.tooltip_library')}>
                         <div className="nav_box">
                             <div className="box"/>
-                            <div className="right-menu-title">Library</div>
+                            <div className="right-menu-title">{t('main_navbar.library')}</div>
                         </div>
                     </_Link>
                     <_Link className={(this.state.selectedMenu === SETTINGS ? 'active-menu-item' : '') + ' menu-item'}
@@ -405,10 +404,10 @@ export default class AppMenu extends Component {
                                        selectedMenu: SETTINGS
                                    });
                                }
-                           }} title="Projects">
+                           }} title={t('main_navbar.tooltip_projects')}>
                         <div className="nav_box">
                             <div className="settings"/>
-                            <div className="right-menu-title">Projects</div>
+                            <div className="right-menu-title">{t('main_navbar.projects')}</div>
                         </div>
                     </_Link>
                     <_Link className={(this.state.selectedMenu === CREDITS ? 'active-menu-item' : '') + ' menu-item'}
@@ -422,9 +421,9 @@ export default class AppMenu extends Component {
                                        selectedMenu: CREDITS
                                    });
                                }
-                           }} title="Credits">
+                           }} title={t('main_navbar.tooltip_credits')}>
                         <div className="credits"/>
-                        <div className="right-menu-title">Credits</div>
+                        <div className="right-menu-title">{t('main_navbar.credits')}</div>
                     </_Link>
                     <div className="menu_separator"/>
                     <_Link className={(this.state.selectedMenu === IMAGE ? 'active-menu-item' : '') + ' menu-item'}
@@ -438,10 +437,10 @@ export default class AppMenu extends Component {
                                        ee.emit(EVENT_SELECT_TAB, 'image')
                                    }, 100)
                                }
-                           }} title="Annotate on selection">
+                           }} title={t('main_navbar.tooltip_annotate')}>
                         <div className="nav_box">
                             <div className="image"/>
-                            <div className="right-menu-title">Annotate</div>
+                            <div className="right-menu-title">{t('main_navbar.annotate')}</div>
                         </div>
                     </_Link>
                     <_Link
@@ -459,10 +458,10 @@ export default class AppMenu extends Component {
                                        ee.emit(EVENT_SELECT_TAB, 'eventHome')
                                    }, 100)
                                }
-                           }} title="Create new event">
+                           }} title={t('main_navbar.tooltip_event')}>
                         <div className="nav_box">
                             <div className="event"/>
-                            <div className="right-menu-title">Event</div>
+                            <div className="right-menu-title">{t('main_navbar.event')}</div>
                         </div>
                     </_Link>
                     <div className="menu_separator"/>
@@ -477,20 +476,20 @@ export default class AppMenu extends Component {
                                        ee.emit(EVENT_SELECT_TAB, 'data')
                                    }, 100)
                                }
-                           }} title="View and export results of annotations">
+                           }} title={t('main_navbar.tooltip_results')}>
                         <div className="nav_box">
                             <div className="list"/>
-                            <div className="right-menu-title">Results</div>
+                            <div className="right-menu-title">{t('main_navbar.results')}</div>
                         </div>
                     </_Link>
                     <_Link
                            disabled={true}
                            to="/this_path_needs_to_be_replaces_with_iiif"
                            style={{background: 'lightgrey'}}
-                           onClick={() => {}} title="IIIF">
+                           onClick={() => {}} title={t('main_navbar.tooltip_iiif')}>
                         <div className="nav_box">
                             <div className="iiif"/>
-                            <div className="right-menu-title">IIIF</div>
+                            <div className="right-menu-title">{t('main_navbar.iiif')}</div>
                         </div>
 
                     </_Link>
@@ -506,10 +505,10 @@ export default class AppMenu extends Component {
                                        selectedMenu: TAXONOMIES
                                    });
                                }
-                           }} title="Annotations models">
+                           }} title={t('main_navbar.tooltip_models')}>
                         <div className="nav_box">
                             <div className="models"/>
-                            <div className="right-menu-title">Models</div>
+                            <div className="right-menu-title">{t('main_navbar.models')}</div>
                         </div>
                     </_Link>
                     <_Link
@@ -524,10 +523,28 @@ export default class AppMenu extends Component {
                                        selectedMenu: TAG_MANAGER
                                    });
                                }
-                           }} title="Tag manager">
+                           }} title={t('main_navbar.tooltip_keywords')}>
                         <div className="nav_box">
                             <div className="tags-menu"/>
-                            <div className="right-menu-title">Keywords</div>
+                            <div className="right-menu-title">{t('main_navbar.keywords')}</div>
+                        </div>
+                    </_Link>
+                    <_Link
+                           className={(this.state.selectedMenu === OPTIONS ? 'active-menu-item' : '') + ' menu-item'}
+                           to="/options"
+                           onClick={(e) => {
+                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
+                                   e.preventDefault();
+                                   this._showEditFormViolationModalWarning();
+                               }else {
+                                   this.setState({
+                                       selectedMenu: OPTIONS
+                                   });
+                               }
+                           }} title={t('main_navbar.tooltip_options')}>
+                        <div className="nav_box">
+                            <div className="options-menu"/>
+                            <div className="right-menu-title">{t('main_navbar.options')}</div>
                         </div>
                     </_Link>
                     <div className="menu_separator"/>
@@ -536,8 +553,8 @@ export default class AppMenu extends Component {
         );
     }
 
-
     _errorDisplay = () => {
+        const { t } = this.props;
         let error = '';
         if (this.state.error && this.state.errorInfo) {
             mapStackTrace(this.state.error.stack, mappedStack => {
@@ -548,8 +565,8 @@ export default class AppMenu extends Component {
             <Row className="">
                 <Col className="error-page">
                     <div>
-                        <h4><img alt="error icon" src={ERROR}/> Oops! Something went wrong.</h4>
-                        <span>Please send error with short description to <a
+                        <h4><img alt="error icon" src={ERROR}/>{t('global.lbl_error_message')}</h4>
+                        <span>{t('global.lbl_send_error_message')}<a
                             href="mailto:">annotateiiif@gmail.com</a></span>
                     </div>
                 </Col>
@@ -559,20 +576,20 @@ export default class AppMenu extends Component {
                     <button className="btn btn-primary" onClick={ () => {
                         this.setState({hasError: false, error: null, errorInfo: null})
                         this.props.goToLibrary();
-                    }}>Return to main screen
+                    }}>{t('global.btn_return_to_main_screen')}
                     </button>
                     &nbsp;&nbsp;&nbsp;
                     <button className="btn btn-primary" onClick={ () => {
                         this.textArea.select();
                         document.execCommand('copy');
-                    }}>Copy error to clipboard
+                    }}>{t('global.btn_copy_error_to_clipboard')}
                     </button>
                     &nbsp;&nbsp;&nbsp;
                     <button className="btn btn-primary" onClick={ () => {
                         this.setState({
                             showProjects: !this.state.showProjects
                         })
-                    }}>{this.state.showProjects ? 'Show error message' : 'Switch project'}
+                    }}>{this.state.showProjects ? t('global.btn_show_error_message') : t('global.btn_switch_project')}
                     </button>
                 </Col>
             </Row>

@@ -12,7 +12,6 @@ import TurndownService from "turndown";
 import {ANNOTATION_RICHTEXT} from "../constants/constants";
 import {calculateTableHeight} from "../utils/common";
 
-
 class Collections extends PureComponent {
     constructor(props) {
         super(props);
@@ -51,8 +50,8 @@ class Collections extends PureComponent {
         });
     }
 
-    generateColumns(image) {
-        const COLUMNS = [
+    generateExportColumns(image) {
+        const EXPORT_COLUMNS = [
             'Title',
             'Catalog number',
             'Scientific name',
@@ -64,20 +63,20 @@ class Collections extends PureComponent {
             'LongitudeDD',
             'LatitudeDD',
         ];
-
         if (image.anno_counter > 0) {
             for (let i = 0; i < image.anno_counter; i++) {
-                COLUMNS.push('annotation_type_' + (i + 1));
-                COLUMNS.push('annotation_name_' + (i + 1));
-                COLUMNS.push('annotation_value_' + (i + 1));
-                COLUMNS.push('annotation_position_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_type_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_name_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_value_' + (i + 1));
+                EXPORT_COLUMNS.push('annotation_position_' + (i + 1));
             }
         }
-        return COLUMNS;
+        return EXPORT_COLUMNS;
     }
 
     _exportCSV(separator, action) {
         if (this.state.initPicturesList) {
+            const { t } = this.props;
             const turndownService = new TurndownService()
 
             const annotations = this.state.annotation_list;
@@ -234,12 +233,12 @@ class Collections extends PureComponent {
                 });
             }
 
-            const worksheet = XLSX.utils.aoa_to_sheet([this.generateColumns(maxCount), ...data]);
+            const worksheet = XLSX.utils.aoa_to_sheet([this.generateExportColumns(maxCount), ...data]);
             const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
 
             if (action === 'csv_with_images') {
                 const saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-                    title: 'Save collection to',
+                    title: t('results.collections.dialog_title_save'),
                     defaultPath: `${formatDateForFileName(now)}`,
                 });
                 if (!saverPath || saverPath.length < 1) return;
@@ -251,8 +250,8 @@ class Collections extends PureComponent {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: saverPath,
-                    message: `Export finished`,
-                    buttons: ['OK', 'Open folder'],
+                    message: t('global.export_finished'),
+                    buttons: ['OK', t('global.open_folder')],
                     cancelId: 1
                 });
                 if (result === 1) {
@@ -262,7 +261,7 @@ class Collections extends PureComponent {
 
             } else {
                 let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-                    title: 'Collections',
+                    title: t('results.collections.dialog_title_save'),
                     defaultPath: `${formatDateForFileName(now)}`
                 });
                 if (!file || file.length < 1) return;
@@ -271,8 +270,8 @@ class Collections extends PureComponent {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: file,
-                    message: `Export finished`,
-                    buttons: ['OK', 'Open folder'],
+                    message: t('global.export_finished'),
+                    buttons: ['OK', t('global.open_folder')],
                     cancelId: 1
                 });
                 if (result === 1) {
@@ -285,6 +284,7 @@ class Collections extends PureComponent {
     render() {
         let key = 0;
         let imageArrayLength = this.state.initPicturesList.length;
+        const { t } = this.props;
 
         const addPrefix = function pad(index, size) {
             let digits = size.toString().length;
@@ -301,7 +301,7 @@ class Collections extends PureComponent {
                 <Row className="action-bar">
                     <Col md={1}>
                         <div>
-                            <Dropdown title="Export the selected characters to a CSV file"
+                            <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')}
                                       className="collection-export-button"
                                       isOpen={this.state.dropdownOpen}
                                       size="sm"
@@ -311,18 +311,18 @@ class Collections extends PureComponent {
                                               dropdownOpen: !prevState.dropdownOpen}));
                                       }}>
                                 <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                    Export collection
+                                    {t('results.collections.dropdown_export_collection')}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => {
                                         this._exportCSV(',', '');
-                                    }}>Export csv</DropdownItem>
+                                    }}>{t('results.collections.dropdown_item_export_csv')}</DropdownItem>
                                     <DropdownItem onClick={() => {
                                         this._exportCSV(',', 'csv_with_images');
-                                    }}>Export csv with images</DropdownItem>
+                                    }}>{t('results.collections.dropdown_item_export_csv_with_images')}</DropdownItem>
                                     <DropdownItem onClick={() => {
                                         this.props.goToCollectionExport(this.props.tabName);
-                                    }}>Export IIIF</DropdownItem>
+                                    }}>{t('results.collections.dropdown_item_export_iiif')}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -334,17 +334,17 @@ class Collections extends PureComponent {
                         <div className="scrollable-table-wrapper" id="wrapper" ref={_ => (this.pane = _)}
                              style={{height: this.state.height}}>
                             <Table hover size="sm" className="targets-table">
-                                <thead title="Ascendant or descendant order">
+                                <thead title={t('results.table_header_tooltip_ascendant_or_descendant_order')}>
                                 <tr>
                                     <th>#</th>
-                                    <TableHeader title="Title"/>
-                                    <TableHeader title="Catalog #"/>
-                                    <TableHeader title="Scientific Name"/>
-                                    <TableHeader title="Collection #"/>
-                                    <TableHeader title="Author"/>
-                                    <TableHeader title="Date"/>
-                                    <TableHeader title="Cartel"/>
-                                    <TableHeader title="File"/>
+                                    <TableHeader title={t('results.collections.table_column_title')}/>
+                                    <TableHeader title={t('results.collections.table_column_catalog')}/>
+                                    <TableHeader title={t('results.collections.table_column_scientific_name')}/>
+                                    <TableHeader title={t('results.collections.table_column_collection')}/>
+                                    <TableHeader title={t('results.collections.table_column_author')}/>
+                                    <TableHeader title={t('results.collections.table_column_date')}/>
+                                    <TableHeader title={t('results.collections.table_column_cartel')}/>
+                                    <TableHeader title={t('results.collections.table_column_file')}/>
                                 </tr>
                                 </thead>
                                 <tbody>

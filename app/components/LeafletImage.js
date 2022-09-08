@@ -17,6 +17,7 @@ import '../widget/leaflet-categorical'
 import '../widget/leaflet-richtext'
 import '../widget/leaflet-cartel'
 import '../widget/leaflet-control-menu'
+import i18next from "i18next";
 
 /**
  * NOTE!
@@ -40,6 +41,7 @@ import {
 } from "../constants/constants";
 import 'leaflet-contextmenu'
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../utils/library";
+import {overide_defaults} from "../widget/leaflet-override";
 
 //
 // STYLE
@@ -252,7 +254,9 @@ let selectedAnnotation = null;
 
 class LeafletImage extends Component {
     constructor(props, context) {
+        const { t } = i18next;
         super(props, context);
+        this._overrideDefaults();
         this.sha1 = props.currentPicture.sha1;
         this.state = {
             currentPicture: props.currentPicture,
@@ -271,17 +275,16 @@ class LeafletImage extends Component {
         TRANSCRIPTION_OPTIONS.repeatMode = props.repeatMode;
         RICHTEXT_OPTIONS.repeatMode = props.repeatMode;
 
-
         contextMenu = {
             contextmenu: true,
             contextmenuItems: [{
                 icon: require('./pictures/edit-annotation.svg'),
-                text: 'Edit',
+                text: t('global.edit'),
                 index: 0,
                 callback: this._editAnnotationEvent
             }, {
                 icon: require('./pictures/delete-anotation.svg'),
-                text: 'Delete',
+                text: t('global.delete'),
                 index: 1,
                 callback: this._deleteAnnotationEvent
             }]
@@ -289,7 +292,6 @@ class LeafletImage extends Component {
     };
 
     componentWillReceiveProps(nextProps) {
-
         if (this.state.sha1 !== nextProps.currentPicture.sha1)
             this.setState({
                 currentPicture: nextProps.currentPicture,
@@ -380,6 +382,7 @@ class LeafletImage extends Component {
     }
 
     render() {
+        const { t } = i18next;
         return (
             <_Root>
                 <_LeafletDiv>
@@ -430,11 +433,107 @@ class LeafletImage extends Component {
         );
     }
 
+    /**Changes some of the default text for the toolbar buttons*/
+    _overrideDefaults() {
+        const { t } = i18next;
+        L.drawLocal.draw.toolbar.actions.text = t('global.cancel')
+        L.drawLocal.draw.toolbar.actions.title = t('annotate.editor.btn_tooltip_actions')
+        L.drawLocal.draw.toolbar.finish.text = t('global.finish')
+        L.drawLocal.draw.toolbar.finish.title = t('annotate.editor.btn_tooltip_finish')
+        L.drawLocal.draw.toolbar.undo.text = t('annotate.editor.btn_undo')
+        L.drawLocal.draw.toolbar.undo.title = t('annotate.editor.btn_tooltip_undo')
+
+        L.drawLocal.draw.toolbar.buttons.polyline = t('annotate.editor.btn_tooltip_multiline_length_tool');
+        L.drawLocal.draw.handlers.polyline = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
+                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
+            }
+        };
+
+        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
+        L.drawLocal.draw.handlers.polygon = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
+                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
+            }
+        };
+
+        L.drawLocal.draw.toolbar.buttons.rectangle = t('annotate.editor.btn_tooltip_rectangle_of_interest');
+        L.drawLocal.draw.handlers.rectangle = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_rectangle')
+            }
+        };
+        L.drawLocal.draw.handlers.simpleshape = {
+            tooltip: {
+                end: t('annotate.editor.tooltip_release_mouse_to_finish_drawing')
+            }
+        };
+
+        L.drawLocal.draw.toolbar.buttons.circlemarker = t('annotate.editor.btn_tooltip_point_of_interest');
+        L.drawLocal.draw.toolbar.buttons.marker = t('annotate.editor.btn_tooltip_point_of_interest');
+        L.drawLocal.draw.handlers.marker = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_map_to_place_marker'),
+            }
+        };
+        L.drawLocal.draw.toolbar.buttons.occurrence = t('annotate.editor.btn_tooltip_count_tool');
+        L.drawLocal.draw.toolbar.buttons.categorical =  t('annotate.editor.btn_tooltip_categorical_tool');
+        L.drawLocal.draw.toolbar.buttons.colorPicker = t('annotate.editor.btn_tooltip_color_picker_tool');
+        L.drawLocal.draw.toolbar.buttons.cartel = i18next.t('annotate.editor.btn_tooltip_cartel');
+
+        L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_angle_tool');
+        L.drawLocal.draw.handlers.angle = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_angle_click_for_vertex_point'),
+                cont: t('annotate.editor.tooltip_angle_click_to_draw_first_ray'),
+                end: t('annotate.editor.tooltip_angle_click_to_draw_second_ray')
+            }
+        };
+
+        L.drawLocal.draw.toolbar.buttons.simpleline = t('annotate.editor.btn_tooltip_length_tool');
+        L.drawLocal.draw.handlers.simpleline = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
+                cont: t('annotate.editor.tooltip_click_to_finish_line'),
+                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
+            }
+        };
+        L.drawLocal.draw.toolbar.buttons.ratio = t('annotate.editor.btn_tooltip_measure_ratio');
+        L.drawLocal.draw.handlers.ratio = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
+                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
+            }
+        };
+        L.drawLocal.draw.toolbar.buttons.transcription = t('annotate.editor.btn_tooltip_transcription_tool');
+        L.drawLocal.draw.handlers.transcription = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_transcription_tool_click_to_start_drawing_rectangle'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
+                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
+            }
+        };
+        L.drawLocal.draw.toolbar.buttons.richtext = t('annotate.editor.btn_tooltip_text_tool');
+        L.drawLocal.draw.handlers.richtext = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_text_tool_click_to_start_drawing_rectangle'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
+                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
+            }
+        };
+    }
+
     /**
      * Call this method after component is initiated and add image overlay and minimap.
      * @private
      */
     _initLeaflet = () => {
+        const { t } = i18next;
         const map = this.leafletMap.leafletElement;
         const mapContainer = this.leafletMap.container;
         selectedAnnotation = null;
@@ -512,19 +611,12 @@ class LeafletImage extends Component {
 
         this._zoomControl = L.control.zoom({
             position: 'topright',
-            zoomInTitle: 'Increase zoom',
-            zoomOutTitle: 'Decrease zoom'
+            zoomInTitle: t('annotate.editor.btn_tooltip_increase_zoom'),
+            zoomOutTitle: t('annotate.editor.btn_tooltip_decrease_zoom')
         }).addTo(map);
 
         this._fitToView = L.control.fitToView(bounds).addTo(map);
         // Tradusction of tooltips
-        L.drawLocal.draw.toolbar.buttons.simpleline = "Length tool";
-        L.drawLocal.draw.toolbar.buttons.polyline = "Multiline length tool";
-        L.drawLocal.draw.toolbar.buttons.polygon = "Surface tool";
-        L.drawLocal.draw.toolbar.buttons.angle = "Angle tool";
-        L.drawLocal.draw.toolbar.buttons.rectangle = "Rectangle of interest";
-        L.drawLocal.draw.toolbar.buttons.circlemarker = "Point of interest";
-        L.drawLocal.draw.toolbar.buttons.marker = "Point of interest";
 
         Promise.all([lpp, fdp]).then( () => {
             setTimeout(() => {
@@ -563,7 +655,7 @@ class LeafletImage extends Component {
 
             this._recolnatControlMenu = L.recolnatControlMenu({
                 id: 'toggle-checkbox',
-                radioText: 'Enable repeat mode',
+                radioText: t('annotate.editor.lbl_enable_repeat_mode'),
                 repeatModeHandler: this._setRepeatMode,
                 defaultValue: this.props.repeatMode
             });
@@ -591,7 +683,6 @@ class LeafletImage extends Component {
     _onDrawStop = (e) => {
         if (!this.featureGroup)
             return;
-
         this.props.onDrawStop(e);
         const drawnLayers = this.featureGroup.leafletElement;
         //Return back context menu
@@ -635,7 +726,6 @@ class LeafletImage extends Component {
             annotationId: e.layer.annotationId,
             annotationType: e.layer.annotationType
         })
-
         e.layer.on('click', this._emitEvent);
     };
 

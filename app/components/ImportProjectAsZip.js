@@ -105,21 +105,22 @@ export default class extends Component {
 
 
     render() {
+        const { t } = this.props;
         return (
             <div className="bst rcn_collection">
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary();
                     }}>
-                        <img alt="recolnat logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/>
+                        <img alt="recolnat logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
-                    <span className="title">Import project from .annotate file</span>
+                    <span className="title">{t('projects.import_project_as_zip.title')}</span>
                 </div>
 
                 <Container className="cnt">
                     <Row>
                         <Col sm={2} md={2} lg={2}>
-                            <Label>Select ziped project file</Label>
+                            <Label>{t('projects.import_project_as_zip.lbl_select_ziped_project_file')}</Label>
                         </Col>
                         <Col sm={10} md={10} lg={10}>
                             <Form onSubmit={(e) => {
@@ -129,9 +130,7 @@ export default class extends Component {
                                     {/*// TODO 01.04.2020 leave just '.annotate'*/}
                                     <input type="file" name="file" color="red" accept=".zip,.7zip,.annotate"
                                            onChange={(e) => {
-
                                                let path = e.target.files[0].path;
-
                                                this.validateZip(path).then(result => {
                                                    if (result) {
                                                        this.setState({
@@ -143,24 +142,22 @@ export default class extends Component {
                                                            selectedProject: null,
                                                            isEnabled: false
                                                        });
-                                                       ee.emit(EVENT_SHOW_ALERT, 'Invalid zip file..zip does not match recolnat project');
+                                                       ee.emit(EVENT_SHOW_ALERT, t('projects.import_project_as_zip.alert_invalid_zip_file'));
                                                    }
                                                });
                                            }}
                                     />
-
                                 </FormGroup>
                             </Form>
                         </Col>
-
                     </Row>
                     <Row>
                         <Col sm={2} md={2} lg={2}>
-                            <Label>Select folder to import project</Label>
+                            <Label> {t('projects.import_project_as_zip.lbl_select_folder_to_import_project')}</Label>
                         </Col>
                         <Col sm={10} md={10} lg={10}>
                             <Button disabled={!this.state.isEnabled} className="btn btn-primary" color="primary"
-                                    title="Create zip package"
+                                    title={t('projects.import_project_as_zip.btn_tooltip_select_empty_folder')}
                                     onClick={() => {
                                         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {properties: ['openDirectory', 'createDirectory']});
                                         if (!_ || _.length < 1) return;
@@ -177,13 +174,13 @@ export default class extends Component {
                                         // }
 
                                     }}
-                            >Select empty folder</Button>
+                            >{t('projects.import_project_as_zip.btn_select_empty_folder')}</Button>
                             &emsp;
                             <Button
                                 size="md"
                                 color="gray"
                                 onClick={() => { this.props.goToSettings()}}>
-                                Cancel
+                                {t('global.cancel')}
                             </Button>
                         </Col>
                     </Row>

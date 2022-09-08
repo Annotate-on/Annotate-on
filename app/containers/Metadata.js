@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import Component from '../components/Metadata';
 import {tagPicture, untagPicture, updatePictureDate} from "../actions/app";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {};
@@ -20,4 +21,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

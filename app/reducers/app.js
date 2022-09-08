@@ -167,7 +167,7 @@ import {
 } from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
 import {_addTagIdIfMissing, categoryExists, checkItemInParentCategory} from "../components/event/utils";
-
+import i18next from "i18next";
 
 // The 'shape' of the state is defined here
 export const createInitialState = () => ({
@@ -265,7 +265,7 @@ export const userDataBranches = () => ({
 export default (state = {}, action) => {
     const NOW_DATE = new Date();
     const NOW_TIMESTAMP = NOW_DATE.getTime();
-
+    const { t } = i18next;
 
     switch (action.type) {
         case SET_STATE: {
@@ -1157,11 +1157,10 @@ export default (state = {}, action) => {
             if (!action.category.name) return state;
             if (categoryExists(state.tags, action.category.name)) {
                 if(action.category.name !== TAG_AUTO){
-                    ee.emit(EVENT_SHOW_ALERT , 'category with name ' + action.category.name + ' already exists')
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_category_with_name_already_exit', { name: action.category.name}));
                 }
                 return state;
             }
-
             const counter = state.counter + 1;
             return {
                 ...state,
@@ -1170,7 +1169,6 @@ export default (state = {}, action) => {
                     action.category , ...state.tags]
             };
         }
-
             break;
 
         case MERGE_TM_TAGS : {
@@ -1226,13 +1224,13 @@ export default (state = {}, action) => {
             if(!parent) return state;
 
             if (!action.parentName){
-                alert('error you can not add tag or subcategory without parent category!')
+                alert(t('keywords.alert_can_not_add_tag_or_subcategory_without_parent'));
                 return state;
             }
             //validation
             if (isCategory || action.item.type === TYPE_CATEGORY){
                 if (categoryExists(state.tags, action.item.name)) {
-                    ee.emit(EVENT_SHOW_ALERT , `cat with name '${action.item.name}' already exists , category name has to be unique!`);
+                    ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_category_with_name_already_exit', { name: action.item.name}));
                     return state;
                 }
             }
@@ -1241,7 +1239,7 @@ export default (state = {}, action) => {
                 const tags = getTagsOnly(parent.children);
                 if (checkItemInParentCategory(tags, action.item.name)) {
                     if(parentName !== TAG_AUTO){
-                        ee.emit(EVENT_SHOW_ALERT, 'tag with that name already exists in category: ' + parentName);
+                        ee.emit(EVENT_SHOW_ALERT, t('keywords.alert_tag_already_exit_in_category', { parent: parentName}));
                     }
                     return state;
                 }
@@ -1260,8 +1258,8 @@ export default (state = {}, action) => {
                 tags: [...state.tags]
             };
         }
-
             break;
+
         case IMPORT_TAG_MODEL : {
             const counter = state.counter + 1;
             const tags = action.newTags;
@@ -1337,7 +1335,7 @@ export default (state = {}, action) => {
             if(!id) return state;
 
             if (categoryExists(state.tags, action.newName)){
-                ee.emit(EVENT_SHOW_ALERT , "Category with name: " + action.newName + " already exists!")
+                ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_category_with_name_already_exit', { name: action.newName}));
                 return state;
             }
 

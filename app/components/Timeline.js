@@ -12,6 +12,7 @@ import {
     EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION
 } from "../utils/library";
 import {_formatTimeDisplay} from "../utils/maths";
+import i18next from "i18next";
 
 const chance = new Chance();
 let containerWidth = 0;
@@ -65,7 +66,6 @@ export default class extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-
         const newAnnotationId = chance.guid();
         //on annotation record start
         if (prevState.isAnnotationRecording === false && this.state.isAnnotationRecording === true){
@@ -87,6 +87,7 @@ export default class extends Component {
     }
 
     _createVideoAnnotationOnRecordStart = (resourceId, start, end, duration, text, id) => {
+        const { t } = i18next;
         if (this._isValidPositionOnRecordStart(start)) {
             this.props.createAnnotationChronoThematique(resourceId, start, end, duration, text, id);
             ee.emit(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION);
@@ -100,7 +101,7 @@ export default class extends Component {
                 newAnnotationId: id
             })
         } else {
-            alert('something went wrong {_createVideoAnnotationOnRecordStart}')
+            alert(t('annotate.timeline_alert_error_message'));
             return false;
         }
     }

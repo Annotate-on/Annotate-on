@@ -63,6 +63,7 @@ export default class extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <_Root className="bst">
                 <div className="bg">
@@ -72,9 +73,9 @@ export default class extends Component {
                         <img alt="logo"
                              src={RECOLNAT_LOGO}
                              className="logo"
-                             title={"Go back to home page"}/>
+                             title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
-                    <span className="title">Create new project</span>
+                    <span className="title">{t('projects.create_new_project.title')}</span>
                 </div>
                 <_Content>
                     <_RightColumn>
@@ -83,7 +84,7 @@ export default class extends Component {
                             <br/>
                             <Row>
                                 <Col sm={2} md={2} lg={2}>
-                                    <Label>Enter project title</Label>
+                                    <Label>{t('projects.create_new_project.lbl_enter_project_title')}</Label>
                                 </Col>
                                 <Col sm={10} md={10} lg={10}>
                                     <Form onSubmit={(e) => {
@@ -111,15 +112,14 @@ export default class extends Component {
                                 </Col>
                                 <Col sm={10} md={10} lg={10}>
                                     <Button disabled={!this.state.isEnabled} className="btn btn-primary" color="primary"
-                                            title="Create new project"
+                                            title={t('projects.create_new_project.btn_tooltip_select_empty_folder')}
                                             onClick={this._createNewProjectHandler}
-                                    >Select empty folder</Button>
+                                    >{t('projects.create_new_project.btn_select_empty_folder')}</Button>
                                     &emsp;
                                     <Button size="md" color="gray" onClick={ () => {
                                         this.props.goToSettings();
-                                    }}
-                                    >
-                                        Cancel
+                                    }}>
+                                        {t('global.cancel')}
                                     </Button>
                                 </Col>
                             </Row>
@@ -131,6 +131,7 @@ export default class extends Component {
     }
 
     _createNewProjectHandler = () => {
+        const { t } = this.props;
         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
         if (!_ || _.length < 1) return;
         const label = this.state.label;
@@ -159,7 +160,7 @@ export default class extends Component {
             ee.emit(EVENT_CREATE_SYSTEM_TAGS);
             this.props.goToLibrary();
         } else {
-            ee.emit(EVENT_SHOW_ALERT, 'Please select an empty folder');
+            ee.emit(EVENT_SHOW_ALERT, t('projects.create_new_project.alert_please_select_an_empty_folder'));
         }
     }
 }

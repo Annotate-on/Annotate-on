@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 import Component from '../components/Collections'
 import {push} from "connected-react-router";
 import lodash from "lodash";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state) => {
     return {
@@ -29,4 +30,4 @@ const mapDispatchToProps = dispatch => {
         },
     };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

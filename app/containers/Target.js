@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 
 import Component from '../components/Target';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     let taxonomyInstance = {};
@@ -20,4 +21,4 @@ const mapDispatchToProps = dispatch => {
     return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

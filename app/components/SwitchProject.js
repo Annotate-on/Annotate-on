@@ -111,6 +111,7 @@ export default class extends PureComponent {
     }
 
     _handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
                 this._toggle(data.path);
@@ -120,9 +121,9 @@ export default class extends PureComponent {
                 break;
             case 'delete':
                 if (data.isActive) {
-                    alert("You can't delete currently active project.")
+                    alert(t('projects.alert_you_can_not_delete_currently_active_project'))
                 } else if(data.locked !== undefined) {
-                    alert("You can't delete locked project.")
+                    alert(t('projects.alert_you_can_not_delete_locked_project'))
                 } else this._toggle2(data.path, data.isActive);
                 break;
         }
@@ -150,8 +151,9 @@ export default class extends PureComponent {
     };
 
     _toggle2 = (path, isActive) => {
+        const { t } = this.props;
         if(isActive){
-            alert('can not delete active project.');
+            alert(t('projects.alert_you_can_not_delete_currently_active_project'));
             return;
         }
         if (path === undefined) {
@@ -269,6 +271,7 @@ export default class extends PureComponent {
 
     render() {
         let status = '';
+        const { t } = this.props;
         return (<Container className="bst rcn_xper">
                 <Row className="content-table">
                     <Col md={{size: 12, offset: 0}}>
@@ -277,22 +280,22 @@ export default class extends PureComponent {
                                 <thead>
                                 <tr>
                                     {/*<th></th>*/}
-                                    <TableHeader title="Select" sortKey="active"
+                                    <TableHeader title={t('projects.table_column_select')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Lock" sortKey="locked"
+                                    <TableHeader title={t('projects.table_column_lock')} sortKey="locked"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Label' sortKey="label"
+                                    <TableHeader title={t('projects.table_column_label')} sortKey="label"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <th/>
-                                    <TableHeader title='Date' sortKey="date"
+                                    <TableHeader title={t('projects.table_column_date')} sortKey="date"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Folders' sortKey="folders"
+                                    <TableHeader title={t('projects.table_column_folders')} sortKey="folders"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Images' sortKey="images"
+                                    <TableHeader title={t('projects.table_column_images')} sortKey="images"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Status' sortKey="active"
+                                    <TableHeader title={t('projects.table_column_status')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title='Path' sortKey="path"
+                                    <TableHeader title={t('projects.table_column_path')} sortKey="path"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <th/>
                                 </tr>
@@ -328,8 +331,8 @@ export default class extends PureComponent {
                                                              } else {
                                                                  remote.dialog.showMessageBox({
                                                                      type: 'info',
-                                                                     detail: `Project is locked by user ${loadedProject.lockedBy}`,
-                                                                     message: `Locked`,
+                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy}),
+                                                                     message: t('global.locked'),
                                                                      buttons: ['OK'],
                                                                      cancelId: 1
                                                                  });
@@ -373,12 +376,12 @@ export default class extends PureComponent {
                 <div>
                     <ContextMenu id="projects_context_menu">
                         <MenuItem data={{action: 'edit'}} onClick={this._handleContextMenu}>
-                            <img alt="select all" className='select-all' src={EDIT}/> Edit
+                            <img alt="select all" className='select-all' src={EDIT}/> {t('global.edit')}
                         </MenuItem>
                         <MenuItem divider/>
 
                         <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> Delete
+                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> {t('global.delete')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
@@ -396,20 +399,20 @@ export default class extends PureComponent {
                             <img
                                 alt="copy path"
                                 src={COPY_PATH_IMAGE_CONTEXT}
-                            /> Copy to clipboard
+                            /> {t('global.copy_to_clipboard')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
 
                 <Modal isOpen={this.state.modal} toggle={this._toggle} wrapClassName="bst" autoFocus={false}>
-                    <ModalHeader toggle={this._toggle}>Edit project label</ModalHeader>
+                    <ModalHeader toggle={this._toggle}>{t('projects.dialog_title_edit_project_label')}</ModalHeader>
                     <ModalBody>
                         <Form onSubmit={(e) => {
                             e.preventDefault();
                             this._editProject();
                         }}>
                             <FormGroup row>
-                                <Label for="modelName" sm={5}>new project name</Label>
+                                <Label for="modelName" sm={5}>{t('projects.lbl_new_project_name')}</Label>
                                 <Col sm={7}>
                                     <Input type="text" name="projectName" id="projectName" autoFocus={true}
                                            onChange={(e) => {
@@ -423,22 +426,22 @@ export default class extends PureComponent {
                         </Form>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this._editProject}>Save</Button>
-                        <Button color="secondary" onClick={this._toggle}>Cancel</Button>
+                        <Button color="primary" onClick={this._editProject}>{t('global.save')}</Button>
+                        <Button color="secondary" onClick={this._toggle}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
 
                 <Modal isOpen={this.state.deleteModal} toggle={this._toggle2} wrapClassName="bst"
                        autoFocus={false}>
-                    <ModalHeader toggle={this._toggle2}>Are you sure you want to delete this project
+                    <ModalHeader toggle={this._toggle2}>{t('projects.dialog_title_delete_confirmation')}
                         ?</ModalHeader>
                     <ModalFooter>
                         <Button color="primary" onClick={(e) => {
                             e.preventDefault();
                             this._deleteSelectedProject(this.state.selectedProjectPath)
                         }
-                        }>Yes</Button>
-                        <Button color="secondary" onClick={this._toggle2}>Cancel</Button>
+                        }>{t('global.yes')}</Button>
+                        <Button color="secondary" onClick={this._toggle2}>{t('global.cancel')}</Button>
                     </ModalFooter>
                 </Modal>
             </Container>

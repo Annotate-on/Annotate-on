@@ -1,22 +1,16 @@
+import React from 'react';
 import {connect} from 'react-redux';
 import {push} from "connected-react-router";
-import Component from "../components/Credits";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 import {withTranslation} from "react-i18next";
+import Options from "../components/Options";
 
 const mapStateToProps = state => {
-    return {
-        appState: state.app,
-        selectedMenu: state.app.selected_menu,
-        projectName: state.app.selectedProjectName
-    };
+    return {};
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        goToLoading: () => {
-            dispatch(push('/credits'));
-        },
         goToLibrary: () => {
             dispatch(push('/selection'));
             setTimeout(() => {
@@ -26,4 +20,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Options));

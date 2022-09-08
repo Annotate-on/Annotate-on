@@ -23,7 +23,7 @@ const COLUMN_MIN = 'Min';
 const COLUMN_MAX = 'Max';
 const COLUMN_COLOR = 'Color';
 
-const COLUMNS = [
+const EXPORT_COLUMNS = [
     COLUMN_CHARACTER_NAME,
     COLUMN_CHARACTER_TYPE,
     COLUMN_CATALOG_NUMBER,
@@ -124,7 +124,6 @@ class Target extends PureComponent {
                     color: descriptor.targetColor
                 });
             }
-
         }
 
         const sortedTargets = this._sortList(sortBy, sortDirection, unsortedTargets);
@@ -171,8 +170,9 @@ class Target extends PureComponent {
 
     _exportDataToSdd = () => {
         const now = new Date();
+        const { t } = this.props;
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-            title: 'Save in SDD',
+            title: t('results.characters.dialog_title_save_in_sdd'),
             defaultPath: `Characters-${formatDateForFileName(now)}.sdd.xml`
         });
         if (!file || file.length < 1) return;
@@ -185,10 +185,10 @@ class Target extends PureComponent {
 
     _exportData = (separator) => {
         const now = new Date();
+        const { t } = this.props;
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-            title: 'Characters',
+            title: t('results.characters.dialog_title_save'),
             defaultPath: `Characters-${formatDateForFileName(now)}.csv`
-
         });
 
         if (!file || file.length < 1) return;
@@ -225,44 +225,46 @@ class Target extends PureComponent {
             ]
         });
 
-        const worksheet = XLSX.utils.aoa_to_sheet([COLUMNS, ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
         getXlsx(worksheet , separator , file);
     };
 
     render() {
         let key = 0;
-
         let canExportToSdd = false;
         if (this.props.selectedTaxonomy) {
             const taxonomy = this.props.taxonomies.find(tax => tax.id === this.props.selectedTaxonomy.id);
              if(taxonomy) canExportToSdd = taxonomy.model === MODEL_XPER;
-
         }
         const isDropdownDisabled = this.state.sortedTargets.length === 0;
+        const { t } = this.props;
         return (
             <div className="bst rcn_targets">
                 <Row className="action-bar">
                     <Col md={1}>
-                        <Dropdown title="Export the selected characters to a CSV file" isOpen={this.state.dropdownOpen}
+                        <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')} isOpen={this.state.dropdownOpen}
                                   size="sm" color="primary" toggle={() => {
                             this.setState(prevState => ({
                                 dropdownOpen: !prevState.dropdownOpen
                             }));
                         }}>
                             <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                Export results
+                                {t('results.dropdown_export_results')}
                             </DropdownToggle>
                             <DropdownMenu>
                                 <DropdownItem onClick={() => {
                                     this._exportData(';')
-                                }}>Use semicolon separator</DropdownItem>
+                                }}>{t('results.dropdown_item_use_semicolon_separator')}
+                                </DropdownItem>
                                 <DropdownItem onClick={() => {
                                     this._exportData(',')
-                                }}>Use comma separator</DropdownItem>
+                                }}>{t('results.dropdown_item_use_comma_separator')}
+                                </DropdownItem>
                                 {canExportToSdd ?
                                     <DropdownItem onClick={() => {
                                         this._exportDataToSdd()
-                                    }}>Export to Xper</DropdownItem> : ''}
+                                    }}>{t('results.dropdown_item_export_to_xper')}
+                                    </DropdownItem> : ''}
                             </DropdownMenu>
                         </Dropdown>
                     </Col>
@@ -273,21 +275,21 @@ class Target extends PureComponent {
                              style={{height: this.state.height}}>
 
                             <Table hover size="sm" className="targets-table">
-                                <thead title="Ascendant or descendant order">
+                                <thead title={t('results.table_header_tooltip_ascendant_or_descendant_order')}>
                                 <tr>
                                     <th>#</th>
-                                    <TableHeader title="Character name" sortKey="targetName"
+                                    <TableHeader title={t('results.characters.table_column_character_name')} sortKey="targetName"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Character type" sortKey="targetType"
+                                    <TableHeader title={t('results.characters.table_column_character_type')} sortKey="targetType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <th>Value</th>
-                                    <TableHeader title="Item" sortKey="catalogNumber"
+                                    <th>{t('results.characters.table_column_value')}</th>
+                                    <TableHeader title={t('results.characters.table_column_item')} sortKey="catalogNumber"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Annotation type" sortKey="annotationType"
+                                    <TableHeader title={t('results.characters.table_column_annotation_type')} sortKey="annotationType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Number of measures" sortKey="count"
+                                    <TableHeader title={t('results.characters.table_column_number_of_measures')} sortKey="count"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title="Color" sortKey="color"
+                                    <TableHeader title={t('results.characters.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                 </tr>
                                 </thead>

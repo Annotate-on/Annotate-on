@@ -25,6 +25,8 @@ import Splash from "./components/Splash";
 import {IMAGE_STORAGE_DIR} from "./constants/constants";
 import {formatDateForFileName} from "./utils/js";
 import lodash from 'lodash';
+import './i18n';
+import i18next from "i18next";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -69,7 +71,7 @@ fromConfigFile();
 // Callback which boot the app
 const go = () => {
         let initialState = createInitialState();
-
+        const { t } = i18next;
         // Load previously working state.
         const file = path.join(getCacheDir(), 'current-work.json');
 
@@ -106,7 +108,6 @@ const go = () => {
                         correctStructure = false;
                     }
                 }
-
                 if(correctStructure) {
                     initialState = tmpState;
                     for (const sha1 in initialState.app.pictures) {
@@ -119,13 +120,13 @@ const go = () => {
                     fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.old`)
                     remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                         type: 'warning',
-                        message: 'Selected workspace has configuration from older version. Opening project without previous work.',
+                        message: t('global.alert_selected_workspace_has_configuration_from_older_version')
                     });
                 }
             } catch (e) {
                 remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'error',
-                    message: 'Selected workspace state is corrupted. Opening project without previous work.',
+                    message: t('global.alert_selected_workspace_state_is_corrupted'),
                 });
                 // Save corrupted work and create empty state.
                 fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.corrupted`)

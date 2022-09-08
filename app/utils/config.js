@@ -12,6 +12,9 @@ import os from 'os';
 import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
+import {changeLanguage} from "i18next";
+import {getDefaultLanguage} from "../i18n";
+
 
 let config;
 // path to global app config
@@ -31,7 +34,6 @@ if (process.env.NODE_ENV === 'production') {
 } else {
     installatio_root_dir = process.env.INIT_CWD;
 }
-
 
 export const WORK_SPACE_DESCRIPTOR = 'workspace.json';
 export const PROJECT_INFO_DESCRIPTOR = 'project-info.json';
@@ -295,7 +297,8 @@ const SetBackupProject = () => {
     let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
     config = {
         workspace: path.join(installatio_root_dir, 'demo-workspace'),
-        projects: [{path: demoProjectPath, active: true}]
+        projects: [{path: demoProjectPath, active: true}],
+        language: getDefaultLanguage()
     };
     yaml.sync(config_file_path, config);
 }
@@ -306,7 +309,6 @@ export const setConfigFilePath = () => {
 
     const old_config_file_path = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
     config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
-
 
     console.log(config_file_path, fs.existsSync(config_file_path));
     if (!fs.existsSync(config_file_path)) {
@@ -419,12 +421,17 @@ export const fromConfigFile = () => {
             fs.ensureDirSync(USER_DATA_DIR);
             config.workspace = USER_DATA_DIR;
         }
-        initWorkSpace()
+        initWorkSpace();
+        if(config.language) {
+            changeLanguage(config.language);
+        } else {
+            updateSelectedLanguage(getDefaultLanguage());
+        }
     } catch (e) {
         fs.ensureDirSync(USER_DATA_DIR);
         config = {workspace: USER_DATA_DIR};
+        updateSelectedLanguage(getDefaultLanguage());
     }
-
 };
 
 /**
@@ -986,3 +993,17 @@ export const updateChildrenPath = (children, replacePath, withPath) => {
 export const renameFolder = (oldPath, newPath) => {
     fs.renameSync(path.join(config.workspace, IMAGE_STORAGE_DIR, oldPath), path.join(config.workspace, IMAGE_STORAGE_DIR, newPath));
 };
+
+/**
+ * Update information about chosen language
+ * @param projectPath
+ */
+export const updateSelectedLanguage = (lang) => {
+    console.log("updateSelectedLanguage lang " + lang)
+    // const readYml = configYaml(config_file_path);
+    changeLanguage(lang);
+    config.language = lang;
+    yaml.sync(config_file_path, config);
+};
+
+

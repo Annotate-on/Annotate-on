@@ -44,7 +44,7 @@ import ChronoThematicAnnotations from "../containers/ChronoThematicAnnotations";
 import EventAnnotations from "../containers/EventAnnotations";
 import {calculateTableHeight, getXlsx} from "../utils/common";
 
-const COLUMNS = [
+const EXPORT_COLUMNS = [
     'Name',
     'Type',
     'Value',
@@ -99,7 +99,6 @@ const COLUMNS = [
     'Specific Epithet',
     'Taxon ID',
 
-
     "Catalog Number",
     "Reference",
     "Family",
@@ -134,7 +133,6 @@ class Data extends PureComponent {
     constructor(props) {
         super(props);
 
-
         this.exportXlsx = this.exportXlsx.bind(this);
         this.toggle = this.toggle.bind(this);
 
@@ -164,7 +162,6 @@ class Data extends PureComponent {
                     })
                 }
             }
-
 
             const picture = this.props.pictures[annotation.pictureId];
             if (!picture)
@@ -304,7 +301,6 @@ class Data extends PureComponent {
     }
 
     _filter = (selectedTagOptions, selectedTargetOptions) => {
-
         selectedTagOptions = selectedTagOptions || this.state.selectedTagOptions;
         selectedTargetOptions = selectedTargetOptions || this.state.selectedTargetOptions;
 
@@ -481,15 +477,16 @@ class Data extends PureComponent {
 
     render() {
         let key = 0;
+        const { t } = this.props;
         const isDropdownDisabled = this.state.sortedAnnotations.length === 0;
         return (
             <div className="bst rcn_data">
                 <div className="bg">
                     <Row>
                         <Col sm={5} className="hide-overflow">
-                            <span className="project-label">Project:</span><span
+                            <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">Model:</span>
+                            <span className="project-label">{t('global.lbl_model')}:</span>
                             <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
@@ -498,12 +495,12 @@ class Data extends PureComponent {
                                  src='http://www.xper3.fr/resources/img/xper3-logo.png'>
                             </img> : APP_NAME} )</Fragment>
                         :
-                        'Without model'
+                        t('library.lbl_without_model')
                     }
                             </span>
                         </Col>
                         <Col sm={7}>
-                            <span className="title">Tabular view and exports of annotations</span>
+                            <span className="title">{t('results.title')}</span>
                         </Col>
                     </Row>
                 </div>
@@ -517,7 +514,7 @@ class Data extends PureComponent {
                                              this.toggle('1');
                                          }}
                                 >
-                                    Characters
+                                    {t('results.tab_characters')}
                                 </NavLink>
                             </NavItem>
                             <NavItem>
@@ -528,7 +525,7 @@ class Data extends PureComponent {
                                         setTimeout(this._setTableHeight, 300);
                                     }}
                                 >
-                                    Annotations
+                                    {t('results.tab_annotations')}
                                 </NavLink>
                             </NavItem>
                             <NavItem>
@@ -538,7 +535,7 @@ class Data extends PureComponent {
                                         this.toggle('3');
                                     }}
                                 >
-                                    Collections
+                                    {t('results.tab_collections')}
                                 </NavLink>
                             </NavItem>
                             <NavItem>
@@ -548,7 +545,7 @@ class Data extends PureComponent {
                                         this.toggle('4');
                                     }}
                                 >
-                                    Metadata
+                                    {t('results.tab_metadata')}
                                 </NavLink>
                             </NavItem>
                             <NavItem>
@@ -558,7 +555,7 @@ class Data extends PureComponent {
                                         this.toggle('5');
                                     }}
                                 >
-                                    Chrono-thematic
+                                    {t('results.tab_chrono_thematic')}
                                 </NavLink>
                             </NavItem>
                             <NavItem>
@@ -568,7 +565,7 @@ class Data extends PureComponent {
                                         this.toggle('6');
                                     }}
                                 >
-                                   Event-annotations
+                                    {t('results.tab_event-annotations')}
                                 </NavLink>
                             </NavItem>
                         </Nav>
@@ -581,7 +578,7 @@ class Data extends PureComponent {
                             <TabPane tabId="2">
                                 <Row className="action-bar">
                                     <Col md={1}>
-                                        <Dropdown title="Export the selected results to a CSV file"
+                                        <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')}
                                                   isOpen={this.state.dropdownOpen}
                                                   size="sm" color="primary" toggle={() => {
                                             this.setState(prevState => ({
@@ -589,15 +586,15 @@ class Data extends PureComponent {
                                             }));
                                         }}>
                                             <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                                Export to CSV
+                                                {t('results.dropdown_export_to_csv')}
                                             </DropdownToggle>
                                             <DropdownMenu>
                                                 <DropdownItem onClick={() => {
                                                     this.exportXlsx(';')
-                                                }}>Use semicolon separator</DropdownItem>
+                                                }}>{t('results.dropdown_item_use_semicolon_separator')}</DropdownItem>
                                                 <DropdownItem onClick={() => {
                                                     this.exportXlsx(',')
-                                                }}>Use comma separator</DropdownItem>
+                                                }}>{t('results.dropdown_item_use_comma_separator')}</DropdownItem>
                                             </DropdownMenu>
                                         </Dropdown>
                                     </Col>
@@ -605,7 +602,7 @@ class Data extends PureComponent {
                                 <Row className="action-bar">
                                     <Col md={6}>
                                         <br/>
-                                        Filter by tags
+                                        {t('results.annotations.lbl_filter_by_tags')}
                                         <br/><br/>
                                         <Select
                                             value={this.state.selectedTagOptions}
@@ -620,7 +617,7 @@ class Data extends PureComponent {
                                     </Col>
                                     <Col md={6}>
                                         <br/>
-                                        Filter by characters
+                                        {t('results.annotations.lbl_filter_by_characters')}
                                         <br/><br/>
                                         <Select
                                             value={this.state.selectedTargetOptions}
@@ -639,37 +636,37 @@ class Data extends PureComponent {
                                         <div className="scrollable-table-wrapper" ref={_ => (this.pane = _)}
                                              style={{height: this.state.height}}>
                                             <Table hover size="sm" className="targets-table">
-                                                <thead title="Ascendant or descendant order">
+                                                <thead title={t('results.table_header_tooltip_ascendant_or_descendant_order')}>
                                                 <tr>
                                                     <th>#</th>
-                                                    <TableHeader title="Name" sortKey="title"
+                                                    <TableHeader title={t('results.annotations.table_column_name')} sortKey="title"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Type" sortKey="type"
+                                                    <TableHeader title={t('results.annotations.table_column_type')} sortKey="type"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Value" sortKey="value"
+                                                    <TableHeader title={t('results.annotations.table_column_value')} sortKey="value"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Character" sortKey="targets"
+                                                    <TableHeader title={t('results.annotations.table_column_character')} sortKey="targets"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Character type" sortKey="character_type"
+                                                    <TableHeader title={t('results.annotations.table_column_character_type')} sortKey="character_type"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Reference" sortKey="catalogNumber"
+                                                    <TableHeader title={t('results.annotations.table_column_reference')} sortKey="catalogNumber"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Tags" sortKey="tags"
+                                                    <TableHeader title={t('results.annotations.table_column_tags')} sortKey="tags"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="dpiX" sortKey="dpix"
+                                                    <TableHeader title={t('results.annotations.table_column_dpix')} sortKey="dpix"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="dpiY" sortKey="dpiy"
+                                                    <TableHeader title={t('results.annotations.table_column_dpiy')} sortKey="dpiy"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="File" sortKey="fileBasename"
+                                                    <TableHeader title={t('results.annotations.table_column_file')} sortKey="fileBasename"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Note" sortKey="note"
+                                                    <TableHeader title={t('results.annotations.table_column_note')} sortKey="note"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="Folder" sortKey="dirname"
+                                                    <TableHeader title={t('results.annotations.table_column_folder')} sortKey="dirname"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title="X"/>
-                                                    <TableHeader title="Y"/>
-                                                    <TableHeader title="W"/>
-                                                    <TableHeader title="H"/>
+                                                    <TableHeader title={t('results.annotations.table_column_x')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_y')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_w')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_h')}/>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -828,7 +825,7 @@ class Data extends PureComponent {
             }
         });
 
-        const worksheet = XLSX.utils.aoa_to_sheet([COLUMNS, ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
         getXlsx(worksheet , separator , file);
 
     }
