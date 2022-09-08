@@ -1,4 +1,5 @@
 # Annotate-on
+
 Annotate-on est une annoteuse collaborative rapide initialement développée pour les **sciences naturalistes** par le laboratoire [Dicen-idf](https://www.dicen-idf.org), pour l'infrastructure nationale de recherche [Recolnat](https://www.recolnat.org) regroupant notamment le [Cnam](https://www.cnam.fr) et le [MNHN](https://www.mnhn.fr). 
 
 Elle a ensuite été étendue à l'utilisation en **humanités numériques** par le laboratoire Dicen-IdF dans le cadre du projet OPAAH-IIIF au sein du Labex [Les passés dans le présent](http://passes-present.eu/).
