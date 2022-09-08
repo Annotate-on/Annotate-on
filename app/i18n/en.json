@@ -46,6 +46,8 @@
       "lbl_importing_resources_files_to_folders": "Importing resources files to folders",
       "lbl_resources_files_found": "Resources files found",
       "lbl_collecting_metadata_and_generating_thumbnails": "Collecting metadata and generating thumbnails",
+      "alert_selected_workspace_has_configuration_from_older_version": "Selected workspace has configuration from older version. Opening project without previous work.",
+      "alert_selected_workspace_state_is_corrupted": "Selected workspace state is corrupted. Opening project without previous work.",
       "options": {
         "title": "Options",
         "lbl_select_language": "Select language",

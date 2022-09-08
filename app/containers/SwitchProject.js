@@ -3,6 +3,7 @@ import {push} from "connected-react-router";
 import Component from '../components/SwitchProject';
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 import {setNewState} from "../actions/app";
+import { withTranslation } from 'react-i18next';
 
 const mapStateToProps = state => {
     return {
@@ -36,4 +37,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));
