@@ -25,7 +25,7 @@ import {
     lockUnlockProject,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
-    setWorkspace, forceUnlockProject, lockProject
+    setWorkspace, forceUnlockProject, lockProject, checkIfProjectsAreCorrupted
 } from "../utils/config";
 import fs from 'fs-extra';
 import archiver from 'archiver';
@@ -89,6 +89,7 @@ export default class extends PureComponent {
     }
 
     _makeProjects() {
+        checkIfProjectsAreCorrupted();
         const config = getYaml();
         let projectsWithInfo = [];
         if (config && config.projects !== undefined && config.projects.length > 0) {
@@ -337,7 +338,7 @@ export default class extends PureComponent {
                                 alt="xper3-logo"
                                 height='16px'
                                 src='http://www.xper3.fr/resources/img/xper3-logo.png'/> : 'Annotate-ON'} )
-                        </Fragment> : 'Without model'
+                        </Fragment> : t('library.lbl_without_model')
                     }
                             </span>
                         </Col>
@@ -430,6 +431,16 @@ export default class extends PureComponent {
                                                                  return false;
                                                              }
                                                              const path_to_project = path.join(project.path, PROJECT_INFO_DESCRIPTOR);
+                                                             if(!fs.existsSync(path.join(project.path, 'project-info.json'))) {
+                                                                 remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                     type: 'error',
+                                                                     message: t('global.error'),
+                                                                     detail: t('projects.alert_there_is_no_project_on_path', {file_path: project.path}),
+                                                                     cancelId: 1
+                                                                 });
+                                                                 this.setState({showAction: LOCK_UNLOCK_PROJECT});
+                                                                 return ;
+                                                             }
                                                              const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
                                                              if(probeLockedProject(loadedProject)) {
                                                                  lockUnlockProject(project.path);

@@ -324,11 +324,18 @@ const setBackupProject = () => {
     if(!config) {
         config = {}
     }
-    config.workspace = demoProjectPath;
     if(!config.projects) {
         config.projects = []
     }
-    config.projects.push({path: demoProjectPath, active: true});
+    const even = (element) => element.path === demoProjectPath;
+    if (config.projects.some(even)) {
+        config.projects.forEach(p => {
+            p.active = p.path === demoProjectPath;
+        })
+    } else {
+        config.projects.push({path: demoProjectPath, active: true});
+    }
+    config.workspace = demoProjectPath;
     yaml.sync(config_file_path, config);
     lockProject(config.workspace);
 }
@@ -390,6 +397,19 @@ const validateWorkspace = () => {
     return false;
 }
 
+export const checkIfProjectsAreCorrupted = () => {
+    if(!config.projects) return;
+    config.projects.forEach(project => {
+        const corrupted = !fs.existsSync(path.join(project.path, 'project-info.json'));
+        if (corrupted) {
+            project.corrupted = true;
+        } else {
+            delete project.corrupted;
+        }
+    })
+    yaml.sync(config_file_path, config);
+}
+
 export const doInitConfig = () => {
     const { t } = i18next;
     const defaultLanguage = getDefaultLanguage();
@@ -434,6 +454,9 @@ export const doInitConfig = () => {
             return;
         }
 
+        //check if there are corrupted projects
+        checkIfProjectsAreCorrupted();
+
         let switchedToProject;
         // check if workspace is valid
 
@@ -441,9 +464,8 @@ export const doInitConfig = () => {
             console.log(" current workspace [" + config.workspace + "] is not valid" )
             let workspacePath = null;
             config.projects.forEach(project => {
-                console.log(fs.existsSync(path.join(project.path, 'project-info.json')));
                 project.active = false;
-                if (workspacePath === null && !project.corrupted) {
+                if (workspacePath === null && !project.corrupted && fs.existsSync(path.join(project.path, 'project-info.json'))) {
                     project.active = true;
                     workspacePath = project.path;
                     switchedToProject = project;
@@ -465,7 +487,7 @@ export const doInitConfig = () => {
 
         // check if project is locked
         const path_to_project = path.join(config.workspace, PROJECT_INFO_DESCRIPTOR);
-        console.log('path_to_project [' + path_to_project +"]")
+        console.log('path_to_projec [' + path_to_project +"]")
         const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
         console.log(loadedProject)
 
@@ -476,7 +498,6 @@ export const doInitConfig = () => {
             return;
         }
 
-        console.log('project is locked by' + loadedProject.lockedBy);
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
@@ -495,7 +516,6 @@ export const doInitConfig = () => {
         // user doesn't want to unlock project, then switch to other unlocked and not corrupted project
         let workspacePath = null;
         config.projects.forEach(project => {
-            console.log(' check project', project);
             project.active = false;
             if (workspacePath === null) {
                 console.log('project.path ' + project.path);
@@ -528,14 +548,14 @@ export const doInitConfig = () => {
         });
     } catch (e) {
         console.error(e);
+        setBackupProject();
         remote.dialog.showMessageBox({
             type: 'error',
-            detail: t('projects.alert_fatal_error_while_init_config'),
+            detail: t('projects.alert_fatal_error_while_init_config', {workspace: config.workspace}),
             message: t('global.locked'),
             buttons: ['OK'],
             cancelId: 1
         });
-        setBackupProject();
     }
 };
 

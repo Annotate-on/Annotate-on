@@ -61,7 +61,7 @@
       }
     },
     "main_navbar": {
-      "library": "FR Library",
+      "library": "Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",
@@ -386,11 +386,12 @@
       "alert_project_is_locked": "Project is locked by user '{{user}}' on machine '{{machine}}'",
       "alert_confirmation_unlock_project": "Project is locked by user '{{user}}' on machine '{{machine}}'. Do you really want to unlock it?",
       "alert_workspace_will_be_switched_to": "You're workspace will be switched to '{{workspace}}' !",
-      "alert_fatal_error_while_init_config": "Fatal error while initializing configuration , restoring yml file to init state. !",
+      "alert_fatal_error_while_init_config": "Fatal error while initializing configuration,You're workspace will be switched to '{{workspace}}' !",
       "alert_selected_workspace_has_configuration_from_older_version": "Selected workspace has configuration from older version. Opening project without previous work.",
       "alert_selected_workspace_state_is_corrupted": "Selected workspace state is corrupted. Opening project without previous work.",
       "alert_projects_created_with_old_version_of_can_not_be_loaded": "Projects created with version of Annotate <1.7.0 can not be loaded.\nPaths to projects:\n\n",
       "alert_title_projects_created_with_old_version_of_can_not_be_loaded": "Found old config file '{{file_path}}'",
+      "alert_there_is_no_project_on_path": "There is no project on path '{{file_path}}'",
 
       "lbl_new_project_name": "new project name",
       "dialog_title_edit_project_label": "Edit project label",

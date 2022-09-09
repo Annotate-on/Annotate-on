@@ -15,6 +15,7 @@ import {
     Table
 } from 'reactstrap';
 import {
+    checkIfProjectsAreCorrupted,
     deleteWorkspace,
     editProject, forceUnlockProject,
     getProjectInfo,
@@ -62,8 +63,8 @@ export default class extends PureComponent {
             showAction: null,
         };
     }
-
     _makeProjects() {
+        checkIfProjectsAreCorrupted();
         let projectsWithInfo = [];
         const config = getYaml();
         if (config && config.projects !== undefined && config.projects.length > 0) {
@@ -77,7 +78,8 @@ export default class extends PureComponent {
                     images: projectInfo.images,
                     label: projectInfo.label,
                     locked: projectInfo.locked,
-                    lockedBy: projectInfo.lockedBy
+                    lockedBy: projectInfo.lockedBy,
+                    corrupted: p.corrupted
                 }, v => lodash.isUndefined(v) || lodash.isNull(v));
                 projectsWithInfo.push(projectObject);
             });
@@ -220,55 +222,6 @@ export default class extends PureComponent {
         return source.includes(projectWorkspace);
     }
 
-    _zipDirectory(source) {
-        let saverPath = remote.dialog.showSaveDialog( remote.getCurrentWindow() , {
-            title: 'Save project to',
-            defaultPath: path.join(getUserWorkspace(), `${this.state.workspace}.annotate`)
-        });
-
-        if (!saverPath || saverPath.length < 1) return;
-
-        if (saverPath.substring(saverPath.length - 9) !== '.annotate') {
-            saverPath = saverPath + '.annotate';
-        }
-
-        if (this._isForbiddenDirectory(path.dirname(saverPath)) === true) {
-            alert('You cant export project in its own workspace')
-            return;
-        }
-
-        try {
-            ee.emit(EVENT_SHOW_WAITING, "Exporting to zip file...");
-            const archive = archiver('zip', {zlib: {level: 9}});
-
-            const stream = fs.createWriteStream(saverPath, {encoding: 'utf8'});
-
-            archive
-                .directory(source, false)
-                .on('error', err => reject(err))
-                .pipe(stream);
-
-            stream.on('close', () => {
-                ee.emit(EVENT_HIDE_WAITING);
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
-                    type: 'info',
-                    detail: saverPath,
-                    message: `Export finished`,
-                    buttons: ['OK', 'Open folder'],
-                    cancelId: 1
-                });
-                if (result === 1) {
-                    shell.showItemInFolder(saverPath);
-                }
-            });
-
-            archive.finalize();
-        } catch (err) {
-            ee.emit(EVENT_HIDE_WAITING);
-            console.error(err)
-        }
-    }
-
     render() {
         let status = '';
         const { t } = this.props;
@@ -328,6 +281,16 @@ export default class extends PureComponent {
                                                                  return false;
                                                              }
                                                              const path_to_project = path.join(project.path, PROJECT_INFO_DESCRIPTOR);
+                                                             if(!fs.existsSync(path.join(project.path, 'project-info.json'))) {
+                                                                 remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                     type: 'error',
+                                                                     message: t('global.error'),
+                                                                     detail: t('projects.alert_there_is_no_project_on_path', {file_path: project.path}),
+                                                                     cancelId: 1
+                                                                 });
+                                                                 this.setState({showAction: LOCK_UNLOCK_PROJECT});
+                                                                 return ;
+                                                             }
                                                              const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
                                                              if(probeLockedProject(loadedProject)) {
                                                                  lockUnlockProject(project.path);
@@ -353,8 +316,8 @@ export default class extends PureComponent {
                                                 <td width={60}>
                                                     {project.locked ? <img alt="lock" src={LOCK}/> : <img alt="unlock" src={UNLOCK}/>}
                                                 </td>
-                                                <td className={'hide-overflow'} id={'label-wrapper'}>
-                                                    {project.label}
+                                                <td className={`hide-overflow ${project.corrupted === true ? 'corrupted-project-label' : ''}`} id={'label-wrapper'}>
+                                                    {project.corrupted === true ? t('projects.lbl_corrupted_project') : project.label }
                                                 </td>
                                                 <td>
                                                 </td>
