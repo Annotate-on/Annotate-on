@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import styled from 'styled-components';
 import {DOC_FG, DOC_ICON, DOC_ICON_HOVER, IMAGE_STORAGE_DIR} from '../constants/constants';
 import {
-    addProjectToWorkSpace,
+    addProjectToWorkSpace, forceUnlockProject,
     get,
     getThumbNailsDir,
-    getUserWorkspace,
+    getUserWorkspace, lockProject,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
     setWorkspace,
@@ -74,7 +74,7 @@ export default class extends Component {
                 <div className="bg">
                     <a onClick={ () => {
                         this.props.goToLibrary();
-                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page1')}/></a>
+                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
                     <span className="title">{t('projects.import_existing_project.title')}</span>
                 </div>
                 <_Content>
@@ -107,21 +107,27 @@ export default class extends Component {
                                                 if (!version){
                                                     updateProjectInfoVersion(packageJson.version)
                                                 }
-
+                                                console.log("  ")
                                                 if(!probeLockedProject(project)) {
-                                                    addProjectToWorkSpace(dir, false);
-                                                    updateTargetTypes(dir);
-                                                    remote.dialog.showMessageBox({
-                                                        type: 'info',
-                                                        detail: t('projects.alert_project_is_locked', {user:project.lockedBy}),
+                                                    const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                        type: 'question',
+                                                        buttons: ['Yes', 'No'],
                                                         message: t('global.locked'),
-                                                        buttons: ['OK'],
-                                                        cancelId: 1
+                                                        cancelId: 1,
+                                                        detail: t('projects.alert_confirmation_unlock_project', {user: project.lockedBy, machine: project.lockedOn})
                                                     });
-                                                    this.props.goToSettings();
-                                                    return;
+                                                    if(!result) {
+                                                        // user wants to unlock project
+                                                        forceUnlockProject(project.path);
+                                                        // lockProject(project.path);
+                                                    } else {
+                                                        // user don't wants to unlock project
+                                                        addProjectToWorkSpace(dir, false);
+                                                        updateTargetTypes(dir);
+                                                        this.props.goToSettings();
+                                                        return;
+                                                    }
                                                 }
-
                                                 this.setState({
                                                     workspace: dir
                                                 });

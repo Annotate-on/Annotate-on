@@ -16,11 +16,11 @@ import {
 } from 'reactstrap';
 import {
     deleteWorkspace,
-    editProject,
+    editProject, forceUnlockProject,
     getProjectInfo,
     getThumbNailsDir,
     getUserWorkspace,
-    getYaml,
+    getYaml, lockProject,
     lockUnlockProject,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
@@ -33,7 +33,7 @@ import {remote, shell} from "electron";
 import path from "path";
 import {IMAGE_STORAGE_DIR} from "../constants/constants";
 import {ContextMenu, MenuItem} from "react-contextmenu";
-import {ee, EVENT_CREATE_SYSTEM_TAGS, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../utils/library";
+import {ee, EVENT_CREATE_SYSTEM_TAGS, EVENT_HIDE_WAITING, EVENT_SHOW_ALERT, EVENT_SHOW_WAITING} from "../utils/library";
 import configYaml from 'config-yaml';
 import lodash from "lodash";
 
@@ -321,21 +321,31 @@ export default class extends PureComponent {
                                                            }}
                                                            checked={project.active}
                                                     />
-                                                    <div className="check"
+                                                    <div className={`check ${project.corrupted === true ? 'corrupted-project-check' : ''}`}
                                                          onClick={() => {
+                                                             if (project.corrupted && project.corrupted === true){
+                                                                 ee.emit(EVENT_SHOW_ALERT, t('projects.alert_can_not_switch_to_corrupted_project'));
+                                                                 return false;
+                                                             }
                                                              const path_to_project = path.join(project.path, PROJECT_INFO_DESCRIPTOR);
                                                              const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
                                                              if(probeLockedProject(loadedProject)) {
                                                                  lockUnlockProject(project.path);
                                                                  this._setWorkspace(project.path);
                                                              } else {
-                                                                 remote.dialog.showMessageBox({
-                                                                     type: 'info',
-                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy}),
+                                                                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                     type: 'question',
+                                                                     buttons: ['Yes', 'No'],
                                                                      message: t('global.locked'),
-                                                                     buttons: ['OK'],
-                                                                     cancelId: 1
+                                                                     cancelId: 1,
+                                                                     detail: t('projects.alert_confirmation_unlock_project', {user: loadedProject.lockedBy, machine: loadedProject.lockedOn})
                                                                  });
+                                                                 if(!result) {
+                                                                     // user wants to unlock project
+                                                                     forceUnlockProject(project.path);
+                                                                     lockProject(project.path);
+                                                                     this._setWorkspace(project.path);
+                                                                 }
                                                                  this.setState({showAction: LOCK_UNLOCK_PROJECT});
                                                              }
                                                          }}/>

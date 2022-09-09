@@ -25,7 +25,7 @@ import {
     lockUnlockProject,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
-    setWorkspace
+    setWorkspace, forceUnlockProject, lockProject
 } from "../utils/config";
 import fs from 'fs-extra';
 import archiver from 'archiver';
@@ -435,13 +435,19 @@ export default class extends PureComponent {
                                                                  lockUnlockProject(project.path);
                                                                  this._setWorkspace(project.path);
                                                              } else {
-                                                                 remote.dialog.showMessageBox({
-                                                                     type: 'info',
-                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy, machine: loadedProject.lockedOn}),
+                                                                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                     type: 'question',
+                                                                     buttons: ['Yes', 'No'],
                                                                      message: t('global.locked'),
-                                                                     buttons: ['OK'],
-                                                                     cancelId: 1
+                                                                     cancelId: 1,
+                                                                     detail: t('projects.alert_confirmation_unlock_project', {user: loadedProject.lockedBy, machine: loadedProject.lockedOn})
                                                                  });
+                                                                 if(!result) {
+                                                                     // user wants to unlock project
+                                                                     forceUnlockProject(project.path);
+                                                                     lockProject(project.path);
+                                                                     this._setWorkspace(project.path);
+                                                                 }
                                                                  this.setState({showAction: LOCK_UNLOCK_PROJECT});
                                                              }
                                                          }}/>
