@@ -437,7 +437,7 @@ export default class extends PureComponent {
                                                              } else {
                                                                  remote.dialog.showMessageBox({
                                                                      type: 'info',
-                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy}),
+                                                                     detail: t('projects.alert_project_is_locked', {user:loadedProject.lockedBy, machine: loadedProject.lockedOn}),
                                                                      message: t('global.locked'),
                                                                      buttons: ['OK'],
                                                                      cancelId: 1

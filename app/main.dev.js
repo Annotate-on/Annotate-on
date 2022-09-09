@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -96,6 +96,13 @@ app.on('ready', async () => {
     }
   });
 
+  mainWindow.on('close', (e) => {
+    if(mainWindow) {
+      e.preventDefault();
+      mainWindow.webContents.send('app-close');
+    }
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -106,4 +113,13 @@ app.on('ready', async () => {
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
+
+  ipcMain.on('closed', _ => {
+    mainWindow = null;
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
 });
+

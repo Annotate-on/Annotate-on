@@ -8,13 +8,13 @@ import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import {createInitialState} from "./reducers/app";
 import {
-    fromConfigFile,
+    doInitWorkspace,
     getAllPicturesDirectoriesFlatten,
     getCacheDir,
     getProjectInfoFile,
     getThumbNailsDir,
     getUserWorkspace,
-    setConfigFilePath
+    doInitConfig
 } from "./utils/config";
 
 import './app.global.scss';
@@ -63,10 +63,10 @@ const start = new Date().getTime();
 //
 
 // // Read config file
-setConfigFilePath();
+doInitConfig();
 //
 // // Load config of workspace location.
-fromConfigFile();
+doInitWorkspace();
 
 // Callback which boot the app
 const go = () => {
