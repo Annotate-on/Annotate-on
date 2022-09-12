@@ -63,6 +63,7 @@ const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const DELETE_IMAGE_CONTEXT = require('./pictures/delete-tag.svg');
 const LOCK = require('./pictures/lock.svg');
 const UNLOCK = require('./pictures/unlock.svg');
+const SHARED = require('./pictures/user-group-solid.svg');
 
 const EDIT_PROJECT = 'EDIT_PROJECT';
 const DELETE_PROJECT = 'DELETE_PROJECT';
@@ -95,6 +96,7 @@ export default class extends PureComponent {
         if (config && config.projects !== undefined && config.projects.length > 0) {
             config.projects.forEach( p => {
                 let projectInfo = getProjectInfo(p.path);
+                console.log(projectInfo);
                 let projectObject = lodash.omitBy({
                     path: p.path,
                     active: p.active,
@@ -104,11 +106,13 @@ export default class extends PureComponent {
                     images: projectInfo.images,
                     label: projectInfo.label,
                     locked: projectInfo.locked,
-                    lockedBy: projectInfo.lockedBy
+                    lockedBy: projectInfo.lockedBy,
+                    shared: projectInfo.shared
                 }, v => lodash.isUndefined(v) || lodash.isNull(v));
                 projectsWithInfo.push(projectObject);
             });
         }
+        console.log(projectsWithInfo)
         return projectsWithInfo;
     }
 
@@ -155,7 +159,7 @@ export default class extends PureComponent {
                     alert(t('projects.alert_you_can_not_delete_currently_active_project'));
                 } else if(data.locked !== undefined) {
                     alert(t('projects.alert_you_can_not_delete_locked_project'))
-                } else this._toggle2(data.path, data.isActive);
+                } else this._toggle2(data.path, data.isActive, data.label);
                 break;
         }
     };
@@ -181,7 +185,7 @@ export default class extends PureComponent {
 
     };
 
-    _toggle2 = (path, isActive) => {
+    _toggle2 = (path, isActive, label) => {
         const { t } = this.props;
         if(isActive){
             alert(t('projects.alert_you_can_not_delete_currently_active_project'));
@@ -194,7 +198,8 @@ export default class extends PureComponent {
         } else {
             this.setState({
                 deleteModal: !this.state.deleteModal,
-                selectedProjectPath: path
+                selectedProjectPath: path,
+                selectedProjectLabel: label
             });
         }
     };
@@ -387,6 +392,8 @@ export default class extends PureComponent {
                                     {/*<th></th>*/}
                                     <TableHeader title={t('projects.table_column_select')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    <TableHeader title={t('projects.table_column_type')} sortKey="shared"
+                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('projects.table_column_lock')} sortKey="locked"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('projects.table_column_label')} sortKey="label"
@@ -463,6 +470,21 @@ export default class extends PureComponent {
                                                              }
                                                          }}/>
                                                 </td>
+                                                <td width={30}>
+                                                    <ContextMenuTrigger
+                                                        id="projects_context_menu"
+                                                        collect={() => {
+                                                            return {
+                                                                isCorrupted: project.corrupted === true,
+                                                                path: project.path,
+                                                                label: project.label,
+                                                                isActive: project.active,
+                                                                locked: project.locked
+                                                            };
+                                                        }}>
+                                                        {project.shared ? <img alt="shared" src={SHARED} className={"shared-project-icon"}/>  : <span/> }
+                                                    </ContextMenuTrigger>
+                                                </td>
                                                 <td width={60}>
                                                     <ContextMenuTrigger
                                                         id="projects_context_menu"
@@ -470,6 +492,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -484,6 +507,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -500,6 +524,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -514,6 +539,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -528,6 +554,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -542,6 +569,7 @@ export default class extends PureComponent {
                                                             return {
                                                                 isCorrupted: project.corrupted === true,
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active,
                                                                 locked: project.locked
                                                             };
@@ -555,6 +583,7 @@ export default class extends PureComponent {
                                                         collect={() => {
                                                             return {
                                                                 path: project.path,
+                                                                label: project.label,
                                                                 isActive: project.active
                                                             };
                                                         }}>
@@ -631,8 +660,10 @@ export default class extends PureComponent {
 
                 <Modal isOpen={this.state.deleteModal} toggle={this._toggle2} wrapClassName="bst"
                        autoFocus={false}>
-                    <ModalHeader toggle={this._toggle2}>{t('projects.dialog_title_delete_confirmation')}
-                        ?</ModalHeader>
+                    <ModalHeader toggle={this._toggle2}>{t('projects.dialog_title_delete_confirmation', {
+                        label: this.state.selectedProjectLabel,
+                        path: this.state.selectedProjectPath
+                    })}</ModalHeader>
                     <ModalFooter>
                         <Button color="primary" onClick={(e) => {
                             e.preventDefault();

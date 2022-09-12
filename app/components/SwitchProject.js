@@ -37,6 +37,7 @@ import {ContextMenu, MenuItem} from "react-contextmenu";
 import {ee, EVENT_CREATE_SYSTEM_TAGS, EVENT_HIDE_WAITING, EVENT_SHOW_ALERT, EVENT_SHOW_WAITING} from "../utils/library";
 import configYaml from 'config-yaml';
 import lodash from "lodash";
+import SHARED from "./pictures/user-group-solid.svg";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
@@ -79,7 +80,8 @@ export default class extends PureComponent {
                     label: projectInfo.label,
                     locked: projectInfo.locked,
                     lockedBy: projectInfo.lockedBy,
-                    corrupted: p.corrupted
+                    corrupted: p.corrupted,
+                    shared: projectInfo.shared
                 }, v => lodash.isUndefined(v) || lodash.isNull(v));
                 projectsWithInfo.push(projectObject);
             });
@@ -235,6 +237,8 @@ export default class extends PureComponent {
                                     {/*<th></th>*/}
                                     <TableHeader title={t('projects.table_column_select')} sortKey="active"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    <TableHeader title={t('projects.table_column_type')} sortKey="shared"
+                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('projects.table_column_lock')} sortKey="locked"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('projects.table_column_label')} sortKey="label"
@@ -312,6 +316,9 @@ export default class extends PureComponent {
                                                                  this.setState({showAction: LOCK_UNLOCK_PROJECT});
                                                              }
                                                          }}/>
+                                                </td>
+                                                <td width={60}>
+                                                    {project.shared ? <img alt="shared" src={SHARED} className={"shared-project-icon"}/>  : <span/> }
                                                 </td>
                                                 <td width={60}>
                                                     {project.locked ? <img alt="lock" src={LOCK}/> : <img alt="unlock" src={UNLOCK}/>}

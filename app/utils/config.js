@@ -165,17 +165,30 @@ export const unlockProject = () => {
     }
 }
 
+export const markProjectAsShared = (wsPath) => {
+    if(!wsPath) return;
+    console.log(`Mark project on '${wsPath}' as shared`);
+    const projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR);
+    if (fs.existsSync(projectPath)) {
+        const project = JSON.parse(fs.readFileSync(projectPath));
+        project.shared = true;
+        fs.writeFileSync(projectPath, JSON.stringify({...project, path: undefined}));
+    } else {
+        console.log('Project info doesn\'t exist');
+    }
+}
+
 export const forceUnlockProject = (wsPath) => {
     console.log(`Force unlock file with user  `, os.userInfo())
-    console.log(`wsPath  `, wsPath)
+    console.log(`wsPath`, wsPath)
     let project;
     let projectPath;
     if(wsPath) {
-        projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR)
+        projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR);
     } else {
         projectPath = getProjectInfoFile();
     }
-    console.log(`projectPath  `, projectPath)
+    console.log(`projectPath`, projectPath)
     project = JSON.parse(fs.readFileSync(projectPath));
     delete project.locked;
     delete project.lockedBy;

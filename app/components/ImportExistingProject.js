@@ -5,7 +5,7 @@ import {
     addProjectToWorkSpace, forceUnlockProject,
     get,
     getThumbNailsDir,
-    getUserWorkspace, lockProject,
+    getUserWorkspace, markProjectAsShared,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
     setWorkspace,
@@ -107,7 +107,7 @@ export default class extends Component {
                                                 if (!version){
                                                     updateProjectInfoVersion(packageJson.version)
                                                 }
-                                                console.log("  ")
+                                                markProjectAsShared(dir);
                                                 if(!probeLockedProject(project)) {
                                                     const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                                                         type: 'question',
@@ -119,7 +119,6 @@ export default class extends Component {
                                                     if(!result) {
                                                         // user wants to unlock project
                                                         forceUnlockProject(project.path);
-                                                        // lockProject(project.path);
                                                     } else {
                                                         // user don't wants to unlock project
                                                         addProjectToWorkSpace(dir, false);

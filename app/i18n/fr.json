@@ -61,7 +61,7 @@
       }
     },
     "main_navbar": {
-      "library": "Library",
+      "library": "FR Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",
@@ -372,9 +372,10 @@
       "btn_tooltip_export_project": "Save project as .annotate file",
       "btn_import_project": "Import project from .annotate file",
       "btn_tooltip_import_project": "Select .annotate file to import project",
-      "btn_open_project": "Open project from shared folder",
+      "btn_open_project": "Join an existing or shared project",
       "btn_tooltip_open_project": "Select local folder with shared project",
       "table_column_select": "Select",
+      "table_column_type": "Type",
       "table_column_lock": "Lock",
       "table_column_label": "Label",
       "table_column_date": "Date",
@@ -395,7 +396,7 @@
 
       "lbl_new_project_name": "new project name",
       "dialog_title_edit_project_label": "Edit project label",
-      "dialog_title_delete_confirmation": "Are you sure you want to delete this project",
+      "dialog_title_delete_confirmation": "Are you sure you want to delete project '{{label}}' on '{{path}}' ?",
       "alert_you_can_not_edit_corrupted_project": "you can not edit corrupted project!",
       "alert_you_can_not_delete_currently_active_project": "You can't delete currently active project.",
       "alert_you_can_not_delete_locked_project": "You can't delete locked project.",
