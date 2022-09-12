@@ -49,6 +49,10 @@ import {createNewCategory, createNewTag} from "./tags/tagUtils";
 import Chance from "chance";
 import SwitchProject from "../containers/SwitchProject";
 import packageJson from "../../package.json";
+import WIFI_IMAGE from "./pictures/wifi-solid.svg";
+import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faWifi} from "@fortawesome/free-solid-svg-icons/faWifi";
 
 const chance = new Chance();
 
@@ -129,7 +133,10 @@ export default class AppMenu extends Component {
             showEditFormViolationModal: false,
             isEventRecordingLive: false,
             showProjects: false,
+            online: false
         }
+        window.addEventListener('online', this._updateOnlineStatus)
+        window.addEventListener('offline', this._updateOnlineStatus)
     }
 
     componentDidCatch(error, errorInfo) {
@@ -138,7 +145,6 @@ export default class AppMenu extends Component {
     }
 
     componentDidMount() {
-
         console.log('Mounting main app component !!!')
         console.log('checking for project version')
         const version = getProjectVersion();
@@ -162,8 +168,6 @@ export default class AppMenu extends Component {
         ee.on(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this.updateIsEditModeOpen);
         ee.on(SHOW_EDIT_MODE_VIOLATION_MODAL , this._showEditFormViolationModalWarning);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsEventRecordingLive);
-
-
 
         let localCounter = this.props.counter;
         // Autosave current app state to json.
@@ -202,6 +206,7 @@ export default class AppMenu extends Component {
 
         waitPane = document.getElementById('waitPane');
         waitText = document.getElementById('waitText');
+        this._updateOnlineStatus();
     }
 
     componentWillUnmount() {
@@ -342,6 +347,12 @@ export default class AppMenu extends Component {
             });
         }
     };
+
+   _updateOnlineStatus = () => {
+       this.setState({
+           online: navigator.onLine
+       });
+    }
 
     render() {
         const { t } = this.props;
@@ -548,6 +559,13 @@ export default class AppMenu extends Component {
                         </div>
                     </_Link>
                     <div className="menu_separator"/>
+                    <div className="navbar-spacer"/>
+                    <div className={this.state.online ? "connection-status connection-status-online" :"connection-status connection-status-offline"}>
+                        <FontAwesomeIcon className="tm-fa-icon" icon={faWifi}/>
+                        <div className="right-menu-title">
+                            {this.state.online ? t('global.online') : t('global.offline')}
+                        </div>
+                    </div>
                 </_Nav>
             </_Root>
         );
