@@ -52,6 +52,7 @@
       "alert_selected_workspace_state_is_corrupted": "Selected workspace state is corrupted. Opening project without previous work.",
       "online": "Online",
       "offline": "Offline",
+      "connection_status_tooltip": "Internet connection status",
       "options": {
         "title": "Options",
         "lbl_select_language": "Select language",

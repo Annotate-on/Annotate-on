@@ -560,7 +560,7 @@ export default class AppMenu extends Component {
                     </_Link>
                     <div className="menu_separator"/>
                     <div className="navbar-spacer"/>
-                    <div className={this.state.online ? "connection-status connection-status-online" :"connection-status connection-status-offline"}>
+                    <div className={this.state.online ? "connection-status connection-status-online" :"connection-status connection-status-offline"} title={t('global.connection_status_tooltip')}>
                         <FontAwesomeIcon className="tm-fa-icon" icon={faWifi}/>
                         <div className="right-menu-title">
                             {this.state.online ? t('global.online') : t('global.offline')}
