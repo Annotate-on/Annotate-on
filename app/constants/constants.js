@@ -49,6 +49,7 @@ export const INSPECTOR_TEXT = BG1;
 
 export const MOZAIC_VIEW = "MOZAIC_VIEW";
 export const LIST_VIEW = "LIST_VIEW";
+export const MAP_VIEW = "MAP_VIEW";
 
 export const SORT_ALPHABETIC_DESC = "sort_alphabetic_desc";
 export const SORT_ALPHABETIC_ASC = "sort_alphabetic_asc";

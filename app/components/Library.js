@@ -5,7 +5,7 @@ import styled, {css} from 'styled-components';
 import {
     APP_NAME,
     LIST_VIEW,
-    MANUAL_ORDER,
+    MANUAL_ORDER, MAP_VIEW,
     MODEL_XPER,
     MOZAIC_VIEW,
     NAV_SIZE,
@@ -30,11 +30,13 @@ import Nothing from "./Nothing";
 import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
+import MapView from "../containers/MapView";
 
 
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
+const MAP = require('./pictures/map-regular.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const SELECT_ALL_CONTEXT = require('./pictures/select_all_gray.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -343,7 +345,7 @@ export default class extends Component {
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>
-                                {this.state.picView === MOZAIC_VIEW ?
+                                {this.state.picView === MOZAIC_VIEW &&
                                     <MozaicView pictures={this.state.sortedPicturesList}
                                                 tabData={this.props.tabData[this.props.tabName]}
                                                 annotations={this.props.annotations}
@@ -358,9 +360,15 @@ export default class extends Component {
                                                     this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                                     this.setState({picView: LIST_VIEW});
                                                 }}
+                                                openMapView={() => {
+                                                    this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                                    this.setState({picView: MAP_VIEW});
+                                                }}
                                                 skipReSort={(value) => skipSort = value}
                                     />
-                                    : <React.Fragment>
+                                }
+                                {this.state.picView === LIST_VIEW &&
+                                    <React.Fragment>
                                         <div className="lib-wrap">
                                             <div className="lib-actions">
                                                 <div className="switch-view">
@@ -374,6 +382,13 @@ export default class extends Component {
                                                     <div
                                                         className={classnames("list-view", {"selected-view": this.state.picView === LIST_VIEW})}>
                                                         <img alt="list view" src={LIST_WHITE}/>
+                                                    </div>
+                                                    <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
+                                                         onClick={() => {
+                                                             this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                                             this.setState({picView: MAP_VIEW})
+                                                         }}>
+                                                        <img alt="map view" src={MAP}/>
                                                     </div>
                                                 </div>
                                                 <div className="action-buttons">
@@ -586,6 +601,18 @@ export default class extends Component {
                                             />
                                         </_Panel>
                                     </React.Fragment>
+                                }
+                                {this.state.picView === MAP_VIEW &&
+                                    <MapView
+                                        openListView={() => {
+                                            this.props.tabData[this.props.tabName].subview = LIST_VIEW;
+                                            this.setState({picView: LIST_VIEW});
+                                        }}
+                                        openMozaicView={() => {
+                                            this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
+                                            this.setState({picView: MOZAIC_VIEW});
+                                        }}
+                                    ></MapView>
                                 }
                             </_Pictures>
                             : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?

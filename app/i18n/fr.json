@@ -313,6 +313,9 @@
         "alert_start_manual_order_confirmation": "Do you want to reuse the previously saved classification?",
         "alert_selection_and_order_saved": "Selection and order of images saved."
       },
+      "map-view": {
+        "switch_to_map_view_tooltip": "Switch to map view"
+      },
       "import_images" : {
         "title": "Import",
         "lbl_select_mode_of_import": "Select mode of import",
