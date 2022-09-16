@@ -43,6 +43,24 @@ export default class LeafletMap extends Component {
         map.fitBounds(group.getBounds());
     };
 
+    _addMarker = (e) => {
+        console.log(e);
+        const icon = new L.Icon({
+            iconUrl: PIN,
+            iconAnchor: [5, 55],
+            popupAnchor: [10, -44],
+            iconSize: [25, 55],
+        })
+        const marker = new L.marker(e.latlng, {
+            icon : icon
+        });
+        marker.bindPopup(`<b>I am on ${e.latlng}</b>`).openPopup();
+        marker.addTo(this.markersRef.current.leafletElement);
+        setTimeout(() => {
+            this._fitMapToMarkers();
+        }, 100)
+    };
+
     componentDidMount() {
         setTimeout(() => {
             this._fitMapToMarkers();
@@ -55,9 +73,14 @@ export default class LeafletMap extends Component {
         return (
             <_Root>
                 <_LeafletDiv>
-                    <Map center={position} zoom={this.state.zoom} zoomControl={true}
+                    <Map center={position}
+                         zoom={this.state.zoom}
+                         zoomControl={true}
                          ref={this.mapRef}
-                    >
+                         onClick={(e) => {
+                             this._addMarker(e);
+                             e.target.closePopup();
+                         }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
@@ -65,8 +88,7 @@ export default class LeafletMap extends Component {
 
                         <FeatureGroup color="purple"
                                       // ref={_ => (this._setGroupRef(_))}
-                                      ref={this.markersRef}
-                        >
+                                      ref={this.markersRef}>
                             <Marker position={position} icon={pointerIcon}
                                     onClick={(e) => {
                                         this._fitMapToMarkers();
