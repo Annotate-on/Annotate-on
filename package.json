@@ -67,7 +67,10 @@
       "app/main.prod.js.map",
       "package.json"
     ],
-    "extraResources": ["./demo-workspace", "./.ExifTool_config"],
+    "extraResources": [
+      "./demo-workspace",
+      "./.ExifTool_config"
+    ],
     "dmg": {
       "contents": [
         {
@@ -83,10 +86,18 @@
       ]
     },
     "win": {
-      "target": ["nsis", "msi"]
+      "target": [
+        "nsis",
+        "msi"
+      ]
     },
     "linux": {
-      "target": ["deb", "rpm", "snap", "AppImage"],
+      "target": [
+        "deb",
+        "rpm",
+        "snap",
+        "AppImage"
+      ],
       "category": "Development"
     },
     "directories": {
@@ -151,11 +162,17 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
-    "moduleFileExtensions": ["js", "jsx", "json"],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json"
+    ],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     },
-    "setupFiles": ["./internals/scripts/CheckBuiltsExist.js"]
+    "setupFiles": [
+      "./internals/scripts/CheckBuiltsExist.js"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
@@ -291,6 +308,7 @@
     "leaflet-draw": "^0.4.9",
     "leaflet-easyprint": "^2.1.9",
     "leaflet-minimap": "^3.6.1",
+    "leaflet.markercluster": "1.0.6",
     "lodash": "^4.17.11",
     "mediainfo.js": "^0.1.2",
     "moment": "^2.24.0",
@@ -307,6 +325,7 @@
     "react-i18next": "^11.18.4",
     "react-leaflet": "^1.1.6",
     "react-leaflet-draw": "^0.18.0",
+    "react-leaflet-markercluster": "^1.1.8",
     "react-redux": "^6.0.1",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",

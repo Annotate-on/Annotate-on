@@ -6,6 +6,7 @@
 @import "~leaflet-draw/dist/leaflet.draw.css";
 @import "~leaflet-contextmenu/dist/leaflet.contextmenu.css";
 @import "~video.js/dist/video-js.css";
+@import '~react-leaflet-markercluster/dist/styles.min.css';
 
 @font-face {
   font-family: 'OSC';

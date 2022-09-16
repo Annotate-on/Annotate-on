@@ -460,7 +460,10 @@ div.leaflet-marker-icon {
   border: none;
   background-blend-mode: lighten;
   background-position: center center;
+}
 
+.leaflet-map div.leaflet-marker-icon {
+  background: none;
 }
 
 .targetValueM,
