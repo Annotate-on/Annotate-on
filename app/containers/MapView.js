@@ -4,6 +4,7 @@ import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 import {withTranslation} from "react-i18next";
 import MapView from "../components/MapView";
+import {setPictureInSelection} from "../actions/app";
 
 const mapStateToProps = state => {
     return {};
@@ -16,6 +17,9 @@ const mapDispatchToProps = dispatch => {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, 'library')
             }, 100)
+        },
+        setPictureInSelection: (pictureId, tabName) => {
+            dispatch(setPictureInSelection(pictureId, tabName));
         }
     };
 };

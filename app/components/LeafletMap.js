@@ -5,8 +5,9 @@ import L from "leaflet";
 import styled from "styled-components";
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import _ from "lodash";
-
 import PIN from "./pictures/location-dot-solid.svg";
+import moment from "moment";
+import {ee, EVENT_SELECT_TAB} from "../utils/library";
 
 const _Root = styled.div`
     display: grid;
@@ -17,6 +18,10 @@ const _Root = styled.div`
 const _LeafletDiv = styled.div`
     width: 100%;
     height: 100%;
+`;
+
+const _PopUpDiv = styled.div`
+    width: 300px;
 `;
 
 export const pointerIcon = new L.Icon({
@@ -42,10 +47,8 @@ export default class LeafletMap extends Component {
 
     _fitMapToMarkers = () => {
         const map = this.mapRef.current.leafletElement;  //get native Map instance
-        const group = this.markersRef.current.leafletElement; //get native featureGroup instance
         map.fitBounds(this.clusterRef.leafletElement.getBounds());
         console.log(this.clusterRef)
-        // this.clusterRef.zoomToBounds({padding: [20, 20]});
     };
 
     _addMarker = (e) => {
@@ -79,39 +82,17 @@ export default class LeafletMap extends Component {
                     alert("show more clicked");
                 });
         });
-        // marker.addTo(this.markersRef.current.leafletElement);
+
+        marker.on("dblclick", function (ev) {
+            alert('double click')
+        })
         this.clusterRef.leafletElement.addLayer(marker);
     }
 
-    _addRandomMarkers = () => {
-        const icon = new L.Icon({
-            iconUrl: PIN,
-            iconAnchor: [5, 55],
-            popupAnchor: [10, -44],
-            iconSize: [25, 55],
-        })
-        console.log(this.clusterRef)
-        console.log(this.clusterRef.leafletElement)
-        _.times(100, (i) => {
-            this._createMarker(this._getRandomLatLng());
-        });
-    }
-
-    _getRandomLatLng = () => {
-        let bounds = this.mapRef.current.leafletElement.getBounds(),
-            southWest = bounds.getSouthWest(),
-            northEast = bounds.getNorthEast(),
-            lngSpan = northEast.lng - southWest.lng,
-            latSpan = northEast.lat - southWest.lat;
-
-        return new L.LatLng(
-            southWest.lat + latSpan * Math.random(),
-            southWest.lng + lngSpan * Math.random());
-    }
-
     componentDidMount() {
+        console.log("componentDidMount map")
+        console.log(this.props.locations)
         setTimeout(() => {
-            this._addRandomMarkers();
             this._fitMapToMarkers();
         }, 100)
     }
@@ -127,89 +108,107 @@ export default class LeafletMap extends Component {
                          zoom={this.state.zoom}
                          zoomControl={true}
                          ref={this.mapRef}
+                         doubleClickZoom={false}
                          onClick={(e) => {
-                             this._addMarker(e);
-                             e.target.closePopup();
+                             // this._addMarker(e);
+                             // e.target.closePopup();
                          }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
                         />
-
                         <MarkerClusterGroup ref={(markerClusterGroup) => {
                             this.clusterRef = markerClusterGroup;
                         }}>
+                            {this.props.locations.map((location, index) => {
+                                return <Marker position={location.latLng} icon={pointerIcon}
+                                        onClick={(e) => {
+                                            console.log("onClick")
+                                            e.target.closePopup();
+                                        }}
+
+                                        onDblClick={(e) => {
+                                            this.props.onSelection(location.picture.sha1);
+                                        }}
+
+                                        onMouseOver={e => {
+                                            e.target.openPopup();
+                                        }}
+
+                                        onMouseOut={e => {
+                                            // e.target.closePopup();
+                                        }}
+
+                                        onPopupOpen={e => {
+                                            const popUp = e.popup;
+                                            popUp.getElement()
+                                                .querySelector('.action')
+                                                .addEventListener("click", e => {
+                                                    this.props.onSelection(location.picture.sha1);
+                                                });
+                                        }}
+                                >
+                                    <Popup >
+                                        <div className={"map-marker-popup"}>
+                                            {location.picture.erecolnatMetadata ?
+                                                <div className="container">
+                                                    <div className="row">
+                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                            {t('library.map-view.popup_lbl_catalog_n_1')}
+                                                            Catalog N1
+                                                        </div>
+                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
+                                                            {location.picture.erecolnatMetadata.catalognumber}
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                            {t('library.map-view.popup_lbl_scientific_name')}
+                                                        </div>
+                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
+                                                            {location.picture.erecolnatMetadata.scientificname}
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                            {t('library.map-view.popup_lbl_collector_name')}
+                                                        </div>
+                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
+                                                            {location.picture.erecolnatMetadata.recordedby}
+                                                        </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                            {t('library.map-view.popup_lbl_date')}
+                                                        </div>
+                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
+                                                            {location.picture.erecolnatMetadata.modified && moment(location.picture.erecolnatMetadata.modified).format('DD/MM/YYYY')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                : <div className="container">
+                                                        <div className="row">
+                                                            <div
+                                                                className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                                {t('library.map-view.popup_lbl_file_name')}
+                                                            </div>
+                                                            <div
+                                                                className="metadata-value col-sm-12 col-md-12 col-lg-12">
+                                                                {location.picture.file_basename}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            }
+                                            <img className="img-panel"
+                                                 alt="img panel"
+                                                 src={location.picture.thumbnail}>
+                                            </img>
+                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                            })}
                         </MarkerClusterGroup>
-                        {/*<FeatureGroup color="purple"*/}
-                        {/*              ref={this.markersRef}>*/}
-                        {/*    <Marker position={position} icon={pointerIcon}*/}
-                        {/*            onClick={(e) => {*/}
-                        {/*                this._fitMapToMarkers();*/}
-                        {/*                e.target.closePopup();*/}
-                        {/*            }}*/}
-                        {/*            onMouseOver={e => {*/}
-                        {/*                console.log("over")*/}
-                        {/*                e.target.openPopup();*/}
-                        {/*            }}*/}
-                        {/*            onMouseOut={e => {*/}
-                        {/*                console.log("out")*/}
-                        {/*                e.target.closePopup();*/}
-                        {/*            }}>*/}
-                        {/*        <Popup>*/}
-                        {/*            <table className="table">*/}
-                        {/*                <thead>*/}
-                        {/*                <tr>*/}
-                        {/*                    <th scope="col">#</th>*/}
-                        {/*                    <th scope="col">First</th>*/}
-                        {/*                    <th scope="col">Last</th>*/}
-                        {/*                    <th scope="col">Handle</th>*/}
-                        {/*                </tr>*/}
-                        {/*                </thead>*/}
-                        {/*                <tbody>*/}
-                        {/*                <tr>*/}
-                        {/*                    <th scope="row">1</th>*/}
-                        {/*                    <td>Mark</td>*/}
-                        {/*                    <td>Otto</td>*/}
-                        {/*                    <td>@mdo</td>*/}
-                        {/*                </tr>*/}
-                        {/*                <tr>*/}
-                        {/*                    <th scope="row">2</th>*/}
-                        {/*                    <td>Jacob</td>*/}
-                        {/*                    <td>Thornton</td>*/}
-                        {/*                    <td>@fat</td>*/}
-                        {/*                </tr>*/}
-                        {/*                <tr>*/}
-                        {/*                    <th scope="row">3</th>*/}
-                        {/*                    <td>Larry</td>*/}
-                        {/*                    <td>the Bird</td>*/}
-                        {/*                    <td>@twitter</td>*/}
-                        {/*                </tr>*/}
-                        {/*                </tbody>*/}
-                        {/*            </table>*/}
-                        {/*        </Popup>*/}
-                        {/*    </Marker>*/}
-                        {/*    <Marker position={[45.5, -0.09]} icon={pointerIcon}*/}
-                        {/*            onClick={(e) => {*/}
-                        {/*                this._fitMapToMarkers();*/}
-                        {/*                e.target.closePopup();*/}
-                        {/*            }}*/}
-                        {/*    >*/}
-                        {/*        <Popup*/}
-                        {/*            onOpen={*/}
-                        {/*            (e) => {*/}
-                        {/*                console.log('on popup open')*/}
-                        {/*                console.log(e)*/}
-                        {/*                console.log(this);*/}
-                        {/*                // this.getElement()*/}
-                        {/*                //     .querySelector(".action")*/}
-                        {/*                //     .addEventListener("click", e => {*/}
-                        {/*                //         alert('show more')*/}
-                        {/*                //     });*/}
-                        {/*            }}>*/}
-                        {/*            <button className="action">More info</button>*/}
-                        {/*        </Popup>*/}
-                        {/*    </Marker>*/}
-                        {/*</FeatureGroup>*/}
                     </Map>
                 </_LeafletDiv>
             </_Root>

@@ -11,7 +11,7 @@ import {remote} from "electron";
 import lodash from "lodash";
 import {MANUAL_ORDER, MAP_VIEW, RESOURCE_TYPE_EVENT} from "../constants/constants";
 import MozaicPlayer from "./MozaicPlayer";
-import MAP from "./pictures/map-regular.svg";
+import MAP from "./pictures/map-location-dot-solid.svg";
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');

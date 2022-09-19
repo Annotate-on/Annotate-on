@@ -201,4 +201,29 @@
   max-height: 30vh;
 }
 
+.map-marker-popup {
+  display: flex;
+  flex-direction: column;
+  .metadata-title {
+    color: #999999;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    font-size: 10pt;
+  }
+
+  .metadata-value {
+    color: #333333;
+    word-break: break-all;
+    margin-bottom: 5px;
+    font-size: 10pt;
+  }
+
+  a {
+    padding-top: 8px;
+    align-self: center;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+}
 

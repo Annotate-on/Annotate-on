@@ -36,7 +36,7 @@ import MapView from "../containers/MapView";
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
-const MAP = require('./pictures/map-regular.svg');
+const MAP = require('./pictures/map-location-dot-solid.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const SELECT_ALL_CONTEXT = require('./pictures/select_all_gray.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -603,7 +603,8 @@ export default class extends Component {
                                     </React.Fragment>
                                 }
                                 {this.state.picView === MAP_VIEW &&
-                                    <MapView
+                                    <MapView pictures={this.state.sortedPicturesList}
+                                             tabName={this.props.tabName}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                             this.setState({picView: LIST_VIEW});
