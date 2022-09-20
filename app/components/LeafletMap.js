@@ -6,8 +6,10 @@ import styled from "styled-components";
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import _ from "lodash";
 import PIN from "./pictures/location-dot-solid.svg";
+import PIN_RED from "./pictures/location-dot-solid-red.svg";
 import moment from "moment";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {filter} from "lodash/collection";
 
 const _Root = styled.div`
     display: grid;
@@ -31,6 +33,13 @@ export const pointerIcon = new L.Icon({
     iconSize: [25, 55],
 })
 
+export const pointerIconRed = new L.Icon({
+    iconUrl: PIN_RED,
+    iconAnchor: [5, 55],
+    popupAnchor: [10, -44],
+    iconSize: [25, 55],
+})
+
 export default class LeafletMap extends Component {
 
     constructor(props, context) {
@@ -39,6 +48,7 @@ export default class LeafletMap extends Component {
             lat: 51.505,
             lng: -0.09,
             zoom: 10,
+            selectedImages: []
         }
         this.mapRef = React.createRef();
         this.markersRef = React.createRef();
@@ -112,6 +122,16 @@ export default class LeafletMap extends Component {
                          onClick={(e) => {
                              // this._addMarker(e);
                              // e.target.closePopup();
+                         }}
+
+                         onKeyDown={e => {
+                             console.log("onKeydown");
+                             console.log(e);
+                         }}
+
+                         onKeyUp={e => {
+                             console.log("onKeyup");
+                             console.log(e)
                          }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -121,14 +141,16 @@ export default class LeafletMap extends Component {
                             this.clusterRef = markerClusterGroup;
                         }}>
                             {this.props.locations.map((location, index) => {
-                                return <Marker position={location.latLng} icon={pointerIcon}
+                                return <Marker position={location.latLng} icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed : pointerIcon}
                                         onClick={(e) => {
-                                            console.log("onClick")
+                                            if(e.originalEvent.shiftKey) {
+                                                this.props.onSelectResource(location.resource.sha1);
+                                            }
                                             e.target.closePopup();
                                         }}
 
                                         onDblClick={(e) => {
-                                            this.props.onSelection(location.picture.sha1);
+                                            this.props.onOpenResource(location.resource.sha1);
                                         }}
 
                                         onMouseOver={e => {
@@ -145,65 +167,64 @@ export default class LeafletMap extends Component {
                                                 .querySelector('.action');
                                             if(anchor) {
                                                 anchor.addEventListener("click", e => {
-                                                    this.props.onSelection(location.picture.sha1);
+                                                    this.props.onSelection(location.resource.sha1);
                                                 });
                                             }
-                                        }}
-                                >
+                                        }}>
                                     <Popup >
                                         <div className={"map-marker-popup"}>
-                                            {location.picture.erecolnatMetadata ?
-                                                <div className="container">
-                                                    <div className="row">
-                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                            {location.resource.erecolnatMetadata ?
+                                                <div className="attributes-holder">
+                                                    <div>
+                                                        <div className="metadata-title">
                                                             {t('library.map-view.popup_lbl_catalog_n_1')}
                                                             Catalog N1
                                                         </div>
-                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
-                                                            {location.picture.erecolnatMetadata.catalognumber}
+                                                        <div className="metadata-value">
+                                                            {location.resource.erecolnatMetadata.catalognumber}
                                                         </div>
                                                     </div>
-                                                    <div className="row">
-                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                    <div>
+                                                        <div className="metadata-title">
                                                             {t('library.map-view.popup_lbl_scientific_name')}
                                                         </div>
-                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
-                                                            {location.picture.erecolnatMetadata.scientificname}
+                                                        <div className="metadata-value">
+                                                            {location.resource.erecolnatMetadata.scientificname}
                                                         </div>
                                                     </div>
-                                                    <div className="row">
-                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                    <div>
+                                                        <div className="metadata-title">
                                                             {t('library.map-view.popup_lbl_collector_name')}
                                                         </div>
-                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
-                                                            {location.picture.erecolnatMetadata.recordedby}
+                                                        <div className="metadata-value">
+                                                            {location.resource.erecolnatMetadata.recordedby}
                                                         </div>
                                                     </div>
-                                                    <div className="row">
-                                                        <div className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                    <div>
+                                                        <div className="metadata-title">
                                                             {t('library.map-view.popup_lbl_date')}
                                                         </div>
-                                                        <div className="metadata-value col-sm-12 col-md-12 col-lg-12">
-                                                            {location.picture.erecolnatMetadata.modified && moment(location.picture.erecolnatMetadata.modified).format('DD/MM/YYYY')}
+                                                        <div className="metadata-value">
+                                                            {location.resource.erecolnatMetadata.modified && moment(location.resource.erecolnatMetadata.modified).format('DD/MM/YYYY')}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                : <div className="container">
-                                                        <div className="row">
+                                                : <div className="attributes-holder">
+                                                        <div>
                                                             <div
-                                                                className="metadata-title col-sm-12 col-md-12 col-lg-12">
+                                                                className="metadata-title">
                                                                 {t('library.map-view.popup_lbl_file_name')}
                                                             </div>
                                                             <div
-                                                                className="metadata-value col-sm-12 col-md-12 col-lg-12">
-                                                                {location.picture.file_basename}
+                                                                className="metadata-value">
+                                                                {location.resource.file_basename}
                                                             </div>
                                                         </div>
                                                     </div>
                                             }
                                             <img className="img-panel"
                                                  alt="img panel"
-                                                 src={location.picture.thumbnail}>
+                                                 src={location.resource.thumbnail}>
                                             </img>
                                             <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
                                         </div>

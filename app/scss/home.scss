@@ -205,8 +205,6 @@
   text-align: center;
   .metadata-title {
     color: #999999;
-    margin-top: 5px;
-    margin-bottom: 3px;
     font-size: 10pt;
   }
 
@@ -219,7 +217,7 @@
   .metadata-value {
     color: #333333;
     word-break: break-all;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     font-size: 10pt;
   }
 
@@ -230,5 +228,33 @@
     font-size: 12px;
   }
 
+  .attributes-holder{
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    .row {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
 }
+
+.map-docked-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+  top: 20px;
+  right: 20px;
+  border-radius: 3px;
+  i {
+    margin-left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    float: right;
+  }
+
+}
+
 

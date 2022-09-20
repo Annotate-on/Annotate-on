@@ -603,7 +603,7 @@ export default class extends Component {
                                     </React.Fragment>
                                 }
                                 {this.state.picView === MAP_VIEW &&
-                                    <MapView pictures={this.state.sortedPicturesList}
+                                    <MapView resources={this.state.sortedPicturesList}
                                              tabName={this.props.tabName}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;

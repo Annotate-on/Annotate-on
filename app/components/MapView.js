@@ -6,7 +6,8 @@ import classnames from "classnames";
 import MAP_WHITE from "./pictures/map-location-dot-solid-white.svg";
 import React, {Component} from 'react';
 import LeafletMap from "./LeafletMap";
-import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {ee, EVENT_SELECT_TAB, EVENT_OPEN_TAB} from "../utils/library";
+import _ from "lodash";
 
 const _Root = styled.div`
   width: 100%;
@@ -24,6 +25,15 @@ const _Panel = styled.div`
 `;
 
 const _MapPlaceholder = styled.div`
+    width: 100%;
+    height: 100%;
+    position: relative;
+`;
+
+const _DockedPanel = styled.div`
+    position: absolute;
+    display: flex;
+    z-index: 1000;
 `;
 
 export default class MapView extends Component {
@@ -31,7 +41,9 @@ export default class MapView extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            locations : []
+            resourcesWithGeoLocation: [],
+            resourcesWithoutGeoLocation: [],
+            selectedResources: []
         }
     }
 
@@ -48,48 +60,67 @@ export default class MapView extends Component {
         console.log(this.props)
         console.log('componentDidUpdate state:')
         console.log(prevState)
-        if (this.props.pictures !== prevProps.pictures) {
+        if (this.props.resources !== prevProps.resources) {
             this._doFindLocations();
         }
     }
 
     _doFindLocations = () => {
         console.log('_doFindLocations')
-        console.log('number of pictures ' + this.props.pictures.length);
+        console.log('number of resources ' + this.props.resources.length);
 
-        let locations = [];
-        for (const pic of this.props.pictures) {
-            if(pic.exifPlace) {
-                const exifPlaceArr = pic.exifPlace.split(',');
+        let resourcesWithGeoLocation = [];
+        let resourcesWithoutGeoLocation = [];
+        for (const resource of this.props.resources) {
+            if(resource.exifPlace) {
+                const exifPlaceArr = resource.exifPlace.split(',');
                 if(!exifPlaceArr && exifPlaceArr.length != 2) {
                     console.log('wrong format of exifPlace');
+                    resourcesWithoutGeoLocation.push(location);
                 } else {
                     const location = {
                         latLng : [+exifPlaceArr[0], +exifPlaceArr[1]],
-                        picture : pic
+                        resource : resource
                     };
-                    locations.push(location);
+                    resourcesWithGeoLocation.push(location);
                 }
-            }
-            if(pic.erecolnatMetadata && pic.erecolnatMetadata.decimallatitude && pic.erecolnatMetadata.decimallongitude) {
+            } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.decimallatitude && resource.erecolnatMetadata.decimallongitude) {
                 const location = {
-                    latLng : [+pic.erecolnatMetadata.decimallatitude, +pic.erecolnatMetadata.decimallongitude],
-                    picture : pic
+                    latLng : [+resource.erecolnatMetadata.decimallatitude, +resource.erecolnatMetadata.decimallongitude],
+                    resource : resource
                 };
-                locations.push(location);
+                resourcesWithGeoLocation.push(location);
+            } else {
+                resourcesWithoutGeoLocation.push(location);
             }
         }
-        console.log('_doFindLocations found locations =>')
-        console.log(locations)
-        // this.locations = locations;
+        const newSelection = _.intersection(resourcesWithGeoLocation.map(e => {
+            return e.resource.sha1;
+        }), this.state.selectedResources)
         this.setState({
-            locations: locations
+            resourcesWithGeoLocation: resourcesWithGeoLocation,
+            resourcesWithoutGeoLocation: resourcesWithoutGeoLocation,
+            selectedResources: newSelection
         })
     }
 
-    _onSelection = (picId) => {
+    _onOpenResource = (picId) => {
         this.props.setPictureInSelection(picId, this.props.tabName);
         ee.emit(EVENT_SELECT_TAB, 'image')
+    }
+
+    _onSelectResource = (resourceId) => {
+        let newSelection;
+        if(!this.state.selectedResources.includes(resourceId)) {
+            newSelection = [...this.state.selectedResources, resourceId]
+        } else {
+            newSelection = this.state.selectedResources.filter(e => {
+                return e !== resourceId;
+            });
+        }
+        this.setState({
+            selectedResources: newSelection
+        })
     }
 
     render() {
@@ -114,10 +145,33 @@ export default class MapView extends Component {
                 </div>
 
                 <_Panel>
-                    {/*<_MapPlaceholder>*/}
-                        <LeafletMap locations={this.state.locations} onSelection={this._onSelection}></LeafletMap>
+                    <_MapPlaceholder>
+                        <_DockedPanel className = "map-docked-panel">
+                            <div>
+                            <span>{t('library.map-view.number_of_resources_without_geolocation', {count:this.state.resourcesWithoutGeoLocation.length})}</span>
+                            {/*<i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}*/}
+                            {/*   onClick={() => {*/}
+                            {/*       ee.emit(EVENT_OPEN_TAB, 'library')*/}
+                            {/*   }}*/}
+                            {/*/>*/}
+                            </div>
+                            <div>
+                            <span>{t('library.map-view.number_of_selected_resources', {count:this.state.selectedResources.length})}</span>
+                            {/*<i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}*/}
+                            {/*   onClick={() => {*/}
+                            {/*       ee.emit(EVENT_OPEN_TAB, 'library')*/}
+                            {/*   }}*/}
+                            {/*/>*/}
+                            </div>
+
+                        </_DockedPanel>
+                        <LeafletMap locations={this.state.resourcesWithGeoLocation}
+                                    selectedResources = {this.state.selectedResources}
+                                    onOpenResource={this._onOpenResource}
+                                    onSelectResource={this._onSelectResource}>
+                        </LeafletMap>
                         {/*<Map></Map>*/}
-                    {/*</_MapPlaceholder>*/}
+                    </_MapPlaceholder>
                 </_Panel>
 
             </_Root>

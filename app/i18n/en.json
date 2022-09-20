@@ -320,7 +320,9 @@
         "popup_lbl_catalog_n_1": "Catalog N1°",
         "popup_lbl_scientific_name": "Scientific name",
         "popup_lbl_collector_name": "Collector name",
-        "popup_lbl_date": "Date"
+        "popup_lbl_date": "Date",
+        "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
+        "number_of_selected_resources": "{{count}} selected resources"
       },
       "import_images" : {
         "title": "Import",
