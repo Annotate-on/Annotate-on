@@ -202,13 +202,18 @@
 }
 
 .map-marker-popup {
-  display: flex;
-  flex-direction: column;
+  text-align: center;
   .metadata-title {
     color: #999999;
     margin-top: 5px;
     margin-bottom: 3px;
     font-size: 10pt;
+  }
+
+  .img-panel {
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
   }
 
   .metadata-value {

@@ -141,11 +141,13 @@ export default class LeafletMap extends Component {
 
                                         onPopupOpen={e => {
                                             const popUp = e.popup;
-                                            popUp.getElement()
-                                                .querySelector('.action')
-                                                .addEventListener("click", e => {
+                                            const anchor =popUp.getElement()
+                                                .querySelector('.action');
+                                            if(anchor) {
+                                                anchor.addEventListener("click", e => {
                                                     this.props.onSelection(location.picture.sha1);
                                                 });
+                                            }
                                         }}
                                 >
                                     <Popup >
