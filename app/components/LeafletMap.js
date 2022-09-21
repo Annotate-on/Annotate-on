@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
 import i18next from "i18next";
-import {Marker, TileLayer, Map, Popup, LayerGroup, FeatureGroup} from "react-leaflet";
+import {FeatureGroup, Map, Marker, Popup, TileLayer} from "react-leaflet";
 import L from "leaflet";
 import styled from "styled-components";
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import _ from "lodash";
 import PIN from "./pictures/location-dot-solid.svg";
 import PIN_RED from "./pictures/location-dot-solid-red.svg";
 import moment from "moment";
-import {ee, EVENT_SELECT_TAB} from "../utils/library";
-import {filter} from "lodash/collection";
+import {EditControl} from "react-leaflet-draw";
 
 const _Root = styled.div`
     display: grid;
@@ -20,10 +18,6 @@ const _Root = styled.div`
 const _LeafletDiv = styled.div`
     width: 100%;
     height: 100%;
-`;
-
-const _PopUpDiv = styled.div`
-    width: 300px;
 `;
 
 export const pointerIcon = new L.Icon({
@@ -44,6 +38,7 @@ export default class LeafletMap extends Component {
 
     constructor(props, context) {
         super(props, context);
+        this._overrideDefaults();
         this.state = {
             lat: 51.505,
             lng: -0.09,
@@ -51,8 +46,9 @@ export default class LeafletMap extends Component {
             selectedImages: []
         }
         this.mapRef = React.createRef();
-        this.markersRef = React.createRef();
         this.clusterRef = React.createRef();
+        this.editControlFirst = React.createRef();
+        this.featureGroup = React.createRef();
     }
 
     _fitMapToMarkers = () => {
@@ -61,51 +57,87 @@ export default class LeafletMap extends Component {
         console.log(this.clusterRef)
     };
 
-    _addMarker = (e) => {
-        console.log(e);
-        this._createMarker(e.latlng);
-        setTimeout(() => {
-            this._fitMapToMarkers();
-        }, 100)
-    };
-
-    _createMarker = (latlng) => {
-        const icon = new L.Icon({
-            iconUrl: PIN,
-            iconAnchor: [5, 55],
-            popupAnchor: [10, -44],
-            iconSize: [25, 55],
-        })
-        const marker = new L.marker(latlng, {
-            icon : icon
-        });
-        marker.bindPopup(`<b>I am on ${latlng}</b></br><button class="action">More info</button>`).openPopup();
-
-        marker.on("popupopen", (a) => {
-            console.log('popup open ')
-            console.log(a)
-            console.log(a.target)
-            const popUp = a.popup;
-            popUp.getElement()
-                .querySelector('.action')
-                .addEventListener("click", e => {
-                    alert("show more clicked");
-                });
-        });
-
-        marker.on("dblclick", function (ev) {
-            alert('double click')
-        })
-        this.clusterRef.leafletElement.addLayer(marker);
-    }
-
     componentDidMount() {
         console.log("componentDidMount map")
         console.log(this.props.locations)
+        if (this.mapRef){
+            this._initLeaflet();
+        }
         setTimeout(() => {
             this._fitMapToMarkers();
         }, 100)
     }
+
+    _overrideDefaults = () => {
+        const { t } = i18next;
+        L.drawLocal.draw.toolbar.actions.text = t('global.cancel')
+        L.drawLocal.draw.toolbar.actions.title = t('annotate.editor.btn_tooltip_actions')
+        L.drawLocal.draw.toolbar.finish.text = t('global.finish')
+        L.drawLocal.draw.toolbar.finish.title = t('annotate.editor.btn_tooltip_finish')
+        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
+        L.drawLocal.draw.handlers.polygon = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
+                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
+            }
+        };
+    }
+
+    _initLeaflet = () => {
+        const map = this.mapRef.current.leafletElement;
+        const osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const osmAttrib='Map data &copy; OpenStreetMap contributors';
+        const osm2 = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 13, attribution: osmAttrib});
+        this._miniMap = new L.Control.MiniMap(osm2, {
+            position: "bottomright",
+            autoToggleDisplay: false,
+            toggleDisplay: true
+        }).addTo(map);
+    }
+
+    _onSelectionCreated = (e) => {
+        let selectedResources = [];
+        if(e.layerType ==='rectangle') {
+            e.layer.getBounds().contains([43, 25]);
+            for (const location of this.props.locations) {
+                const selected = e.layer.getBounds().contains(location.latLng);
+                if(selected) {
+                    selectedResources.push(location.resource.sha1);
+                }
+            }
+        } else if(e.layerType ==='polygon') {
+            for (const location of this.props.locations) {
+                const selected = this._isMarkerInsidePolygon(location.latLng, e.layer);
+                if(selected) {
+                    selectedResources.push(location.resource.sha1);
+                }
+            }
+        }
+        if(selectedResources) {
+            this.props.onSelectResources(selectedResources)
+        }
+        const drawnLayers = this.featureGroup.current.leafletElement;
+        drawnLayers.eachLayer((layer) => {
+            layer.off('click');
+            drawnLayers.removeLayer(layer);
+        });
+    };
+
+    _isMarkerInsidePolygon = (marker, poly) => {
+        const polyPoints = poly.getLatLngs()[0];
+        const x = marker[0], y = marker[1];
+        let inside = false;
+        for (let i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
+            let xi = polyPoints[i].lat, yi = polyPoints[i].lng;
+            let xj = polyPoints[j].lat, yj = polyPoints[j].lng;
+
+            let intersect = ((yi > y) != (yj > y))
+                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    };
 
     render() {
         const {t} = i18next;
@@ -141,7 +173,8 @@ export default class LeafletMap extends Component {
                             this.clusterRef = markerClusterGroup;
                         }}>
                             {this.props.locations.map((location, index) => {
-                                return <Marker position={location.latLng} icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed : pointerIcon}
+                                return <Marker key={index} position={location.latLng}
+                                               icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed : pointerIcon}
                                         onClick={(e) => {
                                             if(e.originalEvent.shiftKey) {
                                                 this.props.onSelectResource(location.resource.sha1);
@@ -232,6 +265,21 @@ export default class LeafletMap extends Component {
                                 </Marker>
                             })}
                         </MarkerClusterGroup>
+                        <FeatureGroup ref={this.featureGroup}>
+                            <EditControl ref={this.editControlFirst}
+                                         position='bottomleft'
+                                         onCreated={this._onSelectionCreated}
+                                         edit={{
+                                             edit: false,
+                                             remove: false
+                                         }}
+                                         draw={{
+                                             circle: false,
+                                             marker: false,
+                                             polyline : false,
+                                         }}
+                            />
+                        </FeatureGroup>
                     </Map>
                 </_LeafletDiv>
             </_Root>

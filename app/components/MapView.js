@@ -48,27 +48,16 @@ export default class MapView extends Component {
     }
 
     componentDidMount() {
-        console.log('componentDidMount :')
-        console.log(this.props)
         this._doFindLocations();
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log('componentDidUpdate prev props:')
-        console.log(prevProps)
-        console.log('componentDidUpdate new props:')
-        console.log(this.props)
-        console.log('componentDidUpdate state:')
-        console.log(prevState)
         if (this.props.resources !== prevProps.resources) {
             this._doFindLocations();
         }
     }
 
     _doFindLocations = () => {
-        console.log('_doFindLocations')
-        console.log('number of resources ' + this.props.resources.length);
-
         let resourcesWithGeoLocation = [];
         let resourcesWithoutGeoLocation = [];
         for (const resource of this.props.resources) {
@@ -123,6 +112,22 @@ export default class MapView extends Component {
         })
     }
 
+    _onSelectResources = (resourcesId) => {
+        let filteredSelection;
+        filteredSelection = this.state.selectedResources.filter(e => {
+            return !resourcesId.includes(e);
+        });
+        let newSelection = [...filteredSelection];
+        for (const resourceId of resourcesId) {
+            if(!this.state.selectedResources.includes(resourceId)) {
+                newSelection.push(resourceId);
+            }
+        }
+        this.setState({
+            selectedResources: newSelection
+        })
+    }
+
     render() {
         const { t } = i18next;
         return (
@@ -149,28 +154,28 @@ export default class MapView extends Component {
                         <_DockedPanel className = "map-docked-panel">
                             <div>
                             <span>{t('library.map-view.number_of_resources_without_geolocation', {count:this.state.resourcesWithoutGeoLocation.length})}</span>
-                            {/*<i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}*/}
-                            {/*   onClick={() => {*/}
-                            {/*       ee.emit(EVENT_OPEN_TAB, 'library')*/}
-                            {/*   }}*/}
-                            {/*/>*/}
+                            <i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}
+                               onClick={() => {
+                                   ee.emit(EVENT_OPEN_TAB, 'library')
+                               }}
+                            />
                             </div>
                             <div>
                             <span>{t('library.map-view.number_of_selected_resources', {count:this.state.selectedResources.length})}</span>
-                            {/*<i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}*/}
-                            {/*   onClick={() => {*/}
-                            {/*       ee.emit(EVENT_OPEN_TAB, 'library')*/}
-                            {/*   }}*/}
-                            {/*/>*/}
+                            <i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}
+                               onClick={() => {
+                                   ee.emit(EVENT_OPEN_TAB, 'library')
+                               }}
+                            />
                             </div>
-
                         </_DockedPanel>
                         <LeafletMap locations={this.state.resourcesWithGeoLocation}
                                     selectedResources = {this.state.selectedResources}
                                     onOpenResource={this._onOpenResource}
-                                    onSelectResource={this._onSelectResource}>
+                                    onSelectResource={this._onSelectResource}
+                                    onSelectResources={this._onSelectResources}
+                        >
                         </LeafletMap>
-                        {/*<Map></Map>*/}
                     </_MapPlaceholder>
                 </_Panel>
 
