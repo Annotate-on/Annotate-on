@@ -9,8 +9,9 @@ import ToggleButton from 'react-toggle-button'
 import Inspector from "../containers/Inspector";
 import {remote} from "electron";
 import lodash from "lodash";
-import {MANUAL_ORDER, RESOURCE_TYPE_EVENT} from "../constants/constants";
+import {MANUAL_ORDER, MAP_VIEW, RESOURCE_TYPE_EVENT} from "../constants/constants";
 import MozaicPlayer from "./MozaicPlayer";
+import MAP from "./pictures/map-location-dot-solid.svg";
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');
@@ -51,7 +52,7 @@ export default class extends PureComponent {
                 buttons: ['Yes', 'No'],
                 message: t('library.mozaic_view.alert_start_manual_order_message'),
                 cancelId: 1,
-                detail: t('library.mozaic_view.alert_start_manual_order_confirmation')``
+                detail: t('library.mozaic_view.alert_start_manual_order_confirmation')
             });
             if (result === 1) {
                 order = {};
@@ -178,6 +179,10 @@ export default class extends PureComponent {
                         <div title={t('library.mozaic_view.switch_to_list_view_tooltip')} className="list-view"
                              onClick={this.props.openListView}>
                             <img alt="list view" src={LIST}/>
+                        </div>
+                        <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
+                             onClick={this.props.openMapView}>
+                            <img alt="map view" src={MAP}/>
                         </div>
                     </div>
 

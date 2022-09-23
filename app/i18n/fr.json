@@ -313,6 +313,17 @@
         "alert_start_manual_order_confirmation": "Do you want to reuse the previously saved classification?",
         "alert_selection_and_order_saved": "Selection and order of images saved."
       },
+      "map-view": {
+        "switch_to_map_view_tooltip": "Switch to map view",
+        "popup_open_in_annotation_editor": "Open in annotation editor",
+        "popup_lbl_file_name": "File name",
+        "popup_lbl_catalog_n_1": "Catalog N1°",
+        "popup_lbl_scientific_name": "Scientific name",
+        "popup_lbl_collector_name": "Collector name",
+        "popup_lbl_date": "Date",
+        "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
+        "number_of_selected_resources": "{{count}} selected resources"
+      },
       "import_images" : {
         "title": "Import",
         "lbl_select_mode_of_import": "Select mode of import",

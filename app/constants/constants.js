@@ -49,6 +49,7 @@ export const INSPECTOR_TEXT = BG1;
 
 export const MOZAIC_VIEW = "MOZAIC_VIEW";
 export const LIST_VIEW = "LIST_VIEW";
+export const MAP_VIEW = "MAP_VIEW";
 
 export const SORT_ALPHABETIC_DESC = "sort_alphabetic_desc";
 export const SORT_ALPHABETIC_ASC = "sort_alphabetic_asc";
@@ -75,6 +76,7 @@ export const MANUAL_ORDER = "manual_order";
 
 export const COMMON_TAGS = "Common keywords";
 export const TAG_AUTO = "Automatic keywords";
+export const TAG_MAP_SELECTION = "Map selection";
 export const TAG_DPI_NO = "DPI: no";
 export const TAG_MODE_LANDSCAPE = "Mode: landscape";
 export const TAG_MODE_PORTRAIT = "Mode: portrait";

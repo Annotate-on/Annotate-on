@@ -201,4 +201,66 @@
   max-height: 30vh;
 }
 
+.leaflet-popup {
+  width: 240px;
+}
+
+.map-marker-popup {
+  text-align: center;
+  width: 200px;
+
+  .metadata-title {
+    color: #999999;
+    font-size: 10pt;
+  }
+
+  .img-panel {
+    width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+  }
+
+  .metadata-value {
+    color: #333333;
+    word-break: break-word;
+    margin-bottom: 3px;
+    font-size: 10pt;
+  }
+
+  a {
+    padding-top: 8px;
+    align-self: center;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .attributes-holder{
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    .row {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+}
+
+.map-docked-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+  padding: 5px;
+  top: 20px;
+  right: 20px;
+  border-radius: 3px;
+  i {
+    margin-left: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    float: right;
+  }
+
+}
+
 

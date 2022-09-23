@@ -3,20 +3,6 @@ import styled from 'styled-components';
 import {FeatureGroup, Map} from 'react-leaflet';
 import L from 'leaflet';
 import {EditControl} from 'react-leaflet-draw';
-import '../widget/leaflet-angle'
-import '../widget/leaflet-zoom'
-import '../widget/leaflet-simpleline'
-import '../widget/leaflet-occurrence'
-import '../widget/leaflet-override'
-import '../widget/leaflet-print-button'
-import '../widget/leaflet-color-picker'
-import '../widget/leaflet-ratio'
-import '../widget/leaflet-export-zoi'
-import '../widget/leaflet-transcription'
-import '../widget/leaflet-categorical'
-import '../widget/leaflet-richtext'
-import '../widget/leaflet-cartel'
-import '../widget/leaflet-control-menu'
 import i18next from "i18next";
 
 /**
@@ -256,7 +242,6 @@ class LeafletImage extends Component {
     constructor(props, context) {
         const { t } = i18next;
         super(props, context);
-        this._overrideDefaults();
         this.sha1 = props.currentPicture.sha1;
         this.state = {
             currentPicture: props.currentPicture,
@@ -433,100 +418,6 @@ class LeafletImage extends Component {
         );
     }
 
-    /**Changes some of the default text for the toolbar buttons*/
-    _overrideDefaults() {
-        const { t } = i18next;
-        L.drawLocal.draw.toolbar.actions.text = t('global.cancel')
-        L.drawLocal.draw.toolbar.actions.title = t('annotate.editor.btn_tooltip_actions')
-        L.drawLocal.draw.toolbar.finish.text = t('global.finish')
-        L.drawLocal.draw.toolbar.finish.title = t('annotate.editor.btn_tooltip_finish')
-        L.drawLocal.draw.toolbar.undo.text = t('annotate.editor.btn_undo')
-        L.drawLocal.draw.toolbar.undo.title = t('annotate.editor.btn_tooltip_undo')
-
-        L.drawLocal.draw.toolbar.buttons.polyline = t('annotate.editor.btn_tooltip_multiline_length_tool');
-        L.drawLocal.draw.handlers.polyline = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
-                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
-            }
-        };
-
-        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
-        L.drawLocal.draw.handlers.polygon = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
-                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
-            }
-        };
-
-        L.drawLocal.draw.toolbar.buttons.rectangle = t('annotate.editor.btn_tooltip_rectangle_of_interest');
-        L.drawLocal.draw.handlers.rectangle = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_rectangle')
-            }
-        };
-        L.drawLocal.draw.handlers.simpleshape = {
-            tooltip: {
-                end: t('annotate.editor.tooltip_release_mouse_to_finish_drawing')
-            }
-        };
-
-        L.drawLocal.draw.toolbar.buttons.circlemarker = t('annotate.editor.btn_tooltip_point_of_interest');
-        L.drawLocal.draw.toolbar.buttons.marker = t('annotate.editor.btn_tooltip_point_of_interest');
-        L.drawLocal.draw.handlers.marker = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_map_to_place_marker'),
-            }
-        };
-        L.drawLocal.draw.toolbar.buttons.occurrence = t('annotate.editor.btn_tooltip_count_tool');
-        L.drawLocal.draw.toolbar.buttons.categorical =  t('annotate.editor.btn_tooltip_categorical_tool');
-        L.drawLocal.draw.toolbar.buttons.colorPicker = t('annotate.editor.btn_tooltip_color_picker_tool');
-        L.drawLocal.draw.toolbar.buttons.cartel = i18next.t('annotate.editor.btn_tooltip_cartel');
-
-        L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_angle_tool');
-        L.drawLocal.draw.handlers.angle = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_angle_click_for_vertex_point'),
-                cont: t('annotate.editor.tooltip_angle_click_to_draw_first_ray'),
-                end: t('annotate.editor.tooltip_angle_click_to_draw_second_ray')
-            }
-        };
-
-        L.drawLocal.draw.toolbar.buttons.simpleline = t('annotate.editor.btn_tooltip_length_tool');
-        L.drawLocal.draw.handlers.simpleline = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
-                cont: t('annotate.editor.tooltip_click_to_finish_line'),
-                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
-            }
-        };
-        L.drawLocal.draw.toolbar.buttons.ratio = t('annotate.editor.btn_tooltip_measure_ratio');
-        L.drawLocal.draw.handlers.ratio = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_line'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
-                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
-            }
-        };
-        L.drawLocal.draw.toolbar.buttons.transcription = t('annotate.editor.btn_tooltip_transcription_tool');
-        L.drawLocal.draw.handlers.transcription = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_transcription_tool_click_to_start_drawing_rectangle'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
-                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
-            }
-        };
-        L.drawLocal.draw.toolbar.buttons.richtext = t('annotate.editor.btn_tooltip_text_tool');
-        L.drawLocal.draw.handlers.richtext = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_text_tool_click_to_start_drawing_rectangle'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_line'),
-                end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
-            }
-        };
-    }
 
     /**
      * Call this method after component is initiated and add image overlay and minimap.

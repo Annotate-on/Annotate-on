@@ -134,7 +134,7 @@ import {
     IMAGE_STORAGE_DIR,
     INTEREST,
     LIST_VIEW,
-    MANUAL_ORDER,
+    MANUAL_ORDER, TAG_MAP_SELECTION,
     MODEL_ANNOTATE,
     MODEL_XPER,
     NUMERICAL,
@@ -166,7 +166,7 @@ import {
     getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,
 } from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
-import {_addTagIdIfMissing, categoryExists, checkItemInParentCategory} from "../components/event/utils";
+import {_addTagIdIfMissing, categoryExists, checkItemInParentCategory, getNewTabName} from "../components/event/utils";
 import i18next from "i18next";
 
 // The 'shape' of the state is defined here
@@ -866,7 +866,7 @@ export default (state = {}, action) => {
             break;
 // ---------------------------------------------------------------------------------------------------------------------
         case CREATE_TAB: {
-            const name = 'Selection ' + getNewTabName(state);
+            const name =  getNewTabName(state.open_tabs);
             const counter = state.counter + 1;
             const allFolders = getAllDirectoriesNameFlatten();
             const tab = {
@@ -930,7 +930,7 @@ export default (state = {}, action) => {
             break;
 
         case OPEN_IN_NEW_TAB: {
-            const name = 'Selection ' + getNewTabName(state);
+            const name = getNewTabName(state.open_tabs);
             const allFolders = getAllDirectoriesNameFlatten();
             const counter = state.counter + 1;
 
@@ -954,8 +954,7 @@ export default (state = {}, action) => {
             const tabs = state.open_tabs;
             tabs[name] = tab;
             let selectedTags;
-
-            selectedTags = [action.name];
+            selectedTags = [action.name ? action.name : name];
 
             const appendTag = (tagArray, tag) => {
                 if (tag.children) {
@@ -1156,7 +1155,7 @@ export default (state = {}, action) => {
         case CREATE_CATEGORY: {
             if (!action.category.name) return state;
             if (categoryExists(state.tags, action.category.name)) {
-                if(action.category.name !== TAG_AUTO){
+                if(action.category.name !== TAG_AUTO && action.category.name !== TAG_MAP_SELECTION ){
                     ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_category_with_name_already_exit', { name: action.category.name}));
                 }
                 return state;
@@ -3914,24 +3913,6 @@ const tagExist = (tags, name) => {
             return false;
         }
     });
-};
-
-const getNewTabName = (state) => {
-    const keys = Object.keys(state.open_tabs)
-    // Sort tabs by name and get tab with greatest number in name. Default tab name is: 'Selection xx'
-    keys.sort((a, b) => {
-        if (+a.substring(10) > +b.substring(10))
-            return 1;
-        else if (+a.substring(10) < +b.substring(10))
-            return -1;
-        else return 0;
-    });
-    // Remove string part from name
-    const lastName = +keys[keys.length - 1].substring(10);
-    if (isNaN(lastName))
-        return 1;
-    else
-        return +keys[keys.length - 1].substring(10) + 1;
 };
 
 const getAnnotationNum = (patt, text) => {

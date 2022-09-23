@@ -127,7 +127,8 @@ export default class extends Component {
         super(props, context);
         this.toggle = this.toggle.bind(this);
         const annotations = this._sortAnnotations(this._mergeAnnotations(this.props),
-            this.props.tab.sortDirectionAnnotation ? this.props.tab.sortDirectionAnnotation : SORT_DATE_DESC);
+            this.props.tab.sortDirectionAnnotation ? this.props.tab.sortDirectionAnnotation : SORT_DATE_DESC
+        );
 
         this.state = {
             dropdownOpen: false,

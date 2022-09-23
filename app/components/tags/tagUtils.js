@@ -1,6 +1,6 @@
 import {TYPE_CATEGORY, TYPE_TAG} from "../event/Constants";
 import Chance from 'chance';
-import {COMMON_TAGS, TAG_AUTO} from "../../constants/constants";
+import {COMMON_TAGS, TAG_AUTO, TAG_MAP_SELECTION} from "../../constants/constants";
 const chance = new Chance();
 
 export const lvlAutomaticTags = (tags) => {
@@ -111,6 +111,18 @@ export const mergeCategories = ( oldCategory , newCategory ) => {
     });
 
     return oldCategory;
+}
+
+export const getMapSelectionCategory = ( array ) => {
+    let found;
+    array.forEach( object => {
+        console.log('checking', object )
+        if (object.type === TYPE_CATEGORY && object.name === TAG_MAP_SELECTION){
+            found = object;
+            return;
+        }
+    });
+    return found;
 }
 
 export const getRootCategoriesNames = ( array ) => {

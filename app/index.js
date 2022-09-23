@@ -27,6 +27,7 @@ import {formatDateForFileName} from "./utils/js";
 import lodash from 'lodash';
 import './i18n';
 import i18next from "i18next";
+import {initLeaflet} from './widget/leaflet-override';
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -70,6 +71,7 @@ doInitWorkspace();
 
 // Callback which boot the app
 const go = () => {
+        initLeaflet();
         let initialState = createInitialState();
         const { t } = i18next;
         // Load previously working state.

@@ -18,7 +18,7 @@ import {
     TAG_DPI_75,
     TAG_DPI_NO,
     TAG_GPS_NO,
-    TAG_GPS_WIDTH,
+    TAG_GPS_WIDTH, TAG_MAP_SELECTION,
     TAG_MODE_LANDSCAPE,
     TAG_MODE_PORTRAIT
 } from '../constants/constants';
@@ -260,9 +260,10 @@ export default class AppMenu extends Component {
 
     _createSystemTags = () => {
         // Create default system tags.
+        console.log()
 
         const newCategory = createNewCategory(chance.guid() , TAG_AUTO);
-        this.props.createCategory(newCategory)
+        this.props.createCategory(newCategory);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_NO), false , newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_MODE_LANDSCAPE), false, newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_MODE_PORTRAIT), false, newCategory.id);
@@ -273,6 +274,9 @@ export default class AppMenu extends Component {
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_300), false, newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_600), false, newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_1200), false, newCategory.id);
+
+        const newMapSelectionCategory = createNewCategory(chance.guid() , TAG_MAP_SELECTION);
+        this.props.createCategory(newMapSelectionCategory);
     };
 
     _showAlert = (text) => {
