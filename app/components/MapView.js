@@ -8,6 +8,11 @@ import React, {Component} from 'react';
 import LeafletMap from "./LeafletMap";
 import {ee, EVENT_SELECT_TAB, EVENT_OPEN_TAB} from "../utils/library";
 import _ from "lodash";
+import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
+import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
+import Chance from "chance";
+import {getNewTabName} from "./event/utils";
+const chance = new Chance();
 
 const _Root = styled.div`
   width: 100%;
@@ -65,7 +70,7 @@ export default class MapView extends Component {
                 const exifPlaceArr = resource.exifPlace.split(',');
                 if(!exifPlaceArr && exifPlaceArr.length != 2) {
                     console.log('wrong format of exifPlace');
-                    resourcesWithoutGeoLocation.push(location);
+                    resourcesWithoutGeoLocation.push(resource);
                 } else {
                     const location = {
                         latLng : [+exifPlaceArr[0], +exifPlaceArr[1]],
@@ -80,7 +85,7 @@ export default class MapView extends Component {
                 };
                 resourcesWithGeoLocation.push(location);
             } else {
-                resourcesWithoutGeoLocation.push(location);
+                resourcesWithoutGeoLocation.push(resource);
             }
         }
         const newSelection = _.intersection(resourcesWithGeoLocation.map(e => {
@@ -128,6 +133,40 @@ export default class MapView extends Component {
         })
     }
 
+    _onOpenNewTabSelection = () => {
+        if(!this.state.selectedResources.length) {
+            console.log('selection is empty');
+            return;
+        }
+        this._doOpenResourcesInNewTab(this.state.selectedResources);
+    }
+
+    _onOpenNewTabWithoutGeolocation = () => {
+        if(!this.state.resourcesWithoutGeoLocation.length) {
+            console.log('selection is empty');
+            return;
+        }
+        let resourceIds = this.state.resourcesWithoutGeoLocation.map(value => value.sha1);
+        this._doOpenResourcesInNewTab(resourceIds);
+    }
+
+    _doOpenResourcesInNewTab = (resources) => {
+        console.log('openResourcesInNewTab', resources);
+        if(!resources.length) {
+            console.log('selection is empty');
+            return;
+        }
+        const newTag = getNewTabName(this.props.openTabs);
+        const mapSelectionCategory = getMapSelectionCategory(this.props.tags);
+        this.props.addSubCategory(TAG_MAP_SELECTION, createNewTag(chance.guid() , newTag), false , mapSelectionCategory.id);
+        for (const resource of resources) {
+            this.props.tagPicture(resource, newTag);
+        }
+        setTimeout(() => {
+            this.props.openInNewTab(newTag);
+        }, 100);
+    }
+
     render() {
         const { t } = i18next;
         return (
@@ -155,17 +194,12 @@ export default class MapView extends Component {
                             <div>
                             <span>{t('library.map-view.number_of_resources_without_geolocation', {count:this.state.resourcesWithoutGeoLocation.length})}</span>
                             <i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}
-                               onClick={() => {
-                                   ee.emit(EVENT_OPEN_TAB, 'library')
-                               }}
-                            />
+                               onClick={this._onOpenNewTabWithoutGeolocation}                            />
                             </div>
                             <div>
                             <span>{t('library.map-view.number_of_selected_resources', {count:this.state.selectedResources.length})}</span>
                             <i className="fa fa-external-link" aria-hidden="true" title={"Open in new selection"}
-                               onClick={() => {
-                                   ee.emit(EVENT_OPEN_TAB, 'library')
-                               }}
+                               onClick={this._onOpenNewTabSelection}
                             />
                             </div>
                         </_DockedPanel>

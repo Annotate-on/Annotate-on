@@ -4,10 +4,20 @@ import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 import {withTranslation} from "react-i18next";
 import MapView from "../components/MapView";
-import {setPictureInSelection} from "../actions/app";
+import {
+    addSubCategory,
+    createCategory,
+    createTag,
+    openInNewTab,
+    setPictureInSelection,
+    tagPicture
+} from "../actions/app";
 
 const mapStateToProps = state => {
-    return {};
+    return {
+        openTabs : state.app.open_tabs,
+        tags: state.app.tags,
+    };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -20,7 +30,19 @@ const mapDispatchToProps = dispatch => {
         },
         setPictureInSelection: (pictureId, tabName) => {
             dispatch(setPictureInSelection(pictureId, tabName));
-        }
+        },
+        createCategory: (category) => {
+            dispatch(createCategory(category));
+        },
+        addSubCategory: (parentName , item , isCategory , parentId) => {
+            dispatch(addSubCategory(parentName , item , isCategory , parentId));
+        },
+        openInNewTab: (tag) => {
+            dispatch(openInNewTab(tag));
+        },
+        tagPicture: (pictureId, tagName) => {
+            dispatch(tagPicture(pictureId, tagName));
+        },
     };
 };
 

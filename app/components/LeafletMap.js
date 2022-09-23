@@ -101,11 +101,11 @@ export default class LeafletMap extends Component {
         const osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
         const osmAttrib='Map data &copy; OpenStreetMap contributors';
         const osm2 = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 13, attribution: osmAttrib});
-        this._miniMap = new L.Control.MiniMap(osm2, {
-            position: "bottomright",
-            autoToggleDisplay: false,
-            toggleDisplay: true
-        }).addTo(map);
+        // this._miniMap = new L.Control.MiniMap(osm2, {
+        //     position: "bottomright",
+        //     autoToggleDisplay: false,
+        //     toggleDisplay: true
+        // }).addTo(map);
     }
 
     _onSelectionCreated = (e) => {

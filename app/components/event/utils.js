@@ -265,3 +265,19 @@ export const _addTagIdIfMissing = (tags) => {
     })
 
 }
+
+export const getNewTabName = (openTabs) => {
+    const keys = Object.keys(openTabs)
+    // Sort tabs by name and get tab with greatest number in name. Default tab name is: 'Selection xx'
+    keys.sort((a, b) => {
+        if (+a.substring(10) > +b.substring(10))
+            return 1;
+        else if (+a.substring(10) < +b.substring(10))
+            return -1;
+        else return 0;
+    });
+    // Remove string part from name
+    const lastName = +keys[keys.length - 1].substring(10);
+    let tabIndex = isNaN(lastName) ? 1 : +keys[keys.length - 1].substring(10) + 1;
+    return 'Selection ' + tabIndex;
+};
