@@ -271,7 +271,7 @@ export default class LeafletMap extends Component {
                                                  alt="img panel"
                                                  src={location.resource.thumbnail}>
                                             </img>
-                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor1')}</a>
+                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
                                         </div>
                                     </Popup>
                                 </Marker>
