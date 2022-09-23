@@ -38,7 +38,6 @@ export default class LeafletMap extends Component {
 
     constructor(props, context) {
         super(props, context);
-        this._overrideDefaults();
         this.state = {
             lat: 51.505,
             lng: -0.09,
@@ -53,36 +52,49 @@ export default class LeafletMap extends Component {
 
     _fitMapToMarkers = () => {
         const map = this.mapRef.current.leafletElement;  //get native Map instance
-        map.fitBounds(this.clusterRef.leafletElement.getBounds());
+        const bounds = this.clusterRef.leafletElement.getBounds();
+        if(bounds && bounds.isValid()) {
+            map.fitBounds(this.clusterRef.leafletElement.getBounds());
+        }
         console.log(this.clusterRef)
     };
 
     componentDidMount() {
-        console.log("componentDidMount map")
+        console.log("componentDidMount", this.mapRef.current)
         console.log(this.props.locations)
-        if (this.mapRef){
+        if (this.mapRef.current){
+            this._clearMap();
             this._initLeaflet();
+            setTimeout(() => {
+                this._fitMapToMarkers();
+            }, 100)
         }
-        setTimeout(() => {
-            this._fitMapToMarkers();
-        }, 100)
     }
 
-    _overrideDefaults = () => {
-        const { t } = i18next;
-        L.drawLocal.draw.toolbar.actions.text = t('global.cancel')
-        L.drawLocal.draw.toolbar.actions.title = t('annotate.editor.btn_tooltip_actions')
-        L.drawLocal.draw.toolbar.finish.text = t('global.finish')
-        L.drawLocal.draw.toolbar.finish.title = t('annotate.editor.btn_tooltip_finish')
-        L.drawLocal.draw.toolbar.buttons.polygon = t('annotate.editor.btn_tooltip_surface_tool');
-        L.drawLocal.draw.handlers.polygon = {
-            tooltip: {
-                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
-                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
-                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
-            }
-        };
+    componentDidUpdate(prevProps, prevState) {
+        console.log("componentDidUpdate ", this.mapRef.current);
+        if (this.mapRef.current) {
+            this._clearMap();
+            this._initLeaflet();
+        }
     }
+
+    componentWillUnmount() {
+        console.log("componentWillUnmount", this.mapRef.current);
+    }
+
+    _clearMap = () => {
+        if(this._miniMap) {
+            this._miniMap.remove();
+        }
+        const drawnLayers = this.featureGroup.leafletElement;
+        if(drawnLayers) {
+            drawnLayers.eachLayer((layer) => {
+                layer.off('click');
+                drawnLayers.removeLayer(layer);
+            });
+        }
+    };
 
     _initLeaflet = () => {
         const map = this.mapRef.current.leafletElement;
@@ -259,7 +271,7 @@ export default class LeafletMap extends Component {
                                                  alt="img panel"
                                                  src={location.resource.thumbnail}>
                                             </img>
-                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
+                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor1')}</a>
                                         </div>
                                     </Popup>
                                 </Marker>
@@ -278,7 +290,7 @@ export default class LeafletMap extends Component {
                                              marker: false,
                                              polyline : false,
                                          }}
-                            />
+                            ></EditControl>
                         </FeatureGroup>
                     </Map>
                 </_LeafletDiv>
