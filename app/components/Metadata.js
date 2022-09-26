@@ -17,6 +17,7 @@ import {METADATA_DETERMINATIONS_TITLES, METADATA_TITLES} from "../utils/erecolna
 import {loadMetadata, saveMetadata} from "../utils/config";
 import fs from "fs-extra";
 import path from "path";
+import GeolocationWidget from "./GeolocationWidget";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 
@@ -556,25 +557,7 @@ export default class extends Component {
                                    value={this.state.metadata.iptc.relation}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
-                        <FormGroup>
-                            <InputGroup>
-                                <Input type="text" name="iptc.location" id="location"
-                                       placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
-                                       title = {t('inspector.metadata.textbox_tooltip_coverage_place')}
-                                       onKeyDown={this._saveForm}
-                                       value={this.state.metadata.iptc.location}
-                                       onChange={this._formChangeHandler}/>
-                                <InputGroupAddon addonType="append">
-                                    <InputGroupText>
-                                        <i className="fa fa-external-link" aria-hidden="true"
-                                           onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}
-                                        />
-                                    </InputGroupText>
-                                </InputGroupAddon>
-                                {errors.location.length > 0 &&
-                                <span className='error'>{errors.location}</span>}
-                            </InputGroup>
-                        </FormGroup>
+                        <GeolocationWidget place="Beograd" latitude="44.81" longitude="20.46"/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}
