@@ -3,6 +3,7 @@ import videojs from 'video.js'
 import Timeline from "./Timeline";
 import {DEFAULT_VOLUME} from "../constants/constants";
 import {ee, EVENT_GOTO_ANNOTATION} from "../utils/library";
+import LeafletImage from "./LeafletImage";
 
 export default class extends PureComponent {
 
@@ -115,10 +116,39 @@ export default class extends PureComponent {
     render() {
         return (
             <div className="bst rcn_video">
-                <div data-vjs-player>
-                    <video className="video-js"
-                           ref={this.videoPlayer}>
-                    </video>
+
+                <div className="leaflet-wrapper">
+                    <div data-vjs-player>
+                        <video className="video-js"
+                               ref={this.videoPlayer}>
+                        </video>
+                    </div>
+                    <LeafletImage
+                                  currentPicture={this.props.currentPicture} ref={this.leafletImage}
+                                  leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                  annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
+                                  annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                  annotationsRectangular={this.props.annotationsRectangular}
+                                  annotationsPolygon={this.props.annotationsPolygon}
+                                  annotationsAngle={this.props.annotationsAngle}
+                                  annotationsColorPicker={this.props.annotationsColorPicker}
+                                  annotationsOccurrence={this.props.annotationsOccurrence}
+                                  annotationsTranscription={this.props.annotationsTranscription}
+                                  annotationsRichtext={this.props.annotationsRichtext}
+                                  onCreated={this.props.onCreated}
+                                  onEditStop={this.props.onEditStop}
+                                  onDrawStart={this.props.onDrawStart}
+                                  onDrawStop={this.props.onDrawStop}
+                                  calibrationMode={this.props.calibrationActive}
+                                  fireSaveEvent={this.props.fireSaveEvent}
+                                  onContextMenuEvent={this.props.handleLeafletContextMenu}
+                                  targetColors={this.props.targetColors}
+                                  taxonomyInstance={this.props.taxonomyInstance}
+                                  repeatMode={this.props.repeatMode}
+                                  saveLeafletSettings={this.props.saveLeafletSettings}
+                    />
+
+
                 </div>
                 {this.player && this.state.loadedmetadata ?
                     <Timeline ref={this.timeline}

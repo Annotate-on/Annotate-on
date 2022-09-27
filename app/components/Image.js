@@ -348,6 +348,29 @@ class Image extends PureComponent {
                                     isEditing={this.state.currentAnnotationTool}
                                     editedAnnotation={this.state.editedAnnotation}
                                     openEditPanelonVideoAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
+
+                                    leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                    annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+                                    annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+                                    annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+                                    annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
+                                    annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
+                                    annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
+                                    annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
+                                    annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
+                                    annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                    targetColors={targetColors}
+
+                                    onCreated={this._onCreated}
+                                    onEditStop={this._onEditStop}
+                                    onDrawStart={this._onDrawStart}
+                                    onDrawStop={this._onDrawStop}
+                                    calibrationMode={this.state.calibrationActive}
+                                    fireSaveEvent={this._fireSaveEvent}
+                                    onContextMenuEvent={this._handleLeafletContextMenu}
+                                    taxonomyInstance={this.props.taxonomyInstance}
+                                    repeatMode={this.props.repeatMode}
+                                    saveLeafletSettings={this.props.saveLeafletSettings}
                                 /> : null
                         }
                         {

@@ -4,6 +4,7 @@ import {FeatureGroup, Map} from 'react-leaflet';
 import L from 'leaflet';
 import {EditControl} from 'react-leaflet-draw';
 import i18next from "i18next";
+import PNGlib from "pnglib"
 
 /**
  * NOTE!
@@ -369,7 +370,7 @@ class LeafletImage extends Component {
     render() {
         const { t } = i18next;
         return (
-            <_Root>
+            <_Root className="vLeaflet">
                 <_LeafletDiv>
                     <Map setView={[0, 0]} center={[0, 0]} zoom={10} zoomControl={false} contextmenu={true}
                          contextmenuWidth={140}
@@ -459,8 +460,15 @@ class LeafletImage extends Component {
 
         const bounds = new L.LatLngBounds(southWest, northEast);
 
+
+        const p = new PNGlib(this.state.currentPicture.width, this.state.currentPicture.height, 2);
+        p.color(0, 0, 0, 0); // set the background transparent
+        const imageURL = 'data:image/png;base64,' + p.getBase64()
+
+
         // add the image overlay, so that it covers the entire map
-        this._imageOverlay = L.imageOverlay(this.state.currentPicture.file, bounds);
+        // this._imageOverlay = L.imageOverlay(this.state.currentPicture.file, bounds);
+        this._imageOverlay = L.imageOverlay(imageURL, bounds);
         this._imageOverlay.addTo(map);
         // L.control.scale().addTo(map);
         //map.setMaxBounds(bounds);

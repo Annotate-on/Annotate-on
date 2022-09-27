@@ -3,6 +3,24 @@
   grid-template-rows: auto 180px;
   height: calc(100% - 41px);
 
+  .leaflet-wrapper {
+    position: relative;
+
+    .leaflet-container {
+      background: transparent;
+    }
+
+    .vLeaflet {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .video-js {
+      position: absolute;
+    }
+  }
+
   .timeline {
     display: grid;
     grid-template-columns: 220px auto;
