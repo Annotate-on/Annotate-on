@@ -41,12 +41,13 @@ import Select from "react-select";
 import {
     ee, EVENT_GET_EVENT_TIMELINE_CURRENT_TIME,
     EVENT_GOTO_ANNOTATION, EVENT_ON_TAG_DROP,
-    EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL,
     EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL,
     EVENT_SET_ANNOTATION_POSITION,
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
+import lodash from "lodash";
+
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
@@ -84,7 +85,7 @@ export default class extends Component {
         let start, end;
 
         //declare tag groups for each input field
-        let [nameTags,titleTags,topicTags,personTags,dateTags,locationTags,noteTags] = [[],[],[],[],[],[],[]]
+        let [nameTags, titleTags, topicTags, personTags, dateTags, locationTags, noteTags] = [[], [], [], [], [], [], []]
 
         if ('vertices' in props.annotation) {
             props.annotation.vertices.map((vertex, index) => {
@@ -150,6 +151,13 @@ export default class extends Component {
                 break;
         }
 
+        if (!lodash.isNil(props.annotation.video)) {
+            start = props.annotation.video.start;
+            end = props.annotation.video.end;
+            if (end === -1)
+                end = start;
+        }
+
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] ?
             this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] : {descriptorId: "-1"};
 
@@ -166,7 +174,7 @@ export default class extends Component {
         }
 
 
-        console.log('annotation to edit...' , props.annotation)
+        console.log('annotation to edit...', props.annotation)
 
         this.state = {
             person: person ? person : '',
@@ -190,13 +198,13 @@ export default class extends Component {
             originalEnd: end,
             hideCancelButton: false,
             topic: topic,
-            nameTags : nameTags,
-            titleTags : titleTags,
+            nameTags: nameTags,
+            titleTags: titleTags,
             topicTags: topicTags,
-            personTags : personTags,
-            dateTags : dateTags,
-            locationTags : locationTags,
-            noteTags : noteTags,
+            personTags: personTags,
+            dateTags: dateTags,
+            locationTags: locationTags,
+            noteTags: noteTags,
             activeDropZone: null,
             tagStartTime: 0
         };
@@ -209,43 +217,39 @@ export default class extends Component {
                 this.state.targetColor, this.state.descriptor.value, this.state.value);
         }
 
-        if ( nextProps.annotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
+        if (nextProps.annotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
             this.setState({
-                nameTags : nextProps.annotation.nameTags ? nextProps.annotation.nameTags : [],
-                titleTags : nextProps.annotation.titleTags ? nextProps.annotation.titleTags : [],
-                topicTags : nextProps.annotation.topicTags ? nextProps.annotation.topicTags : [],
-                personTags : nextProps.annotation.personTags ? nextProps.annotation.personTags : [],
-                dateTags : nextProps.annotation.dateTags ? nextProps.annotation.dateTags : [],
-                locationTags : nextProps.annotation.locationTags ? nextProps.annotation.locationTags : [],
-                noteTags : nextProps.annotation.noteTags ? nextProps.annotation.noteTags : [],
+                nameTags: nextProps.annotation.nameTags ? nextProps.annotation.nameTags : [],
+                titleTags: nextProps.annotation.titleTags ? nextProps.annotation.titleTags : [],
+                topicTags: nextProps.annotation.topicTags ? nextProps.annotation.topicTags : [],
+                personTags: nextProps.annotation.personTags ? nextProps.annotation.personTags : [],
+                dateTags: nextProps.annotation.dateTags ? nextProps.annotation.dateTags : [],
+                locationTags: nextProps.annotation.locationTags ? nextProps.annotation.locationTags : [],
+                noteTags: nextProps.annotation.noteTags ? nextProps.annotation.noteTags : [],
             })
         }
     };
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
-        if (prevProps.isAnnotationRecording === true && this.props.isAnnotationRecording === false){
+        if (prevProps.isAnnotationRecording === true && this.props.isAnnotationRecording === false) {
             this.setState({
                 hideCancelButton: true
             })
         }
     }
 
-
-
     componentDidMount() {
         ee.on(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
-        ee.on(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL, this._saveChronothematiqueAnnotaion);
         ee.on(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
-        ee.on(EVENT_ON_TAG_DROP , this.onTagDropEvent)
-        ee.on(NOTIFY_CURRENT_TIME , this.setTagStartTime)
+        ee.on(EVENT_ON_TAG_DROP, this.onTagDropEvent)
+        ee.on(NOTIFY_CURRENT_TIME, this.setTagStartTime)
     }
 
     componentWillUnmount() {
         ee.removeListener(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
-        ee.removeListener(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL, this._saveChronothematiqueAnnotaion);
         ee.removeListener(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
-        ee.removeListener(EVENT_ON_TAG_DROP , this.onTagDropEvent)
-        ee.removeListener(NOTIFY_CURRENT_TIME , this.setTagStartTime)
+        ee.removeListener(EVENT_ON_TAG_DROP, this.onTagDropEvent)
+        ee.removeListener(NOTIFY_CURRENT_TIME, this.setTagStartTime)
 
     }
 
@@ -274,24 +278,14 @@ export default class extends Component {
     }
 
     _saveAnnotateEventAnnotation = () => {
-        if (this.state.annotationType === ANNOTATION_EVENT_ANNOTATION){
+        if (this.state.annotationType === ANNOTATION_EVENT_ANNOTATION) {
             this.props.save(
                 this.state.title,
                 this.state.descriptor.descriptorId || "-1", this.state.text,
                 this.state.targetColor, this.state.descriptor.value, this.state.value,
-                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , this.mergeAllTags() , this.state.topic);
+                this.state.descriptor.type, this.state.person, this.state.videoDate, this.state.location, this.mergeAllTags(), this.state.topic);
         }
         ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
-    }
-
-    _saveChronothematiqueAnnotaion = () => {
-        if (this.state.annotationType === 'chronothematique'){
-            this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
-                this.state.targetColor, this.state.descriptor.value, this.state.value,
-                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location);
-        }
-        ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
-
     }
 
     backToAnnotationEditor = () => {
@@ -311,9 +305,9 @@ export default class extends Component {
     };
 
 
-    handleUntagEventAnnotation = (event , tagName , groupType) => {
+    handleUntagEventAnnotation = (event, tagName, groupType) => {
         event.preventDefault();
-        this.props.untagEventAnnotation(tagName , groupType);
+        this.props.untagEventAnnotation(tagName, groupType);
     }
 
     handleUnTagAnnotation = e => {
@@ -331,47 +325,47 @@ export default class extends Component {
     handleOnDragLeaveEvent = (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        if (this.state.activeTagsPanel !== null){
+        if (this.state.activeTagsPanel !== null) {
             this.setState({
                 activeTagsPanel: null
             })
         }
     }
 
-    handOnDragOverEvent = (ev , type) => {
+    handOnDragOverEvent = (ev, type) => {
         ev.preventDefault();
         ev.stopPropagation();
-        if (this.state.activeDropZone !== type){
+        if (this.state.activeDropZone !== type) {
             this.setState({
                 activeDropZone: type
             })
         }
     }
 
-    handOnDropEvent = (ev , inputGroup) => {
+    handOnDropEvent = (ev, inputGroup) => {
         ee.emit(EVENT_GET_EVENT_TIMELINE_CURRENT_TIME);
         ev.preventDefault();
         const tagName = ev.dataTransfer.getData("tagName");
-        if (inputGroup === "generalTags"){
+        if (inputGroup === "generalTags") {
             this.props.tagAnnotation(tagName);
-        }else{
-            setTimeout( ()=> {
+        } else {
+            setTimeout(() => {
                 ev.preventDefault();
                 const tag = {
                     name: tagName,
                     start: this.state.tagStartTime
                 }
-                this.props.tagEventAnnotation(tag , inputGroup);
+                this.props.tagEventAnnotation(tag, inputGroup);
                 this.setState({
                     activeDropZone: null
                 })
-            } , 100)
+            }, 100)
         }
     }
 
     render() {
         let key = 0;
-        const { t } = this.props;
+        const {t} = this.props;
 
         const toolbarConfig = {
             display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
@@ -400,16 +394,20 @@ export default class extends Component {
                 }} className="tag-form">
                     <FormGroup row>
                         {
-                            this.props.isAnnotationRecording ? <Label sm={12} className="rec_ann_text">Click "Annotate" button to save <b>{this.state.title}</b>.</Label> :
+                            this.props.isAnnotationRecording ?
+                                <Label sm={12} className="rec_ann_text">Click "Annotate" button to
+                                    save <b>{this.state.title}</b>.</Label> :
                                 <Row>
-                                    <Col sm={{ size: 3, offset: 5 }}>
-                                        <Button disabled={this.state.title.length < 3 || this.state.end < this.state.start} color="primary" onClick={ () => {
+                                    <Col sm={{size: 3, offset: 5}}>
+                                        <Button
+                                            disabled={this.state.title.length < 3 || this.state.end < this.state.start}
+                                            color="primary" onClick={() => {
                                             this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
                                                 this.state.targetColor, this.state.descriptor.value, this.state.value,
-                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic);
+                                                this.state.descriptor.type, this.state.person, this.state.videoDate, this.state.location, null, this.state.topic);
                                         }}>{t('global.save')}</Button>
                                     </Col>
-                                    <Col sm={{ size: 3, offset: 1 }}>
+                                    <Col sm={{size: 3, offset: 1}}>
                                         <Button disabled={this.state.title.length < 3} color="primary"
                                                 onClick={this.cancel}>{t('global.cancel')}</Button>
                                     </Col>
@@ -419,10 +417,11 @@ export default class extends Component {
 
                     {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
                         <Row>
-                            <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
+                            <Label sm={3} for="note"
+                                   className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
                             {/*<Col sm={3} md={3} lg={3} className="tag-title">Tags</Col>*/}
                             <Col sm={9} md={9} lg={9} className="title-button">
-                                <Button className="btn btn-secondary" color="gray" onClick={ () => {
+                                <Button className="btn btn-secondary" color="gray" onClick={() => {
                                     this.setState({pickTagForAnnotation: true});
                                 }}>{t('inspector.annotation_editor.btn_edit_keywords')}</Button>
                             </Col>
@@ -446,7 +445,8 @@ export default class extends Component {
                         </Row> : null
                     }
                     <FormGroup row>
-                        <Label sm={3} for="type" className="label-for">{t('inspector.annotation_editor.lbl_type')}</Label>
+                        <Label sm={3} for="type"
+                               className="label-for">{t('inspector.annotation_editor.lbl_type')}</Label>
                         <Col sm={9} className="align-bottom">
                             <img className="icon_edit"
                                  src={require('./pictures/' + this.state.annotationType + '.svg')} alt="edit icon"/>
@@ -455,11 +455,12 @@ export default class extends Component {
 
                     <FormGroup row
                                className={`tagDropZone ${this.state.activeDropZone === 'name' ? 'tdzHover' : ''}`}
-                               onDragOver={ (event) => this.handOnDragOverEvent(event , "name")}
-                               onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                               onDrop={ (event) => this.handOnDropEvent(event , "nameTags")}
+                               onDragOver={(event) => this.handOnDragOverEvent(event, "name")}
+                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                               onDrop={(event) => this.handOnDropEvent(event, "nameTags")}
                     >
-                        <Label sm={3} for="name" className="label-for">{t('inspector.annotation_editor.lbl_name')}</Label>
+                        <Label sm={3} for="name"
+                               className="label-for">{t('inspector.annotation_editor.lbl_name')}</Label>
                         <Col sm={9}>
                             <Input bsSize="sm" name="name" id="name" autoFocus
                                    value={this.state.title}
@@ -473,14 +474,14 @@ export default class extends Component {
                         {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                             <Col sm={12} md={12} lg={12}>
                                 <div className="tags-panel">
-                                    {this.state.nameTags.map( tag => {
+                                    {this.state.nameTags.map(tag => {
                                         return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
                                             <img src={REMOVE_TAG}
                                                  alt="delete-tag"
                                                  className='delete-tag'
                                                  tagname={tag.name}
                                                  onClick={(event) =>
-                                                     this.handleUntagEventAnnotation(event , tag.name , "nameTags")}/>
+                                                     this.handleUntagEventAnnotation(event, tag.name, "nameTags")}/>
                                         </span>
                                     })
                                     }
@@ -490,11 +491,12 @@ export default class extends Component {
 
                     <FormGroup row
                                className={`tagDropZone ${this.state.activeDropZone === 'title' ? 'tdzHover' : ''}`}
-                               onDragOver={ (event) => this.handOnDragOverEvent(event , "title")}
-                               onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                               onDrop={ (event) => this.handOnDropEvent(event , "titleTags")}
+                               onDragOver={(event) => this.handOnDragOverEvent(event, "title")}
+                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                               onDrop={(event) => this.handOnDropEvent(event, "titleTags")}
                     >
-                        <Label sm={3} for="values" className="label-for">{t('inspector.annotation_editor.lbl_title')}</Label>
+                        <Label sm={3} for="values"
+                               className="label-for">{t('inspector.annotation_editor.lbl_title')}</Label>
                         <Col sm={9} className="align-bottom">
                             {(this.props.annotation.annotationType === ANNOTATION_MARKER ||
                                 this.props.annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE ||
@@ -521,13 +523,13 @@ export default class extends Component {
                         {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                             <Col sm={12} md={12} lg={12}>
                                 <div className="tags-panel">
-                                    {this.state.titleTags.map( tag => {
+                                    {this.state.titleTags.map(tag => {
                                         return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
                                             <img src={REMOVE_TAG} className='delete-tag'
                                                  alt="delete-tag"
                                                  tagname={tag.name}
                                                  onClick={(e) =>
-                                                     this.handleUntagEventAnnotation(e , tag.name, "titleTags")}/>
+                                                     this.handleUntagEventAnnotation(e, tag.name, "titleTags")}/>
                                         </span>
                                     })
                                     }
@@ -535,16 +537,17 @@ export default class extends Component {
                             </Col> : null}
                     </FormGroup>
 
-                    {this.state.annotationType === ANNOTATION_CHRONOTHEMATIQUE || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                    {!lodash.isNil(this.props.annotation.video) || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                         <Fragment>
                             {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                 <FormGroup row
                                            className={`tagDropZone ${this.state.activeDropZone === 'topic' ? 'tdzHover' : ''}`}
-                                           onDragOver={ (event) => this.handOnDragOverEvent(event , "topic")}
-                                           onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                           onDrop={ (event) => this.handOnDropEvent(event , "topicTags")}
+                                           onDragOver={(event) => this.handOnDragOverEvent(event, "topic")}
+                                           onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                           onDrop={(event) => this.handOnDropEvent(event, "topicTags")}
                                 >
-                                    <Label sm={3} for="topic" className="label-for">{t('inspector.annotation_editor.lbl_topic')}</Label>
+                                    <Label sm={3} for="topic"
+                                           className="label-for">{t('inspector.annotation_editor.lbl_topic')}</Label>
                                     <Col sm={9} className="align-bottom">
                                         <Input bsSize="sm"
                                                type="textarea" name="topic" id="topic" rows={2}
@@ -555,12 +558,13 @@ export default class extends Component {
                                     {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                         <Col sm={12} md={12} lg={12}>
                                             <div className="tags-panel">
-                                                {this.state.topicTags.map( tag => {
-                                                    return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
+                                                {this.state.topicTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
                                                         <img src={REMOVE_TAG} className='delete-tag'
                                                              alt="delete-tag"
                                                              tagname={tag.name}
-                                                             onClick={(e) => this.handleUntagEventAnnotation(e , tag.name , "topicTags")}/>
+                                                             onClick={(e) => this.handleUntagEventAnnotation(e, tag.name, "topicTags")}/>
 
                                                     </span>
                                                 })
@@ -569,129 +573,137 @@ export default class extends Component {
                                         </Col> : null}
                                 </FormGroup> : null}
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'person' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "person")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "personTags")}
-                            >
-                                <Label sm={3} for="person" className="label-for">{t('inspector.annotation_editor.lbl_person')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm"
-                                           type="textarea" name="person" id="person" rows={2}
-                                           onChange={e => this.setState({person: e.target.value})}
-                                           value={this.state.person}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.personTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         tagname={tag.name}
-                                                         alt="delete-tag"
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "personTags")}/>
-                                                </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'date' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "date")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "dateTags")}
-                            >
-                                <Label sm={3} for="videoDate" className="label-for">{t('inspector.annotation_editor.lbl_date')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm" type="textarea" name="videoDate" id="videoDate" rows={2}
-                                           onChange={e => this.setState({videoDate: e.target.value})}
-                                           value={this.state.videoDate}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.dateTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG}
-                                                         alt="delete-tag"
-                                                         className='delete-tag'
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "dateTags")}/>
-                                                </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
+                            {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                                <>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'person' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "person")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "personTags")}
+                                    >
+                                        <Label sm={3} for="person"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_person')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm"
+                                                   type="textarea" name="person" id="person" rows={2}
+                                                   onChange={e => this.setState({person: e.target.value})}
+                                                   value={this.state.person}
+                                            />
+                                        </Col>
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'location' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "location")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "locationTags")}
-                            >
-                                <Label sm={3} for="videoLocation" className="label-for">{t('inspector.annotation_editor.lbl_location')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm" type="textarea" name="videoLocation" id="videoLocation" rows={2}
-                                           onChange={e => this.setState({location: e.target.value})}
-                                           value={this.state.location}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.locationTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         alt="delete-tag"
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "locationTags")}/>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.personTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             tagname={tag.name}
+                                                             alt="delete-tag"
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "personTags")}/>
                                                 </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'date' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "date")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "dateTags")}
+                                    >
+                                        <Label sm={3} for="videoDate"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_date')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm" type="textarea" name="videoDate" id="videoDate" rows={2}
+                                                   onChange={e => this.setState({videoDate: e.target.value})}
+                                                   value={this.state.videoDate}
+                                            />
+                                        </Col>
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'note' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "note")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "noteTags")}
-                            >
-                                <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_note')}</Label>
-                                <Col sm={9}>
-                                    <Input bsSize="sm" type="textarea" name="note" id="note" rows={2}
-                                           onChange={e => this.setState({text: e.target.value})}
-                                           value={this.state.text}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.noteTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         alt="delete-tag"
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "noteTags")}/>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.dateTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG}
+                                                             alt="delete-tag"
+                                                             className='delete-tag'
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "dateTags")}/>
                                                 </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
-
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'location' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "location")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "locationTags")}
+                                    >
+                                        <Label sm={3} for="videoLocation"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_location')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm" type="textarea" name="videoLocation" id="videoLocation"
+                                                   rows={2}
+                                                   onChange={e => this.setState({location: e.target.value})}
+                                                   value={this.state.location}
+                                            />
+                                        </Col>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.locationTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             alt="delete-tag"
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "locationTags")}/>
+                                                </span>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'note' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "note")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "noteTags")}
+                                    >
+                                        <Label sm={3} for="note"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_note')}</Label>
+                                        <Col sm={9}>
+                                            <Input bsSize="sm" type="textarea" name="note" id="note" rows={2}
+                                                   onChange={e => this.setState({text: e.target.value})}
+                                                   value={this.state.text}
+                                            />
+                                        </Col>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.noteTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             alt="delete-tag"
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "noteTags")}/>
+                                                </span>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                </> : null}
                             <FormGroup row className="tc-position">
-                                <Label sm={3} for="position" className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
+                                <Label sm={3} for="position"
+                                       className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
                                 <Col sm={9} data-tip data-for={this.props.annotation.id}>
                                     <div className="position_input">
                                         <label htmlFor="start">{t('inspector.annotation_editor.lbl_tc_in')}</label>
@@ -713,7 +725,7 @@ export default class extends Component {
                                         <Input readOnly bsSize="sm" name="end" id="end"
                                                disabled={this.props.isAnnotateEventRecording}
                                                className={classnames({'selected': this.state.positionField === 'end'})}
-                                               value={this.state.end ? _formatTimeDisplay(this.state.end)  + " - " + _formatTimeDisplayForEvent((this.props.currentResource.syncTimeStart + this.state.end)) : ''}
+                                               value={this.state.end ? _formatTimeDisplay(this.state.end) + " - " + _formatTimeDisplayForEvent((this.props.currentResource.syncTimeStart + this.state.end)) : ''}
                                                onClick={event => {
                                                    this.setState({
                                                        positionField: 'end'
@@ -722,7 +734,8 @@ export default class extends Component {
                                                }}
                                         />
                                     </div>
-                                    <ReactTooltip multiline={true} place="right" effect="solid" id={this.props.annotation.id}
+                                    <ReactTooltip multiline={true} place="right" effect="solid"
+                                                  id={this.props.annotation.id}
                                                   aria-haspopup='true'
                                                   role='example'>
                                 <pre>
@@ -740,11 +753,13 @@ export default class extends Component {
                             </FormGroup>
                         </Fragment> :
                         <FormGroup row style={{hidden: true}}>
-                            <Label sm={3} for="position" className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
+                            <Label sm={3} for="position"
+                                   className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
                             <Col sm={9}>
                                 <Input readOnly data-tip data-for={this.props.annotation.id} plaintext bsSize="sm"
                                        name="position" id="position" value={this.state.vertices}/>
-                                <ReactTooltip multiline={true} place="right" effect="solid" id={this.props.annotation.id}
+                                <ReactTooltip multiline={true} place="right" effect="solid"
+                                              id={this.props.annotation.id}
                                               aria-haspopup='true'
                                               role='example'>
                                 <pre>
@@ -754,20 +769,22 @@ export default class extends Component {
                             </Col>
                         </FormGroup>
                     }
-                    {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ? <Fragment>
-                        <FormGroup row>
-                            <Col md={{size: 9, offset: 0}} className="local-title">
-                                Character
-                            </Col>
-                        </FormGroup>
-                        <hr/>
-                        <FormGroup row>
-                            <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_character')}</Label>
-                            <Col sm={9}>
-                                {this._renderTargets()}
-                            </Col>
-                        </FormGroup>
-                    </Fragment> : ''}
+                    {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
+                        <Fragment>
+                            <FormGroup row>
+                                <Col md={{size: 9, offset: 0}} className="local-title">
+                                    Character
+                                </Col>
+                            </FormGroup>
+                            <hr/>
+                            <FormGroup row>
+                                <Label sm={3} for="target"
+                                       className="label-for">{t('inspector.annotation_editor.lbl_character')}</Label>
+                                <Col sm={9}>
+                                    {this._renderTargets()}
+                                </Col>
+                            </FormGroup>
+                        </Fragment> : ''}
                     {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
                         <Row>
                             <Label sm={3} className="label-for">{t('inspector.annotation_editor.lbl_values')}</Label>
@@ -806,8 +823,9 @@ export default class extends Component {
                                 <Col sm={1} className="no-padding">
                                     <img className="btn_menu"
                                          src={EDIT_ANNOTATION}
-                                         title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
-                                         onClick={ () => this._catToggle()}
+                                         title={t('inspector.annotation_editor.tooltip_pick_a_value')}
+                                         alt="pick a value"
+                                         onClick={() => this._catToggle()}
                                     />
                                 </Col> : ''}
                         </Row> : ''}
@@ -815,21 +833,22 @@ export default class extends Component {
                     {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                         <FormGroup row
                                    className={`tagDropZone ${this.state.activeDropZone === 'generalTags' ? 'tdzHover' : ''}`}
-                                   onDragOver={ (event) => this.handOnDragOverEvent(event , "generalTags")}
-                                   onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                   onDrop={ (event) => this.handOnDropEvent(event , "generalTags")}
+                                   onDragOver={(event) => this.handOnDragOverEvent(event, "generalTags")}
+                                   onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                   onDrop={(event) => this.handOnDropEvent(event, "generalTags")}
                         >
-                            <Label sm={3} for="generalTags" className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
+                            <Label sm={3} for="generalTags"
+                                   className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
                             <Col sm={9}>
                                 <div className="tags-panel">
                                     {this.props.tags && this.props.tags.map(tag => {
                                         return <span key={tag} className="annotation-tag">{tag}&nbsp;
-                                                    <img
-                                                        alt="delete a tag"
-                                                        src={REMOVE_TAG}
-                                                        className='delete-tag'
-                                                        tagname={tag}
-                                                        onClick={this.handleUnTagAnnotation}/>
+                                            <img
+                                                alt="delete a tag"
+                                                src={REMOVE_TAG}
+                                                className='delete-tag'
+                                                tagname={tag}
+                                                onClick={this.handleUnTagAnnotation}/>
                                         </span>
                                     })}
                                 </div>
@@ -854,7 +873,8 @@ export default class extends Component {
                     {/* Select value for categorical descriptor */}
                     <Modal isOpen={this.state.catModal} toggle={this._catToggle} wrapClassName="bst"
                            autoFocus={false}>
-                        <ModalHeader toggle={this._catToggle}>{t('inspector.annotation_editor.dialog_title_select_value_for_character')}</ModalHeader>
+                        <ModalHeader
+                            toggle={this._catToggle}>{t('inspector.annotation_editor.dialog_title_select_value_for_character')}</ModalHeader>
                         <ModalBody>
                             <Row className="action-bar">
                                 <Col>
@@ -878,37 +898,37 @@ export default class extends Component {
                                                    }}/> Unknown values
                                         </div>
                                         {this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
-                                        && this.props.selectedTaxonomy.descriptors.map(target => {
-                                            if (target.id === this.state.descriptor.descriptorId && this.state.descriptor.type === CATEGORICAL && target.targetType === this.state.descriptorGroup) {
-                                                return target.states.map((state, index) => {
-                                                    return <div key={`option_${index}`}>
-                                                        <Input type="checkbox" value={state.id}
-                                                               onChange={_ => {
-                                                               }}
-                                                               disabled={this.state.disableCategoricalValues}
-                                                               checked={!this.state.disableCategoricalValues && this.state.descriptor.value.indexOf(state.id) !== -1}
-                                                               defaultChecked={this.state.descriptor.value.indexOf(state.id) !== -1}
-                                                               onClick={_ => {
-                                                                   const values = [...this.state.descriptor.value];
-                                                                   const index = values.indexOf(state.id);
-                                                                   if (index !== -1) {
-                                                                       values.splice(index, 1);
-                                                                   } else if (_.target.checked) {
-                                                                       values.push(state.id);
-                                                                   }
-                                                                   this.setState(prevState => ({
-                                                                       descriptor: {
-                                                                           ...prevState.descriptor,
-                                                                           value: values
+                                            && this.props.selectedTaxonomy.descriptors.map(target => {
+                                                if (target.id === this.state.descriptor.descriptorId && this.state.descriptor.type === CATEGORICAL && target.targetType === this.state.descriptorGroup) {
+                                                    return target.states.map((state, index) => {
+                                                        return <div key={`option_${index}`}>
+                                                            <Input type="checkbox" value={state.id}
+                                                                   onChange={_ => {
+                                                                   }}
+                                                                   disabled={this.state.disableCategoricalValues}
+                                                                   checked={!this.state.disableCategoricalValues && this.state.descriptor.value.indexOf(state.id) !== -1}
+                                                                   defaultChecked={this.state.descriptor.value.indexOf(state.id) !== -1}
+                                                                   onClick={_ => {
+                                                                       const values = [...this.state.descriptor.value];
+                                                                       const index = values.indexOf(state.id);
+                                                                       if (index !== -1) {
+                                                                           values.splice(index, 1);
+                                                                       } else if (_.target.checked) {
+                                                                           values.push(state.id);
                                                                        }
-                                                                   }));
-                                                               }}
-                                                        /> <span
-                                                        className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
-                                                    </div>
-                                                })
-                                            }
-                                        })}
+                                                                       this.setState(prevState => ({
+                                                                           descriptor: {
+                                                                               ...prevState.descriptor,
+                                                                               value: values
+                                                                           }
+                                                                       }));
+                                                                   }}
+                                                            /> <span
+                                                            className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
+                                                        </div>
+                                                    })
+                                                }
+                                            })}
                                     </div>
                                 </Col>
                             </Row>
@@ -924,7 +944,8 @@ export default class extends Component {
                            size="lg"
                            scrollable={true}
                            toggle={this._toggleRteModal} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggleRteModal}>{t('inspector.annotation_editor.dialog_title_edit_text')}</ModalHeader>
+                        <ModalHeader
+                            toggle={this._toggleRteModal}>{t('inspector.annotation_editor.dialog_title_edit_text')}</ModalHeader>
                         <ModalBody>
                             <Form className="rte-container" onSubmit={(e) => {
                                 e.preventDefault();
@@ -952,7 +973,7 @@ export default class extends Component {
     };
 
     handleTargetChange = (annotation, selectedTargetOptions) => {
-        const { t } = this.props;
+        const {t} = this.props;
         if (selectedTargetOptions.measure === annotation.measure
             || selectedTargetOptions.measure === "N" && annotation.measure === "#"
             || selectedTargetOptions.measure === "-1"
@@ -1050,7 +1071,7 @@ export default class extends Component {
     };
 
     _renderTargets = () => {
-        const { t } = this.props;
+        const {t} = this.props;
         const annotation = this.props.annotation;
         const options = [{
             value: "-1",
@@ -1128,7 +1149,8 @@ export default class extends Component {
             defaultValue = options[0]
         }
 
-        return <Select className="annotation_target" title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
+        return <Select className="annotation_target"
+                       title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
                        value={defaultValue}
                        menuPosition={"fixed"}
                        styles={customStyles}

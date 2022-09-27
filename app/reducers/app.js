@@ -112,7 +112,7 @@ import {
     UPDATE_MOZAIC_TOGGLE,
     UPDATE_PICTURE_DATE,
     UPDATE_TABULAR_VIEW,
-    UPDATE_TAXONOMY_VALUES, EDIT_CATEGORY_BY_ID, flatOldTags
+    UPDATE_TAXONOMY_VALUES, EDIT_CATEGORY_BY_ID, flatOldTags, STOP_ANNOTATION_RECORDING
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -3787,6 +3787,84 @@ export default (state = {}, action) => {
             };
         }
             break;
+        case STOP_ANNOTATION_RECORDING: {
+            const counter = state.counter + 1;
+            let branch;
+            switch (action.annType) {
+                case ANNOTATION_EVENT_ANNOTATION:
+                    branch = "annotations_eventAnnotations"
+                    break;
+                case ANNOTATION_CHRONOTHEMATIQUE:
+                    branch = 'annotations_chronothematique'
+                    break;
+                case ANNOTATION_SIMPLELINE:
+                case ANNOTATION_POLYLINE:
+                    branch = 'annotations_measures_linear';
+                    break;
+                case ANNOTATION_MARKER:
+                    branch = 'annotations_points_of_interest';
+                    break;
+                case ANNOTATION_RECTANGLE:
+                    branch = 'annotations_rectangular';
+                    break;
+                case ANNOTATION_POLYGON:
+                    branch = 'annotations_polygon';
+                    break;
+                case ANNOTATION_ANGLE:
+                    branch = 'annotations_angle';
+                    break;
+                case ANNOTATION_OCCURRENCE:
+                    branch = 'annotations_occurrence';
+                    break;
+                case ANNOTATION_COLORPICKER:
+                    branch = 'annotations_color_picker';
+                    break;
+                case ANNOTATION_RATIO:
+                    branch = 'annotations_ratio';
+                    break;
+                case ANNOTATION_TRANSCRIPTION:
+                    branch = 'annotations_transcription';
+                    break;
+                case ANNOTATION_CATEGORICAL:
+                    branch = 'annotations_categorical';
+                    break;
+                case ANNOTATION_RICHTEXT:
+                    branch = 'annotations_richtext';
+                    break;
+                default:
+                    return state;
+            }
+
+            const annotation = state[branch][action.pictureId].filter(_ => _.id === action.annId).pop();
+
+            if (annotation === undefined) {
+                return state;
+            }
+            if (action.endTime <= annotation.video.start)
+                return state;
+
+            annotation.video.end = action.endTime;
+
+            const response = {
+                ...state,
+                counter,
+                [branch]: {
+                    ...state[branch],
+                    [action.pictureId]: [...state[branch][action.pictureId].filter(_ => _.id !== action.annId), annotation].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+
+            return response;
+        }
+        break;
         default:
             return state;
     }
