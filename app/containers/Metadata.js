@@ -2,6 +2,9 @@ import {connect} from 'react-redux';
 import Component from '../components/Metadata';
 import {tagPicture, untagPicture, updatePictureDate} from "../actions/app";
 import {withTranslation} from "react-i18next";
+import {push} from "connected-react-router";
+import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {MAP_VIEW} from "../constants/constants";
 
 const mapStateToProps = (state, ownProps) => {
     return {};
@@ -17,6 +20,18 @@ const mapDispatchToProps = dispatch => {
         },
         updatePictureDate: (sha1, date, exifPlace) => {
             dispatch(updatePictureDate(sha1, date, exifPlace));
+        },
+        goToLibrary: () => {
+            dispatch(push('/selection'));
+            setTimeout(() => {
+                ee.emit(EVENT_SELECT_TAB, {
+                    tab: 'library',
+                    param: {
+                        picView: MAP_VIEW,
+                        fitToBounds: "false"
+                    }
+                })
+            }, 100)
         }
     };
 };

@@ -957,32 +957,3 @@ div.leaflet-marker-icon {
 .pointer {
   cursor: pointer;
 }
-
-.geolocation-widget {
-  margin-bottom: 1rem;
-
-  .geolocation-widget-editor {
-    padding: 5px;
-    border: 1px solid #ced4da;
-    border-top: none;
-
-    .geolocation-widget-editor-section {
-      .geolocation-widget-editor-section-title {
-        font-weight: bold;
-        padding-bottom: 3px;
-        margin-bottom: 5px;
-        margin-top: 5px;
-        border-bottom: 1px solid #ced4da;
-      }
-    }
-
-    button {
-      width: 100%;
-      margin-bottom: 5px;
-
-      i {
-        margin-right: 5px;
-      }
-    }
-  }
-}

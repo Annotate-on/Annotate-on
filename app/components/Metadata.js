@@ -33,7 +33,6 @@ export default class extends Component {
                 'genre': props.picture.genre || '',
                 'sfName': props.picture.sfName || '',
                 'fieldNumber': props.picture.fieldNumber || ''
-
             },
             'iptc': {
                 'title': props.picture.title || '',
@@ -50,9 +49,9 @@ export default class extends Component {
                 'language':  props.picture.language || '',
                 'relation':  props.picture.relation || '',
                 'location': props.picture.exifPlace || '',
+                'place': props.picture.placeName || '',
                 'rights':  props.picture.rights || '',
                 'contact': props.picture.contact || '',
-
             },
             'exif': {
                 'dimensionsX': props.picture.width,
@@ -106,6 +105,7 @@ export default class extends Component {
                 'language':  metadata.iptc.language ? metadata.iptc.language : this.props.picture.language || '',
                 'relation': metadata.iptc.relation ? metadata.iptc.relation : this.props.picture.relation || '',
                 'location': metadata.iptc.location ? metadata.iptc.location : this.props.picture.exifPlace || '',
+                'placeName': metadata.iptc.placeName ? metadata.iptc.placeName : this.props.picture.placeName || '',
                 'rights': metadata.iptc.rights ? metadata.iptc.rights : this.props.picture.rights || '',
                 'contact':  metadata.iptc.contact ? metadata.iptc.contact : this.props.picture.contact || '',
             };
@@ -135,8 +135,8 @@ export default class extends Component {
     _openInGoogleMaps(locationCoordinates) {
         shell.openExternal(`https://www.google.com/maps/place/${locationCoordinates}`);
     }
-    _validateLocationInput(input) {
 
+    _validateLocationInput(input) {
         const regexDecimal = new RegExp('(^-?\\d*\\.{0,1}\\d+$)');
         const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S]) ([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
 
@@ -168,7 +168,6 @@ export default class extends Component {
     }
 
     convertDMStoDecimal(coordinates){
-
         let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
         let degrees = parseFloat(parts[0]);
         let minutes = parseFloat(parts[1]);
@@ -184,27 +183,32 @@ export default class extends Component {
     }
 
     _formChangeHandler = ( event ) => {
+        // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
         const { t } = this.props;
         let errors = this.state.errors;
 
-        if (name === 'iptc.location'){
-            errors.location =
-                this._validateLocationInput(value)
-                    ? ''
-                    : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
-        }
-
-        const path = event.target.name.split('.');
         const metadata = {...this.state.metadata};
-
-        metadata[path[0]][path[1]] = event.target.value;
-
-        this.setState({
-            metadata,
-            formSaved: false,
-            errors: errors
-        });
+        if (name === 'geolocation') {
+            errors.location = event.errors;
+            if(!errors.location) {
+                metadata.iptc.placeName = value.place;
+                metadata.iptc.location = value.latitude + ', ' + value.longitude;
+            }
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        } else {
+            const path = event.target.name.split('.');
+            metadata[path[0]][path[1]] = value;
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        }
     };
 
     _saveForm = (_) => {
@@ -303,6 +307,11 @@ export default class extends Component {
             (val) => val.length > 0 && (valid = false)
         );
         return valid;
+    };
+
+    _showLocationOnMap = ( ) => {
+        console.log("showLocationOnMap", event);
+        this.props.goToLibrary();
     };
 
     render() {
@@ -557,7 +566,33 @@ export default class extends Component {
                                    value={this.state.metadata.iptc.relation}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
-                        <GeolocationWidget place="Beograd" latitude="44.81" longitude="20.46"/>
+
+                        {/*<FormGroup>*/}
+                        {/*    <InputGroup>*/}
+                        {/*        <Input type="text" name="iptc.location" id="location"*/}
+                        {/*               placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}*/}
+                        {/*               title = {t('inspector.metadata.textbox_tooltip_coverage_place')}*/}
+                        {/*               onKeyDown={this._saveForm}*/}
+                        {/*               value={this.state.metadata.iptc.location}*/}
+                        {/*               onChange={this._formChangeHandler}/>*/}
+                        {/*        <InputGroupAddon addonType="append">*/}
+                        {/*            <InputGroupText>*/}
+                        {/*                <i className="fa fa-external-link" aria-hidden="true"*/}
+                        {/*                   onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}*/}
+                        {/*                />*/}
+                        {/*            </InputGroupText>*/}
+                        {/*        </InputGroupAddon>*/}
+                        {/*        {errors.location.length > 0 &&*/}
+                        {/*            <span className='error'>{errors.location}</span>}*/}
+                        {/*    </InputGroup>*/}
+                        {/*</FormGroup>*/}
+
+                        <GeolocationWidget name="geolocation"
+                                           place={this.state.metadata.iptc.placeName}
+                                           location={this.state.metadata.iptc.location}
+                                           onValueChange={this._formChangeHandler}
+                                           onShowLocationOnMap = {this._showLocationOnMap}
+                        />
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}

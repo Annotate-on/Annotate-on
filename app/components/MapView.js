@@ -65,6 +65,7 @@ export default class MapView extends Component {
     _doFindLocations = () => {
         let resourcesWithGeoLocation = [];
         let resourcesWithoutGeoLocation = [];
+
         for (const resource of this.props.resources) {
             if(resource.exifPlace) {
                 const exifPlaceArr = resource.exifPlace.split(',');
@@ -74,14 +75,16 @@ export default class MapView extends Component {
                 } else {
                     const location = {
                         latLng : [+exifPlaceArr[0], +exifPlaceArr[1]],
-                        resource : resource
+                        resource : resource,
+                        current: resource.sha1 === this.props.currentPictureSelection.sha1
                     };
                     resourcesWithGeoLocation.push(location);
                 }
             } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.decimallatitude && resource.erecolnatMetadata.decimallongitude) {
                 const location = {
                     latLng : [+resource.erecolnatMetadata.decimallatitude, +resource.erecolnatMetadata.decimallongitude],
-                    resource : resource
+                    resource : resource,
+                    current: resource.sha1 === this.props.currentPictureSelection.sha1
                 };
                 resourcesWithGeoLocation.push(location);
             } else {
@@ -204,6 +207,7 @@ export default class MapView extends Component {
                             </div>
                         </_DockedPanel>
                         <LeafletMap locations={this.state.resourcesWithGeoLocation}
+                                    fitToBounds = {this.props.fitToBounds}
                                     selectedResources = {this.state.selectedResources}
                                     onOpenResource={this._onOpenResource}
                                     onSelectResource={this._onSelectResource}
