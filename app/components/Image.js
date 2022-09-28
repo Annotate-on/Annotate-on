@@ -371,6 +371,7 @@ class Image extends PureComponent {
                                     taxonomyInstance={this.props.taxonomyInstance}
                                     repeatMode={this.props.repeatMode}
                                     saveLeafletSettings={this.props.saveLeafletSettings}
+                                    leafletVideo={this.leafletImage}
                                 /> : null
                         }
                         {

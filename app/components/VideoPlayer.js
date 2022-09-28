@@ -3,7 +3,7 @@ import videojs from 'video.js'
 import Timeline from "./Timeline";
 import {DEFAULT_VOLUME} from "../constants/constants";
 import {ee, EVENT_GOTO_ANNOTATION} from "../utils/library";
-import LeafletImage from "./LeafletImage";
+import LeafletVideo from "./LeafletVideo";
 
 export default class extends PureComponent {
 
@@ -123,8 +123,8 @@ export default class extends PureComponent {
                                ref={this.videoPlayer}>
                         </video>
                     </div>
-                    <LeafletImage
-                                  currentPicture={this.props.currentPicture} ref={this.leafletImage}
+                    <LeafletVideo
+                                  currentPicture={this.props.currentPicture} ref={this.props.leafletVideo}
                                   leafletPositionByPicture={this.props.leafletPositionByPicture}
                                   annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                   annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
@@ -135,9 +135,9 @@ export default class extends PureComponent {
                                   annotationsOccurrence={this.props.annotationsOccurrence}
                                   annotationsTranscription={this.props.annotationsTranscription}
                                   annotationsRichtext={this.props.annotationsRichtext}
-                                  onCreated={this.props.onCreated}
+                                  onCreated={this._onCreated}
                                   onEditStop={this.props.onEditStop}
-                                  onDrawStart={this.props.onDrawStart}
+                                  onDrawStart={this._onDrawStart}
                                   onDrawStop={this.props.onDrawStop}
                                   calibrationMode={this.props.calibrationActive}
                                   fireSaveEvent={this.props.fireSaveEvent}
@@ -168,5 +168,19 @@ export default class extends PureComponent {
                 }
             </div>
         );
+    }
+
+    _onDrawStart = (e) => {
+        this.player.pause();
+        // e.layer.video = {
+        //     tcin: this.player.currentTime()
+        // }
+        this.props.onDrawStart(e);
+    }
+
+    _onCreated = (e) => {
+        // debugger
+        // e.layer.video.tcout = this.player.currentTime()
+        this.props.onCreated(e);
     }
 }

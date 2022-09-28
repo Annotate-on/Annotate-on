@@ -10,8 +10,12 @@
       background: transparent;
     }
 
-    .vLeaflet {
+    .v-leaflet-root {
       position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .v-leaflet {
       width: 100%;
       height: 100%;
     }

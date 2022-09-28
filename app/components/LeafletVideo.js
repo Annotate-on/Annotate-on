@@ -1,15 +1,9 @@
 import React, {Component} from 'react';
-import styled from 'styled-components';
 import {FeatureGroup, Map} from 'react-leaflet';
 import L from 'leaflet';
 import {EditControl} from 'react-leaflet-draw';
 import i18next from "i18next";
-
-/**
- * NOTE!
- * THIS IMPORT IS REQUIRED TO RUN THE APP
- **/
-import MiniMap from 'leaflet-minimap';
+import PNGlib from "pnglib"
 
 import {
     ANNOTATION_ANGLE,
@@ -27,20 +21,6 @@ import {
 } from "../constants/constants";
 import 'leaflet-contextmenu'
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../utils/library";
-import {overide_defaults} from "../widget/leaflet-override";
-
-//
-// STYLE
-//
-const _Root = styled.div`
-    display: grid;
-    grid-template-rows: auto;
-    height: calc(100% - 40px);
-`;
-const _LeafletDiv = styled.div`
-  width: 100%;
-  height: 100%;
-`;
 
 const EDIT_ANNOTATION_OPTIONS = {
     edit: true,
@@ -240,7 +220,7 @@ let selectedAnnotation = null;
 
 class LeafletImage extends Component {
     constructor(props, context) {
-        const { t } = i18next;
+        const {t} = i18next;
         super(props, context);
         this.sha1 = props.currentPicture.sha1;
         this.state = {
@@ -282,74 +262,23 @@ class LeafletImage extends Component {
                 currentPicture: nextProps.currentPicture,
                 sha1: nextProps.currentPicture.sha1
             });
-
-        if ((nextProps.annotationsPointsOfInterest !== undefined && nextProps.annotationsPointsOfInterest && this.props.annotationsPointsOfInterest === undefined) ||
-            (nextProps.annotationsMeasuresLinear !== undefined && nextProps.annotationsMeasuresLinear && this.props.annotationsMeasuresLinear === undefined) ||
-            (nextProps.annotationsRectangular !== undefined && nextProps.annotationsRectangular && this.props.annotationsRectangular === undefined) ||
-            (nextProps.annotationsPolygon !== undefined && nextProps.annotationsPolygon && this.props.annotationsPolygon === undefined) ||
-            (nextProps.annotationsColorPicker !== undefined && nextProps.annotationsColorPicker && this.props.annotationsColorPicker === undefined) ||
-            (nextProps.annotationsRichtext !== undefined && nextProps.annotationsRichtext && this.props.annotationsRichtext === undefined) ||
-            (nextProps.annotationsAngle !== undefined && nextProps.annotationsAngle && this.props.annotationsAngle === undefined)) {
-
-            if (this._recolnatPrint) {
-                this._recolnatPrint.initialize({
-                    annotationsPointsOfInterest: nextProps.annotationsPointsOfInterest,
-                    annotationsMeasuresLinear: nextProps.annotationsMeasuresLinear,
-                    annotationsRectangular: nextProps.annotationsRectangular,
-                    annotationsPolygon: nextProps.annotationsPolygon,
-                    annotationsAngle: nextProps.annotationsAngle,
-                    annotationsColorPicker: nextProps.annotationsColorPicker,
-                    annotationsOccurrence: nextProps.annotationsOccurrence,
-                    annotationsTranscription: nextProps.annotationsTranscription,
-                    annotationsRichtext: nextProps.annotationsRichtext
-                })
-            }
-        }
-
-        if ((nextProps.annotationsPointsOfInterest && this.props.annotationsPointsOfInterest && nextProps.annotationsPointsOfInterest.length !== this.props.annotationsPointsOfInterest.length) ||
-            (nextProps.annotationsMeasuresLinear && this.props.annotationsMeasuresLinear && nextProps.annotationsMeasuresLinear.length !== this.props.annotationsMeasuresLinear.length) ||
-            (nextProps.annotationsRectangular && this.props.annotationsRectangular && nextProps.annotationsRectangular.length !== this.props.annotationsRectangular.length) ||
-            (nextProps.annotationsPolygon && this.props.annotationsPolygon && nextProps.annotationsPolygon.length !== this.props.annotationsPolygon.length) ||
-            (nextProps.annotationsColorPicker && this.props.annotationsColorPicker && nextProps.annotationsColorPicker.length !== this.props.annotationsColorPicker.length) ||
-            (nextProps.annotationsRichtext && this.props.annotationsRichtext && nextProps.annotationsRichtext.length !== this.props.annotationsRichtext.length) ||
-            (nextProps.annotationsAngle && this.props.annotationsAngle && nextProps.annotationsAngle.length !== this.props.annotationsAngle.length)) {
-
-            if (this._recolnatPrint) {
-                this._recolnatPrint.initialize({
-                    annotationsPointsOfInterest: nextProps.annotationsPointsOfInterest,
-                    annotationsMeasuresLinear: nextProps.annotationsMeasuresLinear,
-                    annotationsRectangular: nextProps.annotationsRectangular,
-                    annotationsPolygon: nextProps.annotationsPolygon,
-                    annotationsAngle: nextProps.annotationsAngle,
-                    annotationsColorPicker: nextProps.annotationsColorPicker,
-                    annotationsOccurrence: nextProps.annotationsOccurrence,
-                    annotationsTranscription: nextProps.annotationsTranscription,
-                    annotationsRichtext: nextProps.annotationsRichtext
-                })
-            }
-
-            if (this._recolnatZoiExport) {
-                this._recolnatZoiExport.initialize({
-                    annotationsRectangular: nextProps.annotationsRectangular
-                })
-            }
-        }
     };
 
     componentDidMount() {
-        if (this.leafletMap){
+        if (this.leafletMap) {
             this._initLeaflet();
         }
         ee.on(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, this.highlightAnnotationFromInspector);
     }
 
     componentWillUnmount() {
-        ee.removeListener(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, () => {});
+        ee.removeListener(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, () => {
+        });
     }
 
-    highlightAnnotationFromInspector = ( id , annotationType) => {
-        if (id && annotationType){
-            const annotation = {annotationId: id , annotationType: annotationType};
+    highlightAnnotationFromInspector = (id, annotationType) => {
+        if (id && annotationType) {
+            const annotation = {annotationId: id, annotationType: annotationType};
             this.highlightAnnotation(annotation);
         }
     }
@@ -367,11 +296,12 @@ class LeafletImage extends Component {
     }
 
     render() {
-        const { t } = i18next;
+        const {t} = i18next;
         return (
-            <_Root>
-                <_LeafletDiv>
+            <div className="v-leaflet-root">
+                <div className="v-leaflet">
                     <Map setView={[0, 0]} center={[0, 0]} zoom={10} zoomControl={false} contextmenu={true}
+                         scrollWheelZoom={false} dragging={false}
                          contextmenuWidth={140}
                          ref={_ => (this._setMapRef(_))} crs={L.CRS.Simple}>
                         <FeatureGroup ref={_ => (this.featureGroupEdit = _)}/>
@@ -394,11 +324,11 @@ class LeafletImage extends Component {
                                          }}
                                          draw={{
                                              circle: false,
-                                             simpleline: SIMPLELINE_OPTIONS,
-                                             polyline: !this.props.calibrationMode ? POLYLINE_OPTIONS : false,
-                                             polygon: !this.props.calibrationMode ? POLYGON_OPTIONS : false,
-                                             angle: !this.props.calibrationMode ? ANGLE_OPTIONS : false,
-                                             occurrence: !this.props.calibrationMode,
+                                             simpleline: false,
+                                             polyline: false,
+                                             polygon: false,
+                                             angle: false,
+                                             occurrence: false,
                                              // left out delivery of 16.05.2019.
                                              // ratio: !this.props.calibrationMode ? COLORPICKER_OPTIONS : false
                                              marker: !this.props.calibrationMode ? MARKER_OPTIONS : false,
@@ -413,18 +343,18 @@ class LeafletImage extends Component {
 
                         </FeatureGroup>
                     </Map>
-                </_LeafletDiv>
-            </_Root>
+                </div>
+            </div>
         );
     }
 
 
     /**
-     * Call this method after component is initiated and add image overlay and minimap.
+     * Call this method after component is initiated and add image overlay.
      * @private
      */
     _initLeaflet = () => {
-        const { t } = i18next;
+        const {t} = i18next;
         const map = this.leafletMap.leafletElement;
         const mapContainer = this.leafletMap.container;
         selectedAnnotation = null;
@@ -452,20 +382,18 @@ class LeafletImage extends Component {
         if (mzoomh === Infinity) mzoomh = this.state.currentPicture.height;
         if (mzoomv === Infinity) mzoomh = this.state.currentPicture.width;
 
-        const mzoom = 10 - Math.log2(mzoomv < mzoomh ? mzoomh : mzoomv) + Math.log2(zoom);
-
         const southWest = map.unproject([0, this.state.currentPicture.height], this.boundsZoomLevel);
         const northEast = map.unproject([this.state.currentPicture.width, 0], this.boundsZoomLevel);
 
         const bounds = new L.LatLngBounds(southWest, northEast);
 
+        const p = new PNGlib(this.state.currentPicture.width, this.state.currentPicture.height, 2);
+        p.color(120, 0, 0, 120); // set the background transparent
+        const imageURL = 'data:image/png;base64,' + p.getBase64()
 
         // add the image overlay, so that it covers the entire map
-        this._imageOverlay = L.imageOverlay(this.state.currentPicture.file, bounds);
+        this._imageOverlay = L.imageOverlay(imageURL, bounds);
         this._imageOverlay.addTo(map);
-        // L.control.scale().addTo(map);
-        //map.setMaxBounds(bounds);
-
 
         if (this.props.leafletPositionByPicture.hasOwnProperty(this.props.currentPicture.sha1)) {
             setTimeout(() => {
@@ -487,30 +415,8 @@ class LeafletImage extends Component {
         map.options.wheelPxPerZoomLevel = 60;
         map.options.picture = this.state.currentPicture.file;
 
-        //Image overlay for minimap
-        const imageLayer2 = L.imageOverlay(this.state.currentPicture.file, bounds);
-        const rect1 = {color: "#333333", weight: 1, opacity: 0.5, fillOpacity: 0.5};
-        const rect2 = {color: "#ff5555", weight: 1, opacity: 0, fillOpacity: 0};
 
-        this._miniMap = new L.Control.MiniMap(imageLayer2, {
-            position: "bottomleft",
-            autoToggleDisplay: false,
-            zoomLevelFixed: mzoom,
-            toggleDisplay: true,
-            aimingRectOptions: rect1,
-            shadowRectOptions: rect2
-        }).addTo(map);
-
-        this._zoomControl = L.control.zoom({
-            position: 'topright',
-            zoomInTitle: t('annotate.editor.btn_tooltip_increase_zoom'),
-            zoomOutTitle: t('annotate.editor.btn_tooltip_decrease_zoom')
-        }).addTo(map);
-
-        this._fitToView = L.control.fitToView(bounds).addTo(map);
-        // Tradusction of tooltips
-
-        Promise.all([lpp, fdp]).then( () => {
+        Promise.all([lpp, fdp]).then(() => {
             setTimeout(() => {
                 map.on('zoomend', this._mapZoomOrMoveEvent, this);
                 map.on('moveend', this._mapZoomOrMoveEvent, this);
@@ -527,24 +433,6 @@ class LeafletImage extends Component {
         });
 
         if (!this.props.calibrationMode) {
-            this._recolnatPrint = L.recolnatPrint({
-                picture: this.props.currentPicture,
-                annotationsPointsOfInterest: this.props.annotationsPointsOfInterest,
-                annotationsMeasuresLinear: this.props.annotationsMeasuresLinear,
-                annotationsRectangular: this.props.annotationsRectangular,
-                annotationsPolygon: this.props.annotationsPolygon,
-                annotationsAngle: this.props.annotationsAngle,
-                annotationsColorPicker: this.props.annotationsColorPicker,
-                annotationsOccurrence: this.props.annotationsOccurrence,
-                annotationsTranscription: this.props.annotationsTranscription,
-                annotationsRichtext: this.props.annotationsRichtext
-            }).addTo(map);
-
-            this._recolnatZoiExport = L.recolnatZOIExport({
-                picture: this.props.currentPicture,
-                annotationsRectangular: this.props.annotationsRectangular
-            }).addTo(map);
-
             this._recolnatControlMenu = L.recolnatControlMenu({
                 id: 'toggle-checkbox',
                 radioText: t('annotate.editor.lbl_enable_repeat_mode'),
@@ -583,14 +471,14 @@ class LeafletImage extends Component {
         });
     };
 
-    _mapZoomOrMoveEvent = () => {
-        const map = this.leafletMap.leafletElement;
-        if (this.props.leafletPositionByPicture.hasOwnProperty(this.props.currentPicture.sha1)) {
-            this.props.leafletPositionByPicture[this.props.currentPicture.sha1].bounds = map.getBounds();
-        } else {
-            this.props.leafletPositionByPicture[this.props.currentPicture.sha1] = {bounds: map.getBounds()};
-        }
-    };
+    // _mapZoomOrMoveEvent = () => {
+    //     const map = this.leafletMap.leafletElement;
+    //     if (this.props.leafletPositionByPicture.hasOwnProperty(this.props.currentPicture.sha1)) {
+    //         this.props.leafletPositionByPicture[this.props.currentPicture.sha1].bounds = map.getBounds();
+    //     } else {
+    //         this.props.leafletPositionByPicture[this.props.currentPicture.sha1] = {bounds: map.getBounds()};
+    //     }
+    // };
 
     _setMapRef = (_) => {
         this.leafletMap = _;
@@ -613,7 +501,7 @@ class LeafletImage extends Component {
             e.layer.bindContextMenu(contextMenu);
         }
         this.props.onCreated(e);
-        ee.emit(EVENT_HIGHLIGHT_ANNOTATION, e.layer.annotationId , true);
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION, e.layer.annotationId, true);
         this.highlightAnnotation({
             annotationId: e.layer.annotationId,
             annotationType: e.layer.annotationType
@@ -629,21 +517,11 @@ class LeafletImage extends Component {
         this.leafletMap.leafletElement.off('mousemove');
         this.leafletMap.leafletElement.off('click');
         this.leafletMap.leafletElement.off('contextmenu.show');
-        this.leafletMap.leafletElement.off('zoomend', this._mapZoomOrMoveEvent, this);
-        this.leafletMap.leafletElement.off('moveend', this._mapZoomOrMoveEvent, this);
-        if (this._recolnatPrint) {
-            this._recolnatPrint.remove();
-        }
-        if (this._recolnatZoiExport) {
-            this._recolnatZoiExport.remove();
-        }
+
         if (this._recolnatControlMenu) {
             this._recolnatControlMenu.remove();
         }
         this._imageOverlay.remove();
-        this._miniMap.remove();
-        this._zoomControl.remove();
-        this._fitToView.remove();
         const drawnLayers = this.featureGroup.leafletElement;
         drawnLayers.eachLayer((layer) => {
             layer.off('click');
@@ -839,7 +717,7 @@ class LeafletImage extends Component {
      * @param event
      */
     _emitEvent = (event) => {
-        ee.emit(EVENT_HIGHLIGHT_ANNOTATION, event.sourceTarget.annotationId , true);
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION, event.sourceTarget.annotationId, true);
         this.highlightAnnotation({
             annotationId: event.sourceTarget.annotationId,
             annotationType: event.sourceTarget.annotationType
@@ -853,8 +731,6 @@ class LeafletImage extends Component {
     _editAnnotationEvent = () => {
         this.editControlFirst.leafletElement.remove();
         this._recolnatControlMenu.remove();
-        this._recolnatPrint.remove();
-        this._recolnatZoiExport.remove()
         this.props.onContextMenuEvent(selectedAnnotation.annotationId, selectedAnnotation.annotationType, EDIT_EVENT);
         selectedAnnotation = null;
     };
@@ -940,8 +816,6 @@ class LeafletImage extends Component {
 
         this._recolnatControlMenu.addTo(this.leafletMap.leafletElement);
         this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement);
-        this._recolnatPrint.addTo(this.leafletMap.leafletElement);
-        this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         return editedLayer;
     };
 
@@ -983,7 +857,7 @@ class LeafletImage extends Component {
         }
 
         this.focusedAnnotations = [];
-        if(this.featureGroup) {
+        if (this.featureGroup) {
             const drawnLayers = this.featureGroup.leafletElement;
             drawnLayers.eachLayer((layer) => {
                 if (layer.annotationId === annotationId) {
@@ -1066,16 +940,12 @@ class LeafletImage extends Component {
 
     showHideToolbar = (show) => {
         if (show) {
-            if(this.state.enableToolBox)
+            if (this.state.enableToolBox)
                 this._recolnatControlMenu.addTo(this.leafletMap.leafletElement)
             this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement)
-            this._recolnatPrint.addTo(this.leafletMap.leafletElement);
-            this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         } else {
             this.editControlFirst.leafletElement.remove();
             this._recolnatControlMenu.remove();
-            this._recolnatPrint.remove();
-            this._recolnatZoiExport.remove();
         }
     };
 
