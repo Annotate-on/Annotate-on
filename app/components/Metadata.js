@@ -18,6 +18,7 @@ import {loadMetadata, saveMetadata} from "../utils/config";
 import fs from "fs-extra";
 import path from "path";
 import GeolocationWidget from "./GeolocationWidget";
+import {validateLocationInput} from "./event/utils";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 
@@ -77,7 +78,6 @@ export default class extends Component {
         };
     }
 
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.picture !== prevProps.picture) {
             let metadata = loadMetadata(this.props.picture.sha1);
@@ -136,52 +136,6 @@ export default class extends Component {
         shell.openExternal(`https://www.google.com/maps/place/${locationCoordinates}`);
     }
 
-    _validateLocationInput(input) {
-        const regexDecimal = new RegExp('(^-?\\d*\\.{0,1}\\d+$)');
-        const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S]) ([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
-
-        const coordinates = input.split(/[ ,]+/);
-        const lat = coordinates[0];
-        const lng = coordinates[1];
-
-        if (input === '' || input === 'N/A'){
-            return true
-        }
-        else if (regexDecimal.test(lat) && regexDecimal.test(lng)) {
-            if (this.validateDecimalCoords(lat , lng)){
-                return true;
-            }
-        }
-        else if (regexDMS.test(input)) {
-            const  latD = this.convertDMStoDecimal(lat);
-            const  lngD = this.convertDMStoDecimal(lng);
-            if (this.validateDecimalCoords(latD , lngD)){
-                return  true;
-            }
-        }else {
-            this.setState({_validateLocationInput : false});
-        }
-    }
-
-    validateDecimalCoords(lat , lng) {
-        return lat > -90 && lat < 90 && lng > -180 && lng < 180;
-    }
-
-    convertDMStoDecimal(coordinates){
-        let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
-        let degrees = parseFloat(parts[0]);
-        let minutes = parseFloat(parts[1]);
-        let seconds = parseFloat(parts[2].replace(',','.'));
-        let direction = parts[3];
-
-        let dd = degrees + minutes / 60 + seconds / (60 * 60);
-
-        if (direction === 'S' || direction === 'W') {
-            dd = dd * -1;
-        }
-        return dd;
-    }
-
     _formChangeHandler = ( event ) => {
         // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
@@ -193,7 +147,7 @@ export default class extends Component {
             errors.location = event.errors;
             if(!errors.location) {
                 metadata.iptc.placeName = value.place;
-                metadata.iptc.location = value.latitude + ', ' + value.longitude;
+                metadata.iptc.location = value.latitude + ',' + value.longitude;
             }
             this.setState({
                 metadata,
@@ -591,8 +545,7 @@ export default class extends Component {
                                            place={this.state.metadata.iptc.placeName}
                                            location={this.state.metadata.iptc.location}
                                            onValueChange={this._formChangeHandler}
-                                           onShowLocationOnMap = {this._showLocationOnMap}
-                        />
+                                           onShowLocationOnMap = {this._showLocationOnMap}/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}

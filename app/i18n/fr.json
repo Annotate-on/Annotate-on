@@ -219,7 +219,16 @@
         "textbox_tooltip_resolution": "Resolution",
         "textbox_placeholder_orientation": "Orientation",
         "textbox_tooltip_orientation": "Orientation",
-        "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format."
+        "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
+        "geolocation": {
+          "lbl_search_for_location": "Search for location",
+          "lbl_manuel_entry": "Manuel entry",
+          "btn_open_map_to_select_location":"Open map to select location",
+          "textbox_placeholder_text_search":"Text search (showing 5 results in a list)",
+          "textbox_placeholder_place_name":"Place name",
+          "textbox_placeholder_latitude":"Latitude",
+          "textbox_placeholder_longitude":"Longitude"
+        }
       },
       "calibration": {
         "btn_tooltip_new_calibration": "Do a new calibration",

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import {Form, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText} from "reactstrap";
+import {Input, InputGroup, InputGroupAddon, InputGroupText} from "reactstrap";
 import i18next from "i18next";
+import {validateLocationInput} from "./event/utils";
 
 export default class GeolocationWidget extends Component {
 
     constructor(props) {
         super(props);
-        // console.log("GeolocationWidget", this.props);
         this.state = {
             inEdit: false,
             value: '',
@@ -18,17 +18,17 @@ export default class GeolocationWidget extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        // console.log("_getDerivedStateFromProps", props, state);
         const coordinates = props.location.split(/[ ,]+/);
         const lat = coordinates[0];
         const lng = coordinates[1];
         let latitude = props.latitude ? this.props.latitude : lat;
         let longitude = props.longitude ? this.props.longitude : lng;
+        let place = props.place? props.place: '';
         let value = (!props.place && !latitude && !longitude) ? '' :
-            `${props.place? props.place: ''} (${latitude ? latitude: ''}, ${longitude? longitude: ''})`;
+            `${place} (${latitude ? latitude: ''}, ${longitude? longitude: ''})`;
         return {
             value: value,
-            place: state.inEdit ? state.place : props.place,
+            place: state.inEdit ? state.place : place,
             latitude: state.inEdit ? state.latitude : latitude,
             longitude: state.inEdit ? state.longitude : longitude
         };
@@ -68,59 +68,13 @@ export default class GeolocationWidget extends Component {
         }
     }
 
-    _validateLocationInput(input) {
-        console.log("validateLocationInput ", input)
-        const regexDecimal = new RegExp('(^-?\\d*\\.{0,1}\\d+$)');
-        const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S]) ([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
-
-        const coordinates = input.split(/[ ,]+/);
-        const lat = coordinates[0];
-        const lng = coordinates[1];
-
-        if (input === '' || input === 'N/A') {
-            return true;
-        }
-        if (regexDecimal.test(lat) && regexDecimal.test(lng) && this.validateDecimalCoords(lat, lng)) {
-            return true;
-        }
-        if (regexDMS.test(input)) {
-            const latD = this.convertDMStoDecimal(lat);
-            const lngD = this.convertDMStoDecimal(lng);
-            if (this.validateDecimalCoords(latD, lngD)) {
-                return true;
-            }
-        } else {
-            this.setState({_validateLocationInput: false});
-            return false;
-        }
-    }
-
-    validateDecimalCoords(lat, lng) {
-        return lat > -90 && lat < 90 && lng > -180 && lng < 180;
-    }
-
-    convertDMStoDecimal(coordinates) {
-        let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
-        let degrees = parseFloat(parts[0]);
-        let minutes = parseFloat(parts[1]);
-        let seconds = parseFloat(parts[2].replace(',', '.'));
-        let direction = parts[3];
-
-        let dd = degrees + minutes / 60 + seconds / (60 * 60);
-
-        if (direction === 'S' || direction === 'W') {
-            dd = dd * -1;
-        }
-        return dd;
-    }
-
     _formChangeHandler = (event) => {
         const {t} = i18next;
         const {name, value} = event.target;
         let errors = this.state.errors;
         if (name === 'latitude' || name === 'longitude') {
-            let input = (name === 'latitude' ? value : this.state.latitude) + ", " + (name === 'longitude' ? value : this.state.longitude);
-            errors = this._validateLocationInput(input)
+            let input = (name === 'latitude' ? value : this.state.latitude) + " " + (name === 'longitude' ? value : this.state.longitude);
+            errors = validateLocationInput(input)
                 ? ''
                 : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
         }
@@ -193,30 +147,30 @@ export default class GeolocationWidget extends Component {
             {this.state.inEdit &&
                 <div className="geolocation-widget-editor">
                     <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">Search for location</div>
+                        <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_search_for_location')}</div>
                         <button className="pointer btn btn-primary">
                             <i className="fa fa-map-marker" aria-hidden="true"
                                onClick={() => this._onOpenLocationInTheMap}/>
-                            Open map to select location
+                            {t('inspector.metadata.geolocation.btn_open_map_to_select_location')}
                         </button>
                     </div>
                     <Input type="text" name="textSearch" id="textSearch"
-                           placeholder={"Text search (showing 5 results in a list)"}/>
+                           placeholder={t('inspector.metadata.geolocation.textbox_placeholder_text_search')}/>
 
                     <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">Manuel entry</div>
-                        <Input type="text" name="place" id="location.place" ref={this.inputPlaceRef}
-                               placeholder={"Place name"}
+                        <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_manuel_entry')}</div>
+                        <Input type="text" name="place" id="location.place"
+                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_place_name')}
                                value={this.state.place}
                                onChange={this._formChangeHandler}
                                onKeyDown={this._onKeyDown}/>
-                        <Input type="text" name="latitude" id="location.latitude" ref={this.inputLatRef}
-                               placeholder={"Latitude"}
+                        <Input type="text" name="latitude" id="location.latitude"
+                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_latitude')}
                                value={this.state.latitude}
                                onChange={this._formChangeHandler}
                                onKeyDown={this._onKeyDown}/>
                         <Input type="text" name="longitude" id="location.longitude"
-                               placeholder={"Longitude"}
+                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_longitude')}
                                value={this.state.longitude}
                                onChange={this._formChangeHandler}
                                onKeyDown={this._onKeyDown}

@@ -11,7 +11,7 @@ import _ from "lodash";
 import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
 import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
 import Chance from "chance";
-import {getNewTabName} from "./event/utils";
+import {getDecimalLocation, getNewTabName, validateLocationInput} from "./event/utils";
 const chance = new Chance();
 
 const _Root = styled.div`
@@ -68,17 +68,17 @@ export default class MapView extends Component {
 
         for (const resource of this.props.resources) {
             if(resource.exifPlace) {
-                const exifPlaceArr = resource.exifPlace.split(',');
-                if(!exifPlaceArr && exifPlaceArr.length != 2) {
-                    console.log('wrong format of exifPlace');
-                    resourcesWithoutGeoLocation.push(resource);
-                } else {
+                const valid = validateLocationInput(resource.exifPlace);
+                if(valid) {
                     const location = {
-                        latLng : [+exifPlaceArr[0], +exifPlaceArr[1]],
+                        latLng : getDecimalLocation(resource.exifPlace),
                         resource : resource,
                         current: resource.sha1 === this.props.currentPictureSelection.sha1
                     };
                     resourcesWithGeoLocation.push(location);
+                } else {
+                    console.log('wrong format of exifPlace');
+                    resourcesWithoutGeoLocation.push(resource);
                 }
             } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.decimallatitude && resource.erecolnatMetadata.decimallongitude) {
                 const location = {
@@ -88,6 +88,7 @@ export default class MapView extends Component {
                 };
                 resourcesWithGeoLocation.push(location);
             } else {
+                console.log('there is no geolocation data');
                 resourcesWithoutGeoLocation.push(resource);
             }
         }
@@ -216,9 +217,7 @@ export default class MapView extends Component {
                         </LeafletMap>
                     </_MapPlaceholder>
                 </_Panel>
-
             </_Root>
         );
     }
-
 }
