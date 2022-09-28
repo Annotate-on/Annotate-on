@@ -13,7 +13,7 @@ import {EditControl} from "react-leaflet-draw";
 const _Root = styled.div`
     display: grid;
     grid-template-rows: auto;
-    height: calc(100% - 40px);
+    height: 100%;
  `;
 
 const _LeafletDiv = styled.div`
@@ -224,7 +224,7 @@ export default class LeafletMap extends Component {
                                                 });
                                             }
                                         }}>
-                                    <Popup >
+                                    location.resource && <Popup >
                                         <div className={"map-marker-popup"}>
                                             {location.resource.erecolnatMetadata ?
                                                 <div className="attributes-holder">
@@ -288,21 +288,38 @@ export default class LeafletMap extends Component {
                                 </Marker>
                             })}
                         </MarkerClusterGroup>
-                        <FeatureGroup ref={this.featureGroup}>
-                            <EditControl ref={this.editControlFirst}
-                                         position='bottomleft'
-                                         onCreated={this._onSelectionCreated}
-                                         edit={{
-                                             edit: false,
-                                             remove: false
-                                         }}
-                                         draw={{
-                                             circle: false,
-                                             marker: false,
-                                             polyline : false,
-                                         }}
-                            ></EditControl>
-                        </FeatureGroup>
+                        {(this.props.onSelectResource || this.props.onSelectResources) &&
+                            <FeatureGroup ref={this.featureGroup}>
+                                <EditControl ref={this.editControlFirst}
+                                             position='bottomleft'
+                                             onCreated={this._onSelectionCreated}
+                                             edit={{
+                                                 edit: false,
+                                                 remove: false
+                                             }}
+                                             draw={{
+                                                 circle: false,
+                                                 marker: false,
+                                                 polyline : false,
+                                             }}
+                                ></EditControl>
+                            </FeatureGroup>
+                        }
+                        {/*<FeatureGroup ref={this.featureGroup}>*/}
+                        {/*    <EditControl ref={this.editControlFirst}*/}
+                        {/*                 position='bottomleft'*/}
+                        {/*                 onCreated={this._onSelectionCreated}*/}
+                        {/*                 edit={{*/}
+                        {/*                     edit: false,*/}
+                        {/*                     remove: false*/}
+                        {/*                 }}*/}
+                        {/*                 draw={{*/}
+                        {/*                     circle: false,*/}
+                        {/*                     marker: false,*/}
+                        {/*                     polyline : false,*/}
+                        {/*                 }}*/}
+                        {/*    ></EditControl>*/}
+                        {/*</FeatureGroup>*/}
                     </Map>
                 </_LeafletDiv>
             </_Root>

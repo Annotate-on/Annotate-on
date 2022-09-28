@@ -31,7 +31,7 @@ const _Panel = styled.div`
 
 const _MapPlaceholder = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 40px);
     position: relative;
 `;
 

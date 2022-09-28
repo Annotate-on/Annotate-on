@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import {Input, InputGroup, InputGroupAddon, InputGroupText} from "reactstrap";
 import i18next from "i18next";
-import {validateLocationInput} from "./event/utils";
+import {getDecimalLocation, validateLocationInput} from "./event/utils";
+import PickTag from "../containers/PickTag";
+import PickLocation from "../containers/PickLocation";
 
 export default class GeolocationWidget extends Component {
 
@@ -13,7 +15,8 @@ export default class GeolocationWidget extends Component {
             place: '',
             latitude: '',
             longitude: '',
-            errors: ''
+            errors: '',
+            showLocationPopup: false
         };
     }
 
@@ -62,10 +65,22 @@ export default class GeolocationWidget extends Component {
     }
 
     _onOpenLocationInTheMap = () => {
-        console.log("onOpenLocationInTheMap click")
-        if(this.props.onShowLocationOnMap) {
-            this.props.onShowLocationOnMap();
+        const input = this.state.latitude + ' ' + this.state.longitude;
+        console.log("_onOpenLocationInTheMap", input);
+        const valid = validateLocationInput(input);
+        const locations = []
+        if(valid) {
+            const location = {
+                latLng : getDecimalLocation(input),
+                resource: {},
+                current: true
+            };
+            locations.push(location);
         }
+        this.setState({
+            locations: locations,
+            showLocationPopup: true
+        });
     }
 
     _formChangeHandler = (event) => {
@@ -127,6 +142,15 @@ export default class GeolocationWidget extends Component {
         const {t} = i18next;
         const {errors} = this.state;
         return <div className="geolocation-widget">
+            <div>
+                <PickLocation
+                    locations = {this.state.locations}
+                    openModal={this.state.showLocationPopup}
+                    onClose={() => {
+                        this.setState({showLocationPopup: false});
+                    }}
+                />
+            </div>
             <InputGroup>
                 <Input type="text" name="location" id="location" readOnly={true}
                        placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
