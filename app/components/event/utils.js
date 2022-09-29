@@ -285,7 +285,7 @@ export const isLocationInDecimalFormat = (input) => {
     if (!input) return false;
     if (input === '' || input === 'N/A') return false;
 
-    const regexDecimal = new RegExp('^(\\d*\\.)?\\d+$');
+    const regexDecimal = new RegExp('^-?(\\d*\\.)?\\d+$');
     const coordinates = input.split(/[ ,]+/);
     if(!coordinates || coordinates.length < 2) return false;
 
@@ -342,6 +342,7 @@ export const getDecimalLocation = (input) => {
 }
 
 export const validateDecimalCoords = (lat , lng) => {
+    console.log("validateDecimalCoords", lat, lng)
     return lat > -90 && lat < 90 && lng > -180 && lng < 180;
 }
 

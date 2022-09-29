@@ -8,7 +8,7 @@ import {
 } from 'reactstrap';
 
 import styled from "styled-components";
-import LeafletMap from "./LeafletMap";
+import PickLocationMap from "./PickLocationMap";
 
 const _MapPlaceholder = styled.div`
     width: 100%;
@@ -20,7 +20,6 @@ export default class extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            locations: [],
             openModal: props.openModal,
         };
     }
@@ -40,14 +39,21 @@ export default class extends Component {
                        scrollable={false}
                        autoFocus={false}>
                     <ModalHeader toggle={this._toggle}>
-                        {/*{t('inspector.pick_tag.dialog_title_pick_a_keyword')}*/}
+                        {this.props.pickLocation && t('inspector.metadata.geolocation.dialog_pick_location_title')}
                     </ModalHeader>
                     <ModalBody>
                         <_MapPlaceholder>
-                            <LeafletMap locations={this.props.locations}
-                                        selectedResources = {[]}
-                                        fitToBounds = "false">
-                            </LeafletMap>
+                            <PickLocationMap
+                                fitToBounds = {false}
+                                selectedLocation={this.props.location}
+                                pickLocation = {this.props.pickLocation}
+                                onPickLocation={ (location) => {
+                                    this._toggle();
+                                    if(this.props.onPickLocation) {
+                                        this.props.onPickLocation(location);
+                                    }
+                                }}>
+                            </PickLocationMap>
                         </_MapPlaceholder>
                     </ModalBody>
                     <ModalFooter>
@@ -67,3 +73,4 @@ export default class extends Component {
     };
 
 }
+

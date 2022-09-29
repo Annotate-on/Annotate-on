@@ -46,12 +46,10 @@ export default class Map extends Component {
         });
 
         const marker = L.marker([51.5, -0.09], {icon: myIcon}).on('click', event => {
-            alert('bravo aki')
         }).addTo(this.map)
             .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
             .openPopup();
         marker.on('mouseover',function(ev) {
-            console.log("over")
             ev.target.openPopup();
         });
 

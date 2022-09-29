@@ -176,13 +176,13 @@ export default class LeafletMap extends Component {
                          }}
 
                          onKeyDown={e => {
-                             console.log("onKeydown");
-                             console.log(e);
+                             // console.log("onKeydown");
+                             // console.log(e);
                          }}
 
                          onKeyUp={e => {
-                             console.log("onKeyup");
-                             console.log(e)
+                             // console.log("onKeyup");
+                             // console.log(e)
                          }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -288,38 +288,21 @@ export default class LeafletMap extends Component {
                                 </Marker>
                             })}
                         </MarkerClusterGroup>
-                        {(this.props.onSelectResource || this.props.onSelectResources) &&
-                            <FeatureGroup ref={this.featureGroup}>
-                                <EditControl ref={this.editControlFirst}
-                                             position='bottomleft'
-                                             onCreated={this._onSelectionCreated}
-                                             edit={{
-                                                 edit: false,
-                                                 remove: false
-                                             }}
-                                             draw={{
-                                                 circle: false,
-                                                 marker: false,
-                                                 polyline : false,
-                                             }}
-                                ></EditControl>
-                            </FeatureGroup>
-                        }
-                        {/*<FeatureGroup ref={this.featureGroup}>*/}
-                        {/*    <EditControl ref={this.editControlFirst}*/}
-                        {/*                 position='bottomleft'*/}
-                        {/*                 onCreated={this._onSelectionCreated}*/}
-                        {/*                 edit={{*/}
-                        {/*                     edit: false,*/}
-                        {/*                     remove: false*/}
-                        {/*                 }}*/}
-                        {/*                 draw={{*/}
-                        {/*                     circle: false,*/}
-                        {/*                     marker: false,*/}
-                        {/*                     polyline : false,*/}
-                        {/*                 }}*/}
-                        {/*    ></EditControl>*/}
-                        {/*</FeatureGroup>*/}
+                        <FeatureGroup ref={this.featureGroup}>
+                            <EditControl ref={this.editControlFirst}
+                                         position='bottomleft'
+                                         onCreated={this._onSelectionCreated}
+                                         edit={{
+                                             edit: false,
+                                             remove: false
+                                         }}
+                                         draw={{
+                                             circle: false,
+                                             marker: false,
+                                             polyline : false,
+                                         }}
+                            ></EditControl>
+                        </FeatureGroup>
                     </Map>
                 </_LeafletDiv>
             </_Root>

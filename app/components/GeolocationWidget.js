@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Input, InputGroup, InputGroupAddon, InputGroupText} from "reactstrap";
 import i18next from "i18next";
 import {getDecimalLocation, validateLocationInput} from "./event/utils";
-import PickTag from "../containers/PickTag";
 import PickLocation from "../containers/PickLocation";
 
 export default class GeolocationWidget extends Component {
@@ -16,7 +15,8 @@ export default class GeolocationWidget extends Component {
             latitude: '',
             longitude: '',
             errors: '',
-            showLocationPopup: false
+            showLocationPopup: false,
+            pickLocation: false
         };
     }
 
@@ -46,41 +46,63 @@ export default class GeolocationWidget extends Component {
     }
 
     _onEdit = () => {
-        console.log("onEdit click");
         this.setState({
             inEdit: true
         });
     }
 
     _onCancelEdit = () => {
-        console.log("_onCancelEdit click");
         this.setState({
             inEdit: false,
             errors: ''
         });
     }
 
-    _onSaveManualEntry = () => {
-        console.log("onSaveManualEntry click");
+    _onOpenLocationInTheMap = (pickValue) => {
+        const input = this.state.latitude + ' ' + this.state.longitude;
+        let location;
+        if(input.trim()) {
+            const valid = validateLocationInput(input);
+            if(valid) {
+                location = {
+                    latLng : getDecimalLocation(input),
+                    place: this.state.place
+                };
+                this.setState({
+                    location: location,
+                    showLocationPopup: true,
+                    pickLocation: pickValue
+                });
+            } else {
+                this.setState({
+                    errors: t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long')
+                });
+            }
+        } else {
+            this.setState({
+                showLocationPopup: true,
+                pickLocation: pickValue
+            });
+        }
     }
 
-    _onOpenLocationInTheMap = () => {
-        const input = this.state.latitude + ' ' + this.state.longitude;
-        console.log("_onOpenLocationInTheMap", input);
-        const valid = validateLocationInput(input);
-        const locations = []
-        if(valid) {
-            const location = {
-                latLng : getDecimalLocation(input),
-                resource: {},
-                current: true
-            };
-            locations.push(location);
+    _onPickLocation = (location) => {
+        let event = {
+            target: {
+                name: this.props.name,
+                value: {
+                    place: location.place,
+                    latitude: location.latLng[0],
+                    longitude: location.latLng[1],
+                }
+            },
+            errors: this.state.errors
         }
         this.setState({
-            locations: locations,
-            showLocationPopup: true
+            inEdit: false,
+            errors: ''
         });
+        this.props.onValueChange(event);
     }
 
     _formChangeHandler = (event) => {
@@ -89,11 +111,14 @@ export default class GeolocationWidget extends Component {
         let errors = this.state.errors;
         if (name === 'latitude' || name === 'longitude') {
             let input = (name === 'latitude' ? value : this.state.latitude) + " " + (name === 'longitude' ? value : this.state.longitude);
-            errors = validateLocationInput(input)
-                ? ''
-                : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
+            if(input.trim()) {
+                errors = validateLocationInput(input)
+                    ? ''
+                    : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
+            } else {
+                errors = ''
+            }
         }
-        console.log('_formChangeHandler', errors)
         this.setState({
             [name]: value,
             errors: errors
@@ -101,8 +126,6 @@ export default class GeolocationWidget extends Component {
     };
 
     _onKeyDown = (_) => {
-        console.log('key ' + _.key);
-        console.log('type ' + _.type);
         if (_.key === 'Escape' && _.type === 'keydown')  {
             this._onCancelEdit();
             return;
@@ -130,24 +153,20 @@ export default class GeolocationWidget extends Component {
         }
     }
 
-    _validateForm = (errors) => {
-        let valid = true;
-        Object.values(errors).forEach(
-            (val) => val.length > 0 && (valid = false)
-        );
-        return valid;
-    };
-
     render() {
         const {t} = i18next;
         const {errors} = this.state;
         return <div className="geolocation-widget">
             <div>
                 <PickLocation
-                    locations = {this.state.locations}
+                    location = {this.state.location}
                     openModal={this.state.showLocationPopup}
                     onClose={() => {
                         this.setState({showLocationPopup: false});
+                    }}
+                    pickLocation = {this.state.pickLocation}
+                    onPickLocation={(location) => {
+                        this._onPickLocation(location);
                     }}
                 />
             </div>
@@ -164,7 +183,7 @@ export default class GeolocationWidget extends Component {
                     </InputGroupText>
                     <InputGroupText>
                         <i className="fa fa-external-link pointer" aria-hidden="true"
-                           onClick={() => this._onOpenLocationInTheMap()}/>
+                           onClick={() => this._onOpenLocationInTheMap(false)}/>
                     </InputGroupText>
                 </InputGroupAddon>
             </InputGroup>
@@ -172,9 +191,8 @@ export default class GeolocationWidget extends Component {
                 <div className="geolocation-widget-editor">
                     <div className="geolocation-widget-editor-section">
                         <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_search_for_location')}</div>
-                        <button className="pointer btn btn-primary">
-                            <i className="fa fa-map-marker" aria-hidden="true"
-                               onClick={() => this._onOpenLocationInTheMap}/>
+                        <button className="pointer btn btn-primary" onClick={() => this._onOpenLocationInTheMap(true)}>
+                            <i className="fa fa-map-marker" aria-hidden="true"/>
                             {t('inspector.metadata.geolocation.btn_open_map_to_select_location')}
                         </button>
                     </div>

@@ -227,7 +227,12 @@
           "textbox_placeholder_text_search":"Text search (showing 5 results in a list)",
           "textbox_placeholder_place_name":"Place name",
           "textbox_placeholder_latitude":"Latitude",
-          "textbox_placeholder_longitude":"Longitude"
+          "textbox_placeholder_longitude":"Longitude",
+          "dialog_pick_location_title": "Pick a location",
+          "popup_lbl_place": "Place",
+          "popup_lbl_lat": "Lat",
+          "popup_lbl_lng": "Lng",
+          "popup_btn_add_location": "Add location"
         }
       },
       "calibration": {

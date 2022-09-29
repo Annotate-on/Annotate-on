@@ -50,7 +50,7 @@ export default class extends Component {
                 'language':  props.picture.language || '',
                 'relation':  props.picture.relation || '',
                 'location': props.picture.exifPlace || '',
-                'place': props.picture.placeName || '',
+                'placeName': props.picture.placeName || '',
                 'rights':  props.picture.rights || '',
                 'contact': props.picture.contact || '',
             },
@@ -146,7 +146,7 @@ export default class extends Component {
         if (name === 'geolocation') {
             errors.location = event.errors;
             if(!errors.location) {
-                metadata.iptc.placeName = value.place;
+                metadata.iptc.placeName = value.place ? value.place : '';
                 metadata.iptc.location = value.latitude + ',' + value.longitude;
             }
             this.setState({
@@ -197,10 +197,11 @@ export default class extends Component {
                     }
                 }
             }
-
+            console.log("iptc", iptc)
             for (let prop in iptc) {
                 if (iptc[prop] !== ''){
                     let xmp_tag = `\t\t <dc:${prop}>${iptc[prop]}</dc:${prop}> \n`;
+                    console.log("prop", prop)
                     if (iptc[prop].includes(separator)) {
                         const _array = iptc[prop].split(separator);
                         _array.forEach( ( a ) => {
