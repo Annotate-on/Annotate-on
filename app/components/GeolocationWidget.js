@@ -59,6 +59,7 @@ export default class GeolocationWidget extends Component {
     }
 
     _onOpenLocationInTheMap = (pickValue) => {
+        const {t} = i18next;
         const input = this.state.latitude + ' ' + this.state.longitude;
         let location;
         if(input.trim()) {
