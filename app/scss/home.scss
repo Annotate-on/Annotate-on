@@ -264,11 +264,19 @@
 
 .geolocation-widget {
   margin-bottom: 1rem;
+  position: relative;
 
   .geolocation-widget-editor {
     padding: 5px;
     border: 1px solid #ced4da;
-    border-top: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    //border-top: none;
+    position: absolute;
+    //background-color: white;
+    background-color: #e9ecef;
+    width: 100%;
+    bottom: 30px;
 
     .geolocation-widget-editor-section {
       .geolocation-widget-editor-section-title {
