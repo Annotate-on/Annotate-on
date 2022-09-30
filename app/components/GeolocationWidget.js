@@ -192,7 +192,10 @@ export default class GeolocationWidget extends Component {
                 <div className="geolocation-widget-editor">
                     <div className="geolocation-widget-editor-section">
                         <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_search_for_location')}</div>
-                        <button className="pointer btn btn-primary" onClick={() => this._onOpenLocationInTheMap(true)}>
+                        <button className="pointer btn btn-primary" onClick={(e) => {
+                            this._onOpenLocationInTheMap(true);
+                            e.preventDefault();
+                        }}>
                             <i className="fa fa-map-marker" aria-hidden="true"/>
                             {t('inspector.metadata.geolocation.btn_open_map_to_select_location')}
                         </button>

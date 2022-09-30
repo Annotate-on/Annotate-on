@@ -23,23 +23,23 @@ const _LeafletDiv = styled.div`
 
 export const pointerIcon = new L.Icon({
     iconUrl: PIN,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export const pointerIconRed = new L.Icon({
     iconUrl: PIN_RED,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export const pointerIconBlue = new L.Icon({
     iconUrl: PIN_BLUE,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export default class LeafletMap extends Component {

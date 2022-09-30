@@ -316,7 +316,6 @@ export const isLocationInDMSFormat = (input) => {
 }
 
 export const validateLocationInput = (input) => {
-    // console.log("validateLocationInput ", input)
     if (input === '' || input === 'N/A') return true;
     if (isLocationInDecimalFormat(input)) {
         return true
@@ -342,7 +341,6 @@ export const getDecimalLocation = (input) => {
 }
 
 export const validateDecimalCoords = (lat , lng) => {
-    console.log("validateDecimalCoords", lat, lng)
     return lat > -90 && lat < 90 && lng > -180 && lng < 180;
 }
 

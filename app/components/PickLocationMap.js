@@ -20,16 +20,16 @@ const _LeafletDiv = styled.div`
 
 export const pointerIconRed = new L.Icon({
     iconUrl: PIN_RED,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export const pointerIconBlue = new L.Icon({
     iconUrl: PIN_BLUE,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export default class PickLocationMap extends Component {
@@ -142,7 +142,7 @@ export default class PickLocationMap extends Component {
             <_Root>
                 <_LeafletDiv>
                     <Map center={position}
-                         className={"pick-location-map " + (this.props.pickLocation ? "pick-location-map-edit" : "pick-location-map-view")}
+                         className={"leaflet-map pick-location-map " + (this.props.pickLocation ? "pick-location-map-edit" : "pick-location-map-view")}
                          zoom={this.state.zoom}
                          zoomControl={true}
                          ref={this.mapRef}
