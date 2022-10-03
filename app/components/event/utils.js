@@ -2,6 +2,9 @@ import Chance from "chance";
 import {TYPE_CATEGORY} from "./Constants";
 
 const chance = new Chance();
+const regexDecimal = new RegExp('^-?(\\d*\\.)?\\d+$');
+const regexDMSLat = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S])');
+const regexDMSLng = new RegExp('([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
 
 export const genId = () => {
     return chance.guid();
@@ -285,7 +288,7 @@ export const isLocationInDecimalFormat = (input) => {
     if (!input) return false;
     if (input === '' || input === 'N/A') return false;
 
-    const regexDecimal = new RegExp('^-?(\\d*\\.)?\\d+$');
+
     const coordinates = input.split(/[ ,]+/);
     if(!coordinates || coordinates.length < 2) return false;
 
@@ -299,13 +302,11 @@ export const isLocationInDMSFormat = (input) => {
     if (!input) return false;
     if (input === '' || input === 'N/A') return false;
 
-    const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S])([,| ])([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
     const coordinates = input.split(/[ ,]+/);
     if(!coordinates || coordinates.length < 2) return false;
-
-    if (regexDMS.test(input)) {
-        const lat = coordinates[0].trim();
-        const lng = coordinates[1].trim();
+    const lat = coordinates[0].trim();
+    const lng = coordinates[1].trim();
+    if (regexDMSLat.test(lat) && regexDMSLng.test(lng)) {
         const latD = convertDMStoDecimal(lat);
         const lngD = convertDMStoDecimal(lng);
         if (validateDecimalCoords(latD, lngD)) {

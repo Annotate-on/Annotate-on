@@ -222,16 +222,15 @@
         "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
         "geolocation": {
           "lbl_search_for_location": "Search for location",
-          "lbl_manuel_entry": "Manuel entry",
           "btn_open_map_to_select_location":"Open map to select location",
           "textbox_placeholder_text_search":"Text search (showing 5 results in a list)",
           "textbox_placeholder_place_name":"Place name",
           "textbox_placeholder_latitude":"Latitude",
           "textbox_placeholder_longitude":"Longitude",
           "dialog_pick_location_title": "Pick a location",
-          "popup_lbl_place": "Place",
-          "popup_lbl_lat": "Lat",
-          "popup_lbl_lng": "Lng",
+          "popup_lbl_new_edit_geolocation": "New edit geolocation",
+          "popup_lbl_place_name": "Locality name",
+          "popup_lbl_lat_lng": "Latitude, Longitude",
           "popup_btn_add_location": "Add location"
         }
       },

@@ -286,12 +286,28 @@
         margin-top: 5px;
         border-bottom: 1px solid #ced4da;
       }
+
+      label {
+        margin-bottom: 2px;
+        margin-left: 3px;
+      }
+      .actions-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 3px;
+         button{
+           margin-left: 5px;
+         }
+      }
     }
 
-    button {
-      width: 100%;
-      margin-bottom: 5px;
+    .alert {
+      margin-bottom: 0px;
+    }
 
+    .pick-location-btn {
+      width: 100%;
+      margin-bottom: 3px;
       i {
         margin-right: 5px;
       }
@@ -321,7 +337,3 @@
     }
   }
 }
-
-
-
-

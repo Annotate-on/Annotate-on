@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Input, InputGroup, InputGroupAddon, InputGroupText} from "reactstrap";
+import {Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label} from "reactstrap";
 import i18next from "i18next";
 import {getDecimalLocation, validateLocationInput} from "./event/utils";
 import PickLocation from "../containers/PickLocation";
@@ -12,8 +12,7 @@ export default class GeolocationWidget extends Component {
             inEdit: false,
             value: '',
             place: '',
-            latitude: '',
-            longitude: '',
+            latLng: '',
             errors: '',
             showLocationPopup: false,
             pickLocation: false
@@ -24,25 +23,27 @@ export default class GeolocationWidget extends Component {
         const coordinates = props.location.split(/[ ,]+/);
         const lat = coordinates[0];
         const lng = coordinates[1];
+
         let latitude = props.latitude ? this.props.latitude : lat;
         let longitude = props.longitude ? this.props.longitude : lng;
+
         let place = props.place? props.place: '';
+        let latLng = (!latitude && !longitude) ? '' : `${latitude ? latitude: ''},${longitude? longitude: ''}`;
         let value = (!props.place && !latitude && !longitude) ? '' :
-            `${place} (${latitude ? latitude: ''}, ${longitude? longitude: ''})`;
+            `${place} (${latitude ? latitude: ''},${longitude? longitude: ''})`;
         return {
             value: value,
             place: state.inEdit ? state.place : place,
-            latitude: state.inEdit ? state.latitude : latitude,
-            longitude: state.inEdit ? state.longitude : longitude
+            latLng: state.inEdit ? state.latLng : latLng
         };
     }
 
     componentDidMount() {
-        // console.log('componentDidMount');
+        // console.log('componentDidMount', this.state);
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log('componentDidUpdate', this.props)
+        // console.log('componentDidUpdate', this.state)
     }
 
     _onEdit = () => {
@@ -58,9 +59,51 @@ export default class GeolocationWidget extends Component {
         });
     }
 
+    _onSaveEdit = (e) => {
+        const {t} = i18next;
+        let errors = this.state.errors;
+        let input = this.state.latLng;
+        if(input.trim()) {
+            errors = validateLocationInput(input) ? '' : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
+        } else {
+            errors = ''
+        }
+        if(errors) {
+            this.setState({
+                errors: errors
+            })
+        } else if(this.props.onValueChange) {
+            console.log(this.state.latLng)
+            let lat = '';
+            let lng = '';
+            if(this.state.latLng) {
+                const latLngArray = this.state.latLng.split(/[ ,]+/);
+                lat = latLngArray[0].trim();
+                lng = latLngArray[1].trim();
+            }
+
+            let event = {
+                target: {
+                    name: this.props.name,
+                    value: {
+                        place: this.state.place,
+                        latitude: lat,
+                        longitude:lng,
+                    }
+                },
+                errors: errors
+            }
+            this.props.onValueChange(event);
+            this.setState({
+                inEdit: false,
+                errors: ''
+            });
+        }
+    }
+
     _onOpenLocationInTheMap = (pickValue) => {
         const {t} = i18next;
-        const input = this.state.latitude + ' ' + this.state.longitude;
+        const input = this.state.latLng;
         let location;
         if(input.trim()) {
             const valid = validateLocationInput(input);
@@ -88,71 +131,40 @@ export default class GeolocationWidget extends Component {
     }
 
     _onPickLocation = (location) => {
-        let event = {
-            target: {
-                name: this.props.name,
-                value: {
-                    place: location.place,
-                    latitude: location.latLng[0],
-                    longitude: location.latLng[1],
-                }
-            },
-            errors: this.state.errors
-        }
         this.setState({
-            inEdit: false,
+            latLng: `${location.latLng[0]}, ${location.latLng[1]}`,
+            showLocationPopup: false,
             errors: ''
         });
         this.props.onValueChange(event);
     }
 
+    -_onSearchByLanLng = () => {
+        console.log(`Search by lat/lng ${this.state.latlng}`)
+    }
+
+    -_onSearchByPlace = () => {
+        console.log(`Search by place ${this.state.place}`)
+    }
+
     _formChangeHandler = (event) => {
         const {t} = i18next;
         const {name, value} = event.target;
-        let errors = this.state.errors;
-        if (name === 'latitude' || name === 'longitude') {
-            let input = (name === 'latitude' ? value : this.state.latitude) + " " + (name === 'longitude' ? value : this.state.longitude);
-            if(input.trim()) {
-                errors = validateLocationInput(input)
-                    ? ''
-                    : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
-            } else {
-                errors = ''
-            }
-        }
+        // let errors = this.state.errors;
+        // if (name === 'latLng') {
+        //     let input = value;
+        //     if(input.trim()) {
+        //         errors = validateLocationInput(input)
+        //             ? ''
+        //             : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
+        //     } else {
+        //         errors = ''
+        //     }
+        // }
         this.setState({
-            [name]: value,
-            errors: errors
+            [name]: value
         });
     };
-
-    _onKeyDown = (_) => {
-        if (_.key === 'Escape' && _.type === 'keydown')  {
-            this._onCancelEdit();
-            return;
-        }
-        if (_.key === 'Enter' && _.type === 'keydown') {
-            if(this.props.onValueChange && !this.state.errors) {
-                let event = {
-                    target: {
-                        name: this.props.name,
-                        value: {
-                            place: this.state.place,
-                            latitude: this.state.latitude,
-                            longitude: this.state.longitude,
-                        }
-                    },
-                    errors: this.state.errors
-                }
-                this.setState({
-                    inEdit: false,
-                    errors: ''
-                });
-                this.props.onValueChange(event);
-            }
-            _.preventDefault();
-        }
-    }
 
     render() {
         const {t} = i18next;
@@ -175,13 +187,11 @@ export default class GeolocationWidget extends Component {
                 <Input type="text" name="location" id="location" readOnly={true}
                        placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
                        title={t('inspector.metadata.textbox_tooltip_coverage_place')}
+                       onClick={() => {
+                           if(!this.state.inEdit) this._onEdit()
+                       }}
                        value={this.state.value}/>
                 <InputGroupAddon addonType="append">
-                    <InputGroupText>
-                        <i className={this.state.inEdit ? "fa fa-times pointer" : "fa fa-pencil pointer"}
-                           aria-hidden="true"
-                           onClick={() => this.state.inEdit ? this._onCancelEdit(): this._onEdit()}/>
-                    </InputGroupText>
                     <InputGroupText>
                         <i className="fa fa-external-link pointer" aria-hidden="true"
                            onClick={() => this._onOpenLocationInTheMap(false)}/>
@@ -191,41 +201,80 @@ export default class GeolocationWidget extends Component {
             {this.state.inEdit &&
                 <div className="geolocation-widget-editor">
                     <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_search_for_location')}</div>
-                        <button className="pointer btn btn-primary" onClick={(e) => {
+                        <div className="geolocation-widget-editor-section-title">
+                            {t('inspector.metadata.geolocation.popup_lbl_new_edit_geolocation')}
+                        </div>
+                    </div>
+                    <div className="geolocation-widget-editor-section">
+                        <FormGroup className="column">
+                            <Label for="place" className="label-for1">{t('inspector.metadata.geolocation.popup_lbl_place_name')}</Label>
+                            <InputGroup>
+                                <Input type="text" name="place" id="location.place"
+                                    // placeholder=
+                                       value={this.state.place}
+                                       onChange={this._formChangeHandler}
+                                       onKeyDown={(e) => {
+                                           if (e.key === 'Enter' && e.type === 'keydown') {
+                                               this._onSearchByPlace();
+                                           };
+                                       }}
+                                />
+                                <InputGroupAddon addonType="append">
+                                    <InputGroupText>
+                                        <i className="fa fa-search pointer" aria-hidden="true"
+                                           onClick={this._onSearchByPlace}/>
+                                    </InputGroupText>
+                                </InputGroupAddon>
+                            </InputGroup>
+                        </FormGroup>
+                        <FormGroup className="column">
+                            <Label for="latLng" className="label-for1">{t('inspector.metadata.geolocation.popup_lbl_lat_lng')}</Label>
+                            <InputGroup>
+                                <Input type="text" name="latLng" id="location.latLng"
+                                       value={this.state.latLng}
+                                       onChange={this._formChangeHandler}
+                                       onKeyDown={(e) => {
+                                           if (e.key === 'Enter' && e.type === 'keydown') {
+                                               this._onSearchByLanLng();
+                                           };
+                                       }}
+                                />
+                                <InputGroupAddon addonType="append">
+                                    <InputGroupText>
+                                        <i className="fa fa-search pointer" aria-hidden="true"
+                                           onClick={this._onSearchByLanLng}/>
+                                    </InputGroupText>
+                                </InputGroupAddon>
+                            </InputGroup>
+                        </FormGroup>
+                        <Button className="pick-location-btn" color="primary" onClick={(e) => {
                             this._onOpenLocationInTheMap(true);
                             e.preventDefault();
                         }}>
                             <i className="fa fa-map-marker" aria-hidden="true"/>
                             {t('inspector.metadata.geolocation.btn_open_map_to_select_location')}
-                        </button>
-                    </div>
-                    <Input type="text" name="textSearch" id="textSearch"
-                           placeholder={t('inspector.metadata.geolocation.textbox_placeholder_text_search')}/>
-
-                    <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">{t('inspector.metadata.geolocation.lbl_manuel_entry')}</div>
-                        <Input type="text" name="place" id="location.place"
-                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_place_name')}
-                               value={this.state.place}
-                               onChange={this._formChangeHandler}
-                               onKeyDown={this._onKeyDown}/>
-                        <Input type="text" name="latitude" id="location.latitude"
-                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_latitude')}
-                               value={this.state.latitude}
-                               onChange={this._formChangeHandler}
-                               onKeyDown={this._onKeyDown}/>
-                        <Input type="text" name="longitude" id="location.longitude"
-                               placeholder={t('inspector.metadata.geolocation.textbox_placeholder_longitude')}
-                               value={this.state.longitude}
-                               onChange={this._formChangeHandler}
-                               onKeyDown={this._onKeyDown}
-                        />
+                        </Button>
                         {errors.length > 0 &&
                             <div className="alert alert-danger" role="alert">
                                 {errors}
                             </div>
                         }
+                        <div className="actions-row">
+                            <Button color="success"  size="sm"
+                                    onClick={(e) => {
+                                        this._onSaveEdit()
+                                        e.preventDefault();
+                                    }}
+                            >{t('global.save')}
+                            </Button>
+                            <Button color="danger"  size="sm"
+                                    onClick={(e) => {
+                                this._onCancelEdit();
+                                e.preventDefault();
+                            }}
+                            >{t('global.cancel')}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             }
