@@ -954,3 +954,17 @@ div.leaflet-marker-icon {
   color: #c71919;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
+.doc-link {
+  height: 22px;
+  width: 22px;
+  cursor: pointer;
+}
+
+.action-bar .doc-link {
+  margin-top: 3px;
+  float: right;
+}
