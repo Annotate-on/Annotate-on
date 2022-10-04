@@ -145,9 +145,10 @@ export default class extends Component {
         const metadata = {...this.state.metadata};
         if (name === 'geolocation') {
             errors.location = event.errors;
+            let location = (!value.latitude && !value.longitude) ? '' : value.latitude + ',' + value.longitude;
             if(!errors.location) {
                 metadata.iptc.placeName = value.place ? value.place : '';
-                metadata.iptc.location = value.latitude + ',' + value.longitude;
+                metadata.iptc.location = location;
             }
             this.setState({
                 metadata,
@@ -173,7 +174,7 @@ export default class extends Component {
             saveMetadata(this.props.picture.sha1, this.state.metadata);
 
             console.log(this.state.metadata);
-            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location);
+            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName);
 
             let naturalScienceMetadata2 = '';
             let  iptcMetadata ='';

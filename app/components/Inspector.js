@@ -743,11 +743,10 @@ export default class extends Component {
         && this.props.selectedTaxonomy.descriptors.map(target => {
             targetColors[target.id] = target.targetColor;
             const type = target.targetType ? `${target.targetType}\\` : '';
-
             if ((annotation.annotationType === 'simple-line' || annotation.annotationType === 'polyline') && target.annotationType === 'NUMERICAL' && target.unit === 'mm') {
                 options.push({
                     value: target.id,
-                    label: `${type}${target.targetName} ${target.unit}`,
+                    label: `${type}${target.targetName} ${target.unit ? target.unit: ''}`,
                     color: target.targetColor,
                     measure: target.unit
                 })
@@ -755,7 +754,7 @@ export default class extends Component {
                 if ((annotation.annotationType === 'polygon') && target.annotationType === 'NUMERICAL' && (target.unit === 'mm²' || target.unit === 'mm2')) {
                     options.push({
                         value: target.id,
-                        label: `${type}${target.targetName} ${target.unit}`,
+                        label: `${type}${target.targetName} ${target.unit ? target.unit: ''}`,
                         color: target.targetColor,
                         measure: target.unit
                     })
@@ -763,7 +762,7 @@ export default class extends Component {
                     if ((annotation.annotationType === 'angle') && target.annotationType === 'NUMERICAL' && (target.unit === '°' || target.unit === 'DEG' || target.unit === 'deg')) {
                         options.push({
                             value: target.id,
-                            label: `${type}${target.targetName} ${target.unit}`,
+                            label: `${type}${target.targetName} ${target.unit ? target.unit: ''}`,
                             color: target.targetColor,
                             measure: target.unit
                         })
@@ -771,7 +770,7 @@ export default class extends Component {
                         if ((annotation.annotationType === 'occurrence') && target.annotationType === 'NUMERICAL' && (target.unit === '#' || target.unit === 'N')) {
                             options.push({
                                 value: target.id,
-                                label: `${type}${target.targetName} ${target.unit}`,
+                                label: `${type}${target.targetName} ${target.unit ? target.unit: ''}`,
                                 color: target.targetColor,
                                 measure: target.unit
                             })
@@ -788,7 +787,7 @@ export default class extends Component {
                                     measure: target.unit,
                                     color: target.targetColor,
                                     targetGroup: target.targetType,
-                                    label: `${type}${target.targetName} ${target.unit}`,
+                                    label: `${type}${target.targetName} ${target.unit ? target.unit: ''}`,
                                 })
                             }
                         }
@@ -834,7 +833,6 @@ export default class extends Component {
                      }
 
                      if (annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && annotation.annotationType !== ANNOTATION_EVENT_ANNOTATION) {
-                         console.log('emitting even....')
                          this._emitEvent(e , annotation.id , annotation.annotationType);
                          this.setState({
                              isFromLeaflet: false,

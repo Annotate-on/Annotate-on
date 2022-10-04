@@ -69,6 +69,7 @@ export default class MapView extends Component {
         for (const resource of this.props.resources) {
             if(resource.exifPlace) {
                 const valid = validateLocationInput(resource.exifPlace);
+                console.log('exifPlace', resource.exifPlace);
                 if(valid) {
                     const location = {
                         latLng : getDecimalLocation(resource.exifPlace),

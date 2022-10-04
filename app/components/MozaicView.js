@@ -389,7 +389,7 @@ export default class extends PureComponent {
                                             <div>{t('library.mozaic_view.lbl_description')}: <span>{pic.description}</span></div>
                                             <div>{t('library.mozaic_view.lbl_serie')}: <span>{pic.serie}</span></div>
                                             <div>{t('library.mozaic_view.lbl_person')}: <span>{pic.person}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.location}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> :
                                         <div className="collection-metadata">
                                             {t('library.mozaic_view.lbl_collection_metadata')} :
@@ -402,6 +402,7 @@ export default class extends PureComponent {
                                                     <span dangerouslySetInnerHTML={{__html: cartel}}/>
                                                 </div>
                                             </div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> : ''}
                             </div>
                         })}

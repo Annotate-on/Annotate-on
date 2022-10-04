@@ -3677,6 +3677,7 @@ export default (state = {}, action) => {
             const pictures = {...state.pictures};
             pictures[action.sha1].exifDate = action.date;
             pictures[action.sha1].exifPlace = action.exifPlace;
+            pictures[action.sha1].placeName = action.placeName;
             return {
                 ...state, counter, pictures
             }

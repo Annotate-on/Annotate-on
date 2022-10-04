@@ -133,7 +133,6 @@ export default class extends Component {
 
     constructor(props) {
         super(props);
-        console.log("constructor", this.props.match);
         const initPicturesList = this.props.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_])
         const allPictureLength = Object.values(this.props.allPictures).length;
         const sortBy = props.sortBy.field;
@@ -537,6 +536,7 @@ export default class extends Component {
                                                                         return rowData.sort_type;
                                                                     }}
                                                             />
+
                                                             <Column
                                                                 dataKey="sort_tags"
                                                                 label={t('library.table_column_tags')}
@@ -555,16 +555,24 @@ export default class extends Component {
                                                                         rowData.sort_tags += this.props.tagsByPicture[rowData.sha1].length
                                                                     }
                                                                     return rowData.sort_tags;
-                                                                }
-                                                                }
+                                                                }}
                                                             />
                                                             <Column dataKey="exifDate"
                                                                     label={t('library.table_column_exif_date')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                            />
                                                             <Column dataKey="exifPlace" label={t('library.table_column_exif_place')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                                    cellRenderer={({rowData}) => {
+                                                                        if(rowData.placeName) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.placeName}</div>)
+                                                                        } else if(rowData.exifPlace) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.exifPlace}</div>)
+                                                                        }
+                                                                    }}
+                                                            />
 
                                                         </Table>
                                                     )}

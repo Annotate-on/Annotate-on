@@ -186,6 +186,7 @@
         "textbox_placeholder_creator": "Creator",
         "textbox_tooltip_creator": "Creator",
         "textbox_placeholder_subject_keywords": "Subject/Keywords",
+        "textbox_tooltip_subject_keywords": "Subject/Keywords",
         "textbox_placeholder_description": "Description",
         "textbox_tooltip_description": "Description",
         "textbox_placeholder_publisher": "Publisher",
@@ -222,7 +223,7 @@
         "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
         "geolocation": {
           "lbl_search_for_location": "Search for location",
-          "btn_open_map_to_select_location":"Open map to select location",
+          "btn_open_map_to_select_location":"Choose location on map",
           "textbox_placeholder_text_search":"Text search (showing 5 results in a list)",
           "textbox_placeholder_place_name":"Place name",
           "textbox_placeholder_latitude":"Latitude",
@@ -231,7 +232,10 @@
           "popup_lbl_new_edit_geolocation": "New edit geolocation",
           "popup_lbl_place_name": "Locality name",
           "popup_lbl_lat_lng": "Latitude, Longitude",
-          "popup_btn_add_location": "Add location"
+          "popup_btn_add_location": "Add location",
+          "popup_lbl_place": "Place",
+          "popup_lbl_lat": "Lat",
+          "popup_lbl_lng": "Lng"
         }
       },
       "calibration": {
@@ -311,7 +315,7 @@
         "tooltip_lbl_exif_date": "ExifDate",
         "tooltip_lbl_exif_place": "ExifPlace",
         "tooltip_lbl_sort_family": "Sort family",
-        "lbl_sort_modified": "Sort modified",
+        "tooltip_lbl_sort_modified": "Sort modified",
         "lbl_event_details": "Event details",
         "lbl_title": "Title",
         "lbl_description": "Description",
@@ -322,6 +326,7 @@
         "lbl_scientific_name": "Scientific name",
         "lbl_author": "Author",
         "lbl_cartel": "Cartel",
+        "lbl_person": "Person",
         "alert_start_manual_order_message": "Start manual order",
         "alert_start_manual_order_confirmation": "Do you want to reuse the previously saved classification?",
         "alert_selection_and_order_saved": "Selection and order of images saved."
