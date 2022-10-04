@@ -53,6 +53,7 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
+      "doc_link_title": "Documentation link to {{section}}",
       "options": {
         "title": "Options",
         "lbl_select_language": "Select language",
