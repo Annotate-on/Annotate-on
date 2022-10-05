@@ -47,8 +47,10 @@ import {
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
+import GeolocationWidget from "./GeolocationWidget";
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
+const VIEW_PICK_A_LOCATION = 'VIEW_PICK_A_LOCATION';
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
 const customStyles = {
@@ -96,6 +98,7 @@ export default class extends Component {
         }
 
         let value;
+        let coverage = props.annotation.coverage;
         switch (props.annotation.annotationType) {
             case ANNOTATION_EVENT_ANNOTATION:
                 value = props.annotation.value;
@@ -198,7 +201,8 @@ export default class extends Component {
             locationTags : locationTags,
             noteTags : noteTags,
             activeDropZone: null,
-            tagStartTime: 0
+            tagStartTime: 0,
+            coverage: coverage
         };
     }
 
@@ -230,8 +234,6 @@ export default class extends Component {
         }
     }
 
-
-
     componentDidMount() {
         ee.on(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
         ee.on(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL, this._saveChronothematiqueAnnotaion);
@@ -246,7 +248,6 @@ export default class extends Component {
         ee.removeListener(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
         ee.removeListener(EVENT_ON_TAG_DROP , this.onTagDropEvent)
         ee.removeListener(NOTIFY_CURRENT_TIME , this.setTagStartTime)
-
     }
 
     onTagDropEvent = () => {
@@ -369,6 +370,20 @@ export default class extends Component {
         }
     }
 
+    handleSpatialLocationChange = (event) => {
+        // console.log("handleSpatialLocationChange", event);
+        const { value } = event.target;
+        const coverage = this.state.coverage ?  {...this.state.coverage} : { spatial: {}};
+        coverage.spatial.placeName = value.place ? value.place : '';
+        coverage.spatial.location = {
+            latitude: value.latitude,
+            longitude: value.longitude
+        };
+        this.setState({
+            coverage: coverage,
+        });
+    }
+
     render() {
         let key = 0;
         const { t } = this.props;
@@ -406,7 +421,7 @@ export default class extends Component {
                                         <Button disabled={this.state.title.length < 3 || this.state.end < this.state.start} color="primary" onClick={ () => {
                                             this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
                                                 this.state.targetColor, this.state.descriptor.value, this.state.value,
-                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic);
+                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic, this.state.coverage);
                                         }}>{t('global.save')}</Button>
                                     </Col>
                                     <Col sm={{ size: 3, offset: 1 }}>
@@ -757,7 +772,7 @@ export default class extends Component {
                     {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ? <Fragment>
                         <FormGroup row>
                             <Col md={{size: 9, offset: 0}} className="local-title">
-                                Character
+                                {t('inspector.annotation_editor.lbl_character')}
                             </Col>
                         </FormGroup>
                         <hr/>
@@ -836,6 +851,28 @@ export default class extends Component {
                             </Col>
                         </FormGroup> : null
                     }
+                    <FormGroup row>
+                        <Col md={{size: 9, offset: 0}} className="local-title">
+                            {t('inspector.annotation_editor.lbl_coverage')}
+                        </Col>
+                    </FormGroup>
+                    <hr/>
+                    <FormGroup row>
+                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>
+                        <Col sm={9}>
+                        </Col>
+                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>
+                        <Col sm={9}>
+                            <GeolocationWidget name="geolocation"
+                                               place={(this.state.coverage && this.state.coverage.spatial) ?  this.state.coverage.spatial.placeName : ''}
+                                               latitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?
+                                                   this.state.coverage.spatial.location.latitude : null}
+                                               longitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?
+                                                   this.state.coverage.spatial.location.longitude : null}
+                                               openEdit={this.props.openEditLocation}
+                                               onValueChange={this.handleSpatialLocationChange}/>
+                        </Col>
+                    </FormGroup>
                 </Form>
 
                 <div>
@@ -1071,7 +1108,7 @@ export default class extends Component {
                         targetType: target.annotationType,
                         measure: target.unit,
                         color: target.targetColor,
-                        label: `${type}${target.targetName} ${target.unit}`
+                        label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                     })
                 } else {
                     if ((annotation.annotationType === 'polygon') && target.annotationType === 'NUMERICAL' && (target.unit === 'mm²' || target.unit === 'mm2')) {
@@ -1080,7 +1117,7 @@ export default class extends Component {
                             targetType: target.annotationType,
                             measure: target.unit,
                             color: target.targetColor,
-                            label: `${type}${target.targetName} ${target.unit}`
+                            label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                         })
                     } else {
                         if ((annotation.annotationType === 'angle') && target.annotationType === 'NUMERICAL' && (target.unit === '°' || target.unit === 'DEG' || target.unit === 'deg')) {
@@ -1089,7 +1126,7 @@ export default class extends Component {
                                 targetType: target.annotationType,
                                 measure: target.unit,
                                 color: target.targetColor,
-                                label: `${type}${target.targetName} ${target.unit}`
+                                label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                             })
                         } else {
                             if ((annotation.annotationType === 'occurrence') && target.annotationType === 'NUMERICAL' && (target.unit === '#' || target.unit === 'N')) {
@@ -1098,7 +1135,7 @@ export default class extends Component {
                                     targetType: target.annotationType,
                                     measure: target.unit,
                                     color: target.targetColor,
-                                    label: `${type}${target.targetName} ${target.unit}`
+                                    label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                                 })
                             } else {
                                 if ((annotation.annotationType === ANNOTATION_MARKER ||
@@ -1113,7 +1150,7 @@ export default class extends Component {
                                         measure: target.unit,
                                         color: target.targetColor,
                                         targetGroup: target.targetType,
-                                        label: `${type}${target.targetName} ${target.unit}`,
+                                        label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                                     })
                                 }
                             }

@@ -442,13 +442,14 @@ export const deleteTag = name => ({
     name
 });
 
-export const editAnnotation = (pictureId, annotationType, annotationId, title, text, annotationData) => ({
+export const editAnnotation = (pictureId, annotationType, annotationId, title, text, coverage, annotationData) => ({
     type: EDIT_ANNOTATION,
     annotationId,
     annotationType,
     pictureId,
     text,
     title,
+    coverage,
     annotationData
 });
 
@@ -772,11 +773,12 @@ export const deleteCartel = (pictureId, id) => ({
     id
 });
 
-export const updatePictureDate = (sha1, date, exifPlace) => ({
+export const updatePictureDate = (sha1, date, exifPlace, placeName) => ({
     type: UPDATE_PICTURE_DATE,
     sha1,
     date,
-    exifPlace
+    exifPlace,
+    placeName
 });
 
 export const updateMozaicToggle = (tabName, showMozaicCollection, showMozaicDetails) => ({

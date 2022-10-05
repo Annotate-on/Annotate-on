@@ -260,7 +260,88 @@
     cursor: pointer;
     float: right;
   }
-
 }
 
+.geolocation-widget {
+  margin-bottom: 1rem;
+  position: relative;
 
+  .geolocation-widget-editor {
+    padding: 5px;
+    border: 1px solid #ced4da;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    //border-top: none;
+    position: absolute;
+    //background-color: white;
+    background-color: #e9ecef;
+    width: 100%;
+    bottom: 30px;
+
+    .geolocation-widget-editor-section {
+
+      .form-group {
+        margin-bottom: 3px;
+      }
+
+      .geolocation-widget-editor-section-title {
+        font-size: 14px;
+        font-weight: bold;
+        padding-bottom: 3px;
+        margin-bottom: 5px;
+        margin-top: 5px;
+        border-bottom: 1px solid #ced4da;
+      }
+
+      label {
+        font-size: 14px;
+        margin-bottom: 2px;
+        margin-left: 3px;
+      }
+      .actions-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 3px;
+         button{
+           margin-left: 5px;
+         }
+      }
+    }
+
+    .alert {
+      margin-bottom: 0px;
+    }
+
+    .pick-location-btn {
+      padding: 2px;
+      width: 100%;
+      margin-bottom: 3px;
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+.pick-location-map.pick-location-map-edit {
+  cursor: default;
+}
+
+.pick-location-map {
+  .map-marker-popup {
+    .attributes-holder {
+      text-align: left;
+      display: flex;
+      flex-direction: row;
+    }
+    .metadata-title {
+      color: #999999;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      font-size: 10pt;
+      width: 50px;
+      text-align: right;
+      padding-right: 5px;
+    }
+  }
+}

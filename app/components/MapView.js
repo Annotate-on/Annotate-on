@@ -11,7 +11,7 @@ import _ from "lodash";
 import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
 import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
 import Chance from "chance";
-import {getNewTabName} from "./event/utils";
+import {getDecimalLocation, getNewTabName, validateLocationInput} from "./event/utils";
 const chance = new Chance();
 
 const _Root = styled.div`
@@ -31,7 +31,7 @@ const _Panel = styled.div`
 
 const _MapPlaceholder = styled.div`
     width: 100%;
-    height: 100%;
+    height: calc(100% - 40px);
     position: relative;
 `;
 
@@ -65,26 +65,31 @@ export default class MapView extends Component {
     _doFindLocations = () => {
         let resourcesWithGeoLocation = [];
         let resourcesWithoutGeoLocation = [];
+
         for (const resource of this.props.resources) {
             if(resource.exifPlace) {
-                const exifPlaceArr = resource.exifPlace.split(',');
-                if(!exifPlaceArr && exifPlaceArr.length != 2) {
-                    console.log('wrong format of exifPlace');
-                    resourcesWithoutGeoLocation.push(resource);
-                } else {
+                const valid = validateLocationInput(resource.exifPlace);
+                console.log('exifPlace', resource.exifPlace);
+                if(valid) {
                     const location = {
-                        latLng : [+exifPlaceArr[0], +exifPlaceArr[1]],
-                        resource : resource
+                        latLng : getDecimalLocation(resource.exifPlace),
+                        resource : resource,
+                        current: resource.sha1 === this.props.currentPictureSelection.sha1
                     };
                     resourcesWithGeoLocation.push(location);
+                } else {
+                    console.log('wrong format of exifPlace');
+                    resourcesWithoutGeoLocation.push(resource);
                 }
             } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.decimallatitude && resource.erecolnatMetadata.decimallongitude) {
                 const location = {
                     latLng : [+resource.erecolnatMetadata.decimallatitude, +resource.erecolnatMetadata.decimallongitude],
-                    resource : resource
+                    resource : resource,
+                    current: resource.sha1 === this.props.currentPictureSelection.sha1
                 };
                 resourcesWithGeoLocation.push(location);
             } else {
+                console.log('there is no geolocation data');
                 resourcesWithoutGeoLocation.push(resource);
             }
         }
@@ -204,6 +209,7 @@ export default class MapView extends Component {
                             </div>
                         </_DockedPanel>
                         <LeafletMap locations={this.state.resourcesWithGeoLocation}
+                                    fitToBounds = {this.props.fitToBounds}
                                     selectedResources = {this.state.selectedResources}
                                     onOpenResource={this._onOpenResource}
                                     onSelectResource={this._onSelectResource}
@@ -212,9 +218,7 @@ export default class MapView extends Component {
                         </LeafletMap>
                     </_MapPlaceholder>
                 </_Panel>
-
             </_Root>
         );
     }
-
 }

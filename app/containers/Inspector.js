@@ -35,8 +35,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        editAnnotation: (pictureId, annotationType, annotationId, title, text, annotation) => {
-            dispatch(editAnnotation(pictureId, annotationType, annotationId, title, text, annotation));
+        editAnnotation: (pictureId, annotationType, annotationId, title, text, coverage, annotation) => {
+            dispatch(editAnnotation(pictureId, annotationType, annotationId, title, text, coverage, annotation));
         },
         focusAnnotation: (annotationId, annotationType, pictureId, ratioLine1, ratioLine2) => {
             dispatch(focusAnnotation(annotationId, annotationType, pictureId, ratioLine1, ratioLine2));

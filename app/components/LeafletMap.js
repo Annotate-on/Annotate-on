@@ -6,13 +6,14 @@ import styled from "styled-components";
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import PIN from "./pictures/location-dot-solid.svg";
 import PIN_RED from "./pictures/location-dot-solid-red.svg";
+import PIN_BLUE from "./pictures/location-dot-solid-blue.svg";
 import moment from "moment";
 import {EditControl} from "react-leaflet-draw";
 
 const _Root = styled.div`
     display: grid;
     grid-template-rows: auto;
-    height: calc(100% - 40px);
+    height: 100%;
  `;
 
 const _LeafletDiv = styled.div`
@@ -22,16 +23,23 @@ const _LeafletDiv = styled.div`
 
 export const pointerIcon = new L.Icon({
     iconUrl: PIN,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export const pointerIconRed = new L.Icon({
     iconUrl: PIN_RED,
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
+})
+
+export const pointerIconBlue = new L.Icon({
+    iconUrl: PIN_BLUE,
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
 })
 
 export default class LeafletMap extends Component {
@@ -56,31 +64,25 @@ export default class LeafletMap extends Component {
         if(bounds && bounds.isValid()) {
             map.fitBounds(this.clusterRef.leafletElement.getBounds());
         }
-        console.log(this.clusterRef)
     };
 
     componentDidMount() {
-        console.log("componentDidMount", this.mapRef.current)
-        console.log(this.props.locations)
         if (this.mapRef.current){
             this._clearMap();
             this._initLeaflet();
-            setTimeout(() => {
-                this._fitMapToMarkers();
-            }, 100)
+            if(this.props.fitToBounds === "true") {
+                setTimeout(() => {
+                    this._fitMapToMarkers();
+                }, 100)
+            }
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("componentDidUpdate ", this.mapRef.current);
         if (this.mapRef.current) {
             this._clearMap();
             this._initLeaflet();
         }
-    }
-
-    componentWillUnmount() {
-        console.log("componentWillUnmount", this.mapRef.current);
     }
 
     _clearMap = () => {
@@ -153,7 +155,12 @@ export default class LeafletMap extends Component {
 
     render() {
         const {t} = i18next;
-        const position = [this.state.lat, this.state.lng]
+        let position = [this.state.lat, this.state.lng]
+        for (const location of this.props.locations) {
+            if(location.current) {
+                position = location.latLng;
+            }
+        }
         return (
             <_Root>
                 <_LeafletDiv>
@@ -169,13 +176,13 @@ export default class LeafletMap extends Component {
                          }}
 
                          onKeyDown={e => {
-                             console.log("onKeydown");
-                             console.log(e);
+                             // console.log("onKeydown");
+                             // console.log(e);
                          }}
 
                          onKeyUp={e => {
-                             console.log("onKeyup");
-                             console.log(e)
+                             // console.log("onKeyup");
+                             // console.log(e)
                          }}>
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -186,7 +193,8 @@ export default class LeafletMap extends Component {
                         }}>
                             {this.props.locations.map((location, index) => {
                                 return <Marker key={index} position={location.latLng}
-                                               icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed : pointerIcon}
+                                               icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed :
+                                                   (location.current ? pointerIconBlue : pointerIcon)}
                                         onClick={(e) => {
                                             if(e.originalEvent.shiftKey) {
                                                 this.props.onSelectResource(location.resource.sha1);
@@ -216,7 +224,7 @@ export default class LeafletMap extends Component {
                                                 });
                                             }
                                         }}>
-                                    <Popup >
+                                    location.resource && <Popup >
                                         <div className={"map-marker-popup"}>
                                             {location.resource.erecolnatMetadata ?
                                                 <div className="attributes-holder">
@@ -267,10 +275,13 @@ export default class LeafletMap extends Component {
                                                         </div>
                                                     </div>
                                             }
-                                            <img className="img-panel"
-                                                 alt="img panel"
-                                                 src={location.resource.thumbnail}>
-                                            </img>
+                                            {location.resource.thumbnail &&
+                                                <img className="img-panel"
+                                                     alt="img panel"
+                                                     src={location.resource.thumbnail}>
+                                                </img>
+                                            }
+                                            <br/>
                                             <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
                                         </div>
                                     </Popup>
@@ -297,5 +308,4 @@ export default class LeafletMap extends Component {
             </_Root>
         );
     }
-
 }

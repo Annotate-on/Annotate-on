@@ -140,6 +140,9 @@ export default class extends Component {
         const sortedPicturesList = this._sortList(sortBy, sortDirection, initPicturesList);
         const currentPictureSelection = this.props.allPictures[this.props.tabData[this.props.tabName].pictures_selection[this.props.currentPictureIndexInSelection]];
 
+        const picView = this.props.match  ? this.props.match.params.picView : this.props.tabData[this.props.tabName].subview || LIST_VIEW;
+        const fitToBounds = this.props.match  ? this.props.match.params.fitToBounds : "true";
+
         this.state = {
             // Current picture for preview
             currentPicture: sortedPicturesList[0],
@@ -153,7 +156,8 @@ export default class extends Component {
             sortedPicturesList,
             windowScrollerEnabled: false,
             selectedPictures: [],
-            picView: this.props.tabData[this.props.tabName].subview || LIST_VIEW,
+            picView: picView,
+            fitToBounds: fitToBounds,
             numberOfFolders: this.props.tabData[this.props.tabName].selected_folders.length,
             numberOfTags: this.props.tabData[this.props.tabName].selected_tags.length,
             selectAll: false,
@@ -167,6 +171,7 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        console.log("componentWillReceiveProps", this.props.match);
         if (skipSort) {
             skipSort = false;
             return;
@@ -362,7 +367,10 @@ export default class extends Component {
                                                 }}
                                                 openMapView={() => {
                                                     this.props.tabData[this.props.tabName].subview = MAP_VIEW;
-                                                    this.setState({picView: MAP_VIEW});
+                                                    this.setState({
+                                                        picView: MAP_VIEW,
+                                                        fitToBounds: "true"
+                                                    });
                                                 }}
                                                 skipReSort={(value) => skipSort = value}
                                     />
@@ -386,7 +394,10 @@ export default class extends Component {
                                                     <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
                                                          onClick={() => {
                                                              this.props.tabData[this.props.tabName].subview = MAP_VIEW;
-                                                             this.setState({picView: MAP_VIEW})
+                                                             this.setState({
+                                                                 picView: MAP_VIEW,
+                                                                 fitToBounds: "true"
+                                                             });
                                                          }}>
                                                         <img alt="map view" src={MAP}/>
                                                     </div>
@@ -525,6 +536,7 @@ export default class extends Component {
                                                                         return rowData.sort_type;
                                                                     }}
                                                             />
+
                                                             <Column
                                                                 dataKey="sort_tags"
                                                                 label={t('library.table_column_tags')}
@@ -543,16 +555,24 @@ export default class extends Component {
                                                                         rowData.sort_tags += this.props.tagsByPicture[rowData.sha1].length
                                                                     }
                                                                     return rowData.sort_tags;
-                                                                }
-                                                                }
+                                                                }}
                                                             />
                                                             <Column dataKey="exifDate"
                                                                     label={t('library.table_column_exif_date')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                            />
                                                             <Column dataKey="exifPlace" label={t('library.table_column_exif_place')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                                    cellRenderer={({rowData}) => {
+                                                                        if(rowData.placeName) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.placeName}</div>)
+                                                                        } else if(rowData.exifPlace) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.exifPlace}</div>)
+                                                                        }
+                                                                    }}
+                                                            />
 
                                                         </Table>
                                                     )}
@@ -605,6 +625,8 @@ export default class extends Component {
                                 {this.state.picView === MAP_VIEW &&
                                     <MapView resources={this.state.sortedPicturesList}
                                              tabName={this.props.tabName}
+                                             currentPictureSelection={this.state.currentPictureSelection}
+                                             fitToBounds={this.state.fitToBounds}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                             this.setState({picView: LIST_VIEW});
