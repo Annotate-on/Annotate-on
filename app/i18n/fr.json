@@ -128,6 +128,7 @@
       "tooltip_edit_annotation": "Edit annotation",
       "tooltip_delete_annotation": "Delete annotation",
       "tooltip_add_keyword": "Add keyword",
+      "tooltip_add_location": "Add location",
       "dialog_title_select_values_for_character": "Select value(s) for character",
       "dialog_title_enter_text": "Enter text",
       "select_character_label": "Choose a character",
