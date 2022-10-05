@@ -65,6 +65,7 @@ import Select from "react-select";
 import {acceptedTypes} from "../utils/annotationRecording";
 import {withTranslation} from "react-i18next";
 
+const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
 const ADD_TAG = require('./pictures/add-tag-annotation.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
 const DELETE_ANNOTATION = require('./pictures/delete-anotation.svg');
@@ -247,7 +248,7 @@ export default class extends Component {
         if (nextProps.editedAnnotation && nextProps.editedAnnotation !== this.state.editedAnnotation && canEdit) {
             this.setState({editedAnnotation: nextProps.editedAnnotation});
         } else if (!canEdit) {
-            this.setState({editedAnnotation: null, openAddTag: false});
+            this.setState({editedAnnotation: null, openAddTag: false, openEditLocation: false});
         }
 
         // Open edit of video and event annotation on annotation record start.
@@ -302,13 +303,14 @@ export default class extends Component {
                 fireSaveEvent={this.props.fireSaveEvent}
                 annotation={this.state.editedAnnotation}
                 openAddTag={this.state.openAddTag}
+                openEditLocation={this.state.openEditLocation}
                 tabName={this.props.tabName}
                 sha1={this.props.picture.sha1}
                 isAnnotationRecording = {this.props.isAnnotationRecording}
                 cancel={() => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , false);
                     this.props.saveOrCancelEditAnnotation(false , null , null , this.state.editedAnnotation.annotationType === 'chronothematique');
-                    this.setState({editedAnnotation: null, openAddTag: false});
+                    this.setState({editedAnnotation: null, openAddTag: false, openEditLocation:false});
                 }}
                 save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType , person , date, location , tags , topic, coverage) => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , false);
@@ -396,7 +398,7 @@ export default class extends Component {
                         }
 
                         targetUpdated = true;
-                        this.setState({editedAnnotation: null, openAddTag: false});
+                        this.setState({editedAnnotation: null, openAddTag: false, openEditLocation:false});
                     }
                 }}
             />
@@ -854,7 +856,7 @@ export default class extends Component {
                                  alt={annotation.annotationType}
                                  src={require('./pictures/' + annotation.annotationType + '.svg')}/>
                         </Col>
-                        <Col md={8} lg={8} sm={8}>
+                        <Col md={7} lg={7} sm={7}>
                             <div className="annotation_title"
                                  style={{color: (!('color' in annotation) || annotation.color === "-1") ? "#333333" : targetColors[descriptor.descriptorId]}}>
                                 {
@@ -901,9 +903,30 @@ export default class extends Component {
                             </div>
                         </Col>
                         {
-                            !this.props.isFromLibraryView ? <Col md={3} lg={3} sm={3}
+                            !this.props.isFromLibraryView ? <Col md={4} lg={4} sm={4}
                                 // className={(!this.props.readOnly && this.state.hover === annotation.id) ? 'action-row' : 'hidden'}>
                                                                  className={'action-row'}>
+
+                                <img alt="add location " className="btn_menu" src={MAP_LOCATION} title={t('inspector.tooltip_add_location')} height="16px"
+                                     onClick={event => {
+                                         event.preventDefault();
+                                         event.stopPropagation();
+                                         if (this.state.isAnnotateEventRecording) {
+                                             return false;
+                                         }
+                                         if (this.props.currentAnnotationTool) {
+                                             let options = {
+                                                 type: "info",
+                                                 title: t('global.attention'),
+                                                 buttons: ["OK"],
+                                                 message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
+                                             }
+                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                         } else {
+                                             this.setState({editedAnnotation: annotation, openEditLocation: true});
+                                         }
+                                     }
+                                }/>
                                 <img alt="add keyword" className="btn_menu" src={ADD_TAG} title={t('inspector.tooltip_add_keyword')} onClick={event => {
                                     event.preventDefault();
                                     event.stopPropagation();
@@ -960,7 +983,7 @@ export default class extends Component {
                                          }
                                          deleteCallback(this.props.picture.sha1, annotation)
                                      }}/>
-                            </Col> : <Col md={3} lg={3} sm={3}/>
+                            </Col> : <Col md={4} lg={4} sm={4}/>
                         }
                     </Row>
                     {this.props.selectedTaxonomy ?

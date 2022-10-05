@@ -50,6 +50,7 @@ import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
 import GeolocationWidget from "./GeolocationWidget";
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
+const VIEW_PICK_A_LOCATION = 'VIEW_PICK_A_LOCATION';
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
 const customStyles = {
@@ -247,7 +248,6 @@ export default class extends Component {
         ee.removeListener(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
         ee.removeListener(EVENT_ON_TAG_DROP , this.onTagDropEvent)
         ee.removeListener(NOTIFY_CURRENT_TIME , this.setTagStartTime)
-
     }
 
     onTagDropEvent = () => {
@@ -869,6 +869,7 @@ export default class extends Component {
                                                    this.state.coverage.spatial.location.latitude : null}
                                                longitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?
                                                    this.state.coverage.spatial.location.longitude : null}
+                                               openEdit={this.props.openEditLocation}
                                                onValueChange={this.handleSpatialLocationChange}/>
                         </Col>
                     </FormGroup>

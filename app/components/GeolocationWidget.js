@@ -9,7 +9,7 @@ export default class GeolocationWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inEdit: false,
+            inEdit: this.props.openEdit ? true : false,
             value: '',
             place: '',
             latLng: '',
@@ -217,9 +217,9 @@ export default class GeolocationWidget extends Component {
                             <Label for="place" className="label-for1">{t('inspector.metadata.geolocation.popup_lbl_place_name')}</Label>
                             <InputGroup>
                                 <Input type="text" name="place" id="location.place"
-                                    // placeholder=
                                        value={this.state.place}
                                        onChange={this._formChangeHandler}
+                                       autoFocus={true}
                                        onKeyDown={(e) => {
                                            if (e.key === 'Enter' && e.type === 'keydown') {
                                                this._onSearchByPlace();
