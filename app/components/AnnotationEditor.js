@@ -1108,7 +1108,7 @@ export default class extends Component {
                         targetType: target.annotationType,
                         measure: target.unit,
                         color: target.targetColor,
-                        label: `${type}${target.targetName} ${target.unit}`
+                        label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                     })
                 } else {
                     if ((annotation.annotationType === 'polygon') && target.annotationType === 'NUMERICAL' && (target.unit === 'mm²' || target.unit === 'mm2')) {
@@ -1117,7 +1117,7 @@ export default class extends Component {
                             targetType: target.annotationType,
                             measure: target.unit,
                             color: target.targetColor,
-                            label: `${type}${target.targetName} ${target.unit}`
+                            label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                         })
                     } else {
                         if ((annotation.annotationType === 'angle') && target.annotationType === 'NUMERICAL' && (target.unit === '°' || target.unit === 'DEG' || target.unit === 'deg')) {
@@ -1126,7 +1126,7 @@ export default class extends Component {
                                 targetType: target.annotationType,
                                 measure: target.unit,
                                 color: target.targetColor,
-                                label: `${type}${target.targetName} ${target.unit}`
+                                label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                             })
                         } else {
                             if ((annotation.annotationType === 'occurrence') && target.annotationType === 'NUMERICAL' && (target.unit === '#' || target.unit === 'N')) {
@@ -1135,7 +1135,7 @@ export default class extends Component {
                                     targetType: target.annotationType,
                                     measure: target.unit,
                                     color: target.targetColor,
-                                    label: `${type}${target.targetName} ${target.unit}`
+                                    label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`
                                 })
                             } else {
                                 if ((annotation.annotationType === ANNOTATION_MARKER ||
@@ -1150,7 +1150,7 @@ export default class extends Component {
                                         measure: target.unit,
                                         color: target.targetColor,
                                         targetGroup: target.targetType,
-                                        label: `${type}${target.targetName} ${target.unit}`,
+                                        label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                                     })
                                 }
                             }
