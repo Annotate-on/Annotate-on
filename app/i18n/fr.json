@@ -157,6 +157,10 @@
         "lbl_tc_out": "TcOut",
         "lbl_character": "Character",
         "lbl_values": "Values",
+        "lbl_coverage": "Coverage",
+        "lbl_temporal": "Temporal",
+        "lbl_spatial": "Spatial",
+
         "tooltip_pick_a_value": "Pick a value",
         "dialog_title_select_value_for_character": "Select value for character",
         "dialog_title_edit_text": "Edit text"
@@ -229,7 +233,7 @@
           "textbox_placeholder_latitude":"Latitude",
           "textbox_placeholder_longitude":"Longitude",
           "dialog_pick_location_title": "Pick a location",
-          "popup_lbl_new_edit_geolocation": "New edit geolocation",
+          "popup_lbl_new_edit_geolocation": "New/edit geolocation",
           "popup_lbl_place_name": "Locality name",
           "popup_lbl_lat_lng": "Latitude, Longitude",
           "popup_btn_add_location": "Add location",

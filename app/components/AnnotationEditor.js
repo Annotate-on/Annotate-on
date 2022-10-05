@@ -47,6 +47,7 @@ import {
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
+import GeolocationWidget from "./GeolocationWidget";
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
@@ -96,6 +97,7 @@ export default class extends Component {
         }
 
         let value;
+        let coverage = props.annotation.coverage;
         switch (props.annotation.annotationType) {
             case ANNOTATION_EVENT_ANNOTATION:
                 value = props.annotation.value;
@@ -198,7 +200,8 @@ export default class extends Component {
             locationTags : locationTags,
             noteTags : noteTags,
             activeDropZone: null,
-            tagStartTime: 0
+            tagStartTime: 0,
+            coverage: coverage
         };
     }
 
@@ -229,8 +232,6 @@ export default class extends Component {
             })
         }
     }
-
-
 
     componentDidMount() {
         ee.on(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
@@ -369,6 +370,20 @@ export default class extends Component {
         }
     }
 
+    handleSpatialLocationChange = (event) => {
+        // console.log("handleSpatialLocationChange", event);
+        const { value } = event.target;
+        const coverage = this.state.coverage ?  {...this.state.coverage} : { spatial: {}};
+        coverage.spatial.placeName = value.place ? value.place : '';
+        coverage.spatial.location = {
+            latitude: value.latitude,
+            longitude: value.longitude
+        };
+        this.setState({
+            coverage: coverage,
+        });
+    }
+
     render() {
         let key = 0;
         const { t } = this.props;
@@ -406,7 +421,7 @@ export default class extends Component {
                                         <Button disabled={this.state.title.length < 3 || this.state.end < this.state.start} color="primary" onClick={ () => {
                                             this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
                                                 this.state.targetColor, this.state.descriptor.value, this.state.value,
-                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic);
+                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic, this.state.coverage);
                                         }}>{t('global.save')}</Button>
                                     </Col>
                                     <Col sm={{ size: 3, offset: 1 }}>
@@ -757,7 +772,7 @@ export default class extends Component {
                     {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ? <Fragment>
                         <FormGroup row>
                             <Col md={{size: 9, offset: 0}} className="local-title">
-                                Character
+                                {t('inspector.annotation_editor.lbl_character')}
                             </Col>
                         </FormGroup>
                         <hr/>
@@ -836,6 +851,27 @@ export default class extends Component {
                             </Col>
                         </FormGroup> : null
                     }
+                    <FormGroup row>
+                        <Col md={{size: 9, offset: 0}} className="local-title">
+                            {t('inspector.annotation_editor.lbl_coverage')}
+                        </Col>
+                    </FormGroup>
+                    <hr/>
+                    <FormGroup row>
+                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>
+                        <Col sm={9}>
+                        </Col>
+                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>
+                        <Col sm={9}>
+                            <GeolocationWidget name="geolocation"
+                                               place={(this.state.coverage && this.state.coverage.spatial) ?  this.state.coverage.spatial.placeName : ''}
+                                               latitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?
+                                                   this.state.coverage.spatial.location.latitude : null}
+                                               longitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?
+                                                   this.state.coverage.spatial.location.longitude : null}
+                                               onValueChange={this.handleSpatialLocationChange}/>
+                        </Col>
+                    </FormGroup>
                 </Form>
 
                 <div>

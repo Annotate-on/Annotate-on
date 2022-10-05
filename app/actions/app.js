@@ -442,13 +442,14 @@ export const deleteTag = name => ({
     name
 });
 
-export const editAnnotation = (pictureId, annotationType, annotationId, title, text, annotationData) => ({
+export const editAnnotation = (pictureId, annotationType, annotationId, title, text, coverage, annotationData) => ({
     type: EDIT_ANNOTATION,
     annotationId,
     annotationType,
     pictureId,
     text,
     title,
+    coverage,
     annotationData
 });
 

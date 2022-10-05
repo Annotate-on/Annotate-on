@@ -2248,6 +2248,7 @@ export default (state = {}, action) => {
 
             annotation.text = action.text;
             annotation.title = action.title;
+            annotation.coverage = action.coverage;
             if (action.annotationType === ANNOTATION_MARKER ||
                 action.annotationType === ANNOTATION_RECTANGLE ||
                 action.annotationType === ANNOTATION_COLORPICKER ||

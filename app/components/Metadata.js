@@ -132,10 +132,6 @@ export default class extends Component {
         }))
     }
 
-    _openInGoogleMaps(locationCoordinates) {
-        shell.openExternal(`https://www.google.com/maps/place/${locationCoordinates}`);
-    }
-
     _formChangeHandler = ( event ) => {
         // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
@@ -263,11 +259,6 @@ export default class extends Component {
             (val) => val.length > 0 && (valid = false)
         );
         return valid;
-    };
-
-    _showLocationOnMap = ( ) => {
-        console.log("showLocationOnMap", event);
-        this.props.goToLibrary();
     };
 
     render() {
@@ -546,8 +537,7 @@ export default class extends Component {
                         <GeolocationWidget name="geolocation"
                                            place={this.state.metadata.iptc.placeName}
                                            location={this.state.metadata.iptc.location}
-                                           onValueChange={this._formChangeHandler}
-                                           onShowLocationOnMap = {this._showLocationOnMap}/>
+                                           onValueChange={this._formChangeHandler}/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}

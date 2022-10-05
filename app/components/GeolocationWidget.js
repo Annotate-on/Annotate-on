@@ -20,17 +20,24 @@ export default class GeolocationWidget extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        const coordinates = props.location.split(/[ ,]+/);
-        const lat = coordinates[0];
-        const lng = coordinates[1];
+        let lat;
+        let lng;
+        if(props.location) {
+            const coordinates = props.location.split(/[ ,]+/);
+            if(coordinates.length < 1) {
+                lat = coordinates[0];
+                lng = coordinates[1];
+            }
+        }
 
-        let latitude = props.latitude ? this.props.latitude : lat;
-        let longitude = props.longitude ? this.props.longitude : lng;
+        let latitude = props.latitude ? props.latitude : lat;
+        let longitude = props.longitude ? props.longitude : lng;
 
         let place = props.place? props.place: '';
         let latLng = (!latitude && !longitude) ? '' : `${latitude ? latitude: ''},${longitude? longitude: ''}`;
         let value = (!props.place && !latitude && !longitude) ? '' :
             `${place} (${latitude ? latitude: ''},${longitude? longitude: ''})`;
+
         return {
             value: value,
             place: state.inEdit ? state.place : place,

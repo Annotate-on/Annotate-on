@@ -310,7 +310,7 @@ export default class extends Component {
                     this.props.saveOrCancelEditAnnotation(false , null , null , this.state.editedAnnotation.annotationType === 'chronothematique');
                     this.setState({editedAnnotation: null, openAddTag: false});
                 }}
-                save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType , person , date, location , tags , topic) => {
+                save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType , person , date, location , tags , topic, coverage) => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , false);
                     if (this.state.editedAnnotation) {
                         const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue , this.state.editedAnnotation.annotationType === 'chronothematique' , person , date, location);
@@ -321,6 +321,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                         }else if (this.state.editedAnnotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
@@ -332,6 +333,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                         }
@@ -356,6 +358,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                             this.props.setAnnotationColor(this.state.editedAnnotation.id, color);
@@ -385,6 +388,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                             this.props.createTargetInstance(NUMERICAL, this.props.tabName, this.state.editedAnnotation.id, targetId, value);

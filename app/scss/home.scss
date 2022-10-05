@@ -279,7 +279,13 @@
     bottom: 30px;
 
     .geolocation-widget-editor-section {
+
+      .form-group {
+        margin-bottom: 3px;
+      }
+
       .geolocation-widget-editor-section-title {
+        font-size: 14px;
         font-weight: bold;
         padding-bottom: 3px;
         margin-bottom: 5px;
@@ -288,6 +294,7 @@
       }
 
       label {
+        font-size: 14px;
         margin-bottom: 2px;
         margin-left: 3px;
       }
@@ -306,6 +313,7 @@
     }
 
     .pick-location-btn {
+      padding: 2px;
       width: 100%;
       margin-bottom: 3px;
       i {
