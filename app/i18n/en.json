@@ -161,7 +161,6 @@
         "lbl_coverage": "Coverage",
         "lbl_temporal": "Temporal",
         "lbl_spatial": "Spatial",
-
         "tooltip_pick_a_value": "Pick a value",
         "dialog_title_select_value_for_character": "Select value for character",
         "dialog_title_edit_text": "Edit text"
@@ -214,6 +213,8 @@
         "textbox_tooltip_relation": "Relation",
         "textbox_placeholder_coverage_place": "Coverage / place",
         "textbox_tooltip_coverage_place": "Coverage / place",
+        "textbox_placeholder_coverage_temporal": "Coverage / temporal",
+        "textbox_tooltip_coverage_temporal": "Coverage / temporal",
         "textbox_placeholder_rights_usage_terms": "Rights Usage Terms",
         "textbox_tooltip_rights_usage_terms": "Rights Usage Terms",
         "textbox_placeholder_contact": "Contact",
@@ -225,6 +226,7 @@
         "textbox_tooltip_resolution": "Resolution",
         "textbox_placeholder_orientation": "Orientation",
         "textbox_tooltip_orientation": "Orientation",
+
         "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
         "geolocation": {
           "lbl_search_for_location": "Search for location",

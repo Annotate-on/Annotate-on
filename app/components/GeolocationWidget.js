@@ -165,7 +165,7 @@ export default class GeolocationWidget extends Component {
     render() {
         const {t} = i18next;
         const {errors} = this.state;
-        return <div className="geolocation-widget">
+        return <div className="geolocation-widget popup-widget">
             <div>
                 <PickLocation
                     location = {this.state.location}
@@ -195,13 +195,13 @@ export default class GeolocationWidget extends Component {
                 </InputGroupAddon>
             </InputGroup>
             {this.state.inEdit &&
-                <div className="geolocation-widget-editor">
-                    <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">
+                <div className="widget-editor">
+                    <div className="widget-editor-section">
+                        <div className="widget-editor-section-title">
                             {t('inspector.metadata.geolocation.popup_lbl_new_edit_geolocation')}
                         </div>
                     </div>
-                    <div className="geolocation-widget-editor-section">
+                    <div className="widget-editor-section">
                         <FormGroup className="column">
                             <Label for="place" className="label-for1">{t('inspector.metadata.geolocation.popup_lbl_place_name')}</Label>
                             <InputGroup>

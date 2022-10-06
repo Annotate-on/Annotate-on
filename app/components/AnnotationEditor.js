@@ -48,6 +48,7 @@ import {
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
 import GeolocationWidget from "./GeolocationWidget";
+import DatingWidget from "./DatingWidget";
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 const VIEW_PICK_A_LOCATION = 'VIEW_PICK_A_LOCATION';
@@ -859,10 +860,11 @@ export default class extends Component {
                     <hr/>
                     <FormGroup row>
                         <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>
-                        <Col sm={9}>
+                        <Col sm={9} className="coverage-editor-holder">
+                            <DatingWidget value={"2022/12/12"} openEdit={this.props.openEditDating}/>
                         </Col>
                         <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>
-                        <Col sm={9}>
+                        <Col sm={9} className="coverage-editor-holder">
                             <GeolocationWidget name="geolocation"
                                                place={(this.state.coverage && this.state.coverage.spatial) ?  this.state.coverage.spatial.placeName : ''}
                                                latitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?

@@ -262,11 +262,11 @@
   }
 }
 
-.geolocation-widget {
+.popup-widget {
   margin-bottom: 1rem;
   position: relative;
 
-  .geolocation-widget-editor {
+  .widget-editor {
     padding: 5px;
     border: 1px solid #ced4da;
     border-top-left-radius: 5px;
@@ -278,13 +278,13 @@
     width: 100%;
     bottom: 30px;
 
-    .geolocation-widget-editor-section {
+    .widget-editor-section {
 
       .form-group {
         margin-bottom: 3px;
       }
 
-      .geolocation-widget-editor-section-title {
+      .widget-editor-section-title {
         font-size: 14px;
         font-weight: bold;
         padding-bottom: 3px;
@@ -344,4 +344,12 @@
       padding-right: 5px;
     }
   }
+}
+
+.dating-widget {
+
+}
+
+.coverage-editor-holder {
+  margin-bottom: 5px;
 }
