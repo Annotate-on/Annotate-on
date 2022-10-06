@@ -9,7 +9,7 @@ export default class GeolocationWidget extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inEdit: this.props.openEdit ? true : false,
+            inEdit: false,
             value: '',
             place: '',
             latLng: '',
@@ -24,7 +24,7 @@ export default class GeolocationWidget extends Component {
         let lng;
         if(props.location) {
             const coordinates = props.location.split(/[ ,]+/);
-            if(coordinates.length < 1) {
+            if(coordinates.length > 1) {
                 lat = coordinates[0];
                 lng = coordinates[1];
             }
@@ -46,7 +46,9 @@ export default class GeolocationWidget extends Component {
     }
 
     componentDidMount() {
-        // console.log('componentDidMount', this.state);
+        if(this.props.openEdit) {
+            this._onEdit();
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -80,7 +82,6 @@ export default class GeolocationWidget extends Component {
                 errors: errors
             })
         } else if(this.props.onValueChange) {
-            console.log(this.state.latLng)
             let lat = '';
             let lng = '';
             if(this.state.latLng) {
@@ -143,7 +144,6 @@ export default class GeolocationWidget extends Component {
             showLocationPopup: false,
             errors: ''
         });
-        this.props.onValueChange(event);
     }
 
     -_onSearchByLanLng = () => {
@@ -157,17 +157,6 @@ export default class GeolocationWidget extends Component {
     _formChangeHandler = (event) => {
         const {t} = i18next;
         const {name, value} = event.target;
-        // let errors = this.state.errors;
-        // if (name === 'latLng') {
-        //     let input = value;
-        //     if(input.trim()) {
-        //         errors = validateLocationInput(input)
-        //             ? ''
-        //             : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
-        //     } else {
-        //         errors = ''
-        //     }
-        // }
         this.setState({
             [name]: value
         });
