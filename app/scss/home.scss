@@ -347,9 +347,34 @@
 }
 
 .dating-widget {
-
+  .widget-editor {
+    input[type=date].form-control {
+      width: 130px;
+    }
+    input[type=time].form-control {
+      width: 130px;
+    }
+    input.form-control {
+      width: 100%;
+      padding-left: 2px;
+      padding-right: 2px;
+      &:hover {
+        background-image: none;
+        background-color: inherit;
+        cursor: default;
+      }
+    }
+    .more-options-collapse {
+      margin-top: 10px;
+      label {
+        margin-right: 5px;
+      }
+    }
+  }
 }
 
 .coverage-editor-holder {
   margin-bottom: 5px;
 }
+
+

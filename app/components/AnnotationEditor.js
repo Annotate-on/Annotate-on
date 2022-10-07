@@ -293,7 +293,6 @@ export default class extends Component {
                 this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location);
         }
         ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
-
     }
 
     backToAnnotationEditor = () => {
@@ -374,14 +373,29 @@ export default class extends Component {
     handleSpatialLocationChange = (event) => {
         // console.log("handleSpatialLocationChange", event);
         const { value } = event.target;
-        const coverage = this.state.coverage ?  {...this.state.coverage} : { spatial: {}};
-        coverage.spatial.placeName = value.place ? value.place : '';
-        coverage.spatial.location = {
+        const coverage = this.state.coverage ?  {...this.state.coverage} : {};
+        const spatial = coverage.spatial ? coverage.spatial: {};
+        spatial.placeName = value.place ? value.place : '';
+        spatial.location = {
             latitude: value.latitude,
             longitude: value.longitude
         };
+        coverage.spatial = spatial;
         this.setState({
-            coverage: coverage,
+            coverage: coverage
+        });
+    }
+
+    handleTemporalCoverageChange = (event) => {
+        const { value } = event.target;
+        const coverage = this.state.coverage ?  {...this.state.coverage} : {};
+        const temporal = coverage.temporal ? coverage.temporal: {};
+        temporal.start = value.start ? value.start : '';
+        temporal.end = value.end ? value.end : '';
+        temporal.period = value.period ? value.period : '';
+        coverage.temporal = temporal;
+        this.setState({
+            coverage: coverage
         });
     }
 
@@ -859,12 +873,18 @@ export default class extends Component {
                     </FormGroup>
                     <hr/>
                     <FormGroup row>
-                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>
-                        <Col sm={9} className="coverage-editor-holder">
-                            <DatingWidget value={"2022/12/12"} openEdit={this.props.openEditDating}/>
+                        {/*<Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>*/}
+                        <Col sm={12} className="coverage-editor-holder">
+                            <DatingWidget value={"2022/12/12"}
+                                          openEdit={this.props.openEditDating}
+                                          start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}
+                                          end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}
+                                          period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}
+                                          onValueChange={this.handleTemporalCoverageChange}
+                            />
                         </Col>
-                        <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>
-                        <Col sm={9} className="coverage-editor-holder">
+                        {/*<Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>*/}
+                        <Col sm={12} className="coverage-editor-holder">
                             <GeolocationWidget name="geolocation"
                                                place={(this.state.coverage && this.state.coverage.spatial) ?  this.state.coverage.spatial.placeName : ''}
                                                latitude ={(this.state.coverage && this.state.coverage.spatial && this.state.coverage.spatial.location) ?

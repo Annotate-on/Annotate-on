@@ -161,7 +161,6 @@
         "lbl_coverage": "Coverage",
         "lbl_temporal": "Temporal",
         "lbl_spatial": "Spatial",
-
         "tooltip_pick_a_value": "Pick a value",
         "dialog_title_select_value_for_character": "Select value for character",
         "dialog_title_edit_text": "Edit text"
@@ -214,6 +213,8 @@
         "textbox_tooltip_relation": "Relation",
         "textbox_placeholder_coverage_place": "Coverage / place",
         "textbox_tooltip_coverage_place": "Coverage / place",
+        "textbox_placeholder_coverage_temporal": "Coverage / temporal",
+        "textbox_tooltip_coverage_temporal": "Coverage / temporal",
         "textbox_placeholder_rights_usage_terms": "Rights Usage Terms",
         "textbox_tooltip_rights_usage_terms": "Rights Usage Terms",
         "textbox_placeholder_contact": "Contact",
@@ -241,6 +242,15 @@
           "popup_lbl_place": "Place",
           "popup_lbl_lat": "Lat",
           "popup_lbl_lng": "Lng"
+        },
+        "temporal" : {
+          "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
+          "popup_lbl_free_entry_date": "Free entry date",
+          "popup_lbl_formatted_date": "Formatted date",
+          "popup_lbl_more_options": "More options",
+          "popup_lbl_name_of_period": "Name of period",
+          "popup_lbl_free_entry_date_end": "Free entry date end",
+          "popup_lbl_formatted_date_end": "Formatted date end"
         }
       },
       "calibration": {

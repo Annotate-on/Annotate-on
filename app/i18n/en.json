@@ -226,7 +226,6 @@
         "textbox_tooltip_resolution": "Resolution",
         "textbox_placeholder_orientation": "Orientation",
         "textbox_tooltip_orientation": "Orientation",
-
         "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
         "geolocation": {
           "lbl_search_for_location": "Search for location",
@@ -243,6 +242,15 @@
           "popup_lbl_place": "Place",
           "popup_lbl_lat": "Lat",
           "popup_lbl_lng": "Lng"
+        },
+        "temporal" : {
+          "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
+          "popup_lbl_free_entry_date": "Free entry date",
+          "popup_lbl_formatted_date": "Formatted date",
+          "popup_lbl_more_options": "More options",
+          "popup_lbl_name_of_period": "Name of period",
+          "popup_lbl_free_entry_date_end": "Free entry date end",
+          "popup_lbl_formatted_date_end": "Formatted date end"
         }
       },
       "calibration": {
