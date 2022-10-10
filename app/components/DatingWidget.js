@@ -79,10 +79,6 @@ export default class DatingWidget extends Component {
         };
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        // console.log("componentDidUpdate", this.state)
-    }
-
     componentDidMount() {
         if (this.props.openEdit) {
             this._onEdit();
@@ -104,11 +100,7 @@ export default class DatingWidget extends Component {
     }
 
     _formChangeHandler = (event) => {
-        const {t} = i18next;
         const {name, value} = event.target;
-        // console.log("change handler ", event.target)
-        // console.log("change handler name", name)
-        // console.log("change handler value", value)
         let state = {}
         if (name === 'formattedDate' && !value) {
             state.formattedTime = '';

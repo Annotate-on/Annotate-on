@@ -271,9 +271,7 @@
     border: 1px solid #ced4da;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    //border-top: none;
     position: absolute;
-    //background-color: white;
     background-color: #e9ecef;
     width: 100%;
     bottom: 30px;
@@ -346,6 +344,25 @@
   }
 }
 
+.geolocation-widget {
+  .widget-editor {
+    input.form-control {
+      &:hover {
+        background-image: none;
+        cursor: default;
+      }
+      &:not([disabled]):hover {
+        background-color: white;
+      }
+    }
+  }
+  .input-group {
+    input.form-control:hover {
+      background-image: none;
+    }
+  }
+}
+
 .dating-widget {
   .widget-editor {
     input[type=date].form-control {
@@ -360,8 +377,10 @@
       padding-right: 2px;
       &:hover {
         background-image: none;
-        background-color: inherit;
         cursor: default;
+      }
+      &:not([disabled]):hover {
+        background-color: white;
       }
     }
     .more-options-collapse {
@@ -369,6 +388,11 @@
       label {
         margin-right: 5px;
       }
+    }
+  }
+  .input-group {
+    input.form-control:hover {
+      background-image: none;
     }
   }
 }

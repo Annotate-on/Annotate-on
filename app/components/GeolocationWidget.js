@@ -20,6 +20,7 @@ export default class GeolocationWidget extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        if(state.inEdit) return null;
         let lat;
         let lng;
         if(props.location) {
@@ -101,7 +102,12 @@ export default class GeolocationWidget extends Component {
                 },
                 errors: errors
             }
+            this.setState({
+                inEdit: false,
+                errors: ''
+            });
             this.props.onValueChange(event);
+        } else {
             this.setState({
                 inEdit: false,
                 errors: ''
@@ -182,7 +188,7 @@ export default class GeolocationWidget extends Component {
             <InputGroup>
                 <Input type="text" name="location" id="location" readOnly={true}
                        placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
-                       title={t('inspector.metadata.textbox_tooltip_coverage_place')}
+                       title={this.state.value ? this.state.value : t('inspector.metadata.textbox_tooltip_coverage_place')}
                        onClick={() => {
                            if(!this.state.inEdit) this._onEdit()
                        }}
