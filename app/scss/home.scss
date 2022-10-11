@@ -276,12 +276,11 @@
     width: 100%;
     bottom: 30px;
 
+    .form-group {
+      margin-bottom: 3px;
+    }
+
     .widget-editor-section {
-
-      .form-group {
-        margin-bottom: 3px;
-      }
-
       .widget-editor-section-title {
         font-size: 14px;
         font-weight: bold;
@@ -366,10 +365,10 @@
 .dating-widget {
   .widget-editor {
     input[type=date].form-control {
-      width: 130px;
+      width: 115px;
     }
     input[type=time].form-control {
-      width: 130px;
+      width: 100px;
     }
     input.form-control {
       width: 100%;
@@ -388,6 +387,24 @@
       label {
         margin-right: 5px;
       }
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .date-time-input {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between
+    }
+    .icon-calendar-picker {
+      font-size: 20px;
+      margin-left: 10px;
+      cursor: hand;
     }
   }
   .input-group {
