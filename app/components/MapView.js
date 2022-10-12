@@ -5,7 +5,7 @@ import LIST from "./pictures/list_icon.svg";
 import classnames from "classnames";
 import MAP_WHITE from "./pictures/map-location-dot-solid-white.svg";
 import React, {Component} from 'react';
-import LeafletMap from "./LeafletMap";
+import LeafletMap, {MARKER_TYPE_ANNOTATION, MARKER_TYPE_METADATA} from "./LeafletMap";
 import {ee, EVENT_SELECT_TAB, EVENT_OPEN_TAB} from "../utils/library";
 import _ from "lodash";
 import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
@@ -67,41 +67,80 @@ export default class MapView extends Component {
         let resourcesWithoutGeoLocation = [];
 
         for (const resource of this.props.resources) {
+            const annotations = this._mergeAnnotations(this.props, resource.sha1)
+            let locationsFromAnnotations = [];
+            if(annotations) {
+                annotations.filter(annotation => {
+                    if(annotation.coverage && annotation.coverage.spatial) {
+                        const location = {
+                            type: MARKER_TYPE_ANNOTATION,
+                            latLng : getDecimalLocation(`${annotation.coverage.spatial.location.latitude},${annotation.coverage.spatial.location.longitude}`),
+                            resource : resource,
+                            current: resource.sha1 === this.props.currentPictureSelection.sha1
+                        };
+                        locationsFromAnnotations.push(location);
+                    }
+                });
+            }
+            let locationFromMetadata;
             if(resource.exifPlace) {
                 const valid = validateLocationInput(resource.exifPlace);
-                console.log('exifPlace', resource.exifPlace);
                 if(valid) {
-                    const location = {
+                    locationFromMetadata = {
+                        type: MARKER_TYPE_METADATA,
                         latLng : getDecimalLocation(resource.exifPlace),
                         resource : resource,
                         current: resource.sha1 === this.props.currentPictureSelection.sha1
                     };
-                    resourcesWithGeoLocation.push(location);
-                } else {
-                    console.log('wrong format of exifPlace');
-                    resourcesWithoutGeoLocation.push(resource);
                 }
             } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.decimallatitude && resource.erecolnatMetadata.decimallongitude) {
-                const location = {
+                locationFromMetadata = {
+                    type: MARKER_TYPE_METADATA,
                     latLng : [+resource.erecolnatMetadata.decimallatitude, +resource.erecolnatMetadata.decimallongitude],
                     resource : resource,
                     current: resource.sha1 === this.props.currentPictureSelection.sha1
                 };
-                resourcesWithGeoLocation.push(location);
-            } else {
-                console.log('there is no geolocation data');
+            }
+            if (!locationFromMetadata && locationsFromAnnotations) {
                 resourcesWithoutGeoLocation.push(resource);
+            } else {
+                if(locationFromMetadata) {
+                    resourcesWithGeoLocation.push(locationFromMetadata)
+                }
+                if(locationsFromAnnotations) {
+                    resourcesWithGeoLocation.push(...locationsFromAnnotations)
+                }
             }
         }
         const newSelection = _.intersection(resourcesWithGeoLocation.map(e => {
             return e.resource.sha1;
-        }), this.state.selectedResources)
+        }), this.state.selectedResources);
+
         this.setState({
             resourcesWithGeoLocation: resourcesWithGeoLocation,
             resourcesWithoutGeoLocation: resourcesWithoutGeoLocation,
             selectedResources: newSelection
         })
     }
+
+    _mergeAnnotations = (props, resourceId) => {
+        return [
+            ...(props.annotationsChronothematique && props.annotationsChronothematique[resourceId] || []),
+            ...(props.eventAnnotations && props.eventAnnotations[resourceId] || []),
+            ...(props.annotationsPointsOfInterest && props.annotationsPointsOfInterest[resourceId] || []),
+            ...(props.annotationsMeasuresLinear && props.annotationsMeasuresLinear[resourceId] || []),
+            ...(props.annotationsRectangular && props.annotationsRectangular[resourceId] || []),
+            ...(props.annotationsPolygon && props.annotationsPolygon[resourceId] || []),
+            ...(props.annotationsAngle && props.annotationsAngle[resourceId] || []),
+            ...(props.annotationsOccurrence && props.annotationsOccurrence[resourceId] || []),
+            ...(props.annotationsColorPicker && props.annotationsColorPicker[resourceId] || []),
+            ...(props.annotationsRatio && props.annotationsRatio[resourceId] || []),
+            ...(props.annotationsTranscription && props.annotationsTranscription[resourceId] || []),
+            ...(props.annotationsCategorical && props.annotationsCategorical[resourceId] || []),
+            ...(props.annotationsRichtext && props.annotationsRichtext[resourceId] || [])
+        ];
+    };
+
 
     _onOpenResource = (picId) => {
         this.props.setPictureInSelection(picId, this.props.tabName);
@@ -129,7 +168,7 @@ export default class MapView extends Component {
         });
         let newSelection = [...filteredSelection];
         for (const resourceId of resourcesId) {
-            if(!this.state.selectedResources.includes(resourceId)) {
+            if(!this.state.selectedResources.includes(resourceId) && !newSelection.includes(resourceId)) {
                 newSelection.push(resourceId);
             }
         }

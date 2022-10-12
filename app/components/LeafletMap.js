@@ -5,10 +5,14 @@ import L from "leaflet";
 import styled from "styled-components";
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import PIN from "./pictures/location-dot-solid.svg";
+import PIN_ANN from "./pictures/location-pin-solid-annotation.svg";
+import PIN_ANN_RED from "./pictures/location-pin-solid-annotation-red.svg";
+import PIN_ANN_BLUE from "./pictures/location-pin-solid-annotation-blue.svg";
 import PIN_RED from "./pictures/location-dot-solid-red.svg";
 import PIN_BLUE from "./pictures/location-dot-solid-blue.svg";
 import moment from "moment";
 import {EditControl} from "react-leaflet-draw";
+
 
 const _Root = styled.div`
     display: grid;
@@ -20,6 +24,9 @@ const _LeafletDiv = styled.div`
     width: 100%;
     height: 100%;
 `;
+
+export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
+export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 export const pointerIcon = new L.Icon({
     iconUrl: PIN,
@@ -37,6 +44,26 @@ export const pointerIconRed = new L.Icon({
 
 export const pointerIconBlue = new L.Icon({
     iconUrl: PIN_BLUE,
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
+})
+export const pointerAnnIcon = new L.Icon({
+    iconUrl: PIN_ANN,
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
+})
+
+export const pointerAnnIconRed = new L.Icon({
+    iconUrl: PIN_ANN_RED,
+    iconAnchor: [12, 34],
+    popupAnchor: [0, -35],
+    iconSize: [25, 35],
+})
+
+export const pointerAnnIconBlue = new L.Icon({
+    iconUrl: PIN_ANN_BLUE,
     iconAnchor: [12, 34],
     popupAnchor: [0, -35],
     iconSize: [25, 35],
@@ -153,6 +180,16 @@ export default class LeafletMap extends Component {
         return inside;
     };
 
+    _getMarkerIcon(location) {
+        if(this.props.selectedResources.includes(location.resource.sha1)) {
+            return MARKER_TYPE_METADATA === location.type ? pointerIconRed : pointerAnnIconRed;
+        }
+        if(location.current) {
+            return MARKER_TYPE_METADATA === location.type ? pointerIconBlue : pointerAnnIconBlue;
+        }
+        return MARKER_TYPE_METADATA === location.type ? pointerIcon : pointerAnnIcon;
+    }
+
     render() {
         const {t} = i18next;
         let position = [this.state.lat, this.state.lng]
@@ -192,39 +229,39 @@ export default class LeafletMap extends Component {
                             this.clusterRef = markerClusterGroup;
                         }}>
                             {this.props.locations.map((location, index) => {
-                                return <Marker key={index} position={location.latLng}
-                                               icon={this.props.selectedResources.includes(location.resource.sha1) ? pointerIconRed :
-                                                   (location.current ? pointerIconBlue : pointerIcon)}
-                                        onClick={(e) => {
-                                            if(e.originalEvent.shiftKey) {
-                                                this.props.onSelectResource(location.resource.sha1);
-                                            }
-                                            e.target.closePopup();
-                                        }}
+                                return <Marker
+                                    key={index} position={location.latLng}
+                                    icon={this._getMarkerIcon(location)}
+                                    onClick={(e) => {
+                                        if (e.originalEvent.shiftKey) {
+                                            this.props.onSelectResource(location.resource.sha1);
+                                        }
+                                        e.target.closePopup();
+                                    }}
 
-                                        onDblClick={(e) => {
-                                            this.props.onOpenResource(location.resource.sha1);
-                                        }}
+                                    onDblClick={(e) => {
+                                        this.props.onOpenResource(location.resource.sha1);
+                                    }}
 
-                                        onMouseOver={e => {
-                                            e.target.openPopup();
-                                        }}
+                                    onMouseOver={e => {
+                                        e.target.openPopup();
+                                    }}
 
-                                        onMouseOut={e => {
-                                            // e.target.closePopup();
-                                        }}
+                                    onMouseOut={e => {
+                                        // e.target.closePopup();
+                                    }}
 
-                                        onPopupOpen={e => {
-                                            const popUp = e.popup;
-                                            const anchor =popUp.getElement()
-                                                .querySelector('.action');
-                                            if(anchor) {
-                                                anchor.addEventListener("click", e => {
-                                                    this.props.onOpenResource(location.resource.sha1);
-                                                });
-                                            }
-                                        }}>
-                                    location.resource && <Popup >
+                                    onPopupOpen={e => {
+                                        const popUp = e.popup;
+                                        const anchor = popUp.getElement()
+                                            .querySelector('.action');
+                                        if (anchor) {
+                                            anchor.addEventListener("click", e => {
+                                                this.props.onOpenResource(location.resource.sha1);
+                                            });
+                                        }
+                                    }}>
+                                    location.resource && <Popup>
                                         <div className={"map-marker-popup"}>
                                             {location.resource.erecolnatMetadata ?
                                                 <div className="attributes-holder">
@@ -308,4 +345,5 @@ export default class LeafletMap extends Component {
             </_Root>
         );
     }
+
 }
