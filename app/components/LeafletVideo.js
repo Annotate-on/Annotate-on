@@ -218,7 +218,7 @@ const fdp = new Promise(function (resolve, reject) {
 let contextMenu = null;
 let selectedAnnotation = null;
 
-class LeafletImage extends Component {
+class LeafletVideo extends Component {
     constructor(props, context) {
         const {t} = i18next;
         super(props, context);
@@ -267,6 +267,9 @@ class LeafletImage extends Component {
     componentDidMount() {
         if (this.leafletMap) {
             this._initLeaflet();
+            this.props.player.on('timeupdate', (_) => {
+                this._drawAnnotations(this.props.player.currentTime())
+            })
         }
         ee.on(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, this.highlightAnnotationFromInspector);
     }
@@ -329,11 +332,9 @@ class LeafletImage extends Component {
                                              polygon: false,
                                              angle: false,
                                              occurrence: false,
-                                             // left out delivery of 16.05.2019.
-                                             // ratio: !this.props.calibrationMode ? COLORPICKER_OPTIONS : false
                                              marker: !this.props.calibrationMode ? MARKER_OPTIONS : false,
                                              rectangle: !this.props.calibrationMode ? RECTANGLE_OPTIONS : false,
-                                             colorPicker: !this.props.calibrationMode ? COLORPICKER_OPTIONS : false,
+                                             colorPicker: false,
                                              transcription: !this.props.calibrationMode ? TRANSCRIPTION_OPTIONS : false,
                                              categorical: !this.props.calibrationMode,
                                              richtext: !this.props.calibrationMode ? RICHTEXT_OPTIONS : false,
@@ -417,11 +418,11 @@ class LeafletImage extends Component {
 
 
         Promise.all([lpp, fdp]).then(() => {
-            setTimeout(() => {
-                map.on('zoomend', this._mapZoomOrMoveEvent, this);
-                map.on('moveend', this._mapZoomOrMoveEvent, this);
-            }, 500);
-            this._drawAnnotations();
+            // setTimeout(() => {
+            //     map.on('zoomend', this._mapZoomOrMoveEvent, this);
+            //     map.on('moveend', this._mapZoomOrMoveEvent, this);
+            // }, 500);
+            this._drawAnnotations(0);
         });
 
         map.on('contextmenu.show', function (event) {
@@ -541,12 +542,21 @@ class LeafletImage extends Component {
      * Draw existing annotations on leaflet.
      * @private
      */
-    _drawAnnotations = () => {
+    _drawAnnotations = (currentTime) => {
         const map = this.leafletMap.leafletElement;
         const featureGroup = this.featureGroup.leafletElement;
 
+        featureGroup.eachLayer((layer) => {
+            layer.unbindContextMenu();
+            featureGroup.removeLayer(layer);
+        });
+
         if (this.props.annotationsPointsOfInterest) {
             this.props.annotationsPointsOfInterest.map(point => {
+                if(!'video' in point)
+                    return
+                if(currentTime < point.video.start || currentTime > point.video.end)
+                    return;
                 const latLng = map.unproject(new L.Point(point.x, point.y), this.boundsZoomLevel);
 
                 const options = {
@@ -569,24 +579,29 @@ class LeafletImage extends Component {
             });
         }
 
-        if (this.props.annotationsMeasuresLinear) {
-            this.props.annotationsMeasuresLinear.map(polyline => {
-                const latLngs = polyline.vertices.map(vertex => {
-                    return map.unproject(new L.Point(vertex.x, vertex.y), this.boundsZoomLevel);
-                });
-
-                const options = {...POLYLINE_OPTIONS.shapeOptions, ...contextMenu};
-                this._resolveColor(polyline.id, options);
-                const layer = L.polyline(latLngs, options);
-                layer.annotationId = polyline.id;
-                layer.annotationType = polyline.annotationType;
-                featureGroup.addLayer(layer);
-                layer.on('click', this._emitEvent);
-            });
-        }
+        // if (this.props.annotationsMeasuresLinear) {
+        //     this.props.annotationsMeasuresLinear.map(polyline => {
+        //         const latLngs = polyline.vertices.map(vertex => {
+        //             return map.unproject(new L.Point(vertex.x, vertex.y), this.boundsZoomLevel);
+        //         });
+        //
+        //         const options = {...POLYLINE_OPTIONS.shapeOptions, ...contextMenu};
+        //         this._resolveColor(polyline.id, options);
+        //         const layer = L.polyline(latLngs, options);
+        //         layer.annotationId = polyline.id;
+        //         layer.annotationType = polyline.annotationType;
+        //         featureGroup.addLayer(layer);
+        //         layer.on('click', this._emitEvent);
+        //     });
+        // }
 
         if (this.props.annotationsRectangular) {
             this.props.annotationsRectangular.map(rectangle => {
+                if(!'video' in rectangle)
+                    return
+                if(currentTime < rectangle.video.start || currentTime > rectangle.video.end)
+                    return;
+
                 const first = rectangle.vertices[0];
                 const third = rectangle.vertices[2];
                 const startLatLng = map.unproject(L.point(first.x, first.y), this.boundsZoomLevel);
@@ -609,69 +624,69 @@ class LeafletImage extends Component {
             });
         }
 
-        if (this.props.annotationsPolygon) {
-            this.props.annotationsPolygon.map(polygon => {
-                const latLngs = [];
-                polygon.vertices.map(vertex => {
-                    latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
-                });
+        // if (this.props.annotationsPolygon) {
+        //     this.props.annotationsPolygon.map(polygon => {
+        //         const latLngs = [];
+        //         polygon.vertices.map(vertex => {
+        //             latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
+        //         });
+        //
+        //         const options = {...POLYGON_OPTIONS.shapeOptions, ...contextMenu};
+        //         this._resolveColor(polygon.id, options);
+        //
+        //         const layer = L.polygon(latLngs, options);
+        //         layer.annotationId = polygon.id;
+        //         layer.annotationType = polygon.annotationType;
+        //         featureGroup.addLayer(layer);
+        //         layer.on('click', this._emitEvent);
+        //     });
+        // }
 
-                const options = {...POLYGON_OPTIONS.shapeOptions, ...contextMenu};
-                this._resolveColor(polygon.id, options);
+        // if (this.props.annotationsAngle) {
+        //     this.props.annotationsAngle.map(angle => {
+        //         const latLngs = [];
+        //         angle.vertices.map(vertex => {
+        //             latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
+        //         });
+        //
+        //         const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
+        //         this._resolveColor(angle.id, options);
+        //
+        //         const layer = L.polyline(latLngs, options);
+        //         layer.annotationId = angle.id;
+        //         layer.annotationType = angle.annotationType;
+        //         featureGroup.addLayer(layer);
+        //         layer.on('click', this._emitEvent);
+        //     });
+        // }
 
-                const layer = L.polygon(latLngs, options);
-                layer.annotationId = polygon.id;
-                layer.annotationType = polygon.annotationType;
-                featureGroup.addLayer(layer);
-                layer.on('click', this._emitEvent);
-            });
-        }
+        // if (this.props.annotationsColorPicker) {
+        //     this.props.annotationsColorPicker.map(point => {
+        //         const latLng = map.unproject(new L.Point(point.x, point.y), this.boundsZoomLevel);
+        //
+        //         const options = {
+        //             ...COLORPICKER_OPTIONS, ...contextMenu
+        //         };
+        //         this._resolveColor(point.id, options);
+        //
+        //         const layer = L.marker(latLng, options);
+        //         layer.annotationId = point.id;
+        //         layer.annotationType = point.annotationType;
+        //         featureGroup.addLayer(layer);
+        //         layer.on('click', this._emitEvent);
+        //     });
+        // }
 
-        if (this.props.annotationsAngle) {
-            this.props.annotationsAngle.map(angle => {
-                const latLngs = [];
-                angle.vertices.map(vertex => {
-                    latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
-                });
-
-                const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
-                this._resolveColor(angle.id, options);
-
-                const layer = L.polyline(latLngs, options);
-                layer.annotationId = angle.id;
-                layer.annotationType = angle.annotationType;
-                featureGroup.addLayer(layer);
-                layer.on('click', this._emitEvent);
-            });
-        }
-
-        if (this.props.annotationsColorPicker) {
-            this.props.annotationsColorPicker.map(point => {
-                const latLng = map.unproject(new L.Point(point.x, point.y), this.boundsZoomLevel);
-
-                const options = {
-                    ...COLORPICKER_OPTIONS, ...contextMenu
-                };
-                this._resolveColor(point.id, options);
-
-                const layer = L.marker(latLng, options);
-                layer.annotationId = point.id;
-                layer.annotationType = point.annotationType;
-                featureGroup.addLayer(layer);
-                layer.on('click', this._emitEvent);
-            });
-        }
-
-        if (this.props.annotationsOccurrence) {
-            this.props.annotationsOccurrence.map(occurrence => {
-                const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
-                const layer = L.occurrence({}, options);
-                layer.annotationId = occurrence.id;
-                layer.annotationType = occurrence.annotationType;
-                featureGroup.addLayer(layer);
-                layer.on('click', this._emitEvent);
-            });
-        }
+        // if (this.props.annotationsOccurrence) {
+        //     this.props.annotationsOccurrence.map(occurrence => {
+        //         const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
+        //         const layer = L.occurrence({}, options);
+        //         layer.annotationId = occurrence.id;
+        //         layer.annotationType = occurrence.annotationType;
+        //         featureGroup.addLayer(layer);
+        //         layer.on('click', this._emitEvent);
+        //     });
+        // }
 
         if (this.props.annotationsTranscription) {
             this.props.annotationsTranscription.map(transcription => {
@@ -985,4 +1000,4 @@ class LeafletImage extends Component {
     }
 }
 
-export default LeafletImage;
+export default LeafletVideo;

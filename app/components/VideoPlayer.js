@@ -5,6 +5,7 @@ import {DEFAULT_VOLUME} from "../constants/constants";
 import {ee, EVENT_GOTO_ANNOTATION} from "../utils/library";
 import LeafletVideo from "./LeafletVideo";
 
+let tcin = 0;
 export default class extends PureComponent {
 
     constructor(props) {
@@ -104,10 +105,16 @@ export default class extends PureComponent {
     _gotoAnnotation = (annotation, position) => {
         if (this.player) {
             if (position === "start" || position === "") {
-                this.player.currentTime(annotation.start);
+                let start = annotation.start
+                if('video' in annotation)
+                    start = annotation.video.start;
+                this.player.currentTime(start);
             }
             if (position === "end") {
-                this.player.currentTime(annotation.end);
+                let end = annotation.end
+                if('video' in annotation)
+                    end = annotation.video.end;
+                this.player.currentTime(end);
             }
             this.player.pause();
         }
@@ -123,6 +130,7 @@ export default class extends PureComponent {
                                ref={this.videoPlayer}>
                         </video>
                     </div>
+                    {this.player && this.state.loadedmetadata ?
                     <LeafletVideo
                                   currentPicture={this.props.currentPicture} ref={this.props.leafletVideo}
                                   leafletPositionByPicture={this.props.leafletPositionByPicture}
@@ -138,7 +146,7 @@ export default class extends PureComponent {
                                   onCreated={this._onCreated}
                                   onEditStop={this.props.onEditStop}
                                   onDrawStart={this._onDrawStart}
-                                  onDrawStop={this.props.onDrawStop}
+                                  onDrawStop={this._onDrawStop}
                                   calibrationMode={this.props.calibrationActive}
                                   fireSaveEvent={this.props.fireSaveEvent}
                                   onContextMenuEvent={this.props.handleLeafletContextMenu}
@@ -146,9 +154,8 @@ export default class extends PureComponent {
                                   taxonomyInstance={this.props.taxonomyInstance}
                                   repeatMode={this.props.repeatMode}
                                   saveLeafletSettings={this.props.saveLeafletSettings}
-                    />
-
-
+                                  player={this.player}
+                    />:''}
                 </div>
                 {this.player && this.state.loadedmetadata ?
                     <Timeline ref={this.timeline}
@@ -157,6 +164,8 @@ export default class extends PureComponent {
                               playbackRate={this.state.originalPlaybackRate}
                               openEditPanelonVideoAnnotationCreate={this.props.openEditPanelonVideoAnnotationCreate}
                               createAnnotationChronoThematique={this.props.createAnnotationChronoThematique}
+                              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                              annotationsRectangular={this.props.annotationsRectangular}
                               annotationsChronothematique={this.props.annotationsChronothematique}
                               file={this.props.currentPicture.file}
                               videoId={this.props.currentPicture.sha1}
@@ -171,16 +180,28 @@ export default class extends PureComponent {
     }
 
     _onDrawStart = (e) => {
-        this.player.pause();
-        // e.layer.video = {
-        //     tcin: this.player.currentTime()
-        // }
+        console.log("_onDrawStart")
+        this.player.play();
+        this.timeline.current.record(false);
+        tcin = this.player.currentTime()
         this.props.onDrawStart(e);
     }
 
+    _onDrawStop = (e) => {
+        console.log("_onDrawStop")
+        // this.timeline.record(false);
+        //
+        this.props.onDrawStop(e);
+    }
+
     _onCreated = (e) => {
-        // debugger
-        // e.layer.video.tcout = this.player.currentTime()
+        console.log("_onCreated")
+        this.player.pause();
+        e.layer.video = {
+            start: tcin,
+            end: this.player.currentTime()
+        }
         this.props.onCreated(e);
+        this.timeline.current.record(false);
     }
 }

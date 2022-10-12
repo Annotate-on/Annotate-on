@@ -637,6 +637,7 @@ class Image extends PureComponent {
         } else if (this.state.currentAnnotationTool !== null) {
             e.layer.annotationId = chance.guid();
             e.layer.annotationType = this.state.currentAnnotationTool;
+
             switch (this.state.currentAnnotationTool) {
                 case ANNOTATION_POLYGON:
                     this.completeAnnotationPolygon(e.layer.getLatLngs()[0].map(latLng => {
@@ -667,7 +668,7 @@ class Image extends PureComponent {
                 case ANNOTATION_RECTANGLE:
                     this.completeAnnotationRectangular(e.layer.getLatLngs()[0].map(latLng => {
                         return this.leafletImage.current.getRealCoordinates(latLng);
-                    }), e.layer.annotationId);
+                    }), e.layer.annotationId, e.layer.video);
 
                     const rects = this.props.annotationsRectangular[this.state.currentPicture.sha1].filter(annotation => annotation.id === e.layer.annotationId);
                     if (rects.length > 0) {
@@ -684,7 +685,7 @@ class Image extends PureComponent {
                 case ANNOTATION_CIRCLEMARKER:
                 case ANNOTATION_MARKER:
                     const point = this.leafletImage.current.getRealCoordinates(e.layer.getLatLng());
-                    this.makeAnnotationPointOfInterest(point.x, point.y, e.layer.annotationId);
+                    this.makeAnnotationPointOfInterest(point.x, point.y, e.layer.annotationId, e.layer.video);
 
                     const points = this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1].filter(annotation => annotation.id === e.layer.annotationId);
                     if (points.length > 0) {
@@ -1069,12 +1070,12 @@ class Image extends PureComponent {
         );
     }
 
-    makeAnnotationPointOfInterest(x, y, id) {
-        this.props.createAnnotationPointOfInterest(this.state.currentPicture.sha1, x, y, id);
+    makeAnnotationPointOfInterest(x, y, id, video) {
+        this.props.createAnnotationPointOfInterest(this.state.currentPicture.sha1, x, y, id, video);
     }
 
-    completeAnnotationRectangular(vertices, id) {
-        this.props.createAnnotationRectangular(this.state.currentPicture.sha1, vertices, id);
+    completeAnnotationRectangular(vertices, id, video) {
+        this.props.createAnnotationRectangular(this.state.currentPicture.sha1, vertices, id, video);
     }
 
     completeAnnotationPolygon(vertices, id) {

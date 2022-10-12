@@ -83,7 +83,7 @@ export default class extends Component {
                                     return false;
                                 }
                                 if (this.props.isValidToRecord) {
-                                    this.props.record()
+                                    this.props.record(true)
                                     if (this.props.player.paused()) {
                                         this.props.player.play()
                                     }

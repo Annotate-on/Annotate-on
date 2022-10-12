@@ -170,22 +170,24 @@ export const createAnnotationMeasurePolyline = (pictureId, value_in_mm, vertices
     };
 };
 
-export const createAnnotationPointOfInterest = (pictureId, x, y, id) => {
+export const createAnnotationPointOfInterest = (pictureId, x, y, id, video) => {
     return {
         type: CREATE_ANNOTATION_POINT_OF_INTEREST,
         pictureId,
         x,
         y,
-        id
+        id,
+        video
     };
 };
 
-export const createAnnotationRectangular = (pictureId, vertices, id) => {
+export const createAnnotationRectangular = (pictureId, vertices, id, video) => {
     return {
         type: CREATE_ANNOTATION_RECTANGULAR,
         pictureId,
         vertices,
-        id
+        id,
+        video
     };
 };
 

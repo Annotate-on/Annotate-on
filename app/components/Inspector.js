@@ -835,7 +835,12 @@ export default class extends Component {
 
                      if (annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && annotation.annotationType !== ANNOTATION_EVENT_ANNOTATION) {
                          console.log('emitting even....')
-                         this._emitEvent(e , annotation.id , annotation.annotationType);
+                         if('video' in annotation) {
+                             this._focusAnnotation(e, annotation);
+                             this._gotoAnnotation(e, annotation, "start");
+                         } else
+                            this._emitEvent(e , annotation.id , annotation.annotationType);
+
                          this.setState({
                              isFromLeaflet: false,
                              highlightAnn: annotation.id
