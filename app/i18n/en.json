@@ -129,6 +129,7 @@
       "tooltip_delete_annotation": "Delete annotation",
       "tooltip_add_keyword": "Add keyword",
       "tooltip_add_location": "Add location",
+      "tooltip_add_dating": "Add dating",
       "dialog_title_select_values_for_character": "Select value(s) for character",
       "dialog_title_enter_text": "Enter text",
       "select_character_label": "Choose a character",
@@ -161,7 +162,6 @@
         "lbl_coverage": "Coverage",
         "lbl_temporal": "Temporal",
         "lbl_spatial": "Spatial",
-
         "tooltip_pick_a_value": "Pick a value",
         "dialog_title_select_value_for_character": "Select value for character",
         "dialog_title_edit_text": "Edit text"
@@ -214,6 +214,8 @@
         "textbox_tooltip_relation": "Relation",
         "textbox_placeholder_coverage_place": "Coverage / place",
         "textbox_tooltip_coverage_place": "Coverage / place",
+        "textbox_placeholder_coverage_temporal": "Coverage / temporal",
+        "textbox_tooltip_coverage_temporal": "Coverage / temporal",
         "textbox_placeholder_rights_usage_terms": "Rights Usage Terms",
         "textbox_tooltip_rights_usage_terms": "Rights Usage Terms",
         "textbox_placeholder_contact": "Contact",
@@ -241,6 +243,11 @@
           "popup_lbl_place": "Place",
           "popup_lbl_lat": "Lat",
           "popup_lbl_lng": "Lng"
+        },
+        "temporal" : {
+          "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
+          "popup_lbl_period": "Period",
+          "popup_lbl_name_of_period": "Name of period"
         }
       },
       "calibration": {

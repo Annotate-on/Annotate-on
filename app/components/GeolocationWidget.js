@@ -20,6 +20,7 @@ export default class GeolocationWidget extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        if(state.inEdit) return null;
         let lat;
         let lng;
         if(props.location) {
@@ -101,7 +102,12 @@ export default class GeolocationWidget extends Component {
                 },
                 errors: errors
             }
+            this.setState({
+                inEdit: false,
+                errors: ''
+            });
             this.props.onValueChange(event);
+        } else {
             this.setState({
                 inEdit: false,
                 errors: ''
@@ -165,7 +171,7 @@ export default class GeolocationWidget extends Component {
     render() {
         const {t} = i18next;
         const {errors} = this.state;
-        return <div className="geolocation-widget">
+        return <div className="geolocation-widget popup-widget">
             <div>
                 <PickLocation
                     location = {this.state.location}
@@ -182,7 +188,7 @@ export default class GeolocationWidget extends Component {
             <InputGroup>
                 <Input type="text" name="location" id="location" readOnly={true}
                        placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
-                       title={t('inspector.metadata.textbox_tooltip_coverage_place')}
+                       title={this.state.value ? this.state.value : t('inspector.metadata.textbox_tooltip_coverage_place')}
                        onClick={() => {
                            if(!this.state.inEdit) this._onEdit()
                        }}
@@ -195,13 +201,13 @@ export default class GeolocationWidget extends Component {
                 </InputGroupAddon>
             </InputGroup>
             {this.state.inEdit &&
-                <div className="geolocation-widget-editor">
-                    <div className="geolocation-widget-editor-section">
-                        <div className="geolocation-widget-editor-section-title">
+                <div className="widget-editor">
+                    <div className="widget-editor-section">
+                        <div className="widget-editor-section-title">
                             {t('inspector.metadata.geolocation.popup_lbl_new_edit_geolocation')}
                         </div>
                     </div>
-                    <div className="geolocation-widget-editor-section">
+                    <div className="widget-editor-section">
                         <FormGroup className="column">
                             <Label for="place" className="label-for1">{t('inspector.metadata.geolocation.popup_lbl_place_name')}</Label>
                             <InputGroup>

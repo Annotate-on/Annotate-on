@@ -262,29 +262,26 @@
   }
 }
 
-.geolocation-widget {
+.popup-widget {
   margin-bottom: 1rem;
   position: relative;
 
-  .geolocation-widget-editor {
+  .widget-editor {
     padding: 5px;
     border: 1px solid #ced4da;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    //border-top: none;
     position: absolute;
-    //background-color: white;
     background-color: #e9ecef;
     width: 100%;
     bottom: 30px;
 
-    .geolocation-widget-editor-section {
+    .form-group {
+      margin-bottom: 3px;
+    }
 
-      .form-group {
-        margin-bottom: 3px;
-      }
-
-      .geolocation-widget-editor-section-title {
+    .widget-editor-section {
+      .widget-editor-section-title {
         font-size: 14px;
         font-weight: bold;
         padding-bottom: 3px;
@@ -345,3 +342,80 @@
     }
   }
 }
+
+.geolocation-widget {
+  .widget-editor {
+    input.form-control {
+      &:hover {
+        background-image: none;
+        cursor: default;
+      }
+      &:not([disabled]):hover {
+        background-color: white;
+      }
+    }
+  }
+  .input-group {
+    input.form-control:hover {
+      background-image: none;
+    }
+  }
+}
+
+.dating-widget {
+  .widget-editor {
+    input[type=date].form-control {
+      width: 115px;
+    }
+    input[type=time].form-control {
+      width: 100px;
+    }
+    input.form-control {
+      width: 100%;
+      padding-left: 2px;
+      padding-right: 2px;
+      &:hover {
+        background-image: none;
+        cursor: default;
+      }
+      &:not([disabled]):hover {
+        background-color: white;
+      }
+    }
+    .more-options-collapse {
+      margin-top: 10px;
+      label {
+        margin-right: 5px;
+      }
+    }
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .date-time-input {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between
+    }
+    .icon-calendar-picker {
+      font-size: 20px;
+      margin-left: 10px;
+      cursor: hand;
+    }
+  }
+  .input-group {
+    input.form-control:hover {
+      background-image: none;
+    }
+  }
+}
+
+.coverage-editor-holder {
+  margin-bottom: 5px;
+}
+
+
