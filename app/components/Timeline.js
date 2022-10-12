@@ -200,15 +200,12 @@ export default class extends Component {
                 endTime: this.props.player.currentTime(),
                 isChronothematique
             });
-            console.log("ako snima")
-        }
-        if (this.state.isAnnotationRecording === false) {
+        } else if (this.state.isAnnotationRecording === false) {
             this.setState({
                 isAnnotationRecording: true,
                 startTime: this.props.player.currentTime(),
                 isChronothematique
             })
-            console.log("ako ne snima")
         }
     }
 
@@ -360,7 +357,10 @@ export default class extends Component {
             return;
         this.setState({focusedAnnotation: annotation});
         this.props.player.pause();
-        this.props.player.currentTime(annotation.start);
+        let start = annotation.start;
+        if('video' in annotation)
+            start = annotation.video.start;
+        this.props.player.currentTime(start);
         ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotation.id);
     }
 

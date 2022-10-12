@@ -389,7 +389,7 @@ class LeafletVideo extends Component {
         const bounds = new L.LatLngBounds(southWest, northEast);
 
         const p = new PNGlib(this.state.currentPicture.width, this.state.currentPicture.height, 2);
-        p.color(120, 0, 0, 120); // set the background transparent
+        p.color(0, 0, 0, 0); // set the background transparent
         const imageURL = 'data:image/png;base64,' + p.getBase64()
 
         // add the image overlay, so that it covers the entire map
@@ -545,17 +545,22 @@ class LeafletVideo extends Component {
     _drawAnnotations = (currentTime) => {
         const map = this.leafletMap.leafletElement;
         const featureGroup = this.featureGroup.leafletElement;
+        const skipRedrawing = [];
 
         featureGroup.eachLayer((layer) => {
-            layer.unbindContextMenu();
-            featureGroup.removeLayer(layer);
+            if(currentTime < layer.start || currentTime > layer.end) {
+                layer.unbindContextMenu();
+                featureGroup.removeLayer(layer);
+            } else {
+                skipRedrawing.push(layer.annotationId);
+            }
         });
 
         if (this.props.annotationsPointsOfInterest) {
             this.props.annotationsPointsOfInterest.map(point => {
                 if(!'video' in point)
                     return
-                if(currentTime < point.video.start || currentTime > point.video.end)
+                if(currentTime < point.video.start || currentTime > point.video.end || skipRedrawing.indexOf(point.id) !== -1)
                     return;
                 const latLng = map.unproject(new L.Point(point.x, point.y), this.boundsZoomLevel);
 
@@ -567,6 +572,9 @@ class LeafletVideo extends Component {
                 const layer = L.marker(latLng, options);
                 layer.annotationId = point.id;
                 layer.annotationType = point.annotationType;
+                layer.start = point.video.start;
+                layer.end = point.video.end;
+
                 featureGroup.addLayer(layer);
                 layer.bindTooltip(point.title, {
                     permanent: true,
@@ -599,7 +607,7 @@ class LeafletVideo extends Component {
             this.props.annotationsRectangular.map(rectangle => {
                 if(!'video' in rectangle)
                     return
-                if(currentTime < rectangle.video.start || currentTime > rectangle.video.end)
+                if(currentTime < rectangle.video.start || currentTime > rectangle.video.end  || skipRedrawing.indexOf(rectangle.id) !== -1)
                     return;
 
                 const first = rectangle.vertices[0];
@@ -613,6 +621,8 @@ class LeafletVideo extends Component {
                 const layer = L.rectangle(new L.LatLngBounds(startLatLng, endLatLng), options);
                 layer.annotationId = rectangle.id;
                 layer.annotationType = rectangle.annotationType;
+                layer.start = rectangle.video.start;
+                layer.end = rectangle.video.end;
                 featureGroup.addLayer(layer);
                 layer.bindTooltip(rectangle.title, {
                     permanent: true,
