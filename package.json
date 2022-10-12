@@ -312,6 +312,7 @@
     "lodash": "^4.17.11",
     "mediainfo.js": "^0.1.2",
     "moment": "^2.24.0",
+    "nominatim-browser": "^2.1.0",
     "normalize": "^0.3.1",
     "normalize.css": "^8.0.1",
     "path": "^0.12.7",

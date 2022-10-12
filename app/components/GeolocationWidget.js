@@ -3,6 +3,7 @@ import {Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, L
 import i18next from "i18next";
 import {getDecimalLocation, validateLocationInput} from "./event/utils";
 import PickLocation from "../containers/PickLocation";
+import * as Nominatim from "nominatim-browser";
 
 export default class GeolocationWidget extends Component {
 
@@ -153,11 +154,61 @@ export default class GeolocationWidget extends Component {
     }
 
     -_onSearchByLanLng = () => {
-        console.log(`Search by lat/lng ${this.state.latlng}`)
+        console.log(`Search by lat/lng ${this.state.latLng}`)
+        const latLngValue = getDecimalLocation(this.state.latLng);
+        if(!latLngValue) {
+            console.log(`Bad format for lat/long`);
+            return ;
+        }
+        Nominatim.reverseGeocode({
+            lat: latLngValue[0],
+            lon: latLngValue[1],
+            addressdetails: true,
+            email: 'nenad@presek-i.com'
+        }).then((result) => {
+            if (result) {
+                console.log(`Display name [${result.display_name}]`);
+                if(result.address) {
+                    console.log(`City [${result.address.city}]`);
+                    console.log(`County [${result.address.county}]`);
+                    console.log(`State [${result.address.state}]`);
+                    console.log(`Country [${result.address.country}]`);
+                }
+                this.setState({
+                    place : result.display_name
+                });
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
     -_onSearchByPlace = () => {
         console.log(`Search by place ${this.state.place}`)
+        Nominatim.geocode({
+                city: this.state.place,
+                addressdetails: true,
+                email: 'nenad@presek-i.com'
+            })
+            .then((results) => {
+                console.log("results", results)
+                const result = results[0];
+                if(result) {
+                    console.log(`Display name [${result.display_name}]`);
+                    console.log(`Lat [${result.lat}]`);
+                    console.log(`Lng [${result.lon}]`);
+                    // result.address is only returned when 'addressdetails: true' is sent in the geocode request
+                    if(result.address) {
+                        console.log(`City [${result.address.city}]`);
+                        console.log(`County [${result.address.county}]`);
+                        console.log(`State [${result.address.state}]`);
+                        console.log(`Country [${result.address.country}]`);
+                    }
+
+                }
+            }).catch((error) => {
+                console.error(error);
+            });
     }
 
     _formChangeHandler = (event) => {
