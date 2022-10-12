@@ -132,7 +132,7 @@ export default class DatingWidget extends Component {
     }
 
     _formChangeHandler = (event) => {
-        const {name, value, min, max} = event.target;
+        const {name, type, value, min, max, checked} = event.target;
         let state = {}
         if(name === 'year' && !value) {
             state.month= '';
@@ -165,7 +165,11 @@ export default class DatingWidget extends Component {
             let date = moment(`${this.state.yearEnd.padStart(4, '0')}-${this.state.monthEnd.padStart(2, '0')}-${value.padStart(2, '0')}`, 'YYYY-MM-DD', true);
             if(!date.isValid()) return;
         }
-        state[name] = value;
+        if(type === 'checkbox') {
+            state[name] = checked;
+        } else {
+            state[name] = value;
+        }
         this.setState(state);
     };
 
@@ -305,8 +309,8 @@ export default class DatingWidget extends Component {
 
                             <span className="more-options-collapse" >
                                 <div className="form-check">
-                                    <Input name="period" id="dating-widget-period" type="checkbox" checked={this.state.hasPeriod}
-                                           onClick={this.toggle}/>
+                                    <Input name="hasPeriod" id="dating-widget-period" type="checkbox" checked={this.state.hasPeriod}
+                                           onChange={this._formChangeHandler}/>
                                     <Label for="dating-widget-period" className="form-check-label pointer">
                                         {t('inspector.metadata.temporal.popup_lbl_period')}
                                     </Label>
