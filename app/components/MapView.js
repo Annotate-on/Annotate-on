@@ -101,7 +101,7 @@ export default class MapView extends Component {
                     current: resource.sha1 === this.props.currentPictureSelection.sha1
                 };
             }
-            if (!locationFromMetadata && locationsFromAnnotations) {
+            if (!locationFromMetadata && !locationsFromAnnotations) {
                 resourcesWithoutGeoLocation.push(resource);
             } else {
                 if(locationFromMetadata) {
