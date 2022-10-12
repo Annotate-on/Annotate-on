@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label} from "reactstrap";
 import i18next from "i18next";
 import moment from "moment";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCalendar} from "@fortawesome/free-solid-svg-icons";
 
 export default class DatingWidget extends Component {
 
@@ -74,23 +72,22 @@ export default class DatingWidget extends Component {
             let endMomentDateStrict = moment(end, 'YYYY-MM-DD', true);
             let endMomentDateTime = moment(end, 'YYYY-MM-DDTHH:mm', true);
             let endMomentDateTimeSec = moment(end, 'YYYY-MM-DDTHH:mm:ss', true);
-            if(endMomentDate.isValid() || endMomentDateStrict.isValid()) {
+            if (endMomentDateTime.isValid() || endMomentDateTimeSec.isValid()) {
+                let endArr = end.split('T');
+                formattedDateEnd = endArr[0];
+                formattedTimeEnd = endArr[1];
+            } else if(endMomentDate.isValid() || endMomentDateStrict.isValid()) {
                 let endArr = end.split('-')
                 yearEnd = endArr.length > 0 ? endArr[0] : '';
                 monthEnd = endArr.length > 1 ? endArr[1] : '';
                 dayEnd = endArr.length > 2 ? endArr[2] : '';
-            } else if (endMomentDateTime.isValid() || endMomentDateTimeSec.isValid()) {
-                let endArr = end.split('T');
-                formattedDateEnd = endArr[0];
-                formattedTimeEnd = endArr[1];
-            } else {
+            } else{
                 console.log("wrong date coverage end format")
             }
             hasFormattedEnd = formattedDateEnd ? true: false;
         }
 
         let nameOfPeriod = period ? period : '';
-
         let value = `${nameOfPeriod ? 'name='+ nameOfPeriod + ';' : ''}${start ? 'start='+ start + ';' : ''}${end ? 'end='+ end + ';' : ''}`;
 
         return {
@@ -138,15 +135,19 @@ export default class DatingWidget extends Component {
         const {name, value, min, max} = event.target;
         let state = {}
         if(name === 'year' && !value) {
-            state['month'] = '';
-            state['day'] = '';
+            state.month= '';
+            state.day = '';
         } else if(name === 'month' && !value) {
-            state['day'] = '';
+            state.day = '';
         } else if(name === 'yearEnd' && !value) {
-            state['monthEnd'] = '';
-            state['dayEnd'] = '';
+            state.monthEnd= '';
+            state.dayEnd = '';
         } else if(name === 'monthEnd' && !value) {
-            state['dayEnd'] = '';
+            state.dayEnd= '';
+        } else if (name === 'formattedDate' && !value) {
+            state.formattedTime = '';
+        } else if (name === 'formattedDateEnd' && !value) {
+            state.formattedTimeEnd = ''
         }
         if(min || max) {
             let valueValue = +value;
@@ -157,11 +158,12 @@ export default class DatingWidget extends Component {
                 return;
             }
         }
-        if (name === 'formattedDate' && !value) {
-            state.formattedTime = '';
-        }
-        if (name === 'formattedDateEnd' && !value) {
-            state.formattedTimeEnd = ''
+        if(name === 'day' && value) {
+            let date = moment(`${this.state.year.padStart(4, '0')}-${this.state.month.padStart(2, '0')}-${value.padStart(2, '0')}`, 'YYYY-MM-DD', true);
+            if(!date.isValid()) return;
+        } else if(name === 'dayEnd' && value) {
+            let date = moment(`${this.state.yearEnd.padStart(4, '0')}-${this.state.monthEnd.padStart(2, '0')}-${value.padStart(2, '0')}`, 'YYYY-MM-DD', true);
+            if(!date.isValid()) return;
         }
         state[name] = value;
         this.setState(state);
@@ -173,12 +175,12 @@ export default class DatingWidget extends Component {
             let period = this.state.nameOfPeriod ? this.state.nameOfPeriod : '';
             let start = this.state.showPicker
                 ? `${this.state.formattedDate}${this.state.formattedTime ? 'T' + this.state.formattedTime : ''}`
-                : `${this.state.year ? this.state.year: ''}${this.state.month ? '-'+this.state.month : ''}${this.state.day ? '-'+this.state.day : ''}`
+                : `${this.state.year ? this.state.year.padStart(4, '0'): ''}${this.state.month ? '-'+this.state.month.padStart(2, '0') : ''}${this.state.day ? '-'+this.state.day.padStart(2, '0') : ''}`
             let end = '';
             if(this.state.hasPeriod) {
                 end = this.state.showPickerEnd
                     ? `${this.state.formattedDateEnd}${this.state.formattedTimeEnd ? 'T' + this.state.formattedTimeEnd : ''}`
-                    : `${this.state.yearEnd ? this.state.yearEnd: ''}${this.state.monthEnd ? '-'+this.state.monthEnd : ''}${this.state.dayEnd ? '-'+this.state.dayEnd : ''}`
+                    : `${this.state.yearEnd ? this.state.yearEnd.padStart(4, '0'): ''}${this.state.monthEnd ? '-'+this.state.monthEnd.padStart(2, '0') : ''}${this.state.dayEnd ? '-'+this.state.dayEnd.padStart(2, '0') : ''}`
             }
 
             let event = {
@@ -192,7 +194,6 @@ export default class DatingWidget extends Component {
                 },
                 errors: errors
             }
-            console.log("datetime", event)
             this.setState({
                 inEdit: false,
                 errors: ''
@@ -297,19 +298,17 @@ export default class DatingWidget extends Component {
                                             />
                                     </FormGroup>
                                 }
-                                <div className="icon-calendar-picker">
-                                    <FontAwesomeIcon icon={faCalendar} onClick={this._toggleDateInput}/>
+                                <div className="icon-calendar-picker" onClick={this._toggleDateInput}>
+                                    <i className="fa fa-calendar pointer"/>
                                 </div>
                             </div>
 
-                            {console.log('state', this.state)}
-                            <span className="row more-options-collapse" >
+                            <span className="more-options-collapse" >
                                 <div className="form-check">
                                     <Input name="period" id="dating-widget-period" type="checkbox" checked={this.state.hasPeriod}
                                            onClick={this.toggle}/>
                                     <Label for="dating-widget-period" className="form-check-label pointer">
-                                        Period
-                                        {/*{t('inspector.metadata.temporal.popup_lbl_more_options')}*/}
+                                        {t('inspector.metadata.temporal.popup_lbl_period')}
                                     </Label>
                                 </div>
                             </span>
@@ -320,7 +319,6 @@ export default class DatingWidget extends Component {
                                             <div className="flex flex-row flex-nowrap align-items-end">
                                                 <Input type="date" name="formattedDateEnd"
                                                        value={this.state.formattedDateEnd}
-                                                       disabled={this.state.formattedDateEnd ? true: false}
                                                        onChange={this._formChangeHandler}
                                                 />
                                                 <Input type="time" name="formattedTimeEnd" step="1"
@@ -356,8 +354,8 @@ export default class DatingWidget extends Component {
                                             />
                                         </FormGroup>
                                     }
-                                    <div className="icon-calendar-picker">
-                                        <FontAwesomeIcon icon={faCalendar} onClick={this._toggleDateInputEnd}/>
+                                    <div className="icon-calendar-picker" onClick={this._toggleDateInputEnd}>
+                                        <i className="fa fa-calendar pointer"/>
                                     </div>
                                 </div>
                             </div>

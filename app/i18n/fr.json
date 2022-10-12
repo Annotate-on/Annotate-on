@@ -246,12 +246,8 @@
         },
         "temporal" : {
           "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
-          "popup_lbl_free_entry_date": "Free entry date",
-          "popup_lbl_formatted_date": "Formatted date",
-          "popup_lbl_more_options": "More options",
-          "popup_lbl_name_of_period": "Name of period",
-          "popup_lbl_free_entry_date_end": "Free entry date end",
-          "popup_lbl_formatted_date_end": "Formatted date end"
+          "popup_lbl_period": "Period",
+          "popup_lbl_name_of_period": "Name of period"
         }
       },
       "calibration": {
