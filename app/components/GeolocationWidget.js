@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {Button, FormGroup, Input, InputGroup, InputGroupAddon, InputGroupText, Label} from "reactstrap";
+import {
+    Button,
+    DropdownItem,
+    DropdownMenu,
+    FormGroup,
+    Input,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupText,
+    Label
+} from "reactstrap";
 import i18next from "i18next";
 import {getDecimalLocation, validateLocationInput} from "./event/utils";
 import PickLocation from "../containers/PickLocation";
@@ -16,7 +26,8 @@ export default class GeolocationWidget extends Component {
             latLng: '',
             errors: '',
             showLocationPopup: false,
-            pickLocation: false
+            pickLocation: false,
+            geocodeResults:null,
         };
     }
 
@@ -166,14 +177,8 @@ export default class GeolocationWidget extends Component {
             addressdetails: true,
             email: 'nenad@presek-i.com'
         }).then((result) => {
+            console.log("result", result)
             if (result) {
-                console.log(`Display name [${result.display_name}]`);
-                if(result.address) {
-                    console.log(`City [${result.address.city}]`);
-                    console.log(`County [${result.address.county}]`);
-                    console.log(`State [${result.address.state}]`);
-                    console.log(`Country [${result.address.country}]`);
-                }
                 this.setState({
                     place : result.display_name
                 });
@@ -192,23 +197,23 @@ export default class GeolocationWidget extends Component {
             })
             .then((results) => {
                 console.log("results", results)
-                const result = results[0];
-                if(result) {
-                    console.log(`Display name [${result.display_name}]`);
-                    console.log(`Lat [${result.lat}]`);
-                    console.log(`Lng [${result.lon}]`);
-                    // result.address is only returned when 'addressdetails: true' is sent in the geocode request
-                    if(result.address) {
-                        console.log(`City [${result.address.city}]`);
-                        console.log(`County [${result.address.county}]`);
-                        console.log(`State [${result.address.state}]`);
-                        console.log(`Country [${result.address.country}]`);
-                    }
-
-                }
+                this.setState({
+                    geocodeResults: results
+                })
             }).catch((error) => {
                 console.error(error);
             });
+    }
+
+    _onSelectedPlace = (value) => {
+        console.log("_onSelectedPlace", value);
+        if(!value) return;
+        let latLng = (!value.lat && !value.lon) ? '' : `${value.lat ? value.lat: ''},${value.lon? value.lon: ''}`;
+        this.setState({
+            latLng,
+            place: value.display_name,
+            geocodeResults: null
+        })
     }
 
     _formChangeHandler = (event) => {
@@ -246,8 +251,10 @@ export default class GeolocationWidget extends Component {
                        value={this.state.value}/>
                 <InputGroupAddon addonType="append">
                     <InputGroupText>
-                        <i className="fa fa-external-link pointer" aria-hidden="true"
-                           onClick={() => this._onOpenLocationInTheMap(false)}/>
+                        <i className={this.state.latLng ? "fa fa-external-link pointer": "fa fa-external-link disabled"} aria-hidden="true"
+                           onClick={() => {
+                               if(this.state.latLng) this._onOpenLocationInTheMap(false);
+                           }}/>
                     </InputGroupText>
                 </InputGroupAddon>
             </InputGroup>
@@ -269,7 +276,11 @@ export default class GeolocationWidget extends Component {
                                        onKeyDown={(e) => {
                                            if (e.key === 'Enter' && e.type === 'keydown') {
                                                this._onSearchByPlace();
-                                           };
+                                           } else if(e.key === 'Escape' && e.type === 'keydown') {
+                                               this.setState({
+                                                   geocodeResults:null
+                                               })
+                                           }
                                        }}
                                 />
                                 <InputGroupAddon addonType="append">
@@ -278,6 +289,16 @@ export default class GeolocationWidget extends Component {
                                            onClick={this._onSearchByPlace}/>
                                     </InputGroupText>
                                 </InputGroupAddon>
+                                {this.state.geocodeResults &&
+                                    <DropdownMenu className="show geocode-results-popup">
+                                        {this.state.geocodeResults.map((value, index) => {
+                                            return <div key={index} role="menuitem" className="dropdown-item"
+                                                        onClick={event => {
+                                                            this._onSelectedPlace(value)
+                                                        }}>{value.display_name}</div>
+                                        })}
+                                </DropdownMenu>
+                                }
                             </InputGroup>
                         </FormGroup>
                         <FormGroup className="column">
