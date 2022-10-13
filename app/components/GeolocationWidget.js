@@ -162,6 +162,7 @@ export default class GeolocationWidget extends Component {
             showLocationPopup: false,
             errors: ''
         });
+        this._onSearchByLanLng();
     }
 
     -_onSearchByLanLng = () => {
