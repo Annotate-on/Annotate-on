@@ -26,9 +26,10 @@ export default class extends Component {
 
         const poi = props.annotationsPointsOfInterest ? props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
         const rec = props.annotationsRectangular ? props.annotationsRectangular.filter(ann => 'video' in ann) : [];
+        const chrono = props.annotationsChronothematique ? props.annotationsChronothematique[props.videoId] : [];
 
         this.state = {
-            tracks: this._sortAnnotationsIntoTracks([...props.annotationsChronothematique[props.videoId], ...poi, ...rec]),
+            tracks: this._sortAnnotationsIntoTracks([...chrono, ...poi, ...rec]),
             duration: props.player.duration(),
             currentTime: 0,
             zoom: this.props.zoom,
@@ -114,8 +115,9 @@ export default class extends Component {
             this.props.annotationsChronothematique !== prevProps.annotationsChronothematique) {
             const poi = this.props.annotationsPointsOfInterest ? this.props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
             const rec = this.props.annotationsRectangular ? this.props.annotationsRectangular.filter(ann => 'video' in ann) : [];
+            const chrono = this.props.annotationsChronothematique ? this.props.annotationsChronothematique[props.videoId] : [];
             this.setState({
-                tracks: this._sortAnnotationsIntoTracks([...this.props.annotationsChronothematique[this.props.videoId], ...poi, ...rec])
+                tracks: this._sortAnnotationsIntoTracks([...chrono, ...poi, ...rec])
             })
         }
     }
@@ -358,7 +360,7 @@ export default class extends Component {
         this.setState({focusedAnnotation: annotation});
         this.props.player.pause();
         let start = annotation.start;
-        if('video' in annotation)
+        if ('video' in annotation)
             start = annotation.video.start;
         this.props.player.currentTime(start);
         ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotation.id);

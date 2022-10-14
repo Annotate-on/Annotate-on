@@ -5,7 +5,6 @@ import {createAnnotationChronoThematique , editAnnotationChronothematiqueEndtime
 
 const mapStateToProps = state => {
     return {
-        annotationsChronothematique: state.app.annotations_chronothematique,
         focusedAnnotation: state.app.focused_annotation,
     };
 };
