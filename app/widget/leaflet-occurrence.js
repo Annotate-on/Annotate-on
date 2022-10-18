@@ -1,21 +1,25 @@
 import {Path, Util, LatLngBounds, LineUtil, LatLng, latLng as toLatLng, Bounds, Point} from 'leaflet';
 
+const MARKER_LENGTH = 5;
+
 /**
  * Change drawing of occurrence annotation.
  */
 L.SVG.include({
     _updateOccurrence: function (layer) {
+        // console.log("_updateOccurrence", layer, layer._parts)
         const parts = layer._parts;
         let str = '';
-
         for(let p = 0, plen = parts.length; p < plen; p++) {
             const points = parts[p];
             for (let i = 0, len = points.length; i < len; i++) {
                 const point = points[i];
-                str += `M ${point.x} ${point.y} L${point.x-20} ${point.y-20} `
+                str += `M ${point.x} ${point.y} L${point.x-MARKER_LENGTH} ${point.y-MARKER_LENGTH} `
+                str += `M ${point.x} ${point.y} L${point.x+MARKER_LENGTH} ${point.y+MARKER_LENGTH} `
+                str += `M ${point.x} ${point.y} L${point.x+MARKER_LENGTH} ${point.y-MARKER_LENGTH} `
+                str += `M ${point.x} ${point.y} L${point.x-MARKER_LENGTH} ${point.y+MARKER_LENGTH} `
             }
         }
-
         this._setPath(layer, str);
     }
 });
@@ -32,10 +36,11 @@ L.Occurrence = Path.extend({
 
         // @option noClip: Boolean = false
         // Disable polyline clipping.
-        noClip: false
+        noClip: true
     },
 
     initialize: function (latlngs, options) {
+       // console.log("initialize", latlngs, options)
         Util.setOptions(this, options);
         this._setLatLngs(latlngs);
     },
@@ -158,6 +163,7 @@ L.Occurrence = Path.extend({
 
     // recursively convert latlngs input into actual LatLng instances; calculate bounds along the way
     _convertLatLngs: function (latlngs) {
+        // console.log("_convertLatLngs", latlngs)
         var result = [],
             flat = LineUtil.isFlat(latlngs);
 
@@ -174,6 +180,7 @@ L.Occurrence = Path.extend({
     },
 
     _project: function () {
+        // console.log("_project", this._latlngs, this._rings)
         var pxBounds = new Bounds();
         this._rings = [];
         this._projectLatlngs(this._latlngs, this._rings, pxBounds);
@@ -335,6 +342,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     addHooks: function () {
+        // console.log("occurence addHooks")
         L.Draw.Feature.prototype.addHooks.call(this);
         if (this._map) {
             this.coords = [];
@@ -368,6 +376,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     removeHooks: function () {
+        // console.log("occurence removeHooks")
         L.Draw.Feature.prototype.removeHooks.call(this);
         this._map.removeLayer(this._markerGroup);
         delete this._markerGroup;
@@ -386,6 +395,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     _createPoint(clientX, clientY, e) {
+        // console.log("_createPoint", clientX, clientY, e)
         if (this._mouseDownOrigin) {
             let dragCheckDistance = L.point(clientX, clientY)
                 .distanceTo(this._mouseDownOrigin);
@@ -398,10 +408,12 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     _onMouseDown: function (e) {
+        // console.log("occurence _onMouseDown")
         this._mouseDownOrigin = L.point(e.originalEvent.clientX, e.originalEvent.clientY);
     },
 
     _onMouseUp: function (e) {
+        // console.log("occurence _onMouseUp")
         let originalEvent = e.originalEvent;
         let clientX = originalEvent.clientX;
         let clientY = originalEvent.clientY;
@@ -409,6 +421,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     _onMouseMove: function (e) {
+        // console.log("occurence _onMouseMove")
         let newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
         let latlng = this._map.layerPointToLatLng(newPos);
         this._mouseMarker.setLatLng(latlng);
@@ -416,6 +429,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     _createMarker: function (latlng) {
+        // console.log("occurence _createMarker")
         let marker = new L.Marker(latlng, {
             icon: this.options.icon,
             zIndexOffset: this.options.zIndexOffset * 2
@@ -428,6 +442,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     // @method completeShape(): void
     // Closes the polyline between the first and last points
     completeShape: function () {
+        // console.log("completeShape")
         if (this.coords.length < 1) {
             return;
         }
@@ -441,7 +456,8 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
     },
 
     _fireCreatedEvent: function () {
-        let occurrence = new this.Occurrence({}, this.options.shapeOptions);
+        // console.log("occurence _fireCreatedEvent", this.coords)
+        let occurrence = new this.Occurrence(this.coords, this.options.shapeOptions);
         occurrence.vertices = this.coords;
         L.Draw.Feature.prototype._fireCreatedEvent.call(this, occurrence);
     }
@@ -456,6 +472,7 @@ L.Draw.Occurrence = L.Draw.Feature.extend({
 L.Edit.Occurrence = L.Handler.extend({
     // @method initialize(): void
     initialize: function (poly) {
+        // console.log("edit initialize", poly)
         this.latlngs = [poly._latlngs];
         if (poly._holes) {
             this.latlngs = this.latlngs.concat(poly._holes);
@@ -485,6 +502,7 @@ L.Edit.Occurrence = L.Handler.extend({
     // @method addHooks(): void
     // Add listener hooks to this handler
     addHooks: function () {
+        // console.log("edit addHooks")
         this._initHandlers();
         this._eachVertexHandler(function (handler) {
             handler.addHooks();
@@ -494,6 +512,7 @@ L.Edit.Occurrence = L.Handler.extend({
     // @method removeHooks(): void
     // Remove listener hooks from this handler
     removeHooks: function () {
+        // console.log("edit removeHooks")
         this._eachVertexHandler(function (handler) {
             handler.removeHooks();
         });
@@ -502,6 +521,7 @@ L.Edit.Occurrence = L.Handler.extend({
     // @method updateMarkers(): void
     // Fire an update for each vertex handler
     updateMarkers: function () {
+        // console.log("edit updateMarkers")
         this._eachVertexHandler(function (handler) {
             handler.updateMarkers();
         });
@@ -560,7 +580,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
             this.options.icon = this.options.touchIcon;
         }
         this._poly = poly;
-        this._poly.coords = [];
+        this._poly.coords = this._poly._latlngs ? [...this._poly._latlngs] : [];
 
         if (options && options.drawError) {
             options.drawError = L.Util.extend({}, this.options.drawError, options.drawError);
@@ -583,6 +603,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     // @method addHooks(): void
     // Add listener hooks to this handler.
     addHooks: function () {
+        // console.log("OccurrenceEdit addHooks")
         var poly = this._poly;
         var path = poly._path;
 
@@ -641,6 +662,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _onMouseMove: function (e) {
+        // console.log("OccurrenceEdit _onMouseMove")
         let newPos = this._map.mouseEventToLayerPoint(e.originalEvent);
         let latlng = this._map.layerPointToLatLng(newPos);
         this._mouseMarker.setLatLng(latlng);
@@ -648,11 +670,13 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _createPoint(clientX, clientY, e) {
+        // console.log("OccurrenceEdit _createPoint")
         if (this._mouseDownOrigin) {
             let dragCheckDistance = L.point(clientX, clientY)
                 .distanceTo(this._mouseDownOrigin);
             if (Math.abs(dragCheckDistance) < 9 * (window.devicePixelRatio || 1)) {
                 this._poly.coords.push(e.latlng);
+                this._poly.setLatLngs(this._poly.coords);
                 this._markers.push(this._createMarker(e.latlng));
             }
         }
@@ -664,6 +688,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _onMouseUp: function (e) {
+        // console.log("OccurrenceEdit _onMouseUp")
         let originalEvent = e.originalEvent;
         let clientX = originalEvent.clientX;
         let clientY = originalEvent.clientY;
@@ -712,11 +737,13 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     // @method updateMarkers(): void
     // Clear markers and update their location
     updateMarkers: function () {
+        // console.log("OccurrenceEdit updateMarkers")
         this._markerGroup.clearLayers();
         this._initMarkers();
     },
 
     _initMarkers: function () {
+        // console.log("OccurrenceEdit _initMarkers")
         if (!this._markerGroup) {
             this._markerGroup = new L.LayerGroup();
         }
@@ -725,6 +752,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _createMarker: function (latlng, index) {
+        // console.log("OccurrenceEdit _createMarker")
         // Extending L.Marker in TouchEvents.js to include touch.
         // var marker = new L.Marker.Touch(latlng, {
         //     draggable: true,
@@ -754,6 +782,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _onMarkerDragStart: function () {
+        // console.log("OccurrenceEdit _onMarkerDragStart")
         this._poly.fire('editstart');
     },
 
@@ -766,6 +795,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _removeMarker: function (marker) {
+        // console.log("OccurrenceEdit _onMarkerDragStart")
         var i = marker._index;
 
         this._markerGroup.removeLayer(marker);
@@ -785,12 +815,14 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _fireEdit: function () {
+        // console.log("OccurrenceEdit _fireEdit")
         this._poly.edited = true;
         this._poly.fire('edit');
         this._poly._map.fire(L.Draw.Event.EDITVERTEX, {layers: this._markerGroup, poly: this._poly});
     },
 
     _onMarkerDrag: function (e) {
+        // console.log("OccurrenceEdit _onMarkerDrag")
         var marker = e.target;
         var poly = this._poly;
 
@@ -848,7 +880,7 @@ L.Edit.OccurrenceEdit = L.Handler.extend({
     },
 
     _onMarkerClick: function (e) {
-
+        // console.log("OccurrenceEdit _onMarkerClick")
         var minPoints = L.Polygon && (this._poly instanceof L.Polygon) ? 4 : 3,
             marker = e.target;
 

@@ -788,6 +788,7 @@ class Image extends PureComponent {
                 , ...this.props.annotationsAngle[sha1] || ''
                 , ...this.props.annotationsTranscription[sha1] || ''
                 , ...this.props.annotationsRichtext[sha1] || ''
+                , ...this.props.annotationsOccurrence[sha1] || ''
             ].filter(_ => _.id === annotationId);
 
             if (annotation && annotation.length > 0) {
@@ -822,6 +823,9 @@ class Image extends PureComponent {
                     break;
                 case ANNOTATION_RICHTEXT:
                     this._deleteAnnotationRichtext(this.state.currentPicture.sha1, annotationId);
+                    break;
+                case ANNOTATION_OCCURRENCE:
+                    this._deleteAnnotationOccurrence(this.state.currentPicture.sha1, annotationId);
                     break;
             }
         }
@@ -866,6 +870,7 @@ class Image extends PureComponent {
     };
 
     _callSaveOrCancelEdit = (save, title, value , isVideoAnnotation , person , date, location , tags , topic) => {
+
         if (isVideoAnnotation){
             let annotation = {
                 value: value,
@@ -1009,6 +1014,7 @@ class Image extends PureComponent {
 
     _deleteAnnotationOccurrence = (sha1, id) => {
         this.props.deleteAnnotationOccurrence(sha1, id, this.props.tabName);
+        this.leafletImage.current.deleteAnnotation(id);
     };
 
     _deleteAnnotationRatio = (sha1, id) => {
