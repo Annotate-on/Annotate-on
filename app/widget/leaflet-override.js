@@ -113,6 +113,12 @@ export const overrideLeafletDefaultLabels = () => {
         }
     };
 
+    L.drawLocal.edit.handlers.edit = {
+        tooltip: {
+            text: '',
+            subtext: t('annotate.editor.tooltip_click_cancel_to_undo_changes')
+        }
+    }
 }
 
 export const initLeaflet = () => {
