@@ -83,7 +83,7 @@
       "keywords": "Keywords",
       "tooltip_keywords": "Tag manager",
       "options": "Options",
-      "tooltip_options" : "Global application options"
+      "tooltip_options": "Global application options"
     },
     "popup_sort": {
       "alphabetical": "Alphabetical",
@@ -230,11 +230,11 @@
         "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
         "geolocation": {
           "lbl_search_for_location": "Search for location",
-          "btn_open_map_to_select_location":"Choose location on map",
-          "textbox_placeholder_text_search":"Text search (showing 5 results in a list)",
-          "textbox_placeholder_place_name":"Place name",
-          "textbox_placeholder_latitude":"Latitude",
-          "textbox_placeholder_longitude":"Longitude",
+          "btn_open_map_to_select_location": "Choose location on map",
+          "textbox_placeholder_text_search": "Text search (showing 5 results in a list)",
+          "textbox_placeholder_place_name": "Place name",
+          "textbox_placeholder_latitude": "Latitude",
+          "textbox_placeholder_longitude": "Longitude",
           "dialog_pick_location_title": "Pick a location",
           "popup_lbl_new_edit_geolocation": "New/edit geolocation",
           "popup_lbl_place_name": "Locality name",
@@ -244,7 +244,7 @@
           "popup_lbl_lat": "Lat",
           "popup_lbl_lng": "Lng"
         },
-        "temporal" : {
+        "temporal": {
           "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
           "popup_lbl_period": "Period",
           "popup_lbl_name_of_period": "Name of period"
@@ -354,7 +354,7 @@
         "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
         "number_of_selected_resources": "{{count}} selected resources"
       },
-      "import_images" : {
+      "import_images": {
         "title": "Import",
         "lbl_select_mode_of_import": "Select mode of import",
         "lbl_import_local_images": "Import local images",
@@ -397,7 +397,7 @@
         "btn_open_json_with_search_results": "Open json with search results",
         "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!"
       },
-      "import_video" : {
+      "import_video": {
         "title": "Import",
         "loading_preparing_files_to_import": "Preparing files to import...",
         "lbl_import_local_videos": "Import local videos",
@@ -541,7 +541,8 @@
         "tooltip_click_to_continue_drawing_shape": "Click to continue drawing shape",
         "tooltip_click_first_point_to_close_shape": "Click first point to close this shape",
         "tooltip_click_to_start_drawing_rectangle": "Click and drag to draw rectangle",
-        "tooltip_release_mouse_to_finish_drawing": "Release mouse to finish drawing"
+        "tooltip_release_mouse_to_finish_drawing": "Release mouse to finish drawing",
+        "tooltip_click_cancel_to_undo_changes": "Click cancel to undo changes"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",
