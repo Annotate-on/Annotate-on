@@ -1,6 +1,6 @@
 import {Path, Util, LatLngBounds, LineUtil, LatLng, latLng as toLatLng, Bounds, Point} from 'leaflet';
 
-const MARKER_LENGTH = 5;
+const MARKER_LENGTH = 8;
 
 /**
  * Change drawing of occurrence annotation.
