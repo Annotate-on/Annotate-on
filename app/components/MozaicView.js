@@ -15,6 +15,7 @@ import MAP from "./pictures/map-location-dot-solid.svg";
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -183,6 +184,10 @@ export default class extends PureComponent {
                         <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
                              onClick={this.props.openMapView}>
                             <img alt="map view" src={MAP}/>
+                        </div>
+                        <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                             onClick={this.props.openTimelineView}>
+                            <img alt="list view" src={TIMELINE}/>
                         </div>
                     </div>
 

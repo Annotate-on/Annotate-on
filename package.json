@@ -303,6 +303,7 @@
     "promise-limit": "^2.7.0",
     "prop-types": "^15.0.0",
     "react": "^16.8.6",
+    "react-chrono": "^1.19.2",
     "react-contextmenu": "^2.11.0",
     "react-dom": "^16.8.6",
     "react-hot-loader": "^4.8.2",

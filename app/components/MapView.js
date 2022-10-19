@@ -12,6 +12,7 @@ import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategor
 import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
 import Chance from "chance";
 import {getDecimalLocation, getNewTabName, validateLocationInput} from "./event/utils";
+import TIMELINE from "./pictures/clock-regular.svg";
 const chance = new Chance();
 
 const _Root = styled.div`
@@ -228,6 +229,10 @@ export default class MapView extends Component {
                         <div
                             className={classnames("map-view", "selected-view")}>
                             <img alt="map view" src={MAP_WHITE}/>
+                        </div>
+                        <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                             onClick={this.props.openTimelineView}>
+                            <img alt="list view" src={TIMELINE}/>
                         </div>
                     </div>
                 </div>
