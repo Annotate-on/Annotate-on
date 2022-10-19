@@ -247,7 +247,7 @@
         "temporal": {
           "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
           "popup_lbl_period": "Period",
-          "popup_lbl_name_of_period": "Name of period"
+          "popup_lbl_name_of_period": "Date name or period name (optional)"
         }
       },
       "calibration": {

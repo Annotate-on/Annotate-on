@@ -266,6 +266,12 @@
   margin-bottom: 1rem;
   position: relative;
 
+  .input-group-append {
+    i.disabled {
+      color: grey;
+    }
+  }
+
   .widget-editor {
     padding: 5px;
     border: 1px solid #ced4da;
@@ -312,7 +318,8 @@
     .pick-location-btn {
       padding: 2px;
       width: 100%;
-      margin-bottom: 3px;
+      margin-bottom: 5px;
+      margin-top: 5px;
       i {
         margin-right: 5px;
       }
@@ -358,6 +365,21 @@
   .input-group {
     input.form-control:hover {
       background-image: none;
+    }
+  }
+
+  .geocode-results-popup {
+    width: 100%;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 0px;
+    margin: 0px;
+    max-height: 300px;
+    overflow-y:auto;
+    .dropdown-item {
+      white-space: normal;
+      border-top: 1px solid #ced4da;
+      cursor: pointer;
     }
   }
 }
