@@ -257,7 +257,7 @@ export default class LeafletMap extends Component {
                                             .querySelector('.action');
                                         if (anchor) {
                                             anchor.addEventListener("click", e => {
-                                                this.props.onOpenResource(location.resource.sha1);
+                                                this.props.onOpenResource(location.resource.sha1, location.annotation);
                                             });
                                         }
                                     }}>

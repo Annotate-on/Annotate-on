@@ -976,7 +976,7 @@ div.leaflet-marker-icon {
 }
 
 .timeline-widget {
-  //height: calc(100% - 40px);
+
   height: 80vh;
   margin: 20px;
   .visible {
@@ -988,6 +988,29 @@ div.leaflet-marker-icon {
   }
   .timeline-card-content {
     min-height: unset;
+  }
+  .action {
+    cursor: pointer;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  p.rc-card-title {
+    margin-bottom: 0px !important;
+  }
+
+  p.rc-card-subtitle {
+    margin-bottom: 0px !important;
+  }
+
+  .card-description {
+    padding: 0px;
+    margin: 0px;
+  }
+  .rc-card-text {
+    padding: 0px;
+    margin: 0px;
+
   }
 }
 

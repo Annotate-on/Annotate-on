@@ -6,7 +6,12 @@ import classnames from "classnames";
 import MAP from "./pictures/map-location-dot-solid.svg";
 import TIMELINE_WHITE from "./pictures/clock-regular-white.svg"
 import React, {Component} from 'react';
-import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {
+    ee,
+    EVENT_HIGHLIGHT_ANNOTATION,
+    EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET,
+    EVENT_SELECT_TAB
+} from "../utils/library";
 import Chance from "chance";
 import TimelineWidget, {mockItems} from "./TimelineWidget";
 import moment from "moment";
@@ -46,7 +51,6 @@ export default class TimelineView extends Component {
     componentDidMount() {
         console.log("componentDidMount")
         this._doFindItemsWithDating();
-        // setInterval(this._doFindItemsWithDating, 5000)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -76,11 +80,12 @@ export default class TimelineView extends Component {
                             let endDate = annotation.coverage.temporal.end ? moment(annotation.coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false) : null;
                             console.log("start date", startDate);
                             const startDateValue = annotation.coverage.temporal.start.replace("T", " ");
+                            const endDateValue = annotation.coverage.temporal.end.replace("T", " ");
                             const dataItem = {
                                 startDate: startDate,
                                 startDateValue: startDateValue,
                                 endDate: endDate,
-                                endDateValue:annotation.coverage.temporal.end,
+                                endDateValue:endDateValue,
                                 period: annotation.coverage.temporal.period,
                                 annotation: annotation,
                                 resource: resource
@@ -96,21 +101,25 @@ export default class TimelineView extends Component {
             let sortedDataItems = dataItems.sort(
                 (objA, objB) => Number(objA.startDate) - Number(objB.startDate),
             );
-            console.log("sorted", sortedDataItems);
-            results = sortedDataItems.map(dataItem => { return {
-                title: `${dataItem.period} ${dataItem.startDateValue}`,
-                cardTitle: `${dataItem.annotation.title}`,
-                cardSubtitle:`${dataItem.resource.file_basename}`,
-                cardDetailedText: `${dataItem.annotation.value ? dataItem.annotation.value : ''}${dataItem.annotation.value_in_mm ? dataItem.annotation.value_in_mm :''}${dataItem.annotation.value_in_deg ? dataItem.annotation.value_in_deg: ''}`,
-                media: {
-                    type: "IMAGE",
-                    source: {
-                        url: `${dataItem.resource.thumbnail}`
-                    }
-                },
-                type: dataItem.annotation.annotationType
-            }})
-            console.log("results", results);
+            results = sortedDataItems.map(dataItem => {
+                const periodLabel = dataItem.period ? `${dataItem.period} : ` : '';
+                const endLabel = dataItem.endDateValue ? ` / ${dataItem.endDateValue}` : '';
+                return {
+                    title: `${periodLabel}${dataItem.startDateValue}${endLabel}`,
+                    cardTitle: `${dataItem.annotation.title}`,
+                    cardSubtitle: `${dataItem.resource.file_basename}`,
+                    cardDetailedText: `${dataItem.annotation.value ? dataItem.annotation.value : ''}${dataItem.annotation.value_in_mm ? dataItem.annotation.value_in_mm : ''}${dataItem.annotation.value_in_deg ? dataItem.annotation.value_in_deg : ''}`,
+                    media: {
+                        type: "IMAGE",
+                        source: {
+                            url: `${dataItem.resource.thumbnail}`
+                        }
+                    },
+                    resource: dataItem.resource.sha1,
+                    annotation: dataItem.annotation.id,
+                    type: dataItem.annotation.annotationType,
+                }
+            })
         }
         this.setState({
             items: results
@@ -135,9 +144,16 @@ export default class TimelineView extends Component {
         ];
     };
 
-    _onOpenResource = (picId) => {
+    _onOpenResource = (picId, annotationId, type) => {
+        console.log("_onOpenResource", picId, annotationId, this.props.tabName)
         this.props.setPictureInSelection(picId, this.props.tabName);
-        ee.emit(EVENT_SELECT_TAB, 'image')
+        setTimeout(() => {
+            ee.emit(EVENT_SELECT_TAB, 'image');
+        }, 100)
+        setTimeout(() => {
+            ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotationId , true);
+            ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, annotationId , type);
+        }, 100)
     }
 
     render() {
@@ -165,7 +181,10 @@ export default class TimelineView extends Component {
                     </div>
                 </div>
                     <_TimelinePlaceholder>
-                        <TimelineWidget items={this.state.items}></TimelineWidget>
+                        <TimelineWidget
+                            items={this.state.items}
+                            onOpenResource={this._onOpenResource}
+                        ></TimelineWidget>
                     </_TimelinePlaceholder>
             </_Root>
         );
