@@ -103,7 +103,7 @@ export default class TimelineWidget extends Component {
         const stream = doc.pipe(blobStream());
         stream.on('finish', function() {
             const blob = this.toBlob();
-            fileSaver.saveAs(blob, 'printkit.pdf');
+            fileSaver.saveAs(blob, 'timeline.pdf');
         });
     }
 
