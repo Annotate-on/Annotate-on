@@ -87,7 +87,6 @@ export default class TimelineWidget extends Component {
             let icon = this._getIconForAnnotationType(item.type)
             const data = icon.split(',');
             const decoded = window.atob(data[1]);
-            console.log(decoded)
             SVGtoPDF(doc, decoded, 194, indexInPage * cardHeight + cardHeight/2 - 7, {height: 25});
 
             // doc.lineWidth(1);
@@ -128,7 +127,7 @@ export default class TimelineWidget extends Component {
                                 enableOutline
                                 cardWidth="350"
                                 onItemSelected={e => {
-                                    console.log("selected", e)
+                                    // console.log("selected", e)
                                 }}
                             >
                                 <div className="chrono-icons">
@@ -138,11 +137,11 @@ export default class TimelineWidget extends Component {
                                     })}
                                 </div>
                                 {this.props.items.map((item, index) => {
-                                    return <div className="card-details-container">
+                                    return <div className="card-details-container" key={index}>
                                         <p>{item.cardDetailedText}</p>
                                         <Button color="link" key={index} href={"#"} className="action"
                                                 onClick={e => {
-                                                    console.log("open", item)
+                                                    // console.log("open", item)
                                                     if (this.props.onOpenResource) {
                                                         this.props.onOpenResource(item.resource, item.annotation, item.type);
                                                     }

@@ -12,33 +12,17 @@ import {
     EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET,
     EVENT_SELECT_TAB
 } from "../utils/library";
-import Chance from "chance";
-import TimelineWidget, {mockItems} from "./TimelineWidget";
+import TimelineWidget from "./TimelineWidget";
 import moment from "moment";
-
-const chance = new Chance();
 
 const _Root = styled.div`
   width: 100%;
   height: 100%;
 `;
 
-const _Panel = styled.div`
-  height: 100%;
-  overflow: scroll;
-  box-shadow: inset 0 -0.5px 0 0 #dddddd, inset 0.5px 0 0 0 #dddddd;
-  ::-webkit-scrollbar {
-      width: 0;
-      background: transparent;
-    }
-`;
-
 const _TimelinePlaceholder = styled.div`
     width: 100%;
-    // height: calc(100% - 40px);
-    // position: relative;
 `;
-
 
 export default class TimelineView extends Component {
 
@@ -49,36 +33,26 @@ export default class TimelineView extends Component {
     }
 
     componentDidMount() {
-        console.log("componentDidMount")
         this._doFindItemsWithDating();
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("componentDidUpdate")
         if (this.props.resources !== prevProps.resources) {
             this._doFindItemsWithDating();
         }
     }
 
     _doFindItemsWithDating = () => {
-        console.log("_doFindItemsWithDating")
-
         let dataItems = [];
         for (const resource of this.props.resources) {
             const annotations = this._mergeAnnotations(this.props, resource.sha1)
             if(annotations) {
                 annotations.filter(annotation => {
                     if(annotation.coverage && annotation.coverage.temporal) {
-
-                        console.log("resource", resource)
-                        console.log("annotation", annotation)
-
                         if(annotation.coverage.temporal.start) {
                             let startMomentDateTimeSec = moment(annotation.coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false);
-                            console.log("start", startMomentDateTimeSec)
                             let startDate = startMomentDateTimeSec.toDate();
                             let endDate = annotation.coverage.temporal.end ? moment(annotation.coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false) : null;
-                            console.log("start date", startDate);
                             const startDateValue = annotation.coverage.temporal.start.replace("T", " ");
                             const endDateValue = annotation.coverage.temporal.end.replace("T", " ");
                             const dataItem = {
@@ -145,7 +119,6 @@ export default class TimelineView extends Component {
     };
 
     _onOpenResource = (picId, annotationId, type) => {
-        console.log("_onOpenResource", picId, annotationId, this.props.tabName)
         this.props.setPictureInSelection(picId, this.props.tabName);
         setTimeout(() => {
             ee.emit(EVENT_SELECT_TAB, 'image');
@@ -158,7 +131,6 @@ export default class TimelineView extends Component {
 
     render() {
         const { t } = i18next;
-        console.log("render ", this.state.items)
         return (
             <_Root>
                 <div className="lib-actions">
