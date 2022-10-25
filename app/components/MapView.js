@@ -6,12 +6,19 @@ import classnames from "classnames";
 import MAP_WHITE from "./pictures/map-location-dot-solid-white.svg";
 import React, {Component} from 'react';
 import LeafletMap, {MARKER_TYPE_ANNOTATION, MARKER_TYPE_METADATA} from "./LeafletMap";
-import {ee, EVENT_SELECT_TAB, EVENT_OPEN_TAB} from "../utils/library";
+import {
+    ee,
+    EVENT_SELECT_TAB,
+    EVENT_OPEN_TAB,
+    EVENT_HIGHLIGHT_ANNOTATION,
+    EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET
+} from "../utils/library";
 import _ from "lodash";
 import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
 import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
 import Chance from "chance";
 import {getDecimalLocation, getNewTabName, validateLocationInput} from "./event/utils";
+import TIMELINE from "./pictures/clock-regular.svg";
 const chance = new Chance();
 
 const _Root = styled.div`
@@ -76,6 +83,7 @@ export default class MapView extends Component {
                             type: MARKER_TYPE_ANNOTATION,
                             latLng : getDecimalLocation(`${annotation.coverage.spatial.location.latitude},${annotation.coverage.spatial.location.longitude}`),
                             resource : resource,
+                            annotation: annotation,
                             current: resource.sha1 === this.props.currentPictureSelection.sha1
                         };
                         locationsFromAnnotations.push(location);
@@ -141,10 +149,18 @@ export default class MapView extends Component {
         ];
     };
 
-
-    _onOpenResource = (picId) => {
+    _onOpenResource = (picId, annotation) => {
+        console.log("_onOpenResource", picId, annotation, this.props.tabName)
         this.props.setPictureInSelection(picId, this.props.tabName);
-        ee.emit(EVENT_SELECT_TAB, 'image')
+        setTimeout(() => {
+            ee.emit(EVENT_SELECT_TAB, 'image');
+        }, 100)
+        if(annotation) {
+            setTimeout(() => {
+                ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotation.id , true);
+                ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, annotation.id, annotation.annotationType);
+            }, 100)
+        }
     }
 
     _onSelectResource = (resourceId) => {
@@ -228,6 +244,10 @@ export default class MapView extends Component {
                         <div
                             className={classnames("map-view", "selected-view")}>
                             <img alt="map view" src={MAP_WHITE}/>
+                        </div>
+                        <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                             onClick={this.props.openTimelineView}>
+                            <img alt="list view" src={TIMELINE}/>
                         </div>
                     </div>
                 </div>

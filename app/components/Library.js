@@ -13,7 +13,7 @@ import {
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
     TABLE_DATA_BG_OVER,
-    TABLE_DATA_FG_OVER,
+    TABLE_DATA_FG_OVER, TIMELINE_VIEW,
 } from '../constants/constants';
 import {MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH} from './Inspector';
 import Inspector from '../containers/Inspector';
@@ -31,12 +31,14 @@ import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
 import MapView from "../containers/MapView";
+import TimelineView from "../containers/TimelineView";
 
 
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
 const MAP = require('./pictures/map-location-dot-solid.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const SELECT_ALL_CONTEXT = require('./pictures/select_all_gray.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -347,6 +349,7 @@ export default class extends Component {
                         <Folders tabName={this.props.tabName}/>
                         <Tags tabName={this.props.tabName} visibleActions={true}/>
                     </div>
+                    {console.log(this.state.picView)}
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>
@@ -371,6 +374,10 @@ export default class extends Component {
                                                         picView: MAP_VIEW,
                                                         fitToBounds: "true"
                                                     });
+                                                }}
+                                                openTimelineView={() => {
+                                                    this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                    this.setState({picView: TIMELINE_VIEW});
                                                 }}
                                                 skipReSort={(value) => skipSort = value}
                                     />
@@ -400,6 +407,15 @@ export default class extends Component {
                                                              });
                                                          }}>
                                                         <img alt="map view" src={MAP}/>
+                                                    </div>
+                                                    <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                                                         onClick={() => {
+                                                             this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                             this.setState({
+                                                                 picView: TIMELINE_VIEW,
+                                                             });
+                                                         }}>
+                                                        <img alt="map view" src={TIMELINE}/>
                                                     </div>
                                                 </div>
                                                 <div className="action-buttons">
@@ -627,6 +643,24 @@ export default class extends Component {
                                              tabName={this.props.tabName}
                                              currentPictureSelection={this.state.currentPictureSelection}
                                              fitToBounds={this.state.fitToBounds}
+                                             openListView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = LIST_VIEW;
+                                                 this.setState({picView: LIST_VIEW});
+                                             }}
+                                             openMozaicView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
+                                                 this.setState({picView: MOZAIC_VIEW});
+                                             }}
+                                             openTimelineView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                 this.setState({picView: TIMELINE_VIEW});
+                                             }}
+                                    ></MapView>
+                                }
+                                {this.state.picView === TIMELINE_VIEW &&
+                                    <TimelineView
+                                        resources={this.state.sortedPicturesList}
+                                        tabName={this.props.tabName}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                             this.setState({picView: LIST_VIEW});
@@ -635,7 +669,14 @@ export default class extends Component {
                                             this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
                                             this.setState({picView: MOZAIC_VIEW});
                                         }}
-                                    ></MapView>
+                                        openMapView={() => {
+                                            this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                            this.setState({
+                                                picView: MAP_VIEW,
+                                                fitToBounds: "true"
+                                            });
+                                        }}
+                                    ></TimelineView>
                                 }
                             </_Pictures>
                             : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?

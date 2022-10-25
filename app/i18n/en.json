@@ -283,6 +283,7 @@
       "lbl_without_model": "Without model",
       "title": "Library",
       "switch_to_mozaic_view_tooltip": "Switch to mozaic view",
+      "switch_to_timeline_view_tooltip": "Switch to timeline view",
       "table_column_catalog_n1": "Catalog N1°",
       "table_column_family": "Family",
       "table_column_date": "Date",
@@ -353,6 +354,9 @@
         "popup_lbl_date": "Date",
         "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
         "number_of_selected_resources": "{{count}} selected resources"
+      },
+      "timeline-view": {
+        "btn_tooltip.export_timeline_in_pdf_format": "Export timeline in pdf format"
       },
       "import_images": {
         "title": "Import",
