@@ -318,7 +318,16 @@ export default class LeafletMap extends Component {
                                                      src={location.resource.thumbnail}>
                                                 </img>
                                             }
-                                            <br/>
+                                            {location.annotation &&
+                                                <div className="annotation-holder">
+                                                    <img height="12px"
+                                                         className="btn_menu"
+                                                         alt={location.annotation.annotationType}
+                                                         src={require('./pictures/' + location.annotation.annotationType + '.svg')}
+                                                    />
+                                                    <span title={location.annotation.title}>{location.annotation.title}</span>
+                                                </div>
+                                            }
                                             <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
                                         </div>
                                     </Popup>

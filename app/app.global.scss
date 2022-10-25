@@ -979,6 +979,20 @@ div.leaflet-marker-icon {
 
   height: 80vh;
   margin: 20px;
+
+  .leaflet-recolnat-print {
+    float: right;
+    right: 41px;
+    border-radius: 0px;
+    padding: 2px;
+    color: red;
+    box-shadow: 0 0 10px 2px rgba(0,0,0,0.2);
+  }
+
+  .leaflet-recolnat-print a:hover {
+    background-color: #fff;
+  }
+
   .visible {
     display: flex !important;
   }
@@ -988,6 +1002,15 @@ div.leaflet-marker-icon {
   }
   .timeline-card-content {
     min-height: unset;
+  }
+
+  .card-details-container {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    margin: 0px 0px 5px;
+    padding: 0px 0px 0px 5px;
+
   }
   .action {
     cursor: pointer;
@@ -1010,7 +1033,7 @@ div.leaflet-marker-icon {
   .rc-card-text {
     padding: 0px;
     margin: 0px;
-
   }
+
 }
 

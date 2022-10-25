@@ -355,6 +355,9 @@
         "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
         "number_of_selected_resources": "{{count}} selected resources"
       },
+      "timeline-view": {
+        "btn_tooltip.export_timeline_in_pdf_format": "Export timeline in pdf format"
+      },
       "import_images": {
         "title": "Import",
         "lbl_select_mode_of_import": "Select mode of import",
