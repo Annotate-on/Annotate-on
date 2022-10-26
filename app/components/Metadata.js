@@ -25,7 +25,6 @@ const REMOVE_TAG = require('./pictures/delete_tag.svg');
 export default class extends Component {
     constructor(props, context) {
         super(props, context);
-        console.log(props);
         const metadata = {
             'naturalScienceMetadata': {
                 'catalogNumber': props.picture.catalogNumber || '',
@@ -83,9 +82,9 @@ export default class extends Component {
             let metadata = loadMetadata(this.props.picture.sha1);
             if (metadata === null) {
                 metadata = {
-                    naturalScienceMetadata: {...this.state.initMetadata.naturalScienceMetadata},
-                    iptc: {...this.state.initMetadata.iptc},
-                    exif: {...this.state.initMetadata.exif}
+                    naturalScienceMetadata: {},
+                    iptc: {},
+                    exif: {}
                 }
             }
 

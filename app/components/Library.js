@@ -147,8 +147,8 @@ export default class extends Component {
 
         this.state = {
             // Current picture for preview
-            currentPicture: sortedPicturesList[0],
-            hardSelection: sortedPicturesList[0],
+            currentPicture: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
+            hardSelection: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
             initPicturesList,
             allPictureLength,
             numberOfPicturesInSelectedFolders: props.tabData[this.props.tabName].folder_pictures_selection.length,
