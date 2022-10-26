@@ -632,7 +632,12 @@
         "table_column_x": "X",
         "table_column_y": "Y",
         "table_column_w": "W",
-        "table_column_h": "H"
+        "table_column_h": "H",
+        "table_column_coverage_spatial_location": "Lat,Lng",
+        "table_column_coverage_spatial_place_name": "Place name",
+        "table_column_coverage_temporal_start": "Temporal start",
+        "table_column_coverage_temporal_end": "Temporal end",
+        "table_column_coverage_temporal_name": "Temporal name"
       },
       "collections": {
         "dropdown_export_collection": "Export collection",
@@ -678,6 +683,7 @@
         "table_column_language": "Language",
         "table_column_relation": "Relation",
         "table_column_coverage": "Coverage",
+        "table_column_place_name": "Place name",
         "table_column_rights": "Rights",
         "table_column_contact": "Contact",
         "table_column_dimension_x": "Dimension X",
