@@ -33,6 +33,7 @@ const EXPORT_COLUMNS = [
     'Language',
     'Relation',
     'Coverage',
+    'Place name',
     'Rights',
     'Contact',
 
@@ -71,6 +72,7 @@ class XmpMetadata extends PureComponent {
             t('results.metadata.table_column_language'),
             t('results.metadata.table_column_relation'),
             t('results.metadata.table_column_coverage'),
+            t('results.metadata.table_column_place_name'),
             t('results.metadata.table_column_rights'),
             t('results.metadata.table_column_contact'),
 
@@ -145,6 +147,7 @@ class XmpMetadata extends PureComponent {
                         xmp_metadata.iptc.language,
                         xmp_metadata.iptc.relation,
                         xmp_metadata.iptc.location,
+                        xmp_metadata.iptc.placeName,
                         xmp_metadata.iptc.rights,
                         xmp_metadata.iptc.contact,
 
@@ -233,6 +236,7 @@ class XmpMetadata extends PureComponent {
                                         dc_language: xmp_metadata.iptc.language,
                                         dc_relation: xmp_metadata.iptc.relation,
                                         dc_coverage: xmp_metadata.iptc.location,
+                                        dc_place: xmp_metadata.iptc.placeName,
                                         dc_rights: xmp_metadata.iptc.rights,
                                         dc_contact: xmp_metadata.iptc.contact,
 
@@ -371,6 +375,7 @@ class XmpMetadata extends PureComponent {
                                                 <td>{xmp.iptc.language}</td>
                                                 <td>{xmp.iptc.relation}</td>
                                                 <td>{xmp.iptc.location}</td>
+                                                <td>{xmp.iptc.placeName}</td>
                                                 <td>{xmp.iptc.rights}</td>
                                                 <td>{xmp.iptc.contact}</td>
 

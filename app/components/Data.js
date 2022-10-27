@@ -60,6 +60,9 @@ const EXPORT_COLUMNS = [
     'File',
     'Folder',
     'Note',
+    'LatLng',
+    'Place name',
+    'Temporal coverage',
     'X',
     'Y',
     'W',
@@ -274,7 +277,8 @@ class Data extends PureComponent {
                 y: annotation.y !== undefined ? annotation.y : null,
                 type: annotation.annotationType,
                 pictureTags,
-                pictureMetadata
+                pictureMetadata,
+                coverage: annotation.coverage
             }
 
         }).filter(_ => _ !== undefined);
@@ -667,6 +671,11 @@ class Data extends PureComponent {
                                                     <TableHeader title={t('results.annotations.table_column_y')}/>
                                                     <TableHeader title={t('results.annotations.table_column_w')}/>
                                                     <TableHeader title={t('results.annotations.table_column_h')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_coverage_spatial_location')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_coverage_spatial_place_name')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_coverage_temporal_name')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_coverage_temporal_start')}/>
+                                                    <TableHeader title={t('results.annotations.table_column_coverage_temporal_end')}/>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -693,6 +702,12 @@ class Data extends PureComponent {
                                                                 <td>{result.y.toFixed(2)}</td>
                                                                 <td>{result.w.toFixed(2)}</td>
                                                                 <td>{result.h.toFixed(2)}</td>
+                                                                <td>{annotation.coverage && annotation.coverage.spatial && annotation.coverage.spatial.location ?
+                                                                    (annotation.coverage.spatial.location.latitude + "," + annotation.coverage.spatial.location.latitude) : ''}</td>
+                                                                <td>{annotation.coverage && annotation.coverage.spatial ? annotation.coverage.spatial.placeName : ''}</td>
+                                                                <td>{annotation.coverage && annotation.coverage.temporal ? annotation.coverage.temporal.period : ''}</td>
+                                                                <td>{annotation.coverage && annotation.coverage.temporal ? annotation.coverage.temporal.start : ''}</td>
+                                                                <td>{annotation.coverage && annotation.coverage.temporal ? annotation.coverage.temporal.end : ''}</td>
                                                             </tr>
                                                         )
                                                     }
@@ -770,6 +785,16 @@ class Data extends PureComponent {
             let fragmentRegion = this._makeRectangle(annotation);
             const vertices = this._printVertices(annotation);
             const customerVertices = this._printCustomerVertices(annotation);
+            let latLngValue = annotation.coverage && annotation.coverage.spatial && annotation.coverage.spatial.location
+                ? annotation.coverage.spatial.location.latitude + "," + annotation.coverage.spatial.location.longitude : '';
+            let placeNameValue = annotation.coverage && annotation.coverage.spatial ? annotation.coverage.spatial.placeName: '';
+            let temporalValue = '';
+            if(annotation.coverage && annotation.coverage.temporal) {
+                let nameOfPeriod = annotation.coverage.temporal.period ? annotation.coverage.temporal.period : '';
+                let start = annotation.coverage.temporal.start;
+                let end = annotation.coverage.temporal.end;
+                temporalValue = `${nameOfPeriod ? 'name='+ nameOfPeriod + ';' : ''}${start ? 'start='+ start + ';' : ''}${end ? 'end='+ end + ';' : ''}`;
+            }
             if (separator === ";") {
                 return [
                     annotation.title,
@@ -787,6 +812,9 @@ class Data extends PureComponent {
                     annotation.fileBasename,
                     annotation.dirname,
                     annotation.note,
+                    latLngValue,
+                    placeNameValue,
+                    temporalValue,
                     fragmentRegion.x,
                     fragmentRegion.y,
                     fragmentRegion.w,
@@ -813,6 +841,9 @@ class Data extends PureComponent {
                     annotation.fileBasename,
                     annotation.dirname,
                     annotation.note,
+                    latLngValue,
+                    placeNameValue,
+                    temporalValue,
                     fragmentRegion.x,
                     fragmentRegion.y,
                     fragmentRegion.w,
