@@ -815,6 +815,7 @@
       "alert_category_with_name_already_exit": "category with name '{{name}}' already exists",
       "alert_tag_already_exit_in_category": "tag with that name already exists in category: '{{parent}}'",
       "alert_can_not_add_tag_or_subcategory_without_parent": "error you can not add tag or subcategory without parent category!",
+      "btn_back_to_keywords": "Back to keywords",
       "dialog_modify_category": {
         "title_edit_new_category": "Edit category",
         "title_create_new_category": "Create category",

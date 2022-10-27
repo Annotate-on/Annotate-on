@@ -46,11 +46,13 @@ const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const chance = new Chance();
 const SORT_DIALOG = 'SORT_DIALOG';
 const SORT_CATEGORY_DIALOG = 'SORT_CATEGORY_DIALOG';
+const SORT_SEARCH_RESULTS_DIALOG = 'SORT_SEARCH_RESULTS_DIALOG';
 
 
 class TagManager extends Component {
 
     constructor(props) {
+        console.log("nextProps tags ", props.tags)
         super(props);
         this.state = {
             rootCategories: sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , SORT_ALPHABETIC_DESC),
@@ -70,7 +72,11 @@ class TagManager extends Component {
             showDialog: '',
             sortDirection: SORT_ALPHABETIC_DESC,
             categoriesSortDirection: SORT_ALPHABETIC_DESC,
-            tagsIdChecked: false
+            tagsIdChecked: false,
+            searchTerm:'',
+            showSearchResults: true,
+            searchResultsSortDirection: SORT_ALPHABETIC_DESC,
+            searchResult: null
         }
 
         this.handleEditTagOrCategory = this.handleEditTagOrCategory.bind(this);
@@ -104,7 +110,7 @@ class TagManager extends Component {
     }
 
     handleResize = () => {
-        if (!this.props.isModalOrTab){
+        if (!this.props.isModalOrTab && !this.state.showSearchResults){
             this._calculateTagsContentHeight();
         }
     }
@@ -115,7 +121,7 @@ class TagManager extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.handleResize)
-        if (!this.props.isModalOrTab){
+        if (!this.props.isModalOrTab && !this.state.showSearchResults){
             this._calculateTagsContentHeight();
         }
         if (this.state.tagsIdChecked === false){
@@ -131,6 +137,7 @@ class TagManager extends Component {
     }
 
     componentWillReceiveProps(nextProps: Readonly<P>, nextContext: any) {
+        console.log("nextProps tags ", nextProps.tags)
 
         if (this.state.selectedCategory && this.state.selectedCategory.children){
             this.setState({
@@ -566,7 +573,6 @@ class TagManager extends Component {
     }
 
     createTagModelFromCSV = (f) => {
-
         let newTagModel = [];
         let uniqueCategories = [];
 
@@ -787,7 +793,7 @@ class TagManager extends Component {
                 ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_item_already_exits', { type: draggedItem.type}));
                 return false;
             }
-        }else{
+        } else {
             //if dragged item is father of category drop zone
             if (isChild(draggedItem.children , category.id)){
                 ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_can_not_move_category_to_subcategory'));
@@ -801,7 +807,7 @@ class TagManager extends Component {
                     return false;
                 }
                 parent = {id: 'root'};
-            }else{
+            } else {
                 const findParent = (items) => {
                     items.forEach(  item => {
                         if (item.type === TYPE_CATEGORY){
@@ -819,7 +825,7 @@ class TagManager extends Component {
             if (!items.some(item => item.name === draggedItem.name)){
                 this.props.mergeTMTags(targetId , draggedItem , parent.id);
                 this.refreshAfterMerge(draggedItem.name);
-            }else{
+            } else {
                 ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_item_already_exits', { type: draggedItem.type}));
                 return false;
             }
@@ -894,7 +900,6 @@ class TagManager extends Component {
     }
 
     renderTagsSection = () => {
-
         if (!this.state.tags || this.state.tags.length === 0){
             return null;
         }
@@ -921,6 +926,411 @@ class TagManager extends Component {
                 )
             }
         });
+    }
+
+    renderTagManager = () => {
+        const { t } = this.props;
+        return(
+            <div>
+                <div id="tm-category-section">
+
+                    <Row className="tm-selected-categories">
+                        <div className="sort-tags-tm">
+                            {
+                                this.state.showDialog === SORT_CATEGORY_DIALOG &&
+                                <div className="sort-dialog sd-ct">
+                                    <div
+                                        className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_ALPHABETIC_DESC})}
+                                        onClick={_ => {
+                                            this._sortCategories(this.state.rootCategories , SORT_ALPHABETIC_DESC);
+                                            this.setState({
+                                                showDialog: '',
+                                                categoriesSortDirection: SORT_ALPHABETIC_DESC,
+                                                rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_DESC)
+                                            });
+                                        }}>{t('popup_sort.alphabetical')}
+                                        <img src={SELECTED_ICON} alt="checked"/>
+                                    </div>
+                                    <div
+                                        className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_ALPHABETIC_ASC})}
+                                        onClick={_ => {
+                                            this._sortCategories(this.state.rootCategories ,SORT_ALPHABETIC_ASC);
+                                            this.setState({
+                                                showDialog: '',
+                                                categoriesSortDirection: SORT_ALPHABETIC_ASC,
+                                                rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_ASC)
+                                            });
+                                        }}>{t('popup_sort.alphabetical_inverted')}
+                                        <img src={SELECTED_ICON} alt="checked"/>
+                                    </div>
+                                    <div
+                                        className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_DATE_DESC})}
+                                        onClick={_ => {
+                                            this._sortCategories(this.state.rootCategories ,SORT_DATE_DESC);
+                                            this.setState({
+                                                showDialog: '',
+                                                categoriesSortDirection: SORT_DATE_DESC,
+                                                rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_DESC)
+                                            });
+                                        }}>{t('popup_sort.newest_to_oldest')}
+                                        <img src={SELECTED_ICON} alt="checked"/>
+                                    </div>
+                                    <div
+                                        className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_DATE_ASC})}
+                                        onClick={_ => {
+                                            this._sortCategories(this.state.rootCategories ,SORT_DATE_ASC);
+                                            this.setState({
+                                                showDialog: '',
+                                                categoriesSortDirection: SORT_DATE_ASC,
+                                                rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_ASC)
+                                            });
+                                        }}>{t('popup_sort.oldest_to_newest')}
+                                        <img src={SELECTED_ICON} alt="checked"/>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <span className="centerTextMiddle sc-label">{t('keywords.lbl_selected_categories')}:</span>
+                        <div  className="tm-home">
+                            <div className="path-items">
+                                <span className="centerTextMiddle goHome" onClick={ ()=> this._backToInitState()}>{t('global.home')}</span>
+                                <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span>
+                            </div>
+                        </div>
+
+                        {
+                            this.state.selectedCategories.length > 0 ?
+                                <div  className="tm-breadcrumb">
+                                    {
+                                        this.state.selectedCategories.map( (cat , index) => {
+                                            return (
+                                                <div className="path-items" key={chance.guid()}>
+                                                    <Category isInMenu={true} key={`cat-${index}`} selectCategory={this._selectCategory} category={cat}/>
+                                                    {
+                                                        this.state.selectedCategories.length -1 !== index ?
+                                                            <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span> : null
+                                                    }
+                                                </div>)
+                                        })
+
+                                    }
+                                </div> : <div  className="tm-breadcrumb"/>
+                        }
+                        <span title={t('keywords.sort_tooltip_categories')}
+                              className={classnames("sort-icon" , "si-tm" , {'sort-selected-icon': this.state.showDialog === SORT_CATEGORY_DIALOG})}
+                              onClick={_ => {
+                                  if (this.state.showDialog === SORT_CATEGORY_DIALOG)
+                                      this.setState({showDialog: ''});
+                                  else
+                                      this.setState({showDialog: SORT_CATEGORY_DIALOG});
+                              }}/>
+                    </Row>
+                    <Row>
+                        <div className={`category-list ${this._isRootCategory(this.state.selectedCategory?.name) ? "category-list_selected" : ""}`}>
+                            {
+                                this.state.rootCategories.map((cat, index) => {
+                                    return (
+                                        <ContextMenuTrigger
+                                            key={`cm-${index}`}
+                                            id="tag-list-context-menu"
+                                            collect={() => {
+                                                return {
+                                                    type: cat.type,
+                                                    tagName: cat.name,
+                                                    item: cat
+                                                };
+                                            }}>
+                                            <Category
+                                                _onDrop={this._onDrop}
+                                                isInPath={this.state.selectedCategories.indexOf(cat) >= 0}
+                                                selectCategory={this._selectCategory} key={`category-${index}`}
+                                                category={cat}
+                                            />
+                                        </ContextMenuTrigger>
+                                    )
+                                })
+                            }
+                            {
+                                !this.state.selectedCategory ?
+                                    <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal}
+                                             type={TYPE_CATEGORY}/> : null
+
+                            }
+
+                        </div>
+                    </Row>
+                    {
+                        this.renderCategories()
+                    }
+                    <Row>
+                        <div className="tag-filter">
+                            <span className="tags-text-center"><b>{t('keywords.lbl_keywords')}</b></span>
+                            <div className="search">
+                                <div className="sort-tags-tm">
+                                    <span title={t('keywords.sort_tooltip_tags')}
+                                          className={classnames("sort-icon" , "si-tm-tags" , {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
+                                          onClick={_ => {
+                                              if (this.state.showDialog === SORT_DIALOG)
+                                                  this.setState({showDialog: ''});
+                                              else
+                                                  this.setState({showDialog: SORT_DIALOG});
+                                          }}/>
+                                    {this.state.showDialog === SORT_DIALOG ?
+                                        <div className="sort-dialog sd-tm">
+                                            <div
+                                                className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_ALPHABETIC_DESC})}
+                                                onClick={_ => {
+                                                    this._handleOnSortChange(SORT_ALPHABETIC_DESC);
+                                                    this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_DESC});
+                                                }}>{t('popup_sort.alphabetical')}
+                                                <img src={SELECTED_ICON} alt="checked"/>
+                                            </div>
+                                            <div
+                                                className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_ALPHABETIC_ASC})}
+                                                onClick={_ => {
+                                                    this._handleOnSortChange(SORT_ALPHABETIC_ASC);
+                                                    this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_ASC});
+                                                }}>{t('popup_sort.alphabetical_inverted')}
+                                                <img src={SELECTED_ICON} alt="checked"/>
+                                            </div>
+                                            <div
+                                                className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_DATE_DESC})}
+                                                onClick={_ => {
+                                                    this._handleOnSortChange(SORT_DATE_DESC);
+                                                    this.setState({showDialog: '' , sortDirection: SORT_DATE_DESC});
+                                                }}>{t('popup_sort.newest_to_oldest')}
+                                                <img src={SELECTED_ICON} alt="checked"/>
+                                            </div>
+                                            <div
+                                                className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_DATE_ASC})}
+                                                onClick={_ => {
+                                                    this._handleOnSortChange(SORT_DATE_ASC);
+                                                    this.setState({showDialog: '' , sortDirection: SORT_DATE_ASC});
+                                                }}>{t('popup_sort.oldest_to_newest')}
+                                                <img src={SELECTED_ICON} alt="checked"/>
+                                            </div>
+                                        </div> : ''
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </Row>
+                </div>
+                {/*TAG-SECTION*/}
+                {
+                    !this.isOrderedAlphabetically() ?
+                        <Row className="tag-section-row">
+                            {
+                                this.state.selectedCategory !== null && this.state.selectedCategory.name ?
+                                    <div id="tm-tag-section" className="category-list tag-items overflowY-auto" style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
+                                        {
+                                            this.renderTagsSection()
+                                        }
+                                        <AddItem isCategorySelected={this.state.selectedCategory.name} showSaveModal={this.showSaveModal} type={TYPE_TAG}/>
+                                    </div> : null
+                            }
+                        </Row> :
+                        <div className={`'x-hidden tags-alphabet ${this.props.screen ? '' : 'overflowY-auto '}`} style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
+                            {
+                                this.state.selectedCategory !== null && this.state.selectedCategory.name ?
+                                    <div>
+                                        <Row className="no-margin">
+                                            <Col sm={12} md={12} lg={12} className="category-list">
+                                                <div className="tm-add-tag"
+                                                     onClick={ ()=> {
+                                                         if (this.state.selectedCategory){
+                                                             this.showSaveModal(TYPE_TAG)
+                                                         }else {
+                                                             ee.emit(EVENT_SHOW_ALERT , 'To add a new keyword you need to select category first...')
+                                                         }
+                                                     }}>
+                                                    <span title="Add new keyword" className= "new-category-tag-icon"/>
+                                                    <span className="cursor-pointer">Add new keyword</span>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                        {
+                                            this.renderTagsAlpha()
+                                        }
+                                    </div> : null
+                            }
+                        </div>
+                }
+                <div>
+                    <Modal isOpen={this.state.showModal} autoFocus={false} toggle={this._toggle} wrapClassName="bst rcn_inspector pick-tag">
+                        <ModalHeader toggle={this._toggle}>{
+                            this.state.editedItemName !== null ? `Edit ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}` : `Create new ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}`
+                        }
+                        </ModalHeader>
+                        <ModalBody>
+                            <Form>
+                                <InputGroup>
+                                    <Input placeholder="Enter name ..." autoFocus={true}
+                                           value={this.state.name}
+                                           onChange={(e) => this.handleNameChange(e.target.value)}/>
+                                    <InputGroupAddon addonType="append">
+                                        {
+                                            this.state.editedItemName !== null ?
+                                                <Button type="submit" color="primary" onClick={(e) => this.handleEditTagOrCategory(e , this.state.editedItemName , this.state.name , this.state.editedItem)}>{t('global.save')}</Button> :
+
+                                                <Button type="submit" color="primary"
+                                                        onClick={(e) => this.saveCategoryOrTag(e)}>{t('global.save')}</Button>
+                                        }
+                                    </InputGroupAddon>
+                                </InputGroup>
+                            </Form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="secondary" onClick={this._toggle}>Close</Button>
+                        </ModalFooter>
+                    </Modal>
+                </div>
+                <div>
+                    <ContextMenu id="tag-list-context-menu">
+                        <MenuItem data={{action: 'edit'}} onClick={this.handleContextMenu}>
+                            {t('global.edit')}
+                        </MenuItem>
+                        <MenuItem divider />
+                        <MenuItem data={{action: 'delete'}} onClick={this.handleContextMenu}>
+                            {t('global.delete')}
+                        </MenuItem>
+                    </ContextMenu>
+                </div>
+            </div>
+        );
+    }
+
+    _searchTags = (searchTerm) => {
+        let rootCategories = sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , this.state.searchResultsSortDirection)
+        console.log("_searchTags root categories", rootCategories)
+        let result = []
+        if(searchTerm.trim()) {
+            for (const category of rootCategories) {
+                this._findSearchResultsForCategory([], category, searchTerm, result);
+            }
+        }
+        console.log("_searchTags search result", result);
+        this.setState({
+            showSearchResults : true,
+            searchTerm: searchTerm,
+            searchResult: result
+        })
+    }
+
+    _findSearchResultsForCategory = (path, category, searchTerm, result) => {
+        console.log("_findSearchResultsForCategory", category, searchTerm)
+        let tags = sortTagsAlphabeticallyOrByDate(this._filterTagsByCategory(category, searchTerm), this.state.searchResultsSortDirection);
+        console.log("_findSearchResultsForCategory tags", tags)
+        path.push(category);
+        if(tags && tags.length > 0) {
+            result.push({
+                    path: [...path],
+                    tags: tags
+                }
+            );
+        }
+        if(category.children) {
+            let subcategories = getRootCategories(category.children);
+            if(subcategories) {
+                for (const subcategory of subcategories) {
+                    this._findSearchResultsForCategory(path, subcategory, searchTerm, result)
+                }
+            }
+        }
+    }
+
+    _filterTagsByCategory = (category, searchTerm) => {
+        if (category && category.children){
+            if (searchTerm.length === 0){
+                return getTagsOnly(category.children);
+            } else {
+                return getTagsOnly(category.children).filter(tag => {
+                    return tag.name.toLowerCase().includes(searchTerm.toLowerCase());
+                });
+            }
+        }
+    }
+
+    _onBackFromSearch = () => {
+        this.setState({
+            showSearchResults : false,
+            searchTerm: ''
+        })
+    }
+
+    _handleOnSearchResultsSortChange = (sortBy) => {
+        console.log("_handleOnSearchResultsSortChange sortBy = ", sortBy)
+        this.setState({
+            searchDialog: '',
+            searchResultsSortDirection: sortBy
+        });
+    };
+
+    renderSearchResults = () => {
+        const { t } = this.props;
+        return(
+            <div className="tm-container-search-results">
+                <div className="tm-container-search-results-header">
+                    <Button color="primary" onClick={this._onBackFromSearch}>{t('keywords.btn_back_to_keywords')}</Button>
+                    <div className="sort-tags-search-results">
+                        <span title={t('keywords.sort_tooltip_tags')}
+                              className={classnames("sort-icon", "si-tm-tags1", {'sort-selected-icon': this.state.showDialog === SORT_SEARCH_RESULTS_DIALOG})}
+                              onClick={_ => {
+                                  if (this.state.showDialog === SORT_SEARCH_RESULTS_DIALOG)
+                                      this.setState({showDialog: ''});
+                                  else
+                                      this.setState({showDialog: SORT_SEARCH_RESULTS_DIALOG});
+                              }}
+                        />
+                        {this.state.showDialog === SORT_SEARCH_RESULTS_DIALOG &&
+                            <div className="sort-dialog sd-tm">
+                                <div
+                                    className={classnames('di-tm', {'di-tm-selected': this.state.searchResultsSortDirection === SORT_ALPHABETIC_DESC})}
+                                    onClick={_ => {
+                                        this._handleOnSearchResultsSortChange(SORT_ALPHABETIC_DESC);
+                                    }}>{t('popup_sort.alphabetical')}
+                                    <img src={SELECTED_ICON} alt="checked"/>
+                                </div>
+                                <div
+                                    className={classnames('di-tm', {'di-tm-selected': this.state.searchResultsSortDirection === SORT_ALPHABETIC_ASC})}
+                                    onClick={_ => {
+                                        this._handleOnSearchResultsSortChange(SORT_ALPHABETIC_ASC);
+                                    }}>{t('popup_sort.alphabetical_inverted')}
+                                    <img src={SELECTED_ICON} alt="checked"/>
+                                </div>
+                                <div
+                                    className={classnames('di-tm', {'di-tm-selected': this.state.searchResultsSortDirection === SORT_DATE_DESC})}
+                                    onClick={_ => {
+                                        this._handleOnSearchResultsSortChange(SORT_DATE_DESC);
+                                    }}>{t('popup_sort.newest_to_oldest')}
+                                    <img src={SELECTED_ICON} alt="checked"/>
+                                </div>
+                                <div
+                                    className={classnames('di-tm', {'di-tm-selected': this.state.searchResultsSortDirection === SORT_DATE_ASC})}
+                                    onClick={_ => {
+                                        this._handleOnSearchResultsSortChange(SORT_DATE_ASC);
+                                    }}>
+                                    {t('popup_sort.oldest_to_newest')}
+                                    <img src={SELECTED_ICON} alt="checked"/>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div className="tm-container-search-results-content">
+                {/*    this.state.selectedCategories.map( (cat , index) => {*/}
+                {/*    return (*/}
+                {/*    <div className="path-items" key={chance.guid()}>*/}
+                {/*    <Category isInMenu={true} key={`cat-${index}`} selectCategory={this._selectCategory} category={cat}/>*/}
+                {/*{*/}
+                {/*    this.state.selectedCategories.length -1 !== index ?*/}
+                {/*    <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span> : null*/}
+                {/*}*/}
+                {/*    </div>)*/}
+                {/*})*/}
+                </div>
+            </div>
+        )
     }
 
     render() {
@@ -969,277 +1379,13 @@ class TagManager extends Component {
                 </div> : null
                 }
                 <div id="tm-wrapper-id" className="tagManager-wrapper">
-                    <div id="tm-category-section">
-                        <Row className="tm-selected-categories">
-                            <div className="sort-tags-tm">
-                                {
-                                    this.state.showDialog === SORT_CATEGORY_DIALOG ?
-                                        <div className="sort-dialog sd-ct">
-                                            <div
-                                                className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_ALPHABETIC_DESC})}
-                                                onClick={_ => {
-                                                    this._sortCategories(this.state.rootCategories , SORT_ALPHABETIC_DESC);
-                                                    this.setState({
-                                                        showDialog: '',
-                                                        categoriesSortDirection: SORT_ALPHABETIC_DESC,
-                                                        rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_DESC)
-                                                    });
-                                                }}>{t('popup_sort.alphabetical')}
-                                                <img src={SELECTED_ICON} alt="checked"/>
-                                            </div>
-                                            <div
-                                                className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_ALPHABETIC_ASC})}
-                                                onClick={_ => {
-                                                    this._sortCategories(this.state.rootCategories ,SORT_ALPHABETIC_ASC);
-                                                    this.setState({
-                                                        showDialog: '',
-                                                        categoriesSortDirection: SORT_ALPHABETIC_ASC,
-                                                        rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_ALPHABETIC_ASC)
-                                                    });
-                                                }}>{t('popup_sort.alphabetical_inverted')}
-                                                <img src={SELECTED_ICON} alt="checked"/>
-                                            </div>
-                                            <div
-                                                className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_DATE_DESC})}
-                                                onClick={_ => {
-                                                    this._sortCategories(this.state.rootCategories ,SORT_DATE_DESC);
-                                                    this.setState({
-                                                        showDialog: '',
-                                                        categoriesSortDirection: SORT_DATE_DESC,
-                                                        rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_DESC)
-                                                    });
-                                                }}>{t('popup_sort.newest_to_oldest')}
-                                                <img src={SELECTED_ICON} alt="checked"/>
-                                            </div>
-                                            <div
-                                                className={classnames('di-tm', {'di-tm-selected': this.state.categoriesSortDirection === SORT_DATE_ASC})}
-                                                onClick={_ => {
-                                                    this._sortCategories(this.state.rootCategories ,SORT_DATE_ASC);
-                                                    this.setState({
-                                                        showDialog: '',
-                                                        categoriesSortDirection: SORT_DATE_ASC,
-                                                        rootCategories: sortTagsAlphabeticallyOrByDate(this.state.rootCategories , SORT_DATE_ASC)
-                                                    });
-                                                }}>{t('popup_sort.oldest_to_newest')}
-                                                <img src={SELECTED_ICON} alt="checked"/>
-                                            </div>
-                                        </div>
-                                        : null
-                                }
-                            </div>
-                            <span className="centerTextMiddle sc-label">{t('keywords.lbl_selected_categories')}:</span>
-                            <div  className="tm-home">
-                                <div className="path-items">
-                                    <span className="centerTextMiddle goHome" onClick={ ()=> this._backToInitState()}>{t('global.home')}</span>
-                                    <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span>
-                                </div>
-                            </div>
-
-                            {
-                                this.state.selectedCategories.length > 0 ?
-                                    <div  className="tm-breadcrumb">
-                                        {
-                                            this.state.selectedCategories.map( (cat , index) => {
-                                                return (
-                                                    <div className="path-items" key={chance.guid()}>
-                                                        <Category isInMenu={true} key={`cat-${index}`} selectCategory={this._selectCategory} category={cat}/>
-                                                        {
-                                                            this.state.selectedCategories.length -1 !== index ?
-                                                                <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span> : null
-                                                        }
-                                                    </div>)
-                                            })
-
-                                        }
-                                    </div> : <div  className="tm-breadcrumb"/>
-                            }
-                            <span title={t('keywords.sort_tooltip_categories')}
-                                  className={classnames("sort-icon" , "si-tm" , {'sort-selected-icon': this.state.showDialog === SORT_CATEGORY_DIALOG})}
-                                  onClick={_ => {
-                                      if (this.state.showDialog === SORT_CATEGORY_DIALOG)
-                                          this.setState({showDialog: ''});
-                                      else
-                                          this.setState({showDialog: SORT_CATEGORY_DIALOG});
-                                  }}/>
-                        </Row>
-                        <Row>
-                            <div className={`category-list ${this._isRootCategory(this.state.selectedCategory?.name) ? "category-list_selected" : ""}`}>
-                                {
-                                    this.state.rootCategories.map((cat, index) => {
-                                        return (
-                                            <ContextMenuTrigger
-                                                key={`cm-${index}`}
-                                                id="tag-list-context-menu"
-                                                collect={() => {
-                                                    return {
-                                                        type: cat.type,
-                                                        tagName: cat.name,
-                                                        item: cat
-                                                    };
-                                                }}>
-                                                <Category
-                                                    _onDrop={this._onDrop}
-                                                    isInPath={this.state.selectedCategories.indexOf(cat) >= 0}
-                                                    selectCategory={this._selectCategory} key={`category-${index}`}
-                                                    category={cat}
-                                                />
-                                            </ContextMenuTrigger>
-                                        )
-                                    })
-                                }
-                                {
-                                    !this.state.selectedCategory ?
-                                        <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal}
-                                                 type={TYPE_CATEGORY}/> : null
-
-                                }
-
-                            </div>
-                        </Row>
-                        {
-                            this.renderCategories()
-                        }
-                        <Row>
-                            <div className="tag-filter">
-                                <span className="tags-text-center"><b>{t('keywords.lbl_keywords')}</b></span>
-                                <div className="search">
-                                    <div className="searchButton">
-                                        <i className="fa fa-search margin-auto"/>
-                                    </div>
-                                    <input type="text" className="searchTerm" placeholder= {t('keywords.textbox_placeholder_search_keywords')} onChange={ (e) => this._filterTags(e.target.value)}/>
-                                    {/*<i className={`${this.state.sortUp ? 'fa fa-sort-alpha-asc' : 'fa fa-sort-alpha-desc'} tm-sort-icon`} onClick={ (event)=> {*/}
-                                    {/*    sortTags();*/}
-                                    {/*}}/>*/}
-                                    <div className="sort-tags-tm">
-                                    <span title={t('keywords.sort_tooltip_tags')}
-                                          className={classnames("sort-icon" , "si-tm-tags" , {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
-                                          onClick={_ => {
-                                              if (this.state.showDialog === SORT_DIALOG)
-                                                  this.setState({showDialog: ''});
-                                              else
-                                                  this.setState({showDialog: SORT_DIALOG});
-                                          }}/>
-                                        {this.state.showDialog === SORT_DIALOG ?
-                                            <div className="sort-dialog sd-tm">
-                                                <div
-                                                    className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_ALPHABETIC_DESC})}
-                                                    onClick={_ => {
-                                                        this._handleOnSortChange(SORT_ALPHABETIC_DESC);
-                                                        this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_DESC});
-                                                    }}>{t('popup_sort.alphabetical')}
-                                                    <img src={SELECTED_ICON} alt="checked"/>
-                                                </div>
-                                                <div
-                                                    className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_ALPHABETIC_ASC})}
-                                                    onClick={_ => {
-                                                        this._handleOnSortChange(SORT_ALPHABETIC_ASC);
-                                                        this.setState({showDialog: '' , sortDirection: SORT_ALPHABETIC_ASC});
-                                                    }}>{t('popup_sort.alphabetical_inverted')}
-                                                    <img src={SELECTED_ICON} alt="checked"/>
-                                                </div>
-                                                <div
-                                                    className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_DATE_DESC})}
-                                                    onClick={_ => {
-                                                        this._handleOnSortChange(SORT_DATE_DESC);
-                                                        this.setState({showDialog: '' , sortDirection: SORT_DATE_DESC});
-                                                    }}>{t('popup_sort.newest_to_oldest')}
-                                                    <img src={SELECTED_ICON} alt="checked"/>
-                                                </div>
-                                                <div
-                                                    className={classnames('di-tm', {'di-tm-selected': this.state.sortDirection === SORT_DATE_ASC})}
-                                                    onClick={_ => {
-                                                        this._handleOnSortChange(SORT_DATE_ASC);
-                                                        this.setState({showDialog: '' , sortDirection: SORT_DATE_ASC});
-                                                    }}>{t('popup_sort.oldest_to_newest')}
-                                                    <img src={SELECTED_ICON} alt="checked"/>
-                                                </div>
-                                            </div> : ''
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
+                    <div className="search">
+                        <div className="searchButton">
+                            <i className="fa fa-search margin-auto"/>
+                        </div>
+                        <input type="text" className="searchTerm" placeholder= {t('keywords.textbox_placeholder_search_keywords')} onChange={ (e) => this._searchTags(e.target.value)} value={this.state.searchTerm}/>
                     </div>
-                    {/*TAG-SECTION*/}
-                    {
-                        !this.isOrderedAlphabetically() ?
-                            <Row className="tag-section-row">
-                                {
-                                    this.state.selectedCategory !== null && this.state.selectedCategory.name ?
-                                        <div id="tm-tag-section" className="category-list tag-items overflowY-auto" style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
-                                            {
-                                                this.renderTagsSection()
-                                            }
-                                            <AddItem isCategorySelected={this.state.selectedCategory.name} showSaveModal={this.showSaveModal} type={TYPE_TAG}/>
-                                        </div> : null
-                                }
-                            </Row> :
-                            <div className={`'x-hidden tags-alphabet ${this.props.screen ? '' : 'overflowY-auto '}`} style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
-                                {
-                                    this.state.selectedCategory !== null && this.state.selectedCategory.name ?
-                                        <div>
-                                            <Row className="no-margin">
-                                                <Col sm={12} md={12} lg={12} className="category-list">
-                                                    <div className="tm-add-tag"
-                                                         onClick={ ()=> {
-                                                             if (this.state.selectedCategory){
-                                                                 this.showSaveModal(TYPE_TAG)
-                                                             }else {
-                                                                 ee.emit(EVENT_SHOW_ALERT , 'To add a new keyword you need to select category first...')
-                                                             }
-                                                         }}>
-                                                        <span title="Add new keyword" className= "new-category-tag-icon"/>
-                                                        <span className="cursor-pointer">Add new keyword</span>
-                                                    </div>
-                                                </Col>
-                                            </Row>
-                                            {
-                                                this.renderTagsAlpha()
-                                            }
-                                        </div> : null
-                                }
-                            </div>
-                    }
-                    <div>
-                        <Modal isOpen={this.state.showModal} autoFocus={false} toggle={this._toggle} wrapClassName="bst rcn_inspector pick-tag">
-                            <ModalHeader toggle={this._toggle}>{
-                                this.state.editedItemName !== null ? `Edit ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}` : `Create new ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}`
-                            }
-                            </ModalHeader>
-                            <ModalBody>
-                                <Form>
-                                    <InputGroup>
-                                        <Input placeholder="Enter name ..." autoFocus={true}
-                                               value={this.state.name}
-                                               onChange={(e) => this.handleNameChange(e.target.value)}/>
-                                        <InputGroupAddon addonType="append">
-                                            {
-                                                this.state.editedItemName !== null ?
-                                                    <Button type="submit" color="primary" onClick={(e) => this.handleEditTagOrCategory(e , this.state.editedItemName , this.state.name , this.state.editedItem)}>{t('global.save')}</Button> :
-
-                                                    <Button type="submit" color="primary"
-                                                            onClick={(e) => this.saveCategoryOrTag(e)}>{t('global.save')}</Button>
-                                            }
-                                        </InputGroupAddon>
-                                    </InputGroup>
-                                </Form>
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="secondary" onClick={this._toggle}>Close</Button>
-                            </ModalFooter>
-                        </Modal>
-                    </div>
-                    <div>
-                        <ContextMenu id="tag-list-context-menu">
-                            <MenuItem data={{action: 'edit'}} onClick={this.handleContextMenu}>
-                                {t('global.edit')}
-                            </MenuItem>
-                            <MenuItem divider />
-                            <MenuItem data={{action: 'delete'}} onClick={this.handleContextMenu}>
-                                {t('global.delete')}
-                            </MenuItem>
-                        </ContextMenu>
-                    </div>
+                    { this.state.showSearchResults ? this.renderSearchResults() : this.renderTagManager()}
                 </div>
             </Container>
         );
