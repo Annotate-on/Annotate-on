@@ -74,7 +74,8 @@ class TagManager extends Component {
             categoriesSortDirection: SORT_ALPHABETIC_DESC,
             tagsIdChecked: false,
             searchTerm:'',
-            showSearchResults: true,
+            searchResultInitialized: false,
+            showSearchResults: false,
             searchResultsSortDirection: SORT_ALPHABETIC_DESC,
             searchResult: null
         }
@@ -102,15 +103,23 @@ class TagManager extends Component {
     }
 
     _calculateTagsContentHeight = () => {
-        const h1 = document.getElementById('tm-wrapper-id').clientHeight;
-        const h2 = document.getElementById('tm-category-section').clientHeight;
-        this.setState({
-            calMaxHeight: (h1-h2 - 106) * 0.95
-        })
+        if(!this.state.showSearchResults) {
+            const h1 = document.getElementById('tm-wrapper-id').clientHeight;
+            const h2 = document.getElementById('tm-category-section').clientHeight;
+            this.setState({
+                calMaxHeight: (h1-h2 - 106) * 0.95
+            })
+        } else {
+            const h1 = document.getElementById('tm-wrapper-id').clientHeight;
+            this.setState({
+                calMaxHeight: h1 - 200
+            })
+        }
     }
 
     handleResize = () => {
-        if (!this.props.isModalOrTab && !this.state.showSearchResults){
+        console.log("handle rezise")
+        if (!this.props.isModalOrTab){
             this._calculateTagsContentHeight();
         }
     }
@@ -121,8 +130,8 @@ class TagManager extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.handleResize)
-        if (!this.props.isModalOrTab && !this.state.showSearchResults){
-            this._calculateTagsContentHeight();
+        if (!this.props.isModalOrTab){
+            this._calculateTagsContentHeight()
         }
         if (this.state.tagsIdChecked === false){
             this.props.addTagsId();
@@ -721,8 +730,8 @@ class TagManager extends Component {
         }
     };
 
-    isOrderedAlphabetically = () => {
-        return this.state.sortDirection === SORT_ALPHABETIC_DESC || this.state.sortDirection === SORT_ALPHABETIC_ASC;
+    isOrderedAlphabetically = (sortDirection) => {
+        return sortDirection === SORT_ALPHABETIC_DESC || sortDirection === SORT_ALPHABETIC_ASC;
     }
 
     validateDropAction = (draggedItem, category) => {
@@ -832,8 +841,7 @@ class TagManager extends Component {
         }
     };
 
-    mapTagsToFirstLetter = () => {
-        const tags = this.state.tags;
+    mapTagsToFirstLetter = (tags) => {
         if (!tags || tags.isEmpty){
             return [];
         }
@@ -855,8 +863,8 @@ class TagManager extends Component {
         return Object.values(data);
     }
 
-    renderTagsAlpha = () => {
-        const result = this.mapTagsToFirstLetter();
+    renderTagsAlpha = (tags) => {
+        const result = this.mapTagsToFirstLetter(tags);
         return  result.map((item, index) => {
             return (
                 <div key={genId()}>
@@ -899,33 +907,38 @@ class TagManager extends Component {
         });
     }
 
-    renderTagsSection = () => {
-        if (!this.state.tags || this.state.tags.length === 0){
+    renderTagsSection = (tags) => {
+        if (!tags || tags.length === 0){
             return null;
         }
-        return  this.state.tags.map((item, index) => {
+        return tags.map((item, index) => {
             if (item.type === TYPE_TAG) {
-                return (
-                    <ContextMenuTrigger id="tag-list-context-menu"
-                                        holdToDisplay={-1}
-                                        collect={() => {
-                                            return {
-                                                tagName: item.name,
-                                                type: TYPE_TAG,
-                                                item: item
-                                            };
-                                        }}>
-                        <div key={`tg-d-${index}-${item.name}`}
-                             className="tm-tagItem"
-                             onClick={(event) => this._tagPictureOrVideo(event, item.name)}
-                             draggable={true}
-                             onDragStart={(event) => this.handleTagOnDragStart(event, item)}
-                             onDragEnd={event => this.handleTagOnDragEnd(event)}
-                        >{item.name}</div>
-                    </ContextMenuTrigger>
-                )
+                return this.renderTag(item, index);
             }
         });
+    }
+
+    renderTag(item, index) {
+        return (
+            <ContextMenuTrigger id="tag-list-context-menu"
+                                key={chance.guid()}
+                                holdToDisplay={-1}
+                                collect={() => {
+                                    return {
+                                        tagName: item.name,
+                                        type: TYPE_TAG,
+                                        item: item
+                                    };
+                                }}>
+                <div key={`tg-d-${index}-${item.name}`}
+                     className="tm-tagItem"
+                     onClick={(event) => this._tagPictureOrVideo(event, item.name)}
+                     draggable={true}
+                     onDragStart={(event) => this.handleTagOnDragStart(event, item)}
+                     onDragEnd={event => this.handleTagOnDragEnd(event)}
+                >{item.name}</div>
+            </ContextMenuTrigger>
+        )
     }
 
     renderTagManager = () => {
@@ -1118,13 +1131,13 @@ class TagManager extends Component {
                 </div>
                 {/*TAG-SECTION*/}
                 {
-                    !this.isOrderedAlphabetically() ?
+                    !this.isOrderedAlphabetically(this.state.sortDirection) ?
                         <Row className="tag-section-row">
                             {
                                 this.state.selectedCategory !== null && this.state.selectedCategory.name ?
                                     <div id="tm-tag-section" className="category-list tag-items overflowY-auto" style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
                                         {
-                                            this.renderTagsSection()
+                                            this.renderTagsSection(this.state.tags)
                                         }
                                         <AddItem isCategorySelected={this.state.selectedCategory.name} showSaveModal={this.showSaveModal} type={TYPE_TAG}/>
                                     </div> : null
@@ -1150,7 +1163,7 @@ class TagManager extends Component {
                                             </Col>
                                         </Row>
                                         {
-                                            this.renderTagsAlpha()
+                                            this.renderTagsAlpha(this.state.tags)
                                         }
                                     </div> : null
                             }
@@ -1201,26 +1214,19 @@ class TagManager extends Component {
     }
 
     _searchTags = (searchTerm) => {
-        let rootCategories = sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , this.state.searchResultsSortDirection)
-        console.log("_searchTags root categories", rootCategories)
-        let result = []
-        if(searchTerm.trim()) {
-            for (const category of rootCategories) {
-                this._findSearchResultsForCategory([], category, searchTerm, result);
-            }
-        }
-        console.log("_searchTags search result", result);
+        const initializedSearch = this.state.searchResultInitialized;
         this.setState({
             showSearchResults : true,
             searchTerm: searchTerm,
-            searchResult: result
+            searchResultInitialized: true
         })
+        if(!initializedSearch) {
+            setTimeout(() => {this.handleResize()}, 100);
+        }
     }
 
     _findSearchResultsForCategory = (path, category, searchTerm, result) => {
-        console.log("_findSearchResultsForCategory", category, searchTerm)
         let tags = sortTagsAlphabeticallyOrByDate(this._filterTagsByCategory(category, searchTerm), this.state.searchResultsSortDirection);
-        console.log("_findSearchResultsForCategory tags", tags)
         path.push(category);
         if(tags && tags.length > 0) {
             result.push({
@@ -1259,7 +1265,7 @@ class TagManager extends Component {
     }
 
     _handleOnSearchResultsSortChange = (sortBy) => {
-        console.log("_handleOnSearchResultsSortChange sortBy = ", sortBy)
+        if(this.state.searchResultsSortDirection === sortBy) return;
         this.setState({
             searchDialog: '',
             searchResultsSortDirection: sortBy
@@ -1268,6 +1274,14 @@ class TagManager extends Component {
 
     renderSearchResults = () => {
         const { t } = this.props;
+        let rootCategories = sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , this.state.searchResultsSortDirection)
+        let result = []
+        if(this.state.searchTerm.trim()) {
+            for (const category of rootCategories) {
+                this._findSearchResultsForCategory([], category, this.state.searchTerm, result);
+            }
+        }
+
         return(
             <div className="tm-container-search-results">
                 <div className="tm-container-search-results-header">
@@ -1276,6 +1290,7 @@ class TagManager extends Component {
                         <span title={t('keywords.sort_tooltip_tags')}
                               className={classnames("sort-icon", "si-tm-tags1", {'sort-selected-icon': this.state.showDialog === SORT_SEARCH_RESULTS_DIALOG})}
                               onClick={_ => {
+                                  _.preventDefault();
                                   if (this.state.showDialog === SORT_SEARCH_RESULTS_DIALOG)
                                       this.setState({showDialog: ''});
                                   else
@@ -1317,20 +1332,60 @@ class TagManager extends Component {
                         }
                     </div>
                 </div>
-                <div className="tm-container-search-results-content">
-                {/*    this.state.selectedCategories.map( (cat , index) => {*/}
-                {/*    return (*/}
-                {/*    <div className="path-items" key={chance.guid()}>*/}
-                {/*    <Category isInMenu={true} key={`cat-${index}`} selectCategory={this._selectCategory} category={cat}/>*/}
-                {/*{*/}
-                {/*    this.state.selectedCategories.length -1 !== index ?*/}
-                {/*    <span className="arrow-span"><FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/></span> : null*/}
-                {/*}*/}
-                {/*    </div>)*/}
-                {/*})*/}
-                </div>
+                {result &&
+                    <div className={`tm-container-search-results-content  ${this.props.screen ? '' : 'overflowY-auto' }`} style={{maxHeight : this.state.calMaxHeight !== null ? this.state.calMaxHeight : '100%'}}>
+                        {result.map((resultItem, index) => {
+                            return this.renderSearchResultItem(resultItem);
+                        })}
+                    </div>
+                }
             </div>
         )
+    }
+
+    renderSearchResultItem = (searchResultItem) => {
+        return (
+            <div className="tm-container-search-results-item" key={chance.guid()}>
+                <div className="tm-container-search-results-item-path">
+                    {
+                        searchResultItem.path.map((cat, index) => {
+                                return <div className="path-item" key={chance.guid()}>
+                                    <Category isInMenu={true} key={`cat-${index}`} selectCategory={() => {
+                                        this._selectCategory(cat);
+                                        this._onBackFromSearch();
+                                    }} category={cat}/>
+                                    { searchResultItem.path.length -1 !== index &&
+                                        <span className="arrow-span">
+                                            <FontAwesomeIcon className="tm-fa-icon" icon={faArrowRight}/>
+                                        </span>
+                                    }
+                                </div>
+                            }
+                        )
+                    }
+                </div>
+                {
+
+                    this.isOrderedAlphabetically(this.state.searchResultsSortDirection) ?
+                        <div className={`x-hidden tags-alphabet`}>
+                            <div>
+                                {
+                                    this.renderTagsAlpha(searchResultItem.tags)
+                                }
+                            </div>
+                        </div>
+                        :
+                        <Row className="tag-section-row">
+                            <div className="category-list tag-items overflowY-auto">
+                                {
+                                    this.renderTagsSection(searchResultItem.tags)
+                                }
+                            </div>
+                        </Row>
+                }
+            </div>
+
+        );
     }
 
     render() {

@@ -454,6 +454,7 @@
   position: relative;
   display: flex;
   justify-content: center;
+  margin-top: 5px;
   margin-bottom: 5px;
 }
 .searchTerm {
@@ -517,7 +518,7 @@
 .tm-container-search-results {
   display: flex;
   flex-direction: column;
-  margin: 20px;
+  height: 100%;
 }
 
 .tm-container-search-results-header {
@@ -538,4 +539,24 @@
 
 .tm-container-search-results-content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
+  //overflow-y: auto;
+
+  .tm-container-search-results-item-path {
+    display: flex;
+    background: #eee;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .path-item {
+      text-align: left;
+      display: flex;
+      padding-left: 10px;
+    }
+
+  }
+
+
 }
