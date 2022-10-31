@@ -145,8 +145,6 @@ class TagManager extends Component {
     }
 
     componentWillReceiveProps(nextProps: Readonly<P>, nextContext: any) {
-        console.log("nextProps tags ", nextProps.tags)
-
         if (this.state.selectedCategory && this.state.selectedCategory.children){
             this.setState({
                 tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(this.state.selectedCategory.children) , this.state.sortDirection)
@@ -1186,14 +1184,14 @@ class TagManager extends Component {
                                             <Col sm={12} md={12} lg={12} className="category-list">
                                                 <div className="tm-add-tag"
                                                      onClick={ ()=> {
-                                                         if (this.state.selectedCategory){
+                                                         if (this.state.selectedCategory) {
                                                              this.showSaveModal(TYPE_TAG)
-                                                         }else {
-                                                             ee.emit(EVENT_SHOW_ALERT , 'To add a new keyword you need to select category first...')
+                                                         } else {
+                                                             ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_to_add_a_new_keyword_you_need_to_select_category'))
                                                          }
                                                      }}>
-                                                    <span title="Add new keyword" className= "new-category-tag-icon"/>
-                                                    <span className="cursor-pointer">Add new keyword</span>
+                                                    <span title={t('keywords.btn_tooltip_add_new_keyword')} className= "new-category-tag-icon"/>
+                                                    <span className="cursor-pointer">{t('keywords.btn_add_new_keyword')}</span>
                                                 </div>
                                             </Col>
                                         </Row>
@@ -1207,13 +1205,16 @@ class TagManager extends Component {
                 <div>
                     <Modal isOpen={this.state.showModal} autoFocus={false} toggle={this._toggle} wrapClassName="bst rcn_inspector pick-tag">
                         <ModalHeader toggle={this._toggle}>{
-                            this.state.editedItemName !== null ? `Edit ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}` : `Create new ${this.state.type === TYPE_CATEGORY ? 'category' : 'keyword'}`
+                            this.state.editedItemName !== null ?
+                                this.state.type === TYPE_CATEGORY ? t('keywords.dialog_modify_category.title_edit_new_category') : t('keywords.dialog_modify_category.title_edit_new_keyword') :
+                                this.state.type === TYPE_CATEGORY ? t('keywords.dialog_modify_category.title_create_new_category') : t('keywords.dialog_modify_category.title_create_new_keyword')
                         }
                         </ModalHeader>
                         <ModalBody>
                             <Form>
                                 <InputGroup>
-                                    <Input placeholder="Enter name ..." autoFocus={true}
+                                    <Input placeholder={t('keywords.dialog_modify_category.textbox_placeholder_enter_name')}
+                                           autoFocus={true}
                                            value={this.state.name}
                                            onChange={(e) => this.handleNameChange(e.target.value)}/>
                                     <InputGroupAddon addonType="append">
