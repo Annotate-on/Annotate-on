@@ -118,7 +118,6 @@ class TagManager extends Component {
     }
 
     handleResize = () => {
-        console.log("handle rezise")
         if (!this.props.isModalOrTab){
             this._calculateTagsContentHeight();
         }
@@ -245,6 +244,28 @@ class TagManager extends Component {
         });
     }
 
+    _selectPath = (category) => {
+        let categoriesPath = [];
+        let parent;
+        let idInSearch = category.id;
+        do {
+            parent = this._findParent(idInSearch);
+            if(parent) {
+                categoriesPath.unshift(parent);
+                idInSearch = parent.id;
+            }
+        } while (parent)
+
+        if(categoriesPath) {
+            categoriesPath.push(category);
+        }
+        this.setState({
+            selectedCategory: category,
+            selectedCategories: categoriesPath,
+            tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
+        })
+    }
+
     _selectCategory = (category) => {
         let categories = this.state.selectedCategories;
         let indexOfCategory = this.findElementIndex(category.name);
@@ -255,9 +276,8 @@ class TagManager extends Component {
                 selectedCategories: [category],
                 tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
             })
-        }
-        else if (!this.isAlreadyInList(category.name)) {
-            //check if it is direct sibiling
+        } else if (!this.isAlreadyInList(category.name)) {
+            //check if it is direct sibling
             if (this._checkForSelectedSibiling(category)){
                 categories.pop();
                 categories.push(category);
@@ -266,7 +286,7 @@ class TagManager extends Component {
                     selectedCategories: categories,
                     tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
                 })
-            }else{
+            } else {
                 //check if its child of currently selected component
                 if (this.state.selectedCategory && this.state.selectedCategory.children){
                     const res = this.state.selectedCategory.children.some( ch => ch.name === category.name);
@@ -277,7 +297,7 @@ class TagManager extends Component {
                             selectedCategories: categories,
                             tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
                         })
-                    }else{
+                    } else {
                         const parentIndex = this._findCategoryParentIndex(category.name);
                         let res = categories.splice(0 , parentIndex + 1);
                         res.push(category);
@@ -288,18 +308,16 @@ class TagManager extends Component {
                         })
                     }
                 }
-
             }
-        }else{
-            if (indexOfCategory === 0){
+        } else {
+            if (indexOfCategory === 0) {
                 this.setState({
                     selectedCategory: category,
                     selectedCategories: categories.splice(0, 1),
                     tags: sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), this.state.sortDirection)
                 })
-            }
-            else if (indexOfCategory === categories.length - 1){
-            }else{
+            } else if (indexOfCategory === categories.length - 1){
+            } else{
                 categories = categories.splice(0 , indexOfCategory + 1);
                 this.setState({
                     selectedCategory: category,
@@ -308,6 +326,23 @@ class TagManager extends Component {
                 })
             }
         }
+    }
+
+    _findParent = (childId) => {
+        let parent = null;
+        const findParent = (items) => {
+            items.forEach(  item => {
+                if (item.type === TYPE_CATEGORY){
+                    if (item.children.some(cat => cat.id === childId)){
+                        parent = item;
+                    } else {
+                        findParent(item.children)
+                    }
+                }
+            })
+        }
+        findParent(this.props.tags);
+        return parent;
     }
 
     _filterTags = (searchTerm) => {
@@ -1351,7 +1386,7 @@ class TagManager extends Component {
                         searchResultItem.path.map((cat, index) => {
                                 return <div className="path-item" key={chance.guid()}>
                                     <Category isInMenu={true} key={`cat-${index}`} selectCategory={() => {
-                                        this._selectCategory(cat);
+                                        this._selectPath(cat);
                                         this._onBackFromSearch();
                                     }} category={cat}/>
                                     { searchResultItem.path.length -1 !== index &&
