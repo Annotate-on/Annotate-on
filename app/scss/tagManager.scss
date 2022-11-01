@@ -27,10 +27,11 @@
   border-radius: 13px;
   margin: 5px;
   padding: 5px 10px 5px 10px;
-  color: #fff;
+  color: #000;
   display: grid;
-  background-color: #2f78ce;
+  background-color: #eeeeee;
   width: max-content;
+  border: 1px solid #ccc;
 }
 
 .letter-div{
@@ -87,7 +88,7 @@
   border-radius: 13px;
   margin: 5px;
   padding: 5px 10px 5px 10px;
-  color: white;
+  color: #fff;
   display: grid;
   background-color: #333;
   width: max-content;
@@ -377,7 +378,24 @@
   display: flex;
   flex-direction: row;
   height: 35px;
+
+  .in-category-search {
+    position: absolute;
+    display: flex;
+    right: 55px;
+    top: -3px;
+    width: 300px;
+  }
+
+  .in-category-search-btn {
+    position: absolute;
+    top:4px;
+    right: 60px;
+    font-size: 18px;
+  }
+
 }
+
 .tag-list {
   flex-flow: row wrap;
   display: flex;
@@ -434,7 +452,6 @@
   font-style: normal;
   line-height: 1;
   letter-spacing: normal;
-  color: #fff;
   cursor: pointer;
 }
 .category-right-element {

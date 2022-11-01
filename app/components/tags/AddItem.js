@@ -17,15 +17,15 @@ class AddItem extends Component {
         const { t } = i18next;
         const title = this.props.type === TYPE_CATEGORY ? t('keywords.btn_add_new_category') : t('keywords.btn_add_new_keyword');
         return (
-            <div className="add-category"
+            <div className="add-category  btn-primary"
                  onClick={ ()=> {
-                     if (this.props.type === TYPE_TAG){
+                     if (this.props.type === TYPE_TAG) {
                          if (this.props.isCategorySelected){
                              this.showModal()
-                         }else{
-                             ee.emit(EVENT_SHOW_ALERT , 'To add a tag you need to select category first...')
+                         } else {
+                             ee.emit(EVENT_SHOW_ALERT , t('keywords.alert_to_add_a_new_keyword_you_need_to_select_category'))
                          }
-                     }else{
+                     } else {
                          this.showModal()
                      }
                  }}>

@@ -77,12 +77,16 @@ class TagManager extends Component {
             searchResultInitialized: false,
             showSearchResults: false,
             searchResultsSortDirection: SORT_ALPHABETIC_DESC,
-            searchResult: null
+            searchResult: null,
+            showInCategorySearch: false,
+            inCategorySearchTerm: ''
         }
 
         this.handleEditTagOrCategory = this.handleEditTagOrCategory.bind(this);
         this.saveCategoryOrTag = this.saveCategoryOrTag.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
+
+        this.inCategorySearchRef = React.createRef();
     }
 
     setInitState = () => {
@@ -344,6 +348,9 @@ class TagManager extends Component {
     }
 
     _filterTags = (searchTerm) => {
+        this.setState({
+            inCategorySearchTerm: searchTerm,
+        })
         if (this.state.selectedCategory && this.state.selectedCategory.children){
             if (searchTerm.length === 0){
                 this.setState({
@@ -896,6 +903,17 @@ class TagManager extends Component {
         return Object.values(data);
     }
 
+    _onInCategorySearchClick = (show) => {
+        this.setState({
+            showInCategorySearch: show
+        })
+        if(show) {
+            setTimeout(() => {
+                this.inCategorySearchRef.current.focus()
+            }, 100);
+        }
+    }
+
     renderTagsAlpha = (tags) => {
         const result = this.mapTagsToFirstLetter(tags);
         return  result.map((item, index) => {
@@ -1112,6 +1130,27 @@ class TagManager extends Component {
                         <div className="tag-filter">
                             <span className="tags-text-center"><b>{t('keywords.lbl_keywords')}</b></span>
                             <div className="search">
+                                {
+                                    this.state.showInCategorySearch ?
+                                        <div className="in-category-search">
+                                            <div className="searchButton">
+                                                <i className="fa fa-search margin-auto"/>
+                                            </div>
+                                            <input type="text" className="searchTerm"
+                                                   ref={this.inCategorySearchRef}
+                                                   placeholder={t('keywords.textbox_placeholder_search_keywords')}
+                                                   onChange={(e) => this._filterTags(e.target.value)}
+                                                   value={this.state.inCategorySearchTerm} onKeyUp={(e) => {
+                                                       if(e.key === "Escape") this._onInCategorySearchClick(false)
+                                                   }
+                                            }/>
+                                        </div>
+                                        : <i className="fa fa-search pointer in-category-search-btn"
+                                             onClick={ () => {
+                                                 this._onInCategorySearchClick(true)
+                                             }
+                                        }/>
+                                }
                                 <div className="sort-tags-tm">
                                     <span title={t('keywords.sort_tooltip_tags')}
                                           className={classnames("sort-icon" , "si-tm-tags" , {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
@@ -1182,7 +1221,7 @@ class TagManager extends Component {
                                     <div>
                                         <Row className="no-margin">
                                             <Col sm={12} md={12} lg={12} className="category-list">
-                                                <div className="tm-add-tag"
+                                                <div className="tm-add-tag btn-primary"
                                                      onClick={ ()=> {
                                                          if (this.state.selectedCategory) {
                                                              this.showSaveModal(TYPE_TAG)
@@ -1303,7 +1342,7 @@ class TagManager extends Component {
     _handleOnSearchResultsSortChange = (sortBy) => {
         if(this.state.searchResultsSortDirection === sortBy) return;
         this.setState({
-            searchDialog: '',
+            showDialog: '',
             searchResultsSortDirection: sortBy
         });
     };
