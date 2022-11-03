@@ -141,9 +141,9 @@ import {
     RESOURCE_TYPE_EVENT,
     SORT_ALPHABETIC_DESC,
     SORT_DATE_DESC, TAG_AUTO,
-    TAGS_SELECTION_MODE_OR
+    TAGS_SELECTION_MODE_OR, TAGS_SELECTION_MODE_AND
 } from '../constants/constants';
-import {findPictures} from '../utils/tags';
+import {AND, findPictures, findPicturesByTagExpression, OR} from '../utils/tags';
 import {
     copySdd,
     deleteTaxonomy,
@@ -3801,9 +3801,23 @@ export default (state = {}, action) => {
 //
 const findPicturesByTags = (state, selectedTags, tagsSelectionMode, allPics) => {
     if (selectedTags.length === 0) return allPics;
-    const list = findPictures(state.tags_by_picture, state.pictures_by_tag, selectedTags, tagsSelectionMode, state);
-    const ll = lodash.intersection(allPics, list) || []
-    return ll;
+    const expression = []
+    for (let i = 0; i < selectedTags.length; i++) {
+        expression.push({has: true, tag: selectedTags[i]})
+        if(selectedTags.length > 1 && i < selectedTags.length-1) {
+            if(tagsSelectionMode === TAGS_SELECTION_MODE_AND) {
+                expression.push(AND);
+            } else if(tagsSelectionMode === TAGS_SELECTION_MODE_OR) {
+                expression.push(OR);
+            }
+        }
+    }
+    const result = findPicturesByTagExpression(expression, allPics, state);
+    return result;
+
+    // const list = findPictures(state.tags_by_picture, state.pictures_by_tag, selectedTags, tagsSelectionMode, state);
+    // const ll = lodash.intersection(allPics, list) || []
+    // return ll;
 };
 
 const filterPicturesByFolder = (tab, allPictures) => {
