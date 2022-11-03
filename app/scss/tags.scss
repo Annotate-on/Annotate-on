@@ -28,15 +28,15 @@
     font-size: 15px;
     margin-top: 10px;
   }
-  .tags-filter {
-    font-size: 14px;
-    color: #ddd;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    input {
-      margin-right: 10px;
-    }
-  }
+  //.tags-filter {
+  //  font-size: 14px;
+  //  color: #ddd;
+  //  margin-top: 10px;
+  //  margin-bottom: 15px;
+  //  input {
+  //    margin-right: 10px;
+  //  }
+  //}
   .tags-badge {
     margin-top: 10px;
     padding: 3px 12px 3px 12px;
@@ -286,5 +286,109 @@
     display: none;
   }
   .tags_nb_img_row{
+  }
+  .tags-filter {
+    display: flex;
+    flex-direction: column;
+    background-color: #9fc5f8;
+    border-radius: 5px;
+    padding: 5px;
+    .tags-filter-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      span {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+      i {
+        font-size: 18px;
+        padding: 5px;
+        color: orange;
+      }
+      .btn {
+        padding: 0px 5px 0px 0px;
+        font-size: 16px;
+        vertical-align: center;
+        i {
+          color: white;
+          font-size: 16px;
+          margin-right: 3px;
+        }
+      }
+    }
+
+    .tags-filter-content {
+      display: flex;
+      margin-top: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+      .tags-filter-expression-container {
+        margin-top: 0px;
+        margin-bottom: 6px;
+        margin-right: 5px;
+        border-radius: 10px;
+        background-color: white;
+        position: relative;
+        padding: 5px 7px 5px 5px;
+        //border-left: 2px solid;
+        //border-right: 2px solid;
+        //border-radius: 8px;
+
+        i {
+          position: absolute;
+          right: -7px;
+          top: -5px;
+          color: red;
+          font-size: 14px;
+          cursor: pointer;
+          background-color: white;
+          border-radius: 8px;
+          padding: 2px;
+        }
+        .tags-filter-expression {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+
+          .tags-filter-expression-brackets {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            border-left: 2px solid;
+            border-right: 2px solid;
+            border-radius: 10px;
+            padding: 3px 5px;
+            align-items: center;
+
+            .tags-filter-expression-keyword {
+              margin-top: 2px;
+              background-color: orange;
+              border-radius: 3px;
+              border: 1px solid darkorange;
+              padding: 3px;
+            }
+
+          }
+        }
+      }
+      .dropdown {
+        > button {
+          background-color: white;
+          color: black;
+          font-size: 15px;
+          font-weight: bold;
+          padding: 0px 3px;
+          margin-left: 3px;
+          margin-right: 3px;
+        }
+        .dropdown-menu {
+          min-width: unset;
+          .dropdown-item {
+            padding: 2px 5px;
+          }
+        }
+      }
+    }
   }
 }

@@ -17,6 +17,7 @@ import {ee, EVENT_SHOW_ALERT} from "../utils/library";
 import {TYPE_CATEGORY, TYPE_TAG} from "./event/Constants";
 import {containsOnlyWhiteSpace} from "./tags/tagUtils";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
+import TagsFilter from "./TagsFilter";
 
 const _Root = styled.div`
   height: 100%;
@@ -433,64 +434,71 @@ export default class extends Component {
                                 </Col>
                             </Row> : ''
                         }
-                        <Row
-                            className={classnames({'not_visible': this.props.autoSelectNew})}>
-                            <Col md={1} lg={1}>
-                                <Input type="checkbox"
-                                       name="name"
-                                       checked={this.state.tagsSelectionMode === TAGS_SELECTION_MODE_AND}
-                                       onChange={() => {
-                                           if (this.state.tagsSelectionMode === TAGS_SELECTION_MODE_OR) {
-                                               this.click_tagsSelectionMode(TAGS_SELECTION_MODE_AND);
-                                           } else {
-                                               this.click_tagsSelectionMode(TAGS_SELECTION_MODE_OR);
-                                           }
-                                       }}
-                                />
-                            </Col>
-                            <Col md={10} lg={10} className="tagCheckBoxLabel">{t('tags.checkbox_show_resources_with_all_selected_keywords')}
+                        <Row>
+                            <Col>
+                                <TagsFilter>
+
+                                </TagsFilter>
+                                {/*<Row*/}
+                                {/*    className={classnames({'not_visible': this.props.autoSelectNew})}>*/}
+                                {/*    <Col md={1} lg={1}>*/}
+                                {/*        <Input type="checkbox"*/}
+                                {/*               name="name"*/}
+                                {/*               checked={this.state.tagsSelectionMode === TAGS_SELECTION_MODE_AND}*/}
+                                {/*               onChange={() => {*/}
+                                {/*                   if (this.state.tagsSelectionMode === TAGS_SELECTION_MODE_OR) {*/}
+                                {/*                       this.click_tagsSelectionMode(TAGS_SELECTION_MODE_AND);*/}
+                                {/*                   } else {*/}
+                                {/*                       this.click_tagsSelectionMode(TAGS_SELECTION_MODE_OR);*/}
+                                {/*                   }*/}
+                                {/*               }}*/}
+                                {/*        />*/}
+                                {/*    </Col>*/}
+                                {/*    <Col md={10} lg={10} className="tagCheckBoxLabel">{t('tags.checkbox_show_resources_with_all_selected_keywords')}</Col>*/}
+                                {/*</Row>*/}
+
+                                <div className="tags" id="tagRoot" draggable={true}
+                                     onDragOver={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         if (e.target.classList.contains('tags'))
+                                             e.target.classList.add('root-hover');
+                                     }}
+
+                                     onDragEnd={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         document.getElementById('tagRoot').classList.remove('root-hover');
+                                     }}
+
+                                     onDragExit={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         e.target.classList.remove('root-hover');
+                                     }}
+
+                                     onDrop={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         document.getElementById('tagRoot').classList.remove('root-hover');
+                                         this._onDrop(e, "ROOT");
+                                     }}>
+                                    {this.state.sortedTags.map(_ => {
+                                        const response = this._renderTags(_);
+                                        return response && response.html;
+                                    })}
+                                </div>
+                                <div>
+                                    {!this.props.isImport ?
+                                        <ContextMenu id="tag_context_menu">
+                                            <MenuItem data={{action: 'open'}} onClick={this._handleContextMenu}>
+                                                <img alt="open" src={OPEN}/> {t('tags.context_menu_open_selection_in_new_tab')}
+                                            </MenuItem>
+                                        </ContextMenu> : ''}
+                                </div>
+
                             </Col>
                         </Row>
-
-                        <div className="tags" id="tagRoot" draggable={true}
-                             onDragOver={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 if (e.target.classList.contains('tags'))
-                                     e.target.classList.add('root-hover');
-                             }}
-
-                             onDragEnd={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 document.getElementById('tagRoot').classList.remove('root-hover');
-                             }}
-
-                             onDragExit={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 e.target.classList.remove('root-hover');
-                             }}
-
-                             onDrop={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 document.getElementById('tagRoot').classList.remove('root-hover');
-                                 this._onDrop(e, "ROOT");
-                             }}>
-                            {this.state.sortedTags.map(_ => {
-                                const response = this._renderTags(_);
-                                return response && response.html;
-                            })}
-                        </div>
-                        <div>
-                            {!this.props.isImport ?
-                                <ContextMenu id="tag_context_menu">
-                                    <MenuItem data={{action: 'open'}} onClick={this._handleContextMenu}>
-                                        <img alt="open" src={OPEN}/> {t('tags.context_menu_open_selection_in_new_tab')}
-                                    </MenuItem>
-                                </ContextMenu> : ''}
-                        </div>
                     </Collapse>
                 </Container>
             </_Root>
