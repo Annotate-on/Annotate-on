@@ -25,12 +25,117 @@ import {
 } from '../constants/constants';
 import {_formatTimeDisplay} from "./maths";
 
+export const AND = "AND"
+export const OR = "OR"
+
+export const findPicturesByTagExpression = (expression, allPictures, state) => {
+
+    console.log("findPictures expression", expression);
+    console.log("findPictures allPictures", allPictures);
+    console.log("findPictures tagsByAnnotation", state.tags_by_annotation);
+
+    if(!expression || expression.length === 0 || Object.values(state.tags_by_annotation).length === 0) return [...allPictures];
+
+    let annotations = [
+        ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_points_of_interest), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_rectangular), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_polygon), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_angle), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_occurrence), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_color_picker), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_ratio), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_transcription), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_categorical), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_richtext), 2)
+    ];
+    console.log("findPictures annotations", annotations)
+    let picturesByTag = {}
+
+    console.log("picturesByTag initial", state.pictures_by_tag)
+    if(state.pictures_by_tag) {
+        lodash.forIn(state.pictures_by_tag, (value, key) => {
+            picturesByTag[key] = [...value]
+        })
+    }
+
+    if(state.tags_by_annotation) {
+        lodash.forIn(state.tags_by_annotation, (value, key) => {
+            if(value) {
+                let annotation = annotations.find((annotation) => {
+                    return key === annotation.id;
+                })
+                if(annotation && allPictures.includes(annotation.pictureId)) {
+                    for (const valueElement of value) {
+                        if(!picturesByTag[valueElement]) {
+                            picturesByTag[valueElement] = []
+                        }
+                        picturesByTag[valueElement].push(annotation.pictureId)
+                    }
+                } else {
+                    console.log("can't find annotation with id ", key)
+                }
+            }
+        })
+    }
+
+    console.log("picturesByTag", picturesByTag)
+    let result = evaluateTagsExpression(expression, allPictures, picturesByTag);
+    return result;
+}
+
+const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
+    let currentResult = []
+    let currentOperator;
+    for (const item of expression) {
+        console.log("item type of", item, typeof item);
+        if (typeof item === 'string') {
+            console.log("operator", item)
+            currentOperator = item;
+            continue;
+        }
+        let set = [];
+        if (Array.isArray(item)) {
+            console.log("inner expression")
+            let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
+            if(innerSet) {
+                set = [...innerSet];
+            }
+        } else if (typeof item === 'object') {
+            console.log("condition", item)
+            if(item.has) {
+                if(picturesByTag[item.tag]) {
+                    set = [...picturesByTag[item.tag]]
+                }
+            } else {
+                if(picturesByTag[item.tag]) {
+                    set = [...lodash.difference(allPictures, picturesByTag[item.tag])];
+                } else {
+                    set = [...allPictures];
+                }
+            }
+        }
+        console.log("currentResult", currentResult)
+        console.log("currentOperator", currentOperator)
+        console.log("set", set)
+        if(currentOperator === AND) {
+            currentResult = lodash.intersection(currentResult, set);
+        } else {
+            currentResult = lodash.union(currentResult, set);
+        }
+        console.log("currentResult after operation", currentResult)
+
+    }
+    return currentResult;
+}
+
 export const findPictures = (tagsByPicture, picturesByTags, selectedTags, tagsSelectionMode, state) => {
     if (selectedTags.length === 0) return [];
 
     let foundPicturesId = [];
 
     if (Object.values(state.tags_by_annotation).length > 0) {
+
         let annotations = [
             ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
             , ...lodash.flattenDepth(Object.values(state.annotations_points_of_interest), 2)
@@ -73,8 +178,6 @@ export const findPictures = (tagsByPicture, picturesByTags, selectedTags, tagsSe
                 }
                     break;
             }
-
-
         });
     }
 
@@ -98,7 +201,6 @@ export const findPictures = (tagsByPicture, picturesByTags, selectedTags, tagsSe
 };
 
 export const attachDefaultTags = (picture, tagPicture, createTag, addSubTag) => {
-
 
     // Tag with system tags if applicable.
     if ('creator' in picture && !lodash.isNil(picture.creator) && picture.creator !== "") {
