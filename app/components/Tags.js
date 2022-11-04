@@ -18,6 +18,7 @@ import {TYPE_CATEGORY, TYPE_TAG} from "./event/Constants";
 import {containsOnlyWhiteSpace} from "./tags/tagUtils";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
 import TagsFilter from "./TagsFilter";
+import {updateTagExpressionOperator} from "../actions/app";
 
 const _Root = styled.div`
   height: 100%;
@@ -46,13 +47,14 @@ export default class extends Component {
 
         this.toggle = this.toggle.bind(this);
 
-        let selectedTags = [], tagsSelectionMode = TAGS_SELECTION_MODE_OR, sortDirection = SORT_ALPHABETIC_DESC;
+        let selectedTags = [], tagsSelectionMode = TAGS_SELECTION_MODE_OR, sortDirection = SORT_ALPHABETIC_DESC, selectedFilter;
         // If this component is created from tab, tabName will no be empty.
         // We are going to use selected tags list from proper source.
         if (this.props.tabName) {
             selectedTags = this.props.tabData[this.props.tabName].selected_tags;
             tagsSelectionMode = this.props.tabData[this.props.tabName].tags_selection_mode;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
+            selectedFilter = this.props.tabData[this.props.tabName].selected_filter;
         }
 
         const sortedTags = this._sortTags([...this.props.tags], sortDirection);
@@ -66,7 +68,8 @@ export default class extends Component {
             sortedTags: sortedTags,
             showDialog: '',
             sortDirection,
-            tagsCount: this._countTags(props.tags)
+            tagsCount: this._countTags(props.tags),
+            selectedFilter
         }
     }
 
@@ -75,17 +78,19 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let selectedTags, tagsSelectionMode, sortDirection;
+        let selectedTags, tagsSelectionMode, sortDirection, selectedFilter;
         if (this.props.tabName) {
             selectedTags = nextProps.tab.selected_tags;
+            selectedFilter = nextProps.tab.selected_filter;
             tagsSelectionMode = nextProps.tab.tags_selection_mode;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
         } else {
             selectedTags = nextProps.selectedTags;
+            selectedFilter = nextProps.selectedFilter;
             sortDirection = SORT_ALPHABETIC_DESC;
         }
         this.setState({
-            selectedTags, tagsSelectionMode,
+            selectedTags, tagsSelectionMode, selectedFilter,
             sortedTags: this._sortTags([...nextProps.tags], sortDirection),
             sortDirection,
             tagsCount: this._countTags(nextProps.tags)
@@ -324,7 +329,8 @@ export default class extends Component {
                 console.log('category selected do nothing..')
                 return false;
             }
-            selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
+            this.props.selectTag(tagName, false, this.props.tabName);
+            // selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
         }
     };
 
@@ -436,26 +442,20 @@ export default class extends Component {
                         }
                         <Row>
                             <Col>
-                                <TagsFilter>
+                                <TagsFilter filter={this.state.selectedFilter}
+                                            onDeleteExpression={(id) => {
+                                                this._handleDeleteTaxExpression(id)
+                                            }}
 
+                                            onCreateExpression={() => {
+                                                this._handleCreateTaxExpression()
+                                            }}
+
+                                            onUpdateTagExpressionOperator={(id, value) => {
+                                                this._handleUpdateTagExpressionOperator(id, value)
+                                            }}
+                                >
                                 </TagsFilter>
-                                {/*<Row*/}
-                                {/*    className={classnames({'not_visible': this.props.autoSelectNew})}>*/}
-                                {/*    <Col md={1} lg={1}>*/}
-                                {/*        <Input type="checkbox"*/}
-                                {/*               name="name"*/}
-                                {/*               checked={this.state.tagsSelectionMode === TAGS_SELECTION_MODE_AND}*/}
-                                {/*               onChange={() => {*/}
-                                {/*                   if (this.state.tagsSelectionMode === TAGS_SELECTION_MODE_OR) {*/}
-                                {/*                       this.click_tagsSelectionMode(TAGS_SELECTION_MODE_AND);*/}
-                                {/*                   } else {*/}
-                                {/*                       this.click_tagsSelectionMode(TAGS_SELECTION_MODE_OR);*/}
-                                {/*                   }*/}
-                                {/*               }}*/}
-                                {/*        />*/}
-                                {/*    </Col>*/}
-                                {/*    <Col md={10} lg={10} className="tagCheckBoxLabel">{t('tags.checkbox_show_resources_with_all_selected_keywords')}</Col>*/}
-                                {/*</Row>*/}
 
                                 <div className="tags" id="tagRoot" draggable={true}
                                      onDragOver={e => {
@@ -505,6 +505,7 @@ export default class extends Component {
         );
     }
 
+
     _handleContextMenu = (e, data) => {
         const { t } = this.props;
         switch (data.action) {
@@ -530,12 +531,27 @@ export default class extends Component {
         }
     };
 
+    _handleUpdateTagExpressionOperator = (id, value) => {
+        console.log("_handleUpdateTagExpressionOperator", id, value, this.props.tabName);
+        this.props.updateTagExpressionOperator(id, value, this.props.tabName);
+    };
+
+    _handleDeleteTaxExpression = (id) => {
+        console.log("_handleDeleteTaxExpression", id);
+        this.props.deleteTagExpression(id, this.props.tabName);
+    };
+
+    _handleCreateTaxExpression = () => {
+        console.log("_handleCreateTaxExpression");
+        this.props.createTagExpression(this.props.tabName);
+    };
+
     _renderTags = (_) => {
         if (this.state.searchTag) {
             if (!(_.name.toLowerCase().includes(this.state.searchTag.toLowerCase()) ||
                 (_.children && this._tagExist(_.children, this.state.searchTag.toLowerCase()))
             )) {
-                return
+                return;
             }
         }
         if (this.state.editTag === _.name) {

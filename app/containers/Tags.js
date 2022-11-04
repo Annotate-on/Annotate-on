@@ -1,7 +1,22 @@
 import {connect} from 'react-redux';
 
-import {createTag, deleteTag, editTag, selectTag, setTagsSelectionMode, tagPicture, unselectTag,
-    untagPicture, addSubTag, openInNewTab, mergeTags, saveTagSort} from '../actions/app';
+import {
+    createTag,
+    deleteTag,
+    editTag,
+    selectTag,
+    setTagsSelectionMode,
+    tagPicture,
+    unselectTag,
+    untagPicture,
+    addSubTag,
+    openInNewTab,
+    mergeTags,
+    saveTagSort,
+    deleteTagExpression,
+    createTagExpression,
+    updateTagExpressionOperator
+} from '../actions/app';
 import Component from '../components/Tags';
 import {withTranslation} from "react-i18next";
 
@@ -55,6 +70,15 @@ const mapDispatchToProps = dispatch => {
         },
         saveTagSort: (tabName, direction) => {
             dispatch(saveTagSort(tabName, direction));
+        },
+        createTagExpression: (tabName) => {
+            dispatch(createTagExpression(tabName));
+        },
+        deleteTagExpression: (id, tabName) => {
+            dispatch(deleteTagExpression(id, tabName));
+        },
+        updateTagExpressionOperator: (id, value, tabName) => {
+            dispatch(updateTagExpressionOperator(id, value, tabName));
         }
     };
 };

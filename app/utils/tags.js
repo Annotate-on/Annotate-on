@@ -27,6 +27,25 @@ import {_formatTimeDisplay} from "./maths";
 
 export const AND = "AND"
 export const OR = "OR"
+export const NOT = "NOT"
+
+export const EXP_ITEM_TYPE_OPERATOR = "EXP_ITEM_TYPE_OPERATOR"
+export const EXP_ITEM_TYPE_CONDITION = "EXP_ITEM_TYPE_CONDITION"
+export const EXP_ITEM_TYPE_EXPRESSION = "EXP_ITEM_TYPE_EXPRESSION"
+
+export const findExpressionOperatorById = (expression, id) => {
+    console.log("findExpressionOperatorById", expression)
+    if(!expression || !expression.value || !id) return null;
+    for (const item of expression.value) {
+        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
+            if(item.id === id) return item;
+        } else if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+            let result = findExpressionOperatorById(item, id);
+            if(result) return result;
+        }
+    }
+    return null;
+}
 
 export const findPicturesByTagExpression = (expression, allPictures, state) => {
 
@@ -34,7 +53,7 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
     console.log("findPictures allPictures", allPictures);
     console.log("findPictures tagsByAnnotation", state.tags_by_annotation);
 
-    if(!expression || expression.length === 0 || Object.values(state.tags_by_annotation).length === 0) return [...allPictures];
+    if(!expression || expression.value.length === 0) return [...allPictures];
 
     let annotations = [
         ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
@@ -87,40 +106,46 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
 const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
     let currentResult = []
     let currentOperator;
-    for (const item of expression) {
-        console.log("item type of", item, typeof item);
-        if (typeof item === 'string') {
+    console.log("evaluateTagsExpression", expression)
+    for (const item of expression.value) {
+        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
             console.log("operator", item)
-            currentOperator = item;
+            currentOperator = item.value;
             continue;
         }
         let set = [];
-        if (Array.isArray(item)) {
+        if (item.type === EXP_ITEM_TYPE_EXPRESSION) {
             console.log("inner expression")
             let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
             if(innerSet) {
                 set = [...innerSet];
             }
-        } else if (typeof item === 'object') {
+        } else if (item.type === EXP_ITEM_TYPE_CONDITION) {
             console.log("condition", item)
-            if(item.has) {
-                if(picturesByTag[item.tag]) {
-                    set = [...picturesByTag[item.tag]]
-                }
-            } else {
-                if(picturesByTag[item.tag]) {
-                    set = [...lodash.difference(allPictures, picturesByTag[item.tag])];
+            if(currentOperator === NOT) {
+                if(picturesByTag[item.value.tag]) {
+                    set = [...lodash.difference(allPictures, picturesByTag[item.value.tag])];
                 } else {
                     set = [...allPictures];
                 }
+            } else {
+                if(picturesByTag[item.value.tag]) {
+                    set = [...picturesByTag[item.value.tag]]
+                }
+
             }
+            // if(item.value.has) {
+            // } else {
+            // }
         }
         console.log("currentResult", currentResult)
         console.log("currentOperator", currentOperator)
         console.log("set", set)
-        if(currentOperator === AND) {
+        if(currentOperator === AND || currentOperator === NOT) {
+            console.log("intersection")
             currentResult = lodash.intersection(currentResult, set);
         } else {
+            console.log("union")
             currentResult = lodash.union(currentResult, set);
         }
         console.log("currentResult after operation", currentResult)

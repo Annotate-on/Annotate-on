@@ -67,6 +67,9 @@ export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
+export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
+export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
+export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
 export const SELECT_MENU = 'SELECT_MENU';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
 export const SET_TAGS_SELECTION_MODE = 'SET_TAGS_SELECTION_MODE';
@@ -542,6 +545,24 @@ export const selectTag = (name, skipCheck, tabName) => ({
     type: SELECT_TAG,
     name,
     skipCheck,
+    tabName
+});
+
+export const createTagExpression = (tabName) => ({
+    type: CREATE_TAG_EXPRESSION,
+    tabName
+});
+
+export const deleteTagExpression = (id, tabName) => ({
+    type: DELETE_TAG_EXPRESSION,
+    id,
+    tabName
+});
+
+export const updateTagExpressionOperator = (id, value, tabName) => ({
+    type: UPDATE_TAG_EXPRESSION_OPERATOR,
+    id,
+    value,
     tabName
 });
 
