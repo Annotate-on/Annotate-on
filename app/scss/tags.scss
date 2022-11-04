@@ -352,6 +352,8 @@
           flex-wrap: wrap;
 
           .tags-filter-expression-brackets {
+            min-height: 30px;
+            min-width: 20px;
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;

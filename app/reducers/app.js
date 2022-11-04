@@ -112,7 +112,12 @@ import {
     UPDATE_MOZAIC_TOGGLE,
     UPDATE_PICTURE_DATE,
     UPDATE_TABULAR_VIEW,
-    UPDATE_TAXONOMY_VALUES, EDIT_CATEGORY_BY_ID, flatOldTags
+    UPDATE_TAXONOMY_VALUES,
+    EDIT_CATEGORY_BY_ID,
+    flatOldTags,
+    DELETE_TAG_EXPRESSION,
+    CREATE_TAG_EXPRESSION,
+    UPDATE_TAG_EXPRESSION_OPPERATOR, UPDATE_TAG_EXPRESSION_OPERATOR
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -143,7 +148,14 @@ import {
     SORT_DATE_DESC, TAG_AUTO,
     TAGS_SELECTION_MODE_OR, TAGS_SELECTION_MODE_AND
 } from '../constants/constants';
-import {AND, findPictures, findPicturesByTagExpression, OR} from '../utils/tags';
+import {
+    AND,
+    EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION,
+    EXP_ITEM_TYPE_OPERATOR, findExpressionOperatorById,
+    findPictures,
+    findPicturesByTagExpression,
+    OR
+} from '../utils/tags';
 import {
     copySdd,
     deleteTaxonomy,
@@ -166,7 +178,13 @@ import {
     getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,
 } from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
-import {_addTagIdIfMissing, categoryExists, checkItemInParentCategory, getNewTabName} from "../components/event/utils";
+import {
+    _addTagIdIfMissing,
+    categoryExists,
+    checkItemInParentCategory,
+    genId,
+    getNewTabName
+} from "../components/event/utils";
 import i18next from "i18next";
 
 // The 'shape' of the state is defined here
@@ -192,6 +210,7 @@ export const createInitialState = () => ({
         pictures: {},
         pictures_by_tag: {},
         selected_tags: [],
+        selected_filter: null,
         standard_deviation: null,
         tags_by_annotation: {},
         tags_by_picture: {},
@@ -209,6 +228,7 @@ export const createInitialState = () => ({
                 subview: LIST_VIEW,
                 selected_folders: [],
                 selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
                 tags_selection_mode: TAGS_SELECTION_MODE_OR,
@@ -253,6 +273,7 @@ export const userDataBranches = () => ({
     pictures_by_calibration: null,
     annotations_by_tag: null,
     selected_tags: null,
+    selected_filter: null,
     open_tabs: null,
     manualOrderLock: false,
     taxonomies: null,
@@ -874,6 +895,7 @@ export default (state = {}, action) => {
                 subview: LIST_VIEW,
                 selected_folders: allFolders,
                 selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
                 tags_selection_mode: TAGS_SELECTION_MODE_OR,
@@ -939,6 +961,7 @@ export default (state = {}, action) => {
                 subview: LIST_VIEW,
                 selected_folders: allFolders,
                 selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
                 tags_selection_mode: TAGS_SELECTION_MODE_OR,
@@ -2456,7 +2479,6 @@ export default (state = {}, action) => {
                 current_picture_index_in_selection = tab.pictures_selection.length - 1;
             else current_picture_index_in_selection--;
 
-
             return {
                 ...state, counter, open_tabs: {
                     ...state.open_tabs, [action.tabName]: {
@@ -2503,6 +2525,133 @@ export default (state = {}, action) => {
             };
         }
             break;
+
+        case CREATE_TAG_EXPRESSION: {
+            console.log("create new expression in tab", action.tabName)
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+
+            if(!tab.selected_filter) {
+                tab.selected_filter = {
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_EXPRESSION,
+                    value: []
+                }
+            }
+            if(tab.selected_filter.value.length > 0) {
+                tab.selected_filter.value.push({
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_OPERATOR,
+                    value:OR
+                });
+            }
+            const newExpression = {
+                id: genId(),
+                type: EXP_ITEM_TYPE_EXPRESSION,
+                value: []
+            }
+            tab.selected_filter.value.push(newExpression);
+            console.log("pictures_selection pre", tab.pictures_selection)
+            tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
+            console.log("pictures_selection after", tab.pictures_selection)
+            const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+            if (newIndex !== -1) {
+                tab.current_picture_index_in_selection = newIndex;
+            } else {
+                tab.current_picture_index_in_selection = 0;
+                tab.selected_sha1 = tab.pictures_selection[0];
+            }
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case DELETE_TAG_EXPRESSION: {
+            console.log("delete expression", action.id)
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+
+            if(tab.selected_filter && tab.selected_filter.value.length > 0) {
+                let updated = []
+                let indexOfDeleted;
+                for (let i = 0; i < tab.selected_filter.value.length; i++) {
+                    const item = tab.selected_filter.value[i];
+                    if(item.id === action.id) {
+                        indexOfDeleted = i;
+                        console.log("to delete", item)
+                        continue;
+                    }
+                }
+                for (let i = 0; i < tab.selected_filter.value.length; i++) {
+                    const item = tab.selected_filter.value[i];
+                    const indexToSkip = indexOfDeleted == 0 ? indexOfDeleted +1 : indexOfDeleted - 1
+                    if( i !== indexOfDeleted && (i !== indexToSkip)) {
+                        updated.push(item);
+                    }
+                    // if(i !== indexOfDeleted) {
+                    //     updated.push(item);
+                    // }
+                    console.log("updated", updated)
+                }
+
+                tab.selected_filter.value = [...updated];
+                console.log("pictures_selection pre", tab.pictures_selection)
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
+                console.log("pictures_selection after", tab.pictures_selection)
+                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+                if (newIndex !== -1) {
+                    tab.current_picture_index_in_selection = newIndex;
+                } else {
+                    tab.current_picture_index_in_selection = 0;
+                    tab.selected_sha1 = tab.pictures_selection[0];
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case UPDATE_TAG_EXPRESSION_OPERATOR: {
+            console.log("update tag expression operator", action.id, action.value, action.tabName)
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+            if(tab.selected_filter) {
+                const foundOperator = findExpressionOperatorById(tab.selected_filter, action.id);
+                console.log("foundOperator operator", foundOperator)
+                if(foundOperator) {
+                    foundOperator.value = action.value;
+                }
+                console.log("pictures_selection pre", tab.pictures_selection)
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
+                console.log("pictures_selection after", tab.pictures_selection)
+                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+                if (newIndex !== -1) {
+                    tab.current_picture_index_in_selection = newIndex;
+                } else {
+                    tab.current_picture_index_in_selection = 0;
+                    tab.selected_sha1 = tab.pictures_selection[0];
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+
         case SELECT_TAG: {
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
@@ -2512,10 +2661,59 @@ export default (state = {}, action) => {
                 // If adding tag from tabbed component take list from tabs object.
                 if (action.tabName) {
                     const tab = tabs[action.tabName];
-                    if (tab.selected_tags.indexOf(action.name) !== -1) return state;
-                    selectedTags = [action.name, ...tab.selected_tags];
-                    tab.selected_tags = [...selectedTags];
-                    tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+
+                    if (tab.selected_tags.indexOf(action.name) == -1) {
+                        selectedTags = [action.name, ...tab.selected_tags];
+                        tab.selected_tags = [...selectedTags];
+                    }
+
+                    console.log("tab.selected_filter", tab.selected_filter)
+                    let currentExpression;
+                    if(!tab.selected_filter) {
+                        tab.selected_filter = {
+                            id: genId(),
+                            type: EXP_ITEM_TYPE_EXPRESSION,
+                            value: []
+                        }
+                    }
+                    if(tab.selected_filter.value.length === 0) {
+                        currentExpression = {
+                            id: genId(),
+                            type: EXP_ITEM_TYPE_EXPRESSION,
+                            value: []
+                        }
+                        tab.selected_filter.value.push(currentExpression);
+                    } else {
+                        for (let i = tab.selected_filter.value.length-1; i >= 0; i--) {
+                            const item = tab.selected_filter.value[i];
+                            console.log("currentExpression item", item)
+                            if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+                                currentExpression = item;
+                                break;
+                            }
+                        }
+                    }
+                    console.log("currentExpression", currentExpression)
+                    let condition = {
+                        id: genId(),
+                        type: EXP_ITEM_TYPE_CONDITION,
+                        value: {
+                            has: true,
+                            tag: action.name
+                        }
+                    }
+
+                    if(currentExpression.value.length > 0) {
+                        currentExpression.value.push({
+                            id: genId(),
+                            type:EXP_ITEM_TYPE_OPERATOR,
+                            value: OR
+                        })
+                    }
+                    currentExpression.value.push(condition);
+
+                    // tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                    tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
 
                     const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                     if (newIndex !== -1) {
@@ -2649,7 +2847,8 @@ export default (state = {}, action) => {
                 tab.selected_tags.splice(index, 1);
                 selectedTags = [...tab.selected_tags];
                 tab.selected_tags = [...tab.selected_tags];
-                tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                // tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -3801,14 +4000,33 @@ export default (state = {}, action) => {
 //
 const findPicturesByTags = (state, selectedTags, tagsSelectionMode, allPics) => {
     if (selectedTags.length === 0) return allPics;
-    const expression = []
+    const expression = {
+        id: genId(),
+        type: EXP_ITEM_TYPE_EXPRESSION,
+        value: []
+    }
     for (let i = 0; i < selectedTags.length; i++) {
-        expression.push({has: true, tag: selectedTags[i]})
+        expression.value.push({
+            id: genId(),
+            type: EXP_ITEM_TYPE_CONDITION,
+            value : {
+                has: true,
+                tag: selectedTags[i]
+            }
+        })
         if(selectedTags.length > 1 && i < selectedTags.length-1) {
             if(tagsSelectionMode === TAGS_SELECTION_MODE_AND) {
-                expression.push(AND);
+                expression.value.push({
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_OPERATOR,
+                    value: AND
+                });
             } else if(tagsSelectionMode === TAGS_SELECTION_MODE_OR) {
-                expression.push(OR);
+                expression.value.push({
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_OPERATOR,
+                    value: OR
+                });
             }
         }
     }
