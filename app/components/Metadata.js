@@ -362,7 +362,7 @@ export default class extends Component {
                                    onKeyDown={this._saveForm}
                                    placeholder={t('inspector.metadata.textbox_placeholder_catalog_number')}
                                    title = {t('inspector.metadata.textbox_tooltip_catalog_number')}
-                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber}
+                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -370,7 +370,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_reference')}
                                    title = {t('inspector.metadata.textbox_tooltip_reference')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.reference}
+                                   value={this.state.metadata.naturalScienceMetadata.reference || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -378,7 +378,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_family')}
                                    title = {t('inspector.metadata.textbox_tooltip_family')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.family}
+                                   value={this.state.metadata.naturalScienceMetadata.family || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -386,7 +386,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_genus')}
                                    title = {t('inspector.metadata.textbox_tooltip_genus')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.genre}
+                                   value={this.state.metadata.naturalScienceMetadata.genre || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -394,7 +394,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_scientific_name')}
                                    title = {t('inspector.metadata.textbox_tooltip_scientific_name')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.sfName}
+                                   value={this.state.metadata.naturalScienceMetadata.sfName || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -402,7 +402,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_collection_number')}
                                    title = {t('inspector.metadata.textbox_tooltip_collection_number')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber}
+                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
@@ -413,7 +413,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_title')}
                                    title = {t('inspector.metadata.textbox_tooltip_title')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.title}
+                                   value={this.state.metadata.iptc.title || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -421,7 +421,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_creator')}
                                    title = {t('inspector.metadata.textbox_tooltip_creator')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.creator}
+                                   value={this.state.metadata.iptc.creator || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -429,7 +429,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_subject_keywords')}
                                    title = {t('inspector.metadata.textbox_tooltip_subject_keywords')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.subject}
+                                   value={this.state.metadata.iptc.subject || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -437,7 +437,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_description')}
                                    title = {t('inspector.metadata.textbox_tooltip_description')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.description}
+                                   value={this.state.metadata.iptc.description || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -445,7 +445,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_publisher')}
                                    title = {t('inspector.metadata.textbox_tooltip_publisher')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.publisher}
+                                   value={this.state.metadata.iptc.publisher || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -453,7 +453,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_contributor')}
                                    title = {t('inspector.metadata.textbox_tooltip_contributor')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contributor}
+                                   value={this.state.metadata.iptc.contributor || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -461,7 +461,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_date')}
                                    title = {t('inspector.metadata.textbox_tooltip_date')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.created}
+                                   value={this.state.metadata.iptc.created || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -469,7 +469,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_type')}
                                    title = {t('inspector.metadata.textbox_tooltip_type')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.type}
+                                   value={this.state.metadata.iptc.type || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -477,7 +477,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_format')}
                                    title = {t('inspector.metadata.textbox_tooltip_format')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.format}
+                                   value={this.state.metadata.iptc.format || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -485,7 +485,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_identifier')}
                                    title ={t('inspector.metadata.textbox_tooltip_identifier')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.identifier}
+                                   value={this.state.metadata.iptc.identifier || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -493,7 +493,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_source')}
                                    title = {t('inspector.metadata.textbox_tooltip_source')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.source}
+                                   value={this.state.metadata.iptc.source || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -501,7 +501,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_language')}
                                    title = {t('inspector.metadata.textbox_tooltip_language')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.language}
+                                   value={this.state.metadata.iptc.language || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -509,7 +509,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_relation')}
                                    title = {t('inspector.metadata.textbox_tooltip_relation')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.relation}
+                                   value={this.state.metadata.iptc.relation || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
@@ -542,7 +542,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}
                                    title = {t('inspector.metadata.textbox_tooltip_rights_usage_terms')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.rights}
+                                   value={this.state.metadata.iptc.rights || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -550,7 +550,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_contact')}
                                    title = {t('inspector.metadata.textbox_tooltip_contact')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contact}
+                                   value={this.state.metadata.iptc.contact || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
@@ -577,7 +577,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_orientation')}
                                    title = {t('inspector.metadata.textbox_tooltip_orientation')}
                                    readOnly
-                                   value={this.state.metadata.exif.orientation}
+                                   value={this.state.metadata.exif.orientation || ''}
                             />
                         </FormGroup>
                     </Form>

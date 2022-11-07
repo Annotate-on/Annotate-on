@@ -2965,7 +2965,9 @@ export default (state = {}, action) => {
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+
+            tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
+            // tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2990,7 +2992,8 @@ export default (state = {}, action) => {
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+            tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
+            // tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;

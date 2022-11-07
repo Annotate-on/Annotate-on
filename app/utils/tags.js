@@ -34,7 +34,7 @@ export const EXP_ITEM_TYPE_CONDITION = "EXP_ITEM_TYPE_CONDITION"
 export const EXP_ITEM_TYPE_EXPRESSION = "EXP_ITEM_TYPE_EXPRESSION"
 
 export const findExpressionOperatorById = (expression, id) => {
-    console.log("findExpressionOperatorById", expression)
+    // console.log("findExpressionOperatorById", expression)
     if(!expression || !expression.value || !id) return null;
     for (const item of expression.value) {
         if (item.type === EXP_ITEM_TYPE_OPERATOR) {
@@ -51,7 +51,7 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
 
     console.log("findPictures expression", expression);
     console.log("findPictures allPictures", allPictures);
-    console.log("findPictures tagsByAnnotation", state.tags_by_annotation);
+    // console.log("findPictures tagsByAnnotation", state.tags_by_annotation);
 
     if(!expression || expression.value.length === 0) return [...allPictures];
 
@@ -68,10 +68,10 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
         , ...lodash.flattenDepth(Object.values(state.annotations_categorical), 2)
         , ...lodash.flattenDepth(Object.values(state.annotations_richtext), 2)
     ];
-    console.log("findPictures annotations", annotations)
+    // console.log("findPictures annotations", annotations)
     let picturesByTag = {}
 
-    console.log("picturesByTag initial", state.pictures_by_tag)
+    // console.log("picturesByTag initial", state.pictures_by_tag)
     if(state.pictures_by_tag) {
         lodash.forIn(state.pictures_by_tag, (value, key) => {
             picturesByTag[key] = [...value]
@@ -98,30 +98,32 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
         })
     }
 
-    console.log("picturesByTag", picturesByTag)
+    // console.log("picturesByTag", picturesByTag)
     let result = evaluateTagsExpression(expression, allPictures, picturesByTag);
-    return result;
+    console.log("findPictures expression, result", expression, allPictures, result);
+    let finalResult = lodash.intersection(allPictures, result);
+    return finalResult;
 }
 
 const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
     let currentResult = []
     let currentOperator;
-    console.log("evaluateTagsExpression", expression)
+    // console.log("evaluateTagsExpression", expression)
     for (const item of expression.value) {
         if (item.type === EXP_ITEM_TYPE_OPERATOR) {
-            console.log("operator", item)
+            // console.log("operator", item)
             currentOperator = item.value;
             continue;
         }
         let set = [];
         if (item.type === EXP_ITEM_TYPE_EXPRESSION) {
-            console.log("inner expression")
+            // console.log("inner expression")
             let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
             if(innerSet) {
                 set = [...innerSet];
             }
         } else if (item.type === EXP_ITEM_TYPE_CONDITION) {
-            console.log("condition", item)
+            // console.log("condition", item)
             if(currentOperator === NOT) {
                 if(picturesByTag[item.value.tag]) {
                     set = [...lodash.difference(allPictures, picturesByTag[item.value.tag])];
@@ -132,23 +134,19 @@ const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
                 if(picturesByTag[item.value.tag]) {
                     set = [...picturesByTag[item.value.tag]]
                 }
-
             }
-            // if(item.value.has) {
-            // } else {
-            // }
         }
-        console.log("currentResult", currentResult)
-        console.log("currentOperator", currentOperator)
-        console.log("set", set)
+        // console.log("currentResult", currentResult)
+        // console.log("currentOperator", currentOperator)
+        // console.log("set", set)
         if(currentOperator === AND || currentOperator === NOT) {
-            console.log("intersection")
+            // console.log("intersection")
             currentResult = lodash.intersection(currentResult, set);
         } else {
-            console.log("union")
+            // console.log("union")
             currentResult = lodash.union(currentResult, set);
         }
-        console.log("currentResult after operation", currentResult)
+        // console.log("currentResult after operation", currentResult)
 
     }
     return currentResult;

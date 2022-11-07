@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
 import AnnotationDropdownMenu from "./common/DropdownMenu";
 import {AND, EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION, EXP_ITEM_TYPE_OPERATOR, NOT, OR} from "../utils/tags";
+import {genId} from "./event/utils";
 
 export default class TagsFilter extends Component {
 
@@ -24,7 +25,7 @@ export default class TagsFilter extends Component {
     renderExpression = (item) => {
         // console.log("renderExpression", item)
         if(item && item.value) return (
-            <div className="tags-filter-expression-container">
+            <div className="tags-filter-expression-container" key={item.id}>
                 <i className="fa fa-times" onClick={
                     (e) => {
                         this.props.onDeleteExpression(item.id)
@@ -51,14 +52,14 @@ export default class TagsFilter extends Component {
     renderCondition = (item) => {
         // console.log("renderCondition", item)
         if(item && item.value) return (
-            <div className="tags-filter-expression-keyword">{item.value.tag}
+            <div className="tags-filter-expression-keyword" key={item.id}>{item.value.tag}
         </div>)
     }
 
     renderOperator = (item) => {
-        const itemId = item.id + "open";
+        const itemId = item.id + "_open";
         return(
-            <Dropdown title="" isOpen={this.state[itemId]} size="sm" color="primary"
+            <Dropdown key={item.id} title="" isOpen={this.state[itemId]} size="sm" color="primary"
                       toggle={() => {
                           this.setState(prevState => (
                               this.createOperatorState(itemId, prevState)
@@ -93,31 +94,31 @@ export default class TagsFilter extends Component {
         // console.log(" tags filter selected filter", this.props.filter)
         const {t} = i18next;
         return (
-            <div className="tags-filter">
-                <div className="tags-filter-header">
-                    <i className="fa fa-filter"></i>
-                    <span>Filter</span>
-                    <Button size="sm" color="primary" onClick={
-                        (e) => {
-                            this.props.onCreateExpression();
-                        }
-                    }>
-                        <i className="fa fa-plus-circle"/>(
-                    </Button>
-                </div>
-                {
-                    this.props.filter && this.props.filter.value &&
+            (this.props.filter && this.props.filter.value && this.props.filter.value.length > 0) ?
+                <div className="tags-filter">
+                    <div className="tags-filter-header">
+                        <i className="fa fa-filter"></i>
+                        <span>Filter</span>
+                        <Button size="sm" color="primary" onClick={
+                            (e) => {
+                                this.props.onCreateExpression();
+                            }
+                        }>
+                            <i className="fa fa-plus-circle"/>(
+                        </Button>
+                    </div>
                     <div className="tags-filter-content">
                         {this.props.filter.value.map(item => {
-                            if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+                            if (item.type === EXP_ITEM_TYPE_EXPRESSION) {
                                 return this.renderExpression(item);
-                            } else if(item.type === EXP_ITEM_TYPE_OPERATOR) {
+                            } else if (item.type === EXP_ITEM_TYPE_OPERATOR) {
                                 return this.renderOperator(item);
                             }
                         })}
                     </div>
-                }
-            </div>
+                </div>
+                :
+                <div></div>
         );
     }
 
