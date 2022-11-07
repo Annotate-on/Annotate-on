@@ -173,34 +173,56 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("componentWillReceiveProps", this.props.match);
+        console.log("library componentWillReceiveProps props", this.props);
+        console.log("library componentWillReceiveProps nextProps ", nextProps);
         if (skipSort) {
             skipSort = false;
             return;
         }
-        // Update list if array has changed because of tabs or folder selection
-        if (this.state.numberOfFolders !== nextProps.tabData[this.props.tabName].selected_folders.length
-            || this.state.numberOfTags !== nextProps.tabData[this.props.tabName].selected_tags.length
-            || this.props.tabData[this.props.tabName].pictures_selection.length !== nextProps.tabData[this.props.tabName].pictures_selection.length
-            || nextProps.currentPictureIndexInSelection !== this.props.currentPictureIndexInSelection
-            || Object.values(nextProps.allPictures).length !== Object.values(this.props.allPictures).length) {
 
-            const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
-            const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
-            // this.state.sortedPicturesList = sortedPicturesList;
+        console.log("update library..")
 
-            this._initSortingValues(sortedPicturesList);
+        const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
+        const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
+        // this.state.sortedPicturesList = sortedPicturesList;
 
-            this.setState({
-                sortedPicturesList: sortedPicturesList,
-                allPictureLength: Object.values(nextProps.allPictures).length,
-                currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
-                numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
-                numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
-                numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
-                currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
-            });
-        }
+        this._initSortingValues(sortedPicturesList);
+
+        this.setState({
+            sortedPicturesList: sortedPicturesList,
+            allPictureLength: Object.values(nextProps.allPictures).length,
+            currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
+            numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
+            numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
+            numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
+            currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
+        });
+
+
+        // // Update list if array has changed because of tabs or folder selection
+        // if (this.state.numberOfFolders !== nextProps.tabData[this.props.tabName].selected_folders.length
+        //     || this.state.numberOfTags !== nextProps.tabData[this.props.tabName].selected_tags.length
+        //     || this.props.tabData[this.props.tabName].pictures_selection.length !== nextProps.tabData[this.props.tabName].pictures_selection.length
+        //     || nextProps.currentPictureIndexInSelection !== this.props.currentPictureIndexInSelection
+        //     || Object.values(nextProps.allPictures).length !== Object.values(this.props.allPictures).length) {
+        //     console.log("update library..")
+        //
+        //     const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
+        //     const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
+        //     // this.state.sortedPicturesList = sortedPicturesList;
+        //
+        //     this._initSortingValues(sortedPicturesList);
+        //
+        //     this.setState({
+        //         sortedPicturesList: sortedPicturesList,
+        //         allPictureLength: Object.values(nextProps.allPictures).length,
+        //         currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
+        //         numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
+        //         numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
+        //         numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
+        //         currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
+        //     });
+        // }
     }
 
     _initSortingValues = (sortedPicturesList) => {
