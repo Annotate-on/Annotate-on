@@ -19,8 +19,6 @@ import {
     TAG_GPS_WIDTH,
     TAG_MODE_LANDSCAPE,
     TAG_MODE_PORTRAIT,
-    TAGS_SELECTION_MODE_AND,
-    TAGS_SELECTION_MODE_OR,
     VERY_LOW_RESOLUTION
 } from '../constants/constants';
 import {_formatTimeDisplay} from "./maths";
@@ -151,77 +149,6 @@ const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
     }
     return currentResult;
 }
-
-export const findPictures = (tagsByPicture, picturesByTags, selectedTags, tagsSelectionMode, state) => {
-    if (selectedTags.length === 0) return [];
-
-    let foundPicturesId = [];
-
-    if (Object.values(state.tags_by_annotation).length > 0) {
-
-        let annotations = [
-            ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_points_of_interest), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_rectangular), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_polygon), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_angle), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_occurrence), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_color_picker), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_ratio), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_transcription), 2)
-        ];
-
-        // Find all pics where annotation is tagged.
-        lodash.forIn(state.tags_by_annotation, (value, key) => {
-
-            switch (tagsSelectionMode) {
-                case TAGS_SELECTION_MODE_AND: {
-
-                    if (lodash.difference(selectedTags, value).length === 0) {
-                        const annotation = lodash.find(annotations, (o) => {
-                            return o.id === key;
-                        });
-                        if (annotation) {
-                            foundPicturesId.push(annotation.pictureId);
-                        }
-                    }
-                }
-                    break;
-                case TAGS_SELECTION_MODE_OR: {
-                    for (const t of selectedTags) {
-                        if (value.indexOf(t) !== -1) {
-                            const annotation = lodash.find(annotations, (o) => {
-                                return o.id === key;
-                            });
-                            if (annotation) {
-                                foundPicturesId.push(annotation.pictureId);
-                            }
-                        }
-                    }
-                }
-                    break;
-            }
-        });
-    }
-
-    // Find all tagged pics.
-    switch (tagsSelectionMode) {
-        case TAGS_SELECTION_MODE_AND:
-            for (const p in tagsByPicture) {
-                // Picture will be added only if contains all selected tags.
-                if (lodash.difference(selectedTags, tagsByPicture[p]).length === 0) foundPicturesId.push(p);
-            }
-            break;
-        case TAGS_SELECTION_MODE_OR:
-            for (const t of selectedTags) {
-                // Append list of pics that are tagged with current tag.
-                foundPicturesId = foundPicturesId.concat(picturesByTags[t]);
-            }
-            break;
-    }
-
-    return lodash.uniq(foundPicturesId).filter(_ => undefined !== _);
-};
 
 export const attachDefaultTags = (picture, tagPicture, createTag, addSubTag) => {
 

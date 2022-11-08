@@ -1,6 +1,3 @@
-export const TAGS_SELECTION_MODE_AND = 'AND';
-export const TAGS_SELECTION_MODE_OR = 'OR';
-
 // Leaflet annotation types
 export const ANNOTATION_CHRONOTHEMATIQUE = 'chronothematique'
 export const ANNOTATION_EVENT_ANNOTATION = 'event_annotation'
