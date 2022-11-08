@@ -45,7 +45,6 @@ const mapStateToProps = (state, ownProps) => {
         selectedTags: state.app.open_tabs[ownProps.tabName].selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode,
         sortBy,
         annotationsByTag: state.app.annotations_by_tag,
         annotations: lodash.flatten([...Object.values(state.app.annotations_measures_linear),

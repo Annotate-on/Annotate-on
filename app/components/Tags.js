@@ -7,8 +7,6 @@ import {
     SORT_ALPHABETIC_DESC,
     SORT_DATE_ASC,
     SORT_DATE_DESC,
-    TAGS_SELECTION_MODE_AND,
-    TAGS_SELECTION_MODE_OR
 } from '../constants/constants';
 import {Col, Collapse, Container, Form, Input, Row} from 'reactstrap';
 import classnames from "classnames";
@@ -18,7 +16,6 @@ import {TYPE_CATEGORY, TYPE_TAG} from "./event/Constants";
 import {containsOnlyWhiteSpace} from "./tags/tagUtils";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
 import TagsFilter from "./TagsFilter";
-import {updateTagExpressionOperator} from "../actions/app";
 
 const _Root = styled.div`
   height: 100%;
@@ -47,12 +44,10 @@ export default class extends Component {
 
         this.toggle = this.toggle.bind(this);
 
-        let selectedTags = [], tagsSelectionMode = TAGS_SELECTION_MODE_OR, sortDirection = SORT_ALPHABETIC_DESC, selectedFilter;
+        let sortDirection = SORT_ALPHABETIC_DESC, selectedFilter;
         // If this component is created from tab, tabName will no be empty.
         // We are going to use selected tags list from proper source.
         if (this.props.tabName) {
-            selectedTags = this.props.tabData[this.props.tabName].selected_tags;
-            tagsSelectionMode = this.props.tabData[this.props.tabName].tags_selection_mode;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
             selectedFilter = this.props.tabData[this.props.tabName].selected_filter;
         }
@@ -63,8 +58,6 @@ export default class extends Component {
             collapse: true,
             newTagName: '',
             draggableTags: [],
-            selectedTags: selectedTags,
-            tagsSelectionMode: tagsSelectionMode,
             sortedTags: sortedTags,
             showDialog: '',
             sortDirection,
@@ -78,19 +71,16 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let selectedTags, tagsSelectionMode, sortDirection, selectedFilter;
+        let sortDirection, selectedFilter;
         if (this.props.tabName) {
-            selectedTags = nextProps.tab.selected_tags;
             selectedFilter = nextProps.tab.selected_filter;
-            tagsSelectionMode = nextProps.tab.tags_selection_mode;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
         } else {
-            selectedTags = nextProps.selectedTags;
             selectedFilter = nextProps.selectedFilter;
             sortDirection = SORT_ALPHABETIC_DESC;
         }
         this.setState({
-            selectedTags, tagsSelectionMode, selectedFilter,
+            selectedFilter,
             sortedTags: this._sortTags([...nextProps.tags], sortDirection),
             sortDirection,
             tagsCount: this._countTags(nextProps.tags)
@@ -107,8 +97,7 @@ export default class extends Component {
     };
 
     _editTagsList = (_) => {
-        const selected = this.state.selectedTags.indexOf(_.name) !== -1 ? 'selected-tag' : '';
-        return (<Row className={selected + ' tag'} key={`tag_${_.name}`}>
+        return (<Row className="tag" key={`tag_${_.name}`}>
             <Col md={12} lg={12} sm={12} className="edit-tag-col">
                 <Form inline onSubmit={this.handleEditTagSubmit}>
                     <Input bsSize="sm"
@@ -181,7 +170,6 @@ export default class extends Component {
     _createTagsList = (_) => {
         const { t } = this.props;
         const isTag = _.type !== TYPE_CATEGORY;
-        const selected = this.state.selectedTags.indexOf(_.name) !== -1;
         const numberOfTaggedPics = this.props.picturesByTag.hasOwnProperty(_.name) ? this.props.picturesByTag[_.name].length : 0;
         const numberOfTaggedAnnotations = this.props.annotationsByTag.hasOwnProperty(_.name) ? this.props.annotationsByTag[_.name].length : 0;
         const dndSelected = this.state.draggableTags.filter(tag => tag === _.name).length > 0;
@@ -244,7 +232,7 @@ export default class extends Component {
                              alt="merge icon"
                         /> : ''}
 
-                    <span  style={{background: isTag ? 'orange' : ''}} className={classnames('tag-col-left', {'selected': selected}, {'selected-child': selectedChild})}>
+                    <span  style={{background: isTag ? 'orange' : ''}} className={classnames('tag-col-left', {'selected-child': selectedChild})}>
                         <ContextMenuTrigger holdToDisplay={-1}
                                             disable={!enableClicks || _.type === TYPE_CATEGORY}
                                             attributes={attr}
@@ -274,7 +262,7 @@ export default class extends Component {
                 </div>
             </div>);
 
-        return {html, hasSelectedChild: selected || selectedChild};
+        return {html, hasSelectedChild: selectedChild};
 
     };
 
@@ -324,35 +312,21 @@ export default class extends Component {
                 draggableTags: tags.filter(tag => tag.type === TYPE_TAG)
             });
         } else {
-            const selected = this.state.selectedTags.indexOf(tagName) !== -1;
             if (tagType === TYPE_CATEGORY){
                 console.log('category selected do nothing..')
                 return false;
             }
             this.props.selectTag(tagName, false, this.props.tabName);
-            // selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
         }
-    };
-
-    click_tagsSelectionMode = mode => {
-        this.setState({tagsSelectionMode: mode});
-        this.props.setTagsSelectionMode(mode, this.props.tabName);
     };
 
     render() {
         const { t } = this.props;
-        let selectedTags;
-        if (this.props.tab) {
-            selectedTags = this.props.tab.selected_tags.length;
-        } else {
-            selectedTags = this.props.selectedTags.length;
-        }
         return (
             <_Root>
                 <Container className="bst rcn_tags">
                     <Row className="tags-header">
-                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')}
-                            ({selectedTags}/{this.state.tagsCount})
+                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')} ({this.state.tagsCount})
                             <img className="toogleCollapse" onClick={this.toggle}
                                  src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))} alt="arrow-up-down"/>
                         </Col>
@@ -504,7 +478,6 @@ export default class extends Component {
             </_Root>
         );
     }
-
 
     _handleContextMenu = (e, data) => {
         const { t } = this.props;

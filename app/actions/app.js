@@ -72,12 +72,10 @@ export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
 export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
 export const SELECT_MENU = 'SELECT_MENU';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
-export const SET_TAGS_SELECTION_MODE = 'SET_TAGS_SELECTION_MODE';
 export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_EVENT_ANNOTATION = 'TAG_EVENT_ANNOTATION';
 export const UNTAG_EVENT_ANNOTATION = 'UNTAG_EVENT_ANNOTATION';
 export const TAG_PICTURE = 'TAG_PICTURE';
-export const UNSELECT_TAG = 'UNSELECT_TAG';
 export const UNTAG_ANNOTATION = 'UNTAG_ANNOTATION';
 export const UNTAG_PICTURE = 'UNTAG_PICTURE';
 export const DELETE_ANNOTATION_RATIO = 'DELETE_ANNOTATION_RATIO';
@@ -577,12 +575,6 @@ export const setPictureInSelection = (pictureId, tabName) => ({
     tabName
 });
 
-export const setTagsSelectionMode = (mode, tabName) => ({
-    type: SET_TAGS_SELECTION_MODE,
-    mode,
-    tabName
-});
-
 export const untagEventAnnotation = (annotationId , tagName , inputGroup , eventId) => ({
     type: UNTAG_EVENT_ANNOTATION,
     annotationId,
@@ -609,12 +601,6 @@ export const tagPicture = (pictureId, tagName) => ({
     type: TAG_PICTURE,
     pictureId,
     tagName
-});
-
-export const unselectTag = (name, tabName) => ({
-    type: UNSELECT_TAG,
-    name,
-    tabName
 });
 
 export const prepareFolderForDeletion = (path) => ({

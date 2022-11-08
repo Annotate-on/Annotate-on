@@ -98,13 +98,11 @@ import {
     SET_PICTURE_IN_SELECTION,
     SET_SELECTED_TAXONOMY,
     SET_STATE,
-    SET_TAGS_SELECTION_MODE,
     TAG_ANNOTATION,
     TAG_EVENT_ANNOTATION,
     TAG_PICTURE,
     UNFOCUS_ANNOTATION,
     UNSELECT_FOLDER,
-    UNSELECT_TAG,
     UNTAG_ANNOTATION,
     UNTAG_EVENT_ANNOTATION,
     UNTAG_PICTURE,
@@ -146,13 +144,11 @@ import {
     RESOURCE_TYPE_EVENT,
     SORT_ALPHABETIC_DESC,
     SORT_DATE_DESC, TAG_AUTO,
-    TAGS_SELECTION_MODE_OR, TAGS_SELECTION_MODE_AND
 } from '../constants/constants';
 import {
     AND,
     EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION,
     EXP_ITEM_TYPE_OPERATOR, findExpressionOperatorById,
-    findPictures,
     findPicturesByTagExpression,
     OR
 } from '../utils/tags';
@@ -215,7 +211,6 @@ export const createInitialState = () => ({
         tags_by_annotation: {},
         tags_by_picture: {},
         tags: [],
-        tags_selection_mode: TAGS_SELECTION_MODE_OR,
         calibrations: [],
         pictures_by_calibration: {},
         leaflet_position_by_picture: {},
@@ -231,7 +226,6 @@ export const createInitialState = () => ({
                 selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 current_picture_index_in_selection: 0,
@@ -451,7 +445,7 @@ export default (state = {}, action) => {
                 delete pictures[sha1];
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -898,7 +892,6 @@ export default (state = {}, action) => {
                 selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 manualOrderLock: false,
@@ -964,7 +957,6 @@ export default (state = {}, action) => {
                 selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 manualOrderLock: false,
@@ -992,8 +984,36 @@ export default (state = {}, action) => {
             appendTag(selectedTags, tag);
 
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.selected_tags = [...selectedTags];
-            tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+
+            const expression = {
+                id: genId(),
+                type: EXP_ITEM_TYPE_EXPRESSION,
+                value: []
+            }
+            for (let i = 0; i < selectedTags.length; i++) {
+                expression.value.push({
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_CONDITION,
+                    value : {
+                        has: true,
+                        tag: selectedTags[i]
+                    }
+                })
+                if(selectedTags.length > 1 && i < selectedTags.length-1) {
+                    expression.value.push({
+                        id: genId(),
+                        type: EXP_ITEM_TYPE_OPERATOR,
+                        value: OR
+                    });
+                }
+            }
+            tab.selected_filter = {
+                id: genId(),
+                type: EXP_ITEM_TYPE_EXPRESSION,
+                value: [expression]
+            }
+
+            tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2527,7 +2547,6 @@ export default (state = {}, action) => {
             break;
 
         case CREATE_TAG_EXPRESSION: {
-            console.log("create new expression in tab", action.tabName)
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             const tab = tabs[action.tabName];
@@ -2552,9 +2571,7 @@ export default (state = {}, action) => {
                 value: []
             }
             tab.selected_filter.value.push(newExpression);
-            console.log("pictures_selection pre", tab.pictures_selection)
             tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-            console.log("pictures_selection after", tab.pictures_selection)
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2571,7 +2588,6 @@ export default (state = {}, action) => {
             break;
 
         case DELETE_TAG_EXPRESSION: {
-            console.log("delete expression", action.id)
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             const tab = tabs[action.tabName];
@@ -2583,7 +2599,6 @@ export default (state = {}, action) => {
                     const item = tab.selected_filter.value[i];
                     if(item.id === action.id) {
                         indexOfDeleted = i;
-                        console.log("to delete", item)
                         continue;
                     }
                 }
@@ -2593,16 +2608,10 @@ export default (state = {}, action) => {
                     if( i !== indexOfDeleted && (i !== indexToSkip)) {
                         updated.push(item);
                     }
-                    // if(i !== indexOfDeleted) {
-                    //     updated.push(item);
-                    // }
-                    console.log("updated", updated)
                 }
 
                 tab.selected_filter.value = [...updated];
-                console.log("pictures_selection pre", tab.pictures_selection)
                 tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-                console.log("pictures_selection after", tab.pictures_selection)
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -2621,19 +2630,15 @@ export default (state = {}, action) => {
             break;
 
         case UPDATE_TAG_EXPRESSION_OPERATOR: {
-            console.log("update tag expression operator", action.id, action.value, action.tabName)
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             const tab = tabs[action.tabName];
             if(tab.selected_filter) {
                 const foundOperator = findExpressionOperatorById(tab.selected_filter, action.id);
-                console.log("foundOperator operator", foundOperator)
                 if(foundOperator) {
                     foundOperator.value = action.value;
                 }
-                console.log("pictures_selection pre", tab.pictures_selection)
                 tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-                console.log("pictures_selection after", tab.pictures_selection)
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -2651,23 +2656,17 @@ export default (state = {}, action) => {
         }
             break;
 
-
         case SELECT_TAG: {
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             let selectedTags;
             // Skip check if tag is already selected.
+            console.log("select tag action", action)
             if (!action.skipCheck) {
                 // If adding tag from tabbed component take list from tabs object.
                 if (action.tabName) {
                     const tab = tabs[action.tabName];
 
-                    if (tab.selected_tags.indexOf(action.name) == -1) {
-                        selectedTags = [action.name, ...tab.selected_tags];
-                        tab.selected_tags = [...selectedTags];
-                    }
-
-                    console.log("tab.selected_filter", tab.selected_filter)
                     let currentExpression;
                     if(!tab.selected_filter) {
                         tab.selected_filter = {
@@ -2686,14 +2685,14 @@ export default (state = {}, action) => {
                     } else {
                         for (let i = tab.selected_filter.value.length-1; i >= 0; i--) {
                             const item = tab.selected_filter.value[i];
-                            console.log("currentExpression item", item)
+                            // console.log("currentExpression item", item)
                             if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
                                 currentExpression = item;
                                 break;
                             }
                         }
                     }
-                    console.log("currentExpression", currentExpression)
+                    // console.log("currentExpression", currentExpression)
                     let condition = {
                         id: genId(),
                         type: EXP_ITEM_TYPE_CONDITION,
@@ -2711,8 +2710,6 @@ export default (state = {}, action) => {
                         })
                     }
                     currentExpression.value.push(condition);
-
-                    // tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
                     tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
 
                     const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
@@ -2759,29 +2756,6 @@ export default (state = {}, action) => {
                 ...state, counter, open_tabs: {
                     ...state.open_tabs, [action.tabName]: {
                         ...tab
-                    }
-                }
-            };
-        }
-            break;
-        case SET_TAGS_SELECTION_MODE: {
-            const counter = state.counter + 1;
-            const tab = state.open_tabs[action.tabName];
-            if (action.mode === tab.tags_selection_mode) return state;
-
-            const pictures_selection = findPicturesByTags(state, tab.selected_tags, action.mode, tab.folder_pictures_selection);
-            const newIndex = pictures_selection.indexOf(tab.selected_sha1);
-            if (newIndex !== -1) {
-                tab.current_picture_index_in_selection = newIndex;
-            } else {
-                tab.current_picture_index_in_selection = 0;
-                tab.selected_sha1 = tab.pictures_selection[0];
-            }
-
-            return {
-                ...state, counter, open_tabs: {
-                    ...state.open_tabs, [action.tabName]: {
-                        ...tab, tags_selection_mode: action.mode, pictures_selection: pictures_selection
                     }
                 }
             };
@@ -2834,42 +2808,6 @@ export default (state = {}, action) => {
                     [action.tagName]: [...state.pictures_by_tag[action.tagName] || [], action.pictureId]
                 }
             }
-        }
-            break;
-        case UNSELECT_TAG: {
-            const counter = state.counter + 1;
-            let selectedTags;
-            const tabs = state.open_tabs;
-            if (action.tabName) {
-                const tab = tabs[action.tabName];
-                const index = tab.selected_tags.indexOf(action.name);
-                if (index === -1) return state;
-                tab.selected_tags.splice(index, 1);
-                selectedTags = [...tab.selected_tags];
-                tab.selected_tags = [...tab.selected_tags];
-                // tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
-                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
-                if (newIndex !== -1) {
-                    tab.current_picture_index_in_selection = newIndex;
-                } else {
-                    tab.current_picture_index_in_selection = 0;
-                    tab.selected_sha1 = tab.pictures_selection[0];
-                }
-            } else {
-                const tag_to_remove_index = state.selected_tags.indexOf(action.name);
-                if (tag_to_remove_index === -1) return state;
-                selectedTags = [
-                    ...state.selected_tags.slice(0, tag_to_remove_index),
-                    ...state.selected_tags.slice(tag_to_remove_index + 1)
-                ];
-                state.selected_tags = selectedTags;
-            }
-            return {
-                ...state,
-                counter,
-                open_tabs: {...tabs}
-            };
         }
             break;
         case UNTAG_ANNOTATION: {
@@ -2938,7 +2876,7 @@ export default (state = {}, action) => {
                     tab.selected_folders.push(action.path);
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -2965,9 +2903,7 @@ export default (state = {}, action) => {
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-
             tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-            // tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2993,7 +2929,6 @@ export default (state = {}, action) => {
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
             tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
-            // tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -3087,7 +3022,7 @@ export default (state = {}, action) => {
 
                         // Filter pictures by selected folders
                         tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                        tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                        tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
                         const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                         if (newIndex !== -1) {
                             tab.current_picture_index_in_selection = newIndex;
@@ -3183,7 +3118,7 @@ export default (state = {}, action) => {
                 delete pictures[sha1];
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagExpression(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -3994,51 +3929,6 @@ export default (state = {}, action) => {
         default:
             return state;
     }
-}
-;
-
-//
-// HELPERS
-//
-//
-const findPicturesByTags = (state, selectedTags, tagsSelectionMode, allPics) => {
-    if (selectedTags.length === 0) return allPics;
-    const expression = {
-        id: genId(),
-        type: EXP_ITEM_TYPE_EXPRESSION,
-        value: []
-    }
-    for (let i = 0; i < selectedTags.length; i++) {
-        expression.value.push({
-            id: genId(),
-            type: EXP_ITEM_TYPE_CONDITION,
-            value : {
-                has: true,
-                tag: selectedTags[i]
-            }
-        })
-        if(selectedTags.length > 1 && i < selectedTags.length-1) {
-            if(tagsSelectionMode === TAGS_SELECTION_MODE_AND) {
-                expression.value.push({
-                    id: genId(),
-                    type: EXP_ITEM_TYPE_OPERATOR,
-                    value: AND
-                });
-            } else if(tagsSelectionMode === TAGS_SELECTION_MODE_OR) {
-                expression.value.push({
-                    id: genId(),
-                    type: EXP_ITEM_TYPE_OPERATOR,
-                    value: OR
-                });
-            }
-        }
-    }
-    const result = findPicturesByTagExpression(expression, allPics, state);
-    return result;
-
-    // const list = findPictures(state.tags_by_picture, state.pictures_by_tag, selectedTags, tagsSelectionMode, state);
-    // const ll = lodash.intersection(allPics, list) || []
-    // return ll;
 };
 
 const filterPicturesByFolder = (tab, allPictures) => {
