@@ -76,6 +76,11 @@ export default class extends PureComponent {
             ee.emit(EVENT_SHOW_ALERT, t('library.mozaic_view.alert_selection_and_order_saved'));
     }
 
+    _handleSetPictureInSelection = (pictureId, tabName) => {
+        this.props.skipReSort(true);
+        this.props.setPictureInSelection(pictureId, tabName);
+    }
+
     _handleOnSortChange = (event, field) => {
         let sortBy;
         let direction;
@@ -366,7 +371,7 @@ export default class extends PureComponent {
                                 </div>
                                 <MozaicPlayer pic={pic}
                                               ref={pic.sha1}
-                                              setPictureInSelection={this.props.setPictureInSelection}
+                                              setPictureInSelection={this._handleSetPictureInSelection}
                                               tabName={this.props.tabName}
                                               onDragEnd={this._onDragEnd}
                                               onDrop={this._onDrop}

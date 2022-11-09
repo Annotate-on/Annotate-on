@@ -1391,7 +1391,6 @@ export default (state = {}, action) => {
                         updateTagName(cat.children);
                     }
                 });
-
             };
 
             updateTagName(state.tags);
