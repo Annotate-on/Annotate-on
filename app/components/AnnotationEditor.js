@@ -41,7 +41,6 @@ import Select from "react-select";
 import {
     ee, EVENT_GET_EVENT_TIMELINE_CURRENT_TIME,
     EVENT_GOTO_ANNOTATION, EVENT_ON_TAG_DROP,
-    EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL,
     EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL,
     EVENT_SET_ANNOTATION_POSITION,
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
@@ -234,7 +233,6 @@ export default class extends Component {
 
     componentDidMount() {
         ee.on(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
-        ee.on(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL, this._saveChronothematiqueAnnotaion);
         ee.on(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
         ee.on(EVENT_ON_TAG_DROP , this.onTagDropEvent)
         ee.on(NOTIFY_CURRENT_TIME , this.setTagStartTime)
@@ -242,7 +240,6 @@ export default class extends Component {
 
     componentWillUnmount() {
         ee.removeListener(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
-        ee.removeListener(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL, this._saveChronothematiqueAnnotaion);
         ee.removeListener(EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL, this._saveAnnotateEventAnnotation);
         ee.removeListener(EVENT_ON_TAG_DROP , this.onTagDropEvent)
         ee.removeListener(NOTIFY_CURRENT_TIME , this.setTagStartTime)
@@ -284,15 +281,15 @@ export default class extends Component {
         ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
     }
 
-    _saveChronothematiqueAnnotaion = () => {
-        if (this.state.annotationType === 'chronothematique'){
-            this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
-                this.state.targetColor, this.state.descriptor.value, this.state.value,
-                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location);
-        }
-        ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
-
-    }
+    // _saveChronothematiqueAnnotaion = () => {
+    //     if (this.state.annotationType === 'chronothematique'){
+    //         this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
+    //             this.state.targetColor, this.state.descriptor.value, this.state.value,
+    //             this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location);
+    //     }
+    //     ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
+    //
+    // }
 
     backToAnnotationEditor = () => {
         this.setState({view: VIEW_ANNOTATION_EDITOR});

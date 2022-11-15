@@ -6,16 +6,17 @@ import {
     ee,
     EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH,
     EVENT_HIGHLIGHT_ANNOTATION,
-    EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL,
     EVENT_SET_ANNOTATION_POSITION,
     EVENT_UNFOCUS_ANNOTATION,
-    EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION
+    EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION, STOP_ANNOTATION_RECORDING
 } from "../utils/library";
 import {_formatTimeDisplay} from "../utils/maths";
 import i18next from "i18next";
 
 const chance = new Chance();
 let containerWidth = 0;
+
+const STOP = require('./pictures/stop.svg');
 
 export default class extends Component {
     constructor(props) {
@@ -35,7 +36,7 @@ export default class extends Component {
             zoom: this.props.zoom,
             startTime: null,
             endTime: null,
-            isAnnotationRecording: false,
+            // isAnnotationRecording: false,
             focusedAnnotation: '',
             newAnnotationId: null
         }
@@ -66,6 +67,10 @@ export default class extends Component {
         allAnnotations.map(an => {
             let inserted = false;
             let start = this._getTime(an, 'start'), end = this._getTime(an, 'end');
+
+            if (end === -1) {
+                end = start + 0.1;
+            }
 
             for (let lastTime in tracks) {
                 if (lastTime <= start) {
@@ -99,16 +104,16 @@ export default class extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const newAnnotationId = chance.guid();
+        // const newAnnotationId = chance.guid();
         //on annotation record start
-        if (prevState.isAnnotationRecording === false && this.state.isAnnotationRecording === true && this.state.isChronothematique) {
-            this._createVideoAnnotationOnRecordStart(this.props.videoId, this.state.startTime, '', '', '', newAnnotationId);
-        }
-        //stop annotation creation manually
-        if (prevState.isAnnotationRecording !== this.state.isAnnotationRecording && this.state.isAnnotationRecording === false && this.state.isChronothematique) {
-            this.props.player.pause()
-            this._updateEditedAnnotationEndtime(this.props.videoId, this.state.newAnnotationId, this.state.endTime);
-        }
+        // if (prevState.isAnnotationRecording === false && this.state.isAnnotationRecording === true && this.state.isChronothematique) {
+        //     this._createVideoAnnotationOnRecordStart(this.props.videoId, this.state.startTime, '', '', '', newAnnotationId);
+        // }
+        // //stop annotation creation manually
+        // if (prevState.isAnnotationRecording !== this.state.isAnnotationRecording && this.state.isAnnotationRecording === false && this.state.isChronothematique) {
+        //     this.props.player.pause()
+        //     this._updateEditedAnnotationEndtime(this.props.videoId, this.state.newAnnotationId, this.state.endTime);
+        // }
 
         if (this.props.annotationsPointsOfInterest !== prevProps.annotationsPointsOfInterest ||
             this.props.annotationsRectangular !== prevProps.annotationsRectangular ||
@@ -142,10 +147,9 @@ export default class extends Component {
         }
 
         this.props.editAnnotationChronothematiqueEndtime(videoId, annId, endTime);
-        ee.emit(EVENT_SAVE_ANNOTATION_CHRONOTHEMATIQUE_FROM_EDIT_PANEL);
         ee.emit(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH, annId)
         this.setState({
-            isAnnotationRecording: false,
+            // isAnnotationRecording: false,
             newAnnotationId: null,
             endTime: null,
             startTime: null
@@ -184,32 +188,32 @@ export default class extends Component {
         );
     }
 
-    _drawAnnotation(annotationsContainerWidth) {
-        const width = annotationsContainerWidth * (this.props.player.currentTime() - this.state.startTime) / this.state.duration;
-        const startX = this.state.startTime * annotationsContainerWidth / this.state.duration;
-
-        return <div className="track-annotation-drawing" key='drawing' style={{
-            width: `${width}px`,
-            backgroundColor: 'yellow',
-            transform: `translateX(${(startX)}px)`
-        }}>&nbsp;</div>
-    }
-
-    record = (isChronothematique) => {
-        if (this.state.isAnnotationRecording === true) {
-            this.setState({
-                isAnnotationRecording: false,
-                endTime: this.props.player.currentTime(),
-                isChronothematique
-            });
-        } else if (this.state.isAnnotationRecording === false) {
-            this.setState({
-                isAnnotationRecording: true,
-                startTime: this.props.player.currentTime(),
-                isChronothematique
-            })
-        }
-    }
+    // _drawAnnotation(annotationsContainerWidth) {
+    //     const width = annotationsContainerWidth * (this.props.player.currentTime() - this.state.startTime) / this.state.duration;
+    //     const startX = this.state.startTime * annotationsContainerWidth / this.state.duration;
+    //
+    //     return <div className="track-annotation-drawing" key='drawing' style={{
+    //         width: `${width}px`,
+    //         backgroundColor: 'yellow',
+    //         transform: `translateX(${(startX)}px)`
+    //     }}>&nbsp;</div>
+    // }
+    //
+    // record = (isChronothematique) => {
+    //     if (this.state.isAnnotationRecording === true) {
+    //         this.setState({
+    //             isAnnotationRecording: false,
+    //             endTime: this.props.player.currentTime(),
+    //             isChronothematique
+    //         });
+    //     } else if (this.state.isAnnotationRecording === false) {
+    //         this.setState({
+    //             isAnnotationRecording: true,
+    //             startTime: this.props.player.currentTime(),
+    //             isChronothematique
+    //         })
+    //     }
+    // }
 
     render() {
         return (
@@ -223,10 +227,9 @@ export default class extends Component {
                                 isValidToRecord={true}
                                 record={this.record}
                                 playbackRate={this.props.playbackRate}
-                                isAnnotationRecording={this.state.isAnnotationRecording}
                                 isEditModeOpen={this.props.isEditing}
                 />
-                <div className='timeline-display'>
+                <div className='timeline-display video'>
                     {this._renderProgressBar()}
                     {this._renderTetris()}
                 </div>
@@ -276,7 +279,6 @@ export default class extends Component {
                     {Object.entries(this.state.tracks).map((track, i) => {
                         return this._drawTrack(annotationsContainerWidth, track[1], i)
                     })}
-                    {this.state.isAnnotationRecording ? this._drawAnnotation(annotationsContainerWidth) : null}
                 </div>
 
             </div>
@@ -287,7 +289,16 @@ export default class extends Component {
     _drawTrack = (annotationsContainerWidth, annotations, row) => {
         return <div className="track" key={row}>
             {annotations ? annotations.map((annotation, aI) => {
-                const start = this._getTime(annotation, 'start'), end = this._getTime(annotation, 'end');
+                const start = this._getTime(annotation, 'start')
+                let end = this._getTime(annotation, 'end');
+                let isRecording = false;
+                if (end === -1) {
+                    isRecording = true;
+                    if (this.props.player.currentTime() < start) {
+                        end = start + 0.1;
+                    } else end = this.props.player.currentTime();
+                }
+
                 const duration = end - start;
                 const width = annotationsContainerWidth * duration / this.state.duration;
                 const startX = start * annotationsContainerWidth / this.state.duration;
@@ -296,18 +307,24 @@ export default class extends Component {
                     {
                         'highlight-annotation': this.state.focusedAnnotation &&
                             (this.state.focusedAnnotation.annotationId === annotation.id ||
-                                this.state.focusedAnnotation.id === annotation.id)
-                    })} key={aI} style={{
+                                this.state.focusedAnnotation.id === annotation.id) && !isRecording
+                    },{'highlight-recording': isRecording})} key={aI} style={{
                     width: `${width}px`,
                     backgroundColor: annotation.color,
                     transform: `translateX(${startX}px)`
                 }}
-                            onClick={() => this._selectAnnotation(annotation)}
-                            title={annotation.title + " (" + _formatTimeDisplay(annotation.duration) + ")"}
-                >
+                            onClick={() => !isRecording && this._selectAnnotation(annotation)}
+                            title={annotation.title + " (" + _formatTimeDisplay(annotation.duration) + ")"}>
                     <div
                         className='timeline_annotation_header'>
                         {annotation.title} ({_formatTimeDisplay(duration)})
+
+                        {isRecording? <img alt="stop_ann_recording" className="btn_menu recording-stop" src={STOP} onClick={event => {
+                            event.preventDefault();
+                            event.stopPropagation();
+
+                            ee.emit(STOP_ANNOTATION_RECORDING , annotation);
+                        }}/>:''}
                     </div>
                     <div className='timeline_annotation_body'>
                         {annotation.value}

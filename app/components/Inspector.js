@@ -58,7 +58,10 @@ import {
     EVENT_DISHONOR_ANNOTATION,
     EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET,
     EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH,
-    EVENT_UNFOCUS_ANNOTATION, EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, EVENT_UPDATE_EVENT_RECORDING_STATUS
+    EVENT_UNFOCUS_ANNOTATION,
+    EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
+    EVENT_UPDATE_EVENT_RECORDING_STATUS,
+    STOP_ANNOTATION_RECORDING
 } from "../utils/library";
 import RichTextEditor from "react-rte";
 import Select from "react-select";
@@ -68,6 +71,7 @@ import {withTranslation} from "react-i18next";
 const ADD_TAG = require('./pictures/add-tag-annotation.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
 const DELETE_ANNOTATION = require('./pictures/delete-anotation.svg');
+const STOP = require('./pictures/stop.svg');
 
 // STATE CONSTANTS
 
@@ -814,7 +818,9 @@ export default class extends Component {
                     }, 300);
                 }
             }}
-                 className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id}, 'react-contextmenu-wrapper row')}
+                 className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
+                     {'recording-ann': ('video' in annotation && annotation.video.end === -1)},
+                     'react-contextmenu-wrapper row')}
                  onClick={annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION ? e => {
                      if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
                          if (this.state.isAnnotateEventRecording){
@@ -837,7 +843,9 @@ export default class extends Component {
                          console.log('emitting even....')
                          if('video' in annotation) {
                              this._focusAnnotation(e, annotation);
-                             this._gotoAnnotation(e, annotation, "start");
+                             console.log(annotation.video.end)
+                             if (annotation.video.end !== -1)
+                                this._gotoAnnotation(e, annotation, "start");
                          } else
                             this._emitEvent(e , annotation.id , annotation.annotationType);
 
@@ -857,7 +865,7 @@ export default class extends Component {
                                  alt={annotation.annotationType}
                                  src={require('./pictures/' + annotation.annotationType + '.svg')}/>
                         </Col>
-                        <Col md={8} lg={8} sm={8}>
+                        <Col md={7} lg={7} sm={7}>
                             <div className="annotation_title"
                                  style={{color: (!('color' in annotation) || annotation.color === "-1") ? "#333333" : targetColors[descriptor.descriptorId]}}>
                                 {
@@ -904,9 +912,19 @@ export default class extends Component {
                             </div>
                         </Col>
                         {
-                            !this.props.isFromLibraryView ? <Col md={3} lg={3} sm={3}
+                            !this.props.isFromLibraryView ? <Col md={4} lg={4} sm={4}
                                 // className={(!this.props.readOnly && this.state.hover === annotation.id) ? 'action-row' : 'hidden'}>
                                                                  className={'action-row'}>
+
+
+                                {'video' in annotation && annotation.video.end === -1 ?
+                                    <img alt="stop_ann_recording" className="btn_menu" src={STOP} title={t('inspector.tooltip_stop_ann_recording')} onClick={event => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+
+                                        ee.emit(STOP_ANNOTATION_RECORDING , annotation);
+                                    }}/> : ''}
+
                                 <img alt="add keyword" className="btn_menu" src={ADD_TAG} title={t('inspector.tooltip_add_keyword')} onClick={event => {
                                     event.preventDefault();
                                     event.stopPropagation();

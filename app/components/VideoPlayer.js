@@ -2,7 +2,7 @@ import React, {PureComponent} from 'react';
 import videojs from 'video.js'
 import Timeline from "./Timeline";
 import {DEFAULT_VOLUME} from "../constants/constants";
-import {ee, EVENT_GOTO_ANNOTATION} from "../utils/library";
+import {ee, EVENT_GOTO_ANNOTATION, EVENT_SET_ANNOTATION_POSITION, STOP_ANNOTATION_RECORDING} from "../utils/library";
 import LeafletVideo from "./LeafletVideo";
 
 let tcin = 0;
@@ -21,6 +21,8 @@ export default class extends PureComponent {
     }
 
     componentDidMount() {
+
+        ee.on(STOP_ANNOTATION_RECORDING, this._saveEndTimeToAnnotation);
         this.player = videojs(this.videoPlayer.current, {
             id: 'vid_1234',
             preload: 'auto',
@@ -55,6 +57,7 @@ export default class extends PureComponent {
     }
 
     componentWillUnmount() {
+        ee.removeListener(STOP_ANNOTATION_RECORDING, this._saveEndTimeToAnnotation);
         window.removeEventListener('keyup', this._processKeyboardEvents, true);
         if (this.player) {
             this.player.off("loadedmetadata");
@@ -120,6 +123,10 @@ export default class extends PureComponent {
         }
     }
 
+    _saveEndTimeToAnnotation = (annotation) => {
+        this.props.saveAnnotationEndTime(annotation.annotationType, annotation.id, this.player.currentTime(), this.props.currentPicture.sha1);
+    }
+
     render() {
         return (
             <div className="bst rcn_video">
@@ -145,8 +152,8 @@ export default class extends PureComponent {
                                   annotationsRichtext={this.props.annotationsRichtext}
                                   onCreated={this._onCreated}
                                   onEditStop={this.props.onEditStop}
-                                  onDrawStart={this._onDrawStart}
-                                  onDrawStop={this._onDrawStop}
+                                  onDrawStart={this.props.onDrawStart}
+                                  onDrawStop={this.props.onDrawStop}
                                   calibrationMode={this.props.calibrationActive}
                                   fireSaveEvent={this.props.fireSaveEvent}
                                   onContextMenuEvent={this.props.handleLeafletContextMenu}
@@ -155,6 +162,7 @@ export default class extends PureComponent {
                                   repeatMode={this.props.repeatMode}
                                   saveLeafletSettings={this.props.saveLeafletSettings}
                                   player={this.player}
+                                  onLeafletClick={this._onLeafletClick}
                     />:''}
                 </div>
                 {this.player && this.state.loadedmetadata ?
@@ -179,29 +187,19 @@ export default class extends PureComponent {
         );
     }
 
-    _onDrawStart = (e) => {
-        console.log("_onDrawStart")
-        this.player.play();
-        this.timeline.current.record(false);
+    _onLeafletClick = e => {
+        console.log("Leaflet clicked")
+        this.player.pause();
         tcin = this.player.currentTime()
-        this.props.onDrawStart(e);
-    }
-
-    _onDrawStop = (e) => {
-        console.log("_onDrawStop")
-        // this.timeline.record(false);
-        //
-        this.props.onDrawStop(e);
     }
 
     _onCreated = (e) => {
         console.log("_onCreated")
         this.player.pause();
         e.layer.video = {
-            start: tcin,
-            end: this.player.currentTime()
+            start: this.player.currentTime(),
+            end: -1
         }
         this.props.onCreated(e);
-        this.timeline.current.record(false);
     }
 }

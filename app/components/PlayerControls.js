@@ -74,27 +74,6 @@ export default class extends Component {
                                 this.props.player.currentTime(this.props.duration)
                             }}/>
                         </div>
-
-                        <div className='right1'>
-                            <div className={this.props.isValidToRecord ? "add-annotation-button btn btn-primary" : "add-annotation-button btn btn-primary disabled"} onClick={() => {
-                                if (this.props.isEditModeOpen !== null && this.props.isAnnotationRecording === false){
-                                    // alert('Please close edit mode to start recording new annotation')
-                                    ee.emit(SHOW_EDIT_MODE_VIOLATION_MODAL)
-                                    return false;
-                                }
-                                if (this.props.isValidToRecord) {
-                                    this.props.record(true)
-                                    if (this.props.player.paused()) {
-                                        this.props.player.play()
-                                    }
-                                }
-                            }}>
-                                <img className="add-annotation-picture"
-                                     alt="add annotation"
-                                     src={this.props.isAnnotationRecording ? ADD_ANNOTATION_RED : ADD_ANNOTATION}/>
-                                {t('annotate.player_controls.lbl_annotate')}
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import Component from '../components/VideoPlayer';
-import {createAnnotationChronoThematique , editAnnotationChronothematiqueEndtime} from '../actions/app';
+import {
+    createAnnotationChronoThematique,
+    editAnnotationChronothematiqueEndtime,
+    saveAnnotationEndTime
+} from '../actions/app';
 
 const mapStateToProps = state => {
     return {
@@ -16,6 +20,9 @@ const mapDispatchToProps = dispatch => {
         },
         editAnnotationChronothematiqueEndtime: (pictureId, annotationId, endTime) => {
             dispatch(editAnnotationChronothematiqueEndtime(pictureId, annotationId , endTime));
+        },
+        saveAnnotationEndTime: (annType, annId, endTime, pictureId) => {
+            dispatch(saveAnnotationEndTime(annType, annId, endTime, pictureId));
         }
     };
 };
