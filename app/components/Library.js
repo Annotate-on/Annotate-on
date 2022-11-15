@@ -156,7 +156,6 @@ export default class extends Component {
             picView: picView,
             fitToBounds: fitToBounds,
             numberOfFolders: this.props.tabData[this.props.tabName].selected_folders.length,
-            numberOfTags: this.props.tabData[this.props.tabName].selected_tags.length,
             selectAll: false,
             scrollTableTo: this.props.tabData[this.props.tabName].lastScrollPositionInList,
             // Current working picture
@@ -172,7 +171,6 @@ export default class extends Component {
         let stateUpdate = {
             allPictureLength: Object.values(nextProps.allPictures).length,
             numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
-            numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
             numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
             currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
         }

@@ -18,10 +18,11 @@ import {
     TAG_GPS_NO,
     TAG_GPS_WIDTH,
     TAG_MODE_LANDSCAPE,
-    TAG_MODE_PORTRAIT,
+    TAG_MODE_PORTRAIT, TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR,
     VERY_LOW_RESOLUTION
 } from '../constants/constants';
 import {_formatTimeDisplay} from "./maths";
+import {genId} from "../components/event/utils";
 
 export const AND = "AND"
 export const OR = "OR"
@@ -31,25 +32,48 @@ export const EXP_ITEM_TYPE_OPERATOR = "EXP_ITEM_TYPE_OPERATOR"
 export const EXP_ITEM_TYPE_CONDITION = "EXP_ITEM_TYPE_CONDITION"
 export const EXP_ITEM_TYPE_EXPRESSION = "EXP_ITEM_TYPE_EXPRESSION"
 
-export const findExpressionOperatorById = (expression, id) => {
-    // console.log("findExpressionOperatorById", expression)
-    if(!expression || !expression.value || !id) return null;
-    for (const item of expression.value) {
-        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
-            if(item.id === id) return item;
-        } else if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
-            let result = findExpressionOperatorById(item, id);
-            if(result) return result;
+export const convertSelectedTagsToFilter = (selectedTags, tagsSelectionMode) => {
+    if(!selectedTags || selectedTags.length === 0) return null;
+    const expression = {
+        id: genId(),
+        type: EXP_ITEM_TYPE_EXPRESSION,
+        value: []
+    }
+    for (let i = 0; i < selectedTags.length; i++) {
+        expression.value.push({
+            id: genId(),
+            type: EXP_ITEM_TYPE_CONDITION,
+            value : {
+                has: true,
+                tag: selectedTags[i]
+            }
+        })
+        if(selectedTags.length > 1 && i < selectedTags.length-1) {
+            expression.value.push({
+                id: genId(),
+                type: EXP_ITEM_TYPE_OPERATOR,
+                value: tagsSelectionMode === TAGS_SELECTION_MODE_AND ? AND : OR
+            });
         }
     }
-    return null;
+    const filter = {
+        id: genId(),
+        type: EXP_ITEM_TYPE_EXPRESSION,
+        value: [expression]
+    }
+    return filter;
 }
 
-export const findPicturesByTagExpression = (expression, allPictures, state) => {
+export const changeOperatorValueInFilter = (filter, id, value) => {
+    const foundOperator = findExpressionOperatorById(filter, id);
+    if(foundOperator) {
+        foundOperator.value = value;
+    }
+}
 
+export const findPicturesByTagFilter = (expression, allPictures, state) => {
     console.log("findPictures expression", expression);
     console.log("findPictures allPictures", allPictures);
-    // console.log("findPictures tagsByAnnotation", state.tags_by_annotation);
 
     if(!expression || expression.value.length === 0) return [...allPictures];
 
@@ -101,6 +125,20 @@ export const findPicturesByTagExpression = (expression, allPictures, state) => {
     console.log("findPictures expression, result", expression, allPictures, result);
     let finalResult = lodash.intersection(allPictures, result);
     return finalResult;
+}
+
+const findExpressionOperatorById = (expression, id) => {
+    // console.log("findExpressionOperatorById", expression)
+    if(!expression || !expression.value || !id) return null;
+    for (const item of expression.value) {
+        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
+            if(item.id === id) return item;
+        } else if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+            let result = findExpressionOperatorById(item, id);
+            if(result) return result;
+        }
+    }
+    return null;
 }
 
 const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
@@ -230,3 +268,77 @@ export const attachDefaultVideoTags = (video, tagVideo, createTag, addSubTag) =>
         tagVideo(video.sha1, 'height: ' + video.height);
     }
 };
+
+export const findTag = (tags, target, remove) => {
+    let response = null;
+    tags.some(tag => {
+        if (tag.name === target) {
+            response = tag;
+            if (remove) {
+                const rootTags = tags.filter(_ => _.name !== target)
+                tags.splice(0, tags.length);
+                tags.push(...rootTags);
+            }
+            return true;
+        } else if (tag.children) {
+            response = findTag(tag.children, target, remove);
+            const output = null != response;
+            if (output) {
+                if (remove) {
+                    tag.children = tag.children.filter(_ => _.name !== target);
+                }
+            }
+            return output;
+        }
+    });
+    return response;
+};
+
+export const findParentTag = (tags, name) => {
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.name === name) {
+            return tag;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, name);
+        } else {
+            return null;
+        }
+    });
+};
+
+export const tagExistById = (tags, id) => {
+
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.id === id) {
+            return true;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, id);
+        } else {
+            return false;
+        }
+    });
+};
+
+export const tagExist = (tags, name) => {
+
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.name === name) {
+            return true;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, name);
+        } else {
+            return false;
+        }
+    });
+};
+
+

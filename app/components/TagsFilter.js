@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import i18next from "i18next";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {Button, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
-import AnnotationDropdownMenu from "./common/DropdownMenu";
 import {AND, EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION, EXP_ITEM_TYPE_OPERATOR, NOT, OR} from "../utils/tags";
-import {genId} from "./event/utils";
 
 export default class TagsFilter extends Component {
 
@@ -104,7 +101,7 @@ export default class TagsFilter extends Component {
                                 this.props.onCreateExpression();
                             }
                         }>
-                            <i className="fa fa-plus-circle"/>(
+                            <i className="fa fa-plus-circle"/>( )
                         </Button>
                     </div>
                     <div className="tags-filter-content">

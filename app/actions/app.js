@@ -89,7 +89,6 @@ export const UNSELECT_FOLDER = 'UNSELECT_FOLDER';
 export const SAVE_SORTED_ARRAY = 'SAVE_SORTED_ARRAY';
 export const ADD_SUB_TAG = 'ADD_SUB_TAG';
 export const OPEN_IN_NEW_TAB = 'OPEN_IN_NEW_TAB';
-export const OPEN_MAP_SELECTION_IN_NEW_TAB = 'OPEN_MAP_SELECTION_IN_NEW_TAB';
 export const MERGE_TAGS = 'MERGE_TAGS';
 export const SAVE_TAGS_SORT = 'SAVE_TAGS_SORT';
 export const SAVE_ANNOTATION_SORT = 'SAVE_ANNOTATION_SORT';
@@ -821,6 +820,3 @@ export const setNewState = newApp => ({
     type: SET_STATE,
     newApp
 });
-
-
-
