@@ -265,6 +265,7 @@ export const addProjectToWorkSpace = (_, toggleActive) => {
  * @param label
  */
 export const setWorkspace = (_, label) => {
+    console.log("setWorkspace")
     const { t } = i18next;
     addProjectToWorkSpace(_, true);
     setProjectInfo(label);

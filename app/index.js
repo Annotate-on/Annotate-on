@@ -28,6 +28,7 @@ import lodash from 'lodash';
 import './i18n';
 import i18next from "i18next";
 import {initLeaflet} from './widget/leaflet-override';
+import {convertSelectedTagsToFilter} from "./utils/tags";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -90,8 +91,14 @@ const go = () => {
                 const taxonomyInstance = tmpState.app.taxonomyInstance || {};
                 for(const tabName in tmpState.app.open_tabs) {
                     const tab = tmpState.app.open_tabs[tabName];
-                    if('taxonomyInstance' in tab)
+                    if('taxonomyInstance' in tab) {
                         lodash.extendWith(taxonomyInstance, tab.taxonomyInstance)
+                    }
+                    if(!tab.selected_filter && tab.selected_tags) {
+                        tab.selected_filter = convertSelectedTagsToFilter(tab.selected_tags, tab.tags_selection_mode);
+                        tab.selected_tags = null;
+                        tab.tags_selection_mode = null;
+                    }
                 }
                 tmpState.app.taxonomyInstance = taxonomyInstance;
 
