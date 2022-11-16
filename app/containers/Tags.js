@@ -13,7 +13,9 @@ import {
     saveTagSort,
     deleteTagExpression,
     createTagExpression,
-    updateTagExpressionOperator
+    updateTagExpressionOperator,
+    unselectTag,
+    addTagInFilter
 } from '../actions/app';
 import Component from '../components/Tags';
 import {withTranslation} from "react-i18next";
@@ -21,6 +23,7 @@ import {withTranslation} from "react-i18next";
 const mapStateToProps = (state, ownProps) => {
     return {
         picturesByTag: state.app.pictures_by_tag,
+        selectedTags: state.app.selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
         annotationsByTag: state.app.annotations_by_tag,
@@ -46,6 +49,9 @@ const mapDispatchToProps = dispatch => {
         tagPicture: (pictureId, tagName) => {
             dispatch(tagPicture(pictureId, tagName));
         },
+        unselectTag: (name, tabName) => {
+            dispatch(unselectTag(name, tabName));
+        },
         untagPicture: (pictureId, tagName) => {
             dispatch(untagPicture(pictureId, tagName));
         },
@@ -60,6 +66,9 @@ const mapDispatchToProps = dispatch => {
         },
         saveTagSort: (tabName, direction) => {
             dispatch(saveTagSort(tabName, direction));
+        },
+        addTagInFilter: (name, skipCheck, tabName) => {
+            dispatch(addTagInFilter(name, skipCheck, tabName));
         },
         createTagExpression: (tabName) => {
             dispatch(createTagExpression(tabName));

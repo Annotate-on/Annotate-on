@@ -67,6 +67,7 @@ export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
+export const ADD_TAG_IN_FILTER = 'ADD_TAG_IN_FILTER';
 export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
 export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
 export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
@@ -76,6 +77,7 @@ export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_EVENT_ANNOTATION = 'TAG_EVENT_ANNOTATION';
 export const UNTAG_EVENT_ANNOTATION = 'UNTAG_EVENT_ANNOTATION';
 export const TAG_PICTURE = 'TAG_PICTURE';
+export const UNSELECT_TAG = 'UNSELECT_TAG';
 export const UNTAG_ANNOTATION = 'UNTAG_ANNOTATION';
 export const UNTAG_PICTURE = 'UNTAG_PICTURE';
 export const DELETE_ANNOTATION_RATIO = 'DELETE_ANNOTATION_RATIO';
@@ -545,6 +547,13 @@ export const selectTag = (name, skipCheck, tabName) => ({
     tabName
 });
 
+export const addTagInFilter = (name, skipCheck, tabName) => ({
+    type: ADD_TAG_IN_FILTER,
+    name,
+    skipCheck,
+    tabName
+});
+
 export const createTagExpression = (tabName) => ({
     type: CREATE_TAG_EXPRESSION,
     tabName
@@ -600,6 +609,12 @@ export const tagPicture = (pictureId, tagName) => ({
     type: TAG_PICTURE,
     pictureId,
     tagName
+});
+
+export const unselectTag = (name, tabName) => ({
+    type: UNSELECT_TAG,
+    name,
+    tabName
 });
 
 export const prepareFolderForDeletion = (path) => ({

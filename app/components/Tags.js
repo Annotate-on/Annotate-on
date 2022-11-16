@@ -58,6 +58,7 @@ export default class extends Component {
             collapse: true,
             newTagName: '',
             draggableTags: [],
+            selectedTags: [],
             sortedTags: sortedTags,
             showDialog: '',
             sortDirection,
@@ -71,15 +72,18 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let sortDirection, selectedFilter;
+        console.log("componentWillReceiveProps", nextProps)
+        let selectedTags, sortDirection, selectedFilter;
         if (this.props.tabName) {
+            selectedTags = [];
             selectedFilter = nextProps.tab.selected_filter;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
         } else {
-            selectedFilter = nextProps.selectedFilter;
+            selectedTags = nextProps.selectedTags;
             sortDirection = SORT_ALPHABETIC_DESC;
         }
         this.setState({
+            selectedTags,
             selectedFilter,
             sortedTags: this._sortTags([...nextProps.tags], sortDirection),
             sortDirection,
@@ -97,7 +101,8 @@ export default class extends Component {
     };
 
     _editTagsList = (_) => {
-        return (<Row className="tag" key={`tag_${_.name}`}>
+        const selected = this.state.selectedTags.indexOf(_.name) !== -1 ? 'selected-tag' : '';
+        return (<Row className={selected + ' tag'} key={`tag_${_.name}`}>
             <Col md={12} lg={12} sm={12} className="edit-tag-col">
                 <Form inline onSubmit={this.handleEditTagSubmit}>
                     <Input bsSize="sm"
@@ -170,6 +175,7 @@ export default class extends Component {
     _createTagsList = (_) => {
         const { t } = this.props;
         const isTag = _.type !== TYPE_CATEGORY;
+        const selected = this.state.selectedTags.indexOf(_.name) !== -1;
         const numberOfTaggedPics = this.props.picturesByTag.hasOwnProperty(_.name) ? this.props.picturesByTag[_.name].length : 0;
         const numberOfTaggedAnnotations = this.props.annotationsByTag.hasOwnProperty(_.name) ? this.props.annotationsByTag[_.name].length : 0;
         const dndSelected = this.state.draggableTags.filter(tag => tag === _.name).length > 0;
@@ -232,7 +238,7 @@ export default class extends Component {
                              alt="merge icon"
                         /> : ''}
 
-                    <span  style={{background: isTag ? 'orange' : ''}} className={classnames('tag-col-left', {'selected-child': selectedChild})}>
+                    <span  style={{background: isTag ? 'orange' : ''}} className={classnames('tag-col-left', {'selected': selected}, {'selected-child': selectedChild})}>
                         <ContextMenuTrigger holdToDisplay={-1}
                                             disable={!enableClicks || _.type === TYPE_CATEGORY}
                                             attributes={attr}
@@ -262,7 +268,7 @@ export default class extends Component {
                 </div>
             </div>);
 
-        return {html, hasSelectedChild: selectedChild};
+        return {html, hasSelectedChild: selected || selectedChild};
 
     };
 
@@ -312,21 +318,31 @@ export default class extends Component {
                 draggableTags: tags.filter(tag => tag.type === TYPE_TAG)
             });
         } else {
+            const selected = this.state.selectedTags.indexOf(tagName) !== -1;
             if (tagType === TYPE_CATEGORY){
                 console.log('category selected do nothing..')
                 return false;
             }
-            this.props.selectTag(tagName, false, this.props.tabName);
+            if(this.props.isImport) {
+                selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
+            } else {
+                this.props.addTagInFilter(tagName, false, this.props.tabName)
+            }
         }
     };
 
     render() {
         const { t } = this.props;
+        let selectedTags;
+        if (this.props.selectedTags && this.props.selectedTags.length > 0) {
+            selectedTags = this.props.selectedTags.length;
+        }
         return (
             <_Root>
                 <Container className="bst rcn_tags">
                     <Row className="tags-header">
-                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')} ({this.state.tagsCount})
+                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')}
+                            {selectedTags ? ` (${selectedTags}/${this.state.tagsCount})` : ` (${this.state.tagsCount})`}
                             <img className="toogleCollapse" onClick={this.toggle}
                                  src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))} alt="arrow-up-down"/>
                         </Col>
@@ -416,20 +432,22 @@ export default class extends Component {
                         }
                         <Row>
                             <Col>
-                                <TagsFilter filter={this.state.selectedFilter}
-                                            onDeleteExpression={(id) => {
-                                                this._handleDeleteTaxExpression(id)
-                                            }}
+                                <div className={classnames({'not_visible': this.props.autoSelectNew})}>
+                                    <TagsFilter filter={this.state.selectedFilter}
+                                                onDeleteExpression={(id) => {
+                                                    this._handleDeleteTaxExpression(id)
+                                                }}
 
-                                            onCreateExpression={() => {
-                                                this._handleCreateTaxExpression()
-                                            }}
+                                                onCreateExpression={() => {
+                                                    this._handleCreateTaxExpression()
+                                                }}
 
-                                            onUpdateTagExpressionOperator={(id, value) => {
-                                                this._handleUpdateTagExpressionOperator(id, value)
-                                            }}
-                                >
-                                </TagsFilter>
+                                                onUpdateTagExpressionOperator={(id, value) => {
+                                                    this._handleUpdateTagExpressionOperator(id, value)
+                                                }}
+                                    >
+                                    </TagsFilter>
+                                </div>
 
                                 <div className="tags" id="tagRoot" draggable={true}
                                      onDragOver={e => {

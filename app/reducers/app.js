@@ -103,6 +103,7 @@ import {
     TAG_PICTURE,
     UNFOCUS_ANNOTATION,
     UNSELECT_FOLDER,
+    UNSELECT_TAG,
     UNTAG_ANNOTATION,
     UNTAG_EVENT_ANNOTATION,
     UNTAG_PICTURE,
@@ -112,6 +113,7 @@ import {
     UPDATE_TABULAR_VIEW,
     UPDATE_TAXONOMY_VALUES,
     EDIT_CATEGORY_BY_ID,
+    ADD_TAG_IN_FILTER,
     DELETE_TAG_EXPRESSION,
     CREATE_TAG_EXPRESSION,
     UPDATE_TAG_EXPRESSION_OPERATOR
@@ -2589,11 +2591,32 @@ export default (state = {}, action) => {
             break;
 
         case SELECT_TAG: {
+            console.log("select tag action", action)
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             let selectedTags;
             // Skip check if tag is already selected.
-            console.log("select tag action", action)
+            if (!action.skipCheck) {
+                if (state.selected_tags.indexOf(action.name) !== -1) return state;
+                selectedTags = [action.name, ...state.selected_tags];
+                state.selected_tags = selectedTags;
+            } else {
+                selectedTags = state.selected_tags;
+            }
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case ADD_TAG_IN_FILTER: {
+            console.log("add tag in filter action", action)
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            let selectedTags;
+            // Skip check if tag is already selected.
             if (!action.skipCheck) {
                 // If adding tag from tabbed component take list from tabs object.
                 if (action.tabName) {
@@ -2651,10 +2674,6 @@ export default (state = {}, action) => {
                         tab.current_picture_index_in_selection = 0;
                         tab.selected_sha1 = tab.pictures_selection[0];
                     }
-                } else {
-                    if (state.selected_tags.indexOf(action.name) !== -1) return state;
-                    selectedTags = [action.name, ...state.selected_tags];
-                    state.selected_tags = selectedTags;
                 }
             } else {
                 selectedTags = state.selected_tags;
@@ -2740,6 +2759,25 @@ export default (state = {}, action) => {
                     [action.tagName]: [...state.pictures_by_tag[action.tagName] || [], action.pictureId]
                 }
             }
+        }
+            break;
+        case UNSELECT_TAG: {
+            console.log("unselect tag action", action)
+            const counter = state.counter + 1;
+            let selectedTags;
+            const tabs = state.open_tabs;
+            const tag_to_remove_index = state.selected_tags.indexOf(action.name);
+            if (tag_to_remove_index === -1) return state;
+            selectedTags = [
+                ...state.selected_tags.slice(0, tag_to_remove_index),
+                ...state.selected_tags.slice(tag_to_remove_index + 1)
+            ];
+            state.selected_tags = selectedTags;
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
         }
             break;
         case UNTAG_ANNOTATION: {

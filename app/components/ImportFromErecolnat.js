@@ -22,9 +22,8 @@ import {getUserWorkspace} from '../utils/config'
 import {Button, Col, Container, Row} from 'reactstrap';
 import Folders from "../containers/Folders";
 import {ee, EVENT_HIDE_LOADING, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
-import {attachDefaultTags} from "../utils/tags";
+import {attachDefaultTags, loadTags} from "../utils/tags";
 import * as unzipper from "unzipper";
-import {loadTags} from "../utils/common";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const HELP_ICON = require('./pictures/help.svg');
@@ -326,14 +325,11 @@ export default class extends Component {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     })

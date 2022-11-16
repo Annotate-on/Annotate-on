@@ -341,4 +341,23 @@ export const tagExist = (tags, name) => {
     });
 };
 
+export const loadTags = (tags, selectedTags) => {
+    const tagsFiltered = [];
+    try {
+        tags.map(_ => {
+            if (selectedTags.indexOf(_.name) > -1) {
+                tagsFiltered.push({..._, children: null});
+            }
+            if (_.children && _.children) {
+                tagsFiltered.push(...loadTags(_.children, selectedTags));
+            }
+        });
+        return tagsFiltered;
+    } catch (e){
+        console.log(e);
+        return  [];
+    }
+};
+
+
 
