@@ -139,14 +139,13 @@ export default class TimelineWidget extends Component {
                                 {this.props.items.map((item, index) => {
                                     return <div className="card-details-container" key={index}>
                                         <p>{item.cardDetailedText}</p>
-                                        <Button color="link" key={index} href={"#"} className="action"
-                                                onClick={e => {
-                                                    // console.log("open", item)
-                                                    if (this.props.onOpenResource) {
-                                                        this.props.onOpenResource(item.resource, item.annotation, item.type);
-                                                    }
-                                                }}>{t('library.map-view.popup_open_in_annotation_editor')}</Button>
-
+                                        <i className="fa fa-external-link pointer" aria-hidden="true" title={t('library.map-view.popup_open_in_annotation_editor')}
+                                           onClick={() => {
+                                               if (this.props.onOpenResource) {
+                                                   this.props.onOpenResource(item.resource, item.annotation, item.type);
+                                               }
+                                           }}
+                                        />
                                     </div>
 
                                 })}
