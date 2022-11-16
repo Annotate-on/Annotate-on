@@ -55,7 +55,7 @@ export const SAVE_EVENT_AFTER_RECORD = 'SAVE_EVENT_AFTER_RECORD';
 export const EXTEND_EVENT_DURATION = 'EXTEND_EVENT_DURATION';
 export const EDIT_ANNOTATE_EVENT = 'EDIT_ANNOTATE_EVENT';
 export const FINISH_CORRUPTED_EVENT = 'FINISH_CORRUPTED_EVENT';
-export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
+export const EDIT_VIDEO_ANNOTATION_ENDTIME = 'EDIT_VIDEO_ANNOTATION_ENDTIME';
 export const EDIT_EVENT_ANNOTATION_ENDTIME = 'EDIT_EVENT_ANNOTATION_ENDTIME';
 export const FIRST_PICTURE_IN_SELECTION = 'FIRST_PICTURE_IN_SELECTION';
 export const FOCUS_ANNOTATION = 'FOCUS_ANNOTATION';
@@ -123,6 +123,7 @@ export const RENAME_FOLDER = 'RENAME_FOLDER';
 export const DELETE_PICTURE = 'DELETE_PICTURE';
 export const SAVE_LEAFLET_SETTINGS = 'SAVE_LEAFLET_SETTINGS';
 export const SET_STATE = 'SET_STATE';
+export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
     return {
@@ -172,22 +173,24 @@ export const createAnnotationMeasurePolyline = (pictureId, value_in_mm, vertices
     };
 };
 
-export const createAnnotationPointOfInterest = (pictureId, x, y, id) => {
+export const createAnnotationPointOfInterest = (pictureId, x, y, id, video) => {
     return {
         type: CREATE_ANNOTATION_POINT_OF_INTEREST,
         pictureId,
         x,
         y,
-        id
+        id,
+        video
     };
 };
 
-export const createAnnotationRectangular = (pictureId, vertices, id) => {
+export const createAnnotationRectangular = (pictureId, vertices, id, video) => {
     return {
         type: CREATE_ANNOTATION_RECTANGULAR,
         pictureId,
         vertices,
-        id
+        id,
+        video
     };
 };
 
@@ -834,4 +837,9 @@ export const saveLeafletSettings = repeatMode => ({
 export const setNewState = newApp => ({
     type: SET_STATE,
     newApp
+});
+
+export const saveAnnotationEndTime = (annType, annId, endTime, pictureId) => ({
+    type: STOP_ANNOTATION_RECORDING,
+    annType, annId, endTime, pictureId
 });

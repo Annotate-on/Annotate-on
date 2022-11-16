@@ -82,11 +82,11 @@ const mapDispatchToProps = dispatch => {
         createAnnotationMeasurePolyline: (pictureId, value_in_mm, vertices, id, type) => {
             dispatch(createAnnotationMeasurePolyline(pictureId, value_in_mm, vertices, id, type));
         },
-        createAnnotationPointOfInterest: (pictureId, x, y, id) => {
-            dispatch(createAnnotationPointOfInterest(pictureId, x, y, id));
+        createAnnotationPointOfInterest: (pictureId, x, y, id, video) => {
+            dispatch(createAnnotationPointOfInterest(pictureId, x, y, id, video));
         },
-        createAnnotationRectangular: (pictureId, vertices, id) => {
-            dispatch(createAnnotationRectangular(pictureId, vertices, id));
+        createAnnotationRectangular: (pictureId, vertices, id, video) => {
+            dispatch(createAnnotationRectangular(pictureId, vertices, id, video));
         },
         createAnnotationPolygon: (pictureId, vertices, area, id) => {
             dispatch(createAnnotationPolygon(pictureId, vertices, area, id));

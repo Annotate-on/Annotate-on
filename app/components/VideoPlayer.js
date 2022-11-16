@@ -2,8 +2,10 @@ import React, {PureComponent} from 'react';
 import videojs from 'video.js'
 import Timeline from "./Timeline";
 import {DEFAULT_VOLUME} from "../constants/constants";
-import {ee, EVENT_GOTO_ANNOTATION} from "../utils/library";
+import {ee, EVENT_GOTO_ANNOTATION, EVENT_SET_ANNOTATION_POSITION, STOP_ANNOTATION_RECORDING} from "../utils/library";
+import LeafletVideo from "./LeafletVideo";
 
+let tcin = 0;
 export default class extends PureComponent {
 
     constructor(props) {
@@ -19,6 +21,8 @@ export default class extends PureComponent {
     }
 
     componentDidMount() {
+
+        ee.on(STOP_ANNOTATION_RECORDING, this._saveEndTimeToAnnotation);
         this.player = videojs(this.videoPlayer.current, {
             id: 'vid_1234',
             preload: 'auto',
@@ -53,6 +57,7 @@ export default class extends PureComponent {
     }
 
     componentWillUnmount() {
+        ee.removeListener(STOP_ANNOTATION_RECORDING, this._saveEndTimeToAnnotation);
         window.removeEventListener('keyup', this._processKeyboardEvents, true);
         if (this.player) {
             this.player.off("loadedmetadata");
@@ -103,22 +108,62 @@ export default class extends PureComponent {
     _gotoAnnotation = (annotation, position) => {
         if (this.player) {
             if (position === "start" || position === "") {
-                this.player.currentTime(annotation.start);
+                let start = annotation.start
+                if('video' in annotation)
+                    start = annotation.video.start;
+                this.player.currentTime(start);
             }
             if (position === "end") {
-                this.player.currentTime(annotation.end);
+                let end = annotation.end
+                if('video' in annotation)
+                    end = annotation.video.end;
+                this.player.currentTime(end);
             }
             this.player.pause();
         }
     }
 
+    _saveEndTimeToAnnotation = (annotation) => {
+        this.props.saveAnnotationEndTime(annotation.annotationType, annotation.id, this.player.currentTime(), this.props.currentPicture.sha1);
+    }
+
     render() {
         return (
             <div className="bst rcn_video">
-                <div data-vjs-player>
-                    <video className="video-js"
-                           ref={this.videoPlayer}>
-                    </video>
+
+                <div className="leaflet-wrapper">
+                    <div data-vjs-player>
+                        <video className="video-js"
+                               ref={this.videoPlayer}>
+                        </video>
+                    </div>
+                    {this.player && this.state.loadedmetadata ?
+                    <LeafletVideo
+                                  currentPicture={this.props.currentPicture} ref={this.props.leafletVideo}
+                                  leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                  annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
+                                  annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                  annotationsRectangular={this.props.annotationsRectangular}
+                                  annotationsPolygon={this.props.annotationsPolygon}
+                                  annotationsAngle={this.props.annotationsAngle}
+                                  annotationsColorPicker={this.props.annotationsColorPicker}
+                                  annotationsOccurrence={this.props.annotationsOccurrence}
+                                  annotationsTranscription={this.props.annotationsTranscription}
+                                  annotationsRichtext={this.props.annotationsRichtext}
+                                  onCreated={this._onCreated}
+                                  onEditStop={this.props.onEditStop}
+                                  onDrawStart={this.props.onDrawStart}
+                                  onDrawStop={this.props.onDrawStop}
+                                  calibrationMode={this.props.calibrationActive}
+                                  fireSaveEvent={this.props.fireSaveEvent}
+                                  onContextMenuEvent={this.props.handleLeafletContextMenu}
+                                  targetColors={this.props.targetColors}
+                                  taxonomyInstance={this.props.taxonomyInstance}
+                                  repeatMode={this.props.repeatMode}
+                                  saveLeafletSettings={this.props.saveLeafletSettings}
+                                  player={this.player}
+                                  onLeafletClick={this._onLeafletClick}
+                    />:''}
                 </div>
                 {this.player && this.state.loadedmetadata ?
                     <Timeline ref={this.timeline}
@@ -127,6 +172,8 @@ export default class extends PureComponent {
                               playbackRate={this.state.originalPlaybackRate}
                               openEditPanelonVideoAnnotationCreate={this.props.openEditPanelonVideoAnnotationCreate}
                               createAnnotationChronoThematique={this.props.createAnnotationChronoThematique}
+                              annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                              annotationsRectangular={this.props.annotationsRectangular}
                               annotationsChronothematique={this.props.annotationsChronothematique}
                               file={this.props.currentPicture.file}
                               videoId={this.props.currentPicture.sha1}
@@ -138,5 +185,21 @@ export default class extends PureComponent {
                 }
             </div>
         );
+    }
+
+    _onLeafletClick = e => {
+        console.log("Leaflet clicked")
+        this.player.pause();
+        tcin = this.player.currentTime()
+    }
+
+    _onCreated = (e) => {
+        console.log("_onCreated")
+        this.player.pause();
+        e.layer.video = {
+            start: this.player.currentTime(),
+            end: -1
+        }
+        this.props.onCreated(e);
     }
 }

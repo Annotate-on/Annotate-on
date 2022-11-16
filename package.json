@@ -301,6 +301,7 @@
     "normalize.css": "^8.0.1",
     "path": "^0.12.7",
     "pdfkit": "^0.13.0",
+    "pnglib": "^0.0.1",
     "popper.js": "^1.14.7",
     "promise-limit": "^2.7.0",
     "prop-types": "^15.0.0",
