@@ -15,6 +15,7 @@ import packageJson from '../../package.json';
 import {changeLanguage} from "i18next";
 import {getDefaultLanguage} from "../i18n";
 import i18next from "i18next";
+import {convertSelectedTagsToFilter} from "./tags";
 const {ipcRenderer} = require('electron')
 
 let config;
@@ -264,6 +265,7 @@ export const addProjectToWorkSpace = (_, toggleActive) => {
  * @param label
  */
 export const setWorkspace = (_, label) => {
+    console.log("setWorkspace")
     const { t } = i18next;
     addProjectToWorkSpace(_, true);
     setProjectInfo(label);
@@ -284,8 +286,14 @@ export const setWorkspace = (_, label) => {
             const taxonomyInstance = tmpState.taxonomyInstance || {};
             for (const tabName in tmpState.open_tabs) {
                 const tab = tmpState.open_tabs[tabName];
-                if ('taxonomyInstance' in tab)
+                if ('taxonomyInstance' in tab) {
                     lodash.extendWith(taxonomyInstance, tab.taxonomyInstance)
+                }
+                if(!tab.selected_filter && tab.selected_tags) {
+                    tab.selected_filter = convertSelectedTagsToFilter(tab.selected_tags, tab.tags_selection_mode);
+                    tab.selected_tags = null;
+                    tab.tags_selection_mode = null;
+                }
             }
             tmpState.taxonomyInstance = taxonomyInstance;
 

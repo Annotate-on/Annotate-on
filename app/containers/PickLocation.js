@@ -1,6 +1,5 @@
 import {connect} from 'react-redux';
 
-import {createTag, deleteTag, editTag, selectTag} from '../actions/app';
 import Component from '../components/PickLocation';
 import {withTranslation} from "react-i18next";
 

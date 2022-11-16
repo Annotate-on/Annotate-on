@@ -18,9 +18,7 @@ import {
 import fileType from 'file-type';
 import readChunck from 'read-chunk';
 import Chance from "chance";
-import {attachDefaultTags} from "../utils/tags";
-import {loadTags} from "../utils/common";
-
+import {loadTags, attachDefaultTags} from "../utils/tags";
 
 const chance = new Chance();
 
@@ -238,7 +236,6 @@ export default class extends PureComponent {
                     // Display loading overlay.
                     ee.emit(EVENT_SHOW_LOADING, successfullyDownload.length);
                     initPicturesLibrary(successfullyDownload, [this.props.parentFolder], this.props.pictures).then(pictureObjects => {
-
                         //save url as reference (sf metadata field) create both xmp and xml file
                         if (Object.keys(pictureObjects).length !== 0) {
                             Object.keys(pictureObjects).forEach(e => {
@@ -255,14 +252,11 @@ export default class extends PureComponent {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     })

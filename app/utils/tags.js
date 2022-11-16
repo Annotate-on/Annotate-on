@@ -18,87 +18,177 @@ import {
     TAG_GPS_NO,
     TAG_GPS_WIDTH,
     TAG_MODE_LANDSCAPE,
-    TAG_MODE_PORTRAIT,
-    TAGS_SELECTION_MODE_AND,
-    TAGS_SELECTION_MODE_OR,
+    TAG_MODE_PORTRAIT, TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR,
     VERY_LOW_RESOLUTION
 } from '../constants/constants';
 import {_formatTimeDisplay} from "./maths";
+import {genId} from "../components/event/utils";
 
-export const findPictures = (tagsByPicture, picturesByTags, selectedTags, tagsSelectionMode, state) => {
-    if (selectedTags.length === 0) return [];
+export const AND = "AND"
+export const OR = "OR"
+export const NOT = "NOT"
 
-    let foundPicturesId = [];
+export const EXP_ITEM_TYPE_OPERATOR = "EXP_ITEM_TYPE_OPERATOR"
+export const EXP_ITEM_TYPE_CONDITION = "EXP_ITEM_TYPE_CONDITION"
+export const EXP_ITEM_TYPE_EXPRESSION = "EXP_ITEM_TYPE_EXPRESSION"
 
-    if (Object.values(state.tags_by_annotation).length > 0) {
-        let annotations = [
-            ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_points_of_interest), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_rectangular), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_polygon), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_angle), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_occurrence), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_color_picker), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_ratio), 2)
-            , ...lodash.flattenDepth(Object.values(state.annotations_transcription), 2)
-        ];
+export const convertSelectedTagsToFilter = (selectedTags, tagsSelectionMode) => {
+    if(!selectedTags || selectedTags.length === 0) return null;
+    const expression = {
+        id: genId(),
+        type: EXP_ITEM_TYPE_EXPRESSION,
+        value: []
+    }
+    for (let i = 0; i < selectedTags.length; i++) {
+        expression.value.push({
+            id: genId(),
+            type: EXP_ITEM_TYPE_CONDITION,
+            value : {
+                has: true,
+                tag: selectedTags[i]
+            }
+        })
+        if(selectedTags.length > 1 && i < selectedTags.length-1) {
+            expression.value.push({
+                id: genId(),
+                type: EXP_ITEM_TYPE_OPERATOR,
+                value: tagsSelectionMode === TAGS_SELECTION_MODE_AND ? AND : OR
+            });
+        }
+    }
+    const filter = {
+        id: genId(),
+        type: EXP_ITEM_TYPE_EXPRESSION,
+        value: [expression]
+    }
+    return filter;
+}
 
-        // Find all pics where annotation is tagged.
+export const changeOperatorValueInFilter = (filter, id, value) => {
+    const foundOperator = findExpressionOperatorById(filter, id);
+    if(foundOperator) {
+        foundOperator.value = value;
+    }
+}
+
+export const findPicturesByTagFilter = (expression, allPictures, state) => {
+    console.log("findPictures expression", expression);
+    console.log("findPictures allPictures", allPictures);
+
+    if(!expression || expression.value.length === 0) return [...allPictures];
+
+    let annotations = [
+        ...lodash.flattenDepth(Object.values(state.annotations_measures_linear), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_points_of_interest), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_rectangular), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_polygon), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_angle), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_occurrence), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_color_picker), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_ratio), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_transcription), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_categorical), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_richtext), 2)
+    ];
+    // console.log("findPictures annotations", annotations)
+    let picturesByTag = {}
+
+    // console.log("picturesByTag initial", state.pictures_by_tag)
+    if(state.pictures_by_tag) {
+        lodash.forIn(state.pictures_by_tag, (value, key) => {
+            picturesByTag[key] = [...value]
+        })
+    }
+
+    if(state.tags_by_annotation) {
         lodash.forIn(state.tags_by_annotation, (value, key) => {
-
-            switch (tagsSelectionMode) {
-                case TAGS_SELECTION_MODE_AND: {
-
-                    if (lodash.difference(selectedTags, value).length === 0) {
-                        const annotation = lodash.find(annotations, (o) => {
-                            return o.id === key;
-                        });
-                        if (annotation) {
-                            foundPicturesId.push(annotation.pictureId);
+            if(value) {
+                let annotation = annotations.find((annotation) => {
+                    return key === annotation.id;
+                })
+                if(annotation && allPictures.includes(annotation.pictureId)) {
+                    for (const valueElement of value) {
+                        if(!picturesByTag[valueElement]) {
+                            picturesByTag[valueElement] = []
                         }
+                        picturesByTag[valueElement].push(annotation.pictureId)
                     }
+                } else {
+                    console.log("can't find annotation with id ", key)
                 }
-                    break;
-                case TAGS_SELECTION_MODE_OR: {
-                    for (const t of selectedTags) {
-                        if (value.indexOf(t) !== -1) {
-                            const annotation = lodash.find(annotations, (o) => {
-                                return o.id === key;
-                            });
-                            if (annotation) {
-                                foundPicturesId.push(annotation.pictureId);
-                            }
-                        }
-                    }
-                }
-                    break;
             }
-
-
-        });
+        })
     }
 
-    // Find all tagged pics.
-    switch (tagsSelectionMode) {
-        case TAGS_SELECTION_MODE_AND:
-            for (const p in tagsByPicture) {
-                // Picture will be added only if contains all selected tags.
-                if (lodash.difference(selectedTags, tagsByPicture[p]).length === 0) foundPicturesId.push(p);
-            }
-            break;
-        case TAGS_SELECTION_MODE_OR:
-            for (const t of selectedTags) {
-                // Append list of pics that are tagged with current tag.
-                foundPicturesId = foundPicturesId.concat(picturesByTags[t]);
-            }
-            break;
-    }
+    // console.log("picturesByTag", picturesByTag)
+    let result = evaluateTagsExpression(expression, allPictures, picturesByTag);
+    console.log("findPictures expression, result", expression, allPictures, result);
+    let finalResult = lodash.intersection(allPictures, result);
+    return finalResult;
+}
 
-    return lodash.uniq(foundPicturesId).filter(_ => undefined !== _);
-};
+const findExpressionOperatorById = (expression, id) => {
+    // console.log("findExpressionOperatorById", expression)
+    if(!expression || !expression.value || !id) return null;
+    for (const item of expression.value) {
+        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
+            if(item.id === id) return item;
+        } else if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+            let result = findExpressionOperatorById(item, id);
+            if(result) return result;
+        }
+    }
+    return null;
+}
+
+const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
+    let currentResult = []
+    let currentOperator;
+    // console.log("evaluateTagsExpression", expression)
+    for (const item of expression.value) {
+        if (item.type === EXP_ITEM_TYPE_OPERATOR) {
+            // console.log("operator", item)
+            currentOperator = item.value;
+            continue;
+        }
+        let set = [];
+        if (item.type === EXP_ITEM_TYPE_EXPRESSION) {
+            // console.log("inner expression")
+            let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
+            if(innerSet) {
+                set = [...innerSet];
+            }
+        } else if (item.type === EXP_ITEM_TYPE_CONDITION) {
+            // console.log("condition", item)
+            if(currentOperator === NOT) {
+                if(picturesByTag[item.value.tag]) {
+                    set = [...lodash.difference(allPictures, picturesByTag[item.value.tag])];
+                } else {
+                    set = [...allPictures];
+                }
+            } else {
+                if(picturesByTag[item.value.tag]) {
+                    set = [...picturesByTag[item.value.tag]]
+                }
+            }
+        }
+        // console.log("currentResult", currentResult)
+        // console.log("currentOperator", currentOperator)
+        // console.log("set", set)
+        if(currentOperator === AND || currentOperator === NOT) {
+            // console.log("intersection")
+            currentResult = lodash.intersection(currentResult, set);
+        } else {
+            // console.log("union")
+            currentResult = lodash.union(currentResult, set);
+        }
+        // console.log("currentResult after operation", currentResult)
+
+    }
+    return currentResult;
+}
 
 export const attachDefaultTags = (picture, tagPicture, createTag, addSubTag) => {
-
 
     // Tag with system tags if applicable.
     if ('creator' in picture && !lodash.isNil(picture.creator) && picture.creator !== "") {
@@ -178,3 +268,96 @@ export const attachDefaultVideoTags = (video, tagVideo, createTag, addSubTag) =>
         tagVideo(video.sha1, 'height: ' + video.height);
     }
 };
+
+export const findTag = (tags, target, remove) => {
+    let response = null;
+    tags.some(tag => {
+        if (tag.name === target) {
+            response = tag;
+            if (remove) {
+                const rootTags = tags.filter(_ => _.name !== target)
+                tags.splice(0, tags.length);
+                tags.push(...rootTags);
+            }
+            return true;
+        } else if (tag.children) {
+            response = findTag(tag.children, target, remove);
+            const output = null != response;
+            if (output) {
+                if (remove) {
+                    tag.children = tag.children.filter(_ => _.name !== target);
+                }
+            }
+            return output;
+        }
+    });
+    return response;
+};
+
+export const findParentTag = (tags, name) => {
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.name === name) {
+            return tag;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, name);
+        } else {
+            return null;
+        }
+    });
+};
+
+export const tagExistById = (tags, id) => {
+
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.id === id) {
+            return true;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, id);
+        } else {
+            return false;
+        }
+    });
+};
+
+export const tagExist = (tags, name) => {
+
+    if (tags === undefined) {
+        return false;
+    }
+    return tags.some(tag => {
+        if (tag.name === name) {
+            return true;
+        } else if (tag.children && tag.children.length > 0) {
+            return tagExist(tag.children, name);
+        } else {
+            return false;
+        }
+    });
+};
+
+export const loadTags = (tags, selectedTags) => {
+    const tagsFiltered = [];
+    try {
+        tags.map(_ => {
+            if (selectedTags.indexOf(_.name) > -1) {
+                tagsFiltered.push({..._, children: null});
+            }
+            if (_.children && _.children) {
+                tagsFiltered.push(...loadTags(_.children, selectedTags));
+            }
+        });
+        return tagsFiltered;
+    } catch (e){
+        console.log(e);
+        return  [];
+    }
+};
+
+
+

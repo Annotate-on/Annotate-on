@@ -18,7 +18,7 @@ import {
 import fileType from 'file-type';
 import readChunck from 'read-chunk';
 import Chance from "chance";
-import {attachDefaultVideoTags} from "../utils/tags";
+import {attachDefaultVideoTags, findTag, loadTags} from "../utils/tags";
 
 
 const chance = new Chance();
@@ -197,19 +197,16 @@ export default class extends PureComponent {
                         // Select parent folder.
                         this.props.selectFolderGlobally(this.props.parentFolder);
                         // Tag new pictures.
-                        const newTags = this.props.tags.filter(_ => this.props.selectedTags.indexOf(_.name) > -1);
+                        const newTags = loadTags(this.props.tags, this.props.selectedTags);
                         for (const sha1 in videoObjects) {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultVideoTags(videoObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     });

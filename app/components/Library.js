@@ -115,11 +115,6 @@ const _Panel = styled.div`
       background: transparent;
     }
 `;
-// const _Image = styled.img`
-//     background-color: #eee;
-//     padding: ${INSPECTOR_MARGIN}px;
-//     box-shadow: inset 0 -0.5px 0 0 #dddddd, inset 0.5px 0 0 0 #dddddd;
-// `;
 
 const _ImagePlaceholder = styled.div`
     background-color: #eee;
@@ -161,7 +156,6 @@ export default class extends Component {
             picView: picView,
             fitToBounds: fitToBounds,
             numberOfFolders: this.props.tabData[this.props.tabName].selected_folders.length,
-            numberOfTags: this.props.tabData[this.props.tabName].selected_tags.length,
             selectAll: false,
             scrollTableTo: this.props.tabData[this.props.tabName].lastScrollPositionInList,
             // Current working picture
@@ -173,34 +167,25 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("componentWillReceiveProps", this.props.match);
+        // console.log("library componentWillReceiveProps props", this.props, nextProps);
+        let stateUpdate = {
+            allPictureLength: Object.values(nextProps.allPictures).length,
+            numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
+            numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
+            currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
+        }
         if (skipSort) {
             skipSort = false;
-            return;
-        }
-        // Update list if array has changed because of tabs or folder selection
-        if (this.state.numberOfFolders !== nextProps.tabData[this.props.tabName].selected_folders.length
-            || this.state.numberOfTags !== nextProps.tabData[this.props.tabName].selected_tags.length
-            || this.props.tabData[this.props.tabName].pictures_selection.length !== nextProps.tabData[this.props.tabName].pictures_selection.length
-            || nextProps.currentPictureIndexInSelection !== this.props.currentPictureIndexInSelection
-            || Object.values(nextProps.allPictures).length !== Object.values(this.props.allPictures).length) {
-
+        } else {
+            // console.log("update picture selection in library")
             const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
             const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
-            // this.state.sortedPicturesList = sortedPicturesList;
-
             this._initSortingValues(sortedPicturesList);
 
-            this.setState({
-                sortedPicturesList: sortedPicturesList,
-                allPictureLength: Object.values(nextProps.allPictures).length,
-                currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
-                numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
-                numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
-                numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
-                currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
-            });
+            stateUpdate.sortedPicturesList = sortedPicturesList;
+            stateUpdate.currentPicture = sortedPicturesList[nextProps.currentPictureIndexInSelection];
         }
+        this.setState(stateUpdate);
     }
 
     _initSortingValues = (sortedPicturesList) => {
@@ -260,6 +245,7 @@ export default class extends Component {
                 selectAll: false
             });
         } else {
+            skipSort = true;
             this.props.setPictureInSelection(sha1, this.props.tabName);
         }
     };

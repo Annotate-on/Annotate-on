@@ -7,16 +7,11 @@ import Component from '../components/event/EventHome';
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 
 const mapStateToProps = (state, ownProps) => {
-
-    console.log('own props of eventHome' , ownProps);
-    console.log('state global ' , state)
-
     return {
         allPictures: state.app.pictures,
         picturesByTag: state.app.pictures_by_tag,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode,
         tabData: state.app.open_tabs,
         selectedTaxonomy: state.app.selectedTaxonomy,
         projectName: state.app.selectedProjectName

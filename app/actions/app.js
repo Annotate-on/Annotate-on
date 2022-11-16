@@ -67,9 +67,12 @@ export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
+export const ADD_TAG_IN_FILTER = 'ADD_TAG_IN_FILTER';
+export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
+export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
+export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
 export const SELECT_MENU = 'SELECT_MENU';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
-export const SET_TAGS_SELECTION_MODE = 'SET_TAGS_SELECTION_MODE';
 export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_EVENT_ANNOTATION = 'TAG_EVENT_ANNOTATION';
 export const UNTAG_EVENT_ANNOTATION = 'UNTAG_EVENT_ANNOTATION';
@@ -88,7 +91,6 @@ export const UNSELECT_FOLDER = 'UNSELECT_FOLDER';
 export const SAVE_SORTED_ARRAY = 'SAVE_SORTED_ARRAY';
 export const ADD_SUB_TAG = 'ADD_SUB_TAG';
 export const OPEN_IN_NEW_TAB = 'OPEN_IN_NEW_TAB';
-export const OPEN_MAP_SELECTION_IN_NEW_TAB = 'OPEN_MAP_SELECTION_IN_NEW_TAB';
 export const MERGE_TAGS = 'MERGE_TAGS';
 export const SAVE_TAGS_SORT = 'SAVE_TAGS_SORT';
 export const SAVE_ANNOTATION_SORT = 'SAVE_ANNOTATION_SORT';
@@ -545,6 +547,31 @@ export const selectTag = (name, skipCheck, tabName) => ({
     tabName
 });
 
+export const addTagInFilter = (name, skipCheck, tabName) => ({
+    type: ADD_TAG_IN_FILTER,
+    name,
+    skipCheck,
+    tabName
+});
+
+export const createTagExpression = (tabName) => ({
+    type: CREATE_TAG_EXPRESSION,
+    tabName
+});
+
+export const deleteTagExpression = (id, tabName) => ({
+    type: DELETE_TAG_EXPRESSION,
+    id,
+    tabName
+});
+
+export const updateTagExpressionOperator = (id, value, tabName) => ({
+    type: UPDATE_TAG_EXPRESSION_OPERATOR,
+    id,
+    value,
+    tabName
+});
+
 export const refreshState = (picturesObject) => ({
     type: REFRESH_STATE,
     picturesObject
@@ -553,12 +580,6 @@ export const refreshState = (picturesObject) => ({
 export const setPictureInSelection = (pictureId, tabName) => ({
     type: SET_PICTURE_IN_SELECTION,
     pictureId,
-    tabName
-});
-
-export const setTagsSelectionMode = (mode, tabName) => ({
-    type: SET_TAGS_SELECTION_MODE,
-    mode,
     tabName
 });
 
@@ -814,6 +835,3 @@ export const setNewState = newApp => ({
     type: SET_STATE,
     newApp
 });
-
-
-
