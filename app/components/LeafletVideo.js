@@ -310,19 +310,9 @@ class LeafletVideo extends Component {
                              alert(e)
                          }}
                          ref={_ => (this._setMapRef(_))} crs={L.CRS.Simple}>
-                        <FeatureGroup ref={_ => (this.featureGroupEdit = _)}  onClick={(e)=>{
-                            console.log("Markooooooo")
-                        }}/>
-                        <FeatureGroup ref={_ => (this._setGroupRef(_))} onClick={(e)=>{
-                            console.log("Markossssss")
-                        }}
-                                      onDrawVertex={(e)=>{
-                                          alert(e)
-                                      }}>
+                        <FeatureGroup ref={_ => (this.featureGroupEdit = _)} />
+                        <FeatureGroup ref={_ => (this._setGroupRef(_))}>
                             <EditControl ref={_ => (this.editControlFirst = _)}
-                                         onClick={(e)=>{
-                                             console.log("Markoaaaaaa")
-                                         }}
                                          position='topleft'
                                          onEdited={this.props.onEdited}
                                          onCreated={this._onCreated}
@@ -334,10 +324,6 @@ class LeafletVideo extends Component {
                                          onDeleteStop={this.props.onDeleteStop}
                                          onDrawStart={this._onDrawStart}
                                          onDrawStop={this._onDrawStop}
-                                         onDrawVertex={(e)=>{
-                                             alert(e)
-                                         }}
-
                                          edit={{
                                              edit: false,
                                              remove: false
@@ -382,13 +368,6 @@ class LeafletVideo extends Component {
             if (event.keyCode === 13) {
                 this.props.fireSaveEvent(event);
             }
-        });
-
-        L.DomEvent.on(mapContainer, 'mousedown', (event) => {
-            // if (event.keyCode === 13) {
-            //     this.props.fireSaveEvent(event);
-            // }
-            console.log("Mouse down")
         });
 
         let zoomv = mapContainer.offsetWidth < this.state.currentPicture.width ? (this.state.currentPicture.width / mapContainer.offsetWidth) : 1;
@@ -456,10 +435,6 @@ class LeafletVideo extends Component {
             // do something with your marker
             selectedAnnotation = annotation;
         });
-
-        map.on('click', (event) => {
-            alert('Click on map !!!')
-        })
 
         if (!this.props.calibrationMode) {
             this._recolnatControlMenu = L.recolnatControlMenu({
@@ -536,6 +511,7 @@ class LeafletVideo extends Component {
             annotationType: e.layer.annotationType
         })
         e.layer.on('click', this._emitEvent);
+        this.props.player.play();
     };
 
     /**
