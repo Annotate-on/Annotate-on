@@ -21,6 +21,7 @@ import {
 } from "../constants/constants";
 import 'leaflet-contextmenu'
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../utils/library";
+import lodash from "lodash";
 
 const EDIT_ANNOTATION_OPTIONS = {
     edit: true,
@@ -563,7 +564,7 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsPointsOfInterest) {
             this.props.annotationsPointsOfInterest.map(point => {
-                if(!'video' in point)
+                if(lodash.isNil(point.video))
                     return
                 if(currentTime < point.video.start || currentTime > point.video.end || skipRedrawing.indexOf(point.id) !== -1)
                     return;
@@ -594,7 +595,7 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsRectangular) {
             this.props.annotationsRectangular.map(rectangle => {
-                if(!'video' in rectangle)
+                if(lodash.isNil(rectangle.video))
                     return
                 if(currentTime < rectangle.video.start || currentTime > rectangle.video.end  || skipRedrawing.indexOf(rectangle.id) !== -1)
                     return;

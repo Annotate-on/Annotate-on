@@ -4,6 +4,7 @@ import Timeline from "./Timeline";
 import {DEFAULT_VOLUME} from "../constants/constants";
 import {ee, EVENT_GOTO_ANNOTATION, EVENT_SET_ANNOTATION_POSITION, STOP_ANNOTATION_RECORDING} from "../utils/library";
 import LeafletVideo from "./LeafletVideo";
+import lodash from "lodash";
 
 let tcin = 0;
 export default class extends PureComponent {
@@ -109,13 +110,13 @@ export default class extends PureComponent {
         if (this.player) {
             if (position === "start" || position === "") {
                 let start = annotation.start
-                if('video' in annotation)
+                if(!lodash.isNil(annotation.video))
                     start = annotation.video.start;
                 this.player.currentTime(start);
             }
             if (position === "end") {
                 let end = annotation.end
-                if('video' in annotation)
+                if(!lodash.isNil(annotation.video))
                     end = annotation.video.end;
                 this.player.currentTime(end);
             }

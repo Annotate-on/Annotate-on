@@ -12,6 +12,7 @@ import {
 } from "../utils/library";
 import {_formatTimeDisplay} from "../utils/maths";
 import i18next from "i18next";
+import lodash from "lodash";
 
 const chance = new Chance();
 let containerWidth = 0;
@@ -47,7 +48,7 @@ export default class extends Component {
     }
 
     _getTime = (an, property) => {
-        if ('video' in an) {
+        if (!lodash.isNil(an.video)) {
             return an.video[property]
         } else return an[property]
     }
@@ -316,20 +317,24 @@ export default class extends Component {
                             onClick={() => !isRecording && this._selectAnnotation(annotation)}
                             title={annotation.title + " (" + _formatTimeDisplay(annotation.duration) + ")"}>
                     <div
-                        className='timeline_annotation_header'>
+                        className={classnames('timeline_annotation_header', {'highlight-recording': isRecording})}>
                         {annotation.title} ({_formatTimeDisplay(duration)})
 
-                        {isRecording? <img alt="stop_ann_recording" className="btn_menu recording-stop" src={STOP} onClick={event => {
-                            event.preventDefault();
-                            event.stopPropagation();
 
-                            ee.emit(STOP_ANNOTATION_RECORDING , annotation);
-                        }}/>:''}
                     </div>
-                    <div className='timeline_annotation_body'>
-                        {annotation.value}
-                    </div>
+
+                    {isRecording? <img alt="stop_ann_recording" className="recording-stop" src={STOP} onClick={event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        ee.emit(STOP_ANNOTATION_RECORDING , annotation);
+                    }}/>:''}
+
+                    {/*<div className='timeline_annotation_body'>*/}
+                    {/*    {annotation.value}*/}
+                    {/*</div>*/}
                 </div>
+
             }) : null}
         </div>
     }
@@ -377,7 +382,7 @@ export default class extends Component {
         this.setState({focusedAnnotation: annotation});
         this.props.player.pause();
         let start = annotation.start;
-        if ('video' in annotation)
+        if (!lodash.isNil(annotation.video))
             start = annotation.video.start;
         this.props.player.currentTime(start);
         ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotation.id);

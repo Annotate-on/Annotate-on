@@ -49,21 +49,21 @@ export default class extends Component {
             <div className='rowContainer'>
                 <div className='playerControls'>
                     <div className='action-buttons'>
-                        <div className='play-button left1'>
+                        <div className='action-button left1'>
+                            <i title={t('annotate.player_controls.lbl_goto_start')} className="fa fa-step-backward" aria-hidden="true" onClick={() => {
+                                this.props.player.currentTime(0)
+                            }}/>
+                            <i title={t('annotate.player_controls.lbl_backward_5_sec')} className="fa fa-backward" aria-hidden="true" onClick={() => {
+                                this.props.player.currentTime(this.props.player.currentTime() - this.state.timeStep)
+                            }}/>
+                        </div>
+                        <div className='play-button center1'>
                             <i className={this.props.player.paused() ? "fa fa-play-circle" : "fa fa-pause-circle-o"}
                                aria-hidden="true" onClick={() => {
                                 if (this.props.player.paused())
                                     this.props.player.play()
                                 else
                                     this.props.player.pause()
-                            }}/>
-                        </div>
-                        <div className='action-button center1'>
-                            <i title={t('annotate.player_controls.lbl_backward_5_sec')} className="fa fa-backward" aria-hidden="true" onClick={() => {
-                                this.props.player.currentTime(this.props.player.currentTime() - this.state.timeStep)
-                            }}/>
-                            <i title={t('annotate.player_controls.lbl_goto_start')} className="fa fa-step-backward" aria-hidden="true" onClick={() => {
-                                this.props.player.currentTime(0)
                             }}/>
                         </div>
                         <div className='action-button center2'>
