@@ -14,6 +14,13 @@ import {
 } from "../utils/library";
 import TimelineWidget from "./TimelineWidget";
 import moment from "moment";
+import {MARKER_TYPE_ANNOTATION, MARKER_TYPE_METADATA} from "../constants/constants";
+import {Input} from "reactstrap";
+import ToggleButton from "react-toggle-button";
+
+const FILTER_VALUE_ALL = 'all';
+const FILTER_VALUE_ANNOTATIONS = 'annotations';
+const FILTER_VALUE_METADATA = 'metadata';
 
 const _Root = styled.div`
   width: 100%;
@@ -29,6 +36,8 @@ export default class TimelineView extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            showThumbnailForResource: true,
+            filter: FILTER_VALUE_ALL
         }
     }
 
@@ -37,7 +46,9 @@ export default class TimelineView extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.resources !== prevProps.resources) {
+        if (this.props.resources !== prevProps.resources
+            || prevState.showThumbnailForResource !== this.state.showThumbnailForResource
+            || prevState.filter !== this.state.filter) {
             this._doFindItemsWithDating();
         }
     }
@@ -46,7 +57,8 @@ export default class TimelineView extends Component {
         let dataItems = [];
         for (const resource of this.props.resources) {
             const annotations = this._mergeAnnotations(this.props, resource.sha1)
-            if(annotations) {
+            if((this.state.filter === FILTER_VALUE_ALL || this.state.filter === FILTER_VALUE_ANNOTATIONS) && annotations) {
+                // console.log("processing resource", resource)
                 annotations.filter(annotation => {
                     if(annotation.coverage && annotation.coverage.temporal) {
                         if(annotation.coverage.temporal.start) {
@@ -56,6 +68,7 @@ export default class TimelineView extends Component {
                             const startDateValue = annotation.coverage.temporal.start.replace("T", " ");
                             const endDateValue = annotation.coverage.temporal.end.replace("T", " ");
                             const dataItem = {
+                                type: MARKER_TYPE_ANNOTATION,
                                 startDate: startDate,
                                 startDateValue: startDateValue,
                                 endDate: endDate,
@@ -69,6 +82,30 @@ export default class TimelineView extends Component {
                     }
                 });
             }
+            if(this.state.filter === FILTER_VALUE_ALL || this.state.filter === FILTER_VALUE_METADATA) {
+                console.log("processing resource", resource)
+                if(resource.exifDate) {
+                    // TODO for metadata
+                } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.eventdate) {
+                    const eventDateValue = resource.erecolnatMetadata.eventdate.split("/");
+                    let startMomentDateTimeSec = moment(eventDateValue[0], 'YYYY-MM-DD', false);
+                    let startDate = startMomentDateTimeSec.toDate();
+                    let endDate = eventDateValue.length > 0  ? moment(eventDateValue[1], 'YYYY-MM-DD', false) : null;
+                    const startDateValue = eventDateValue[0];
+                    const endDateValue = eventDateValue.length > 0 ? eventDateValue[1] : '';
+                    const dataItem = {
+                        type: MARKER_TYPE_METADATA,
+                        startDate: startDate,
+                        startDateValue: startDateValue,
+                        endDate: endDate,
+                        endDateValue:endDateValue,
+                        period: null,
+                        annotation: null,
+                        resource: resource
+                    }
+                    dataItems.push(dataItem);
+                }
+            }
         }
         let results = [];
         if(dataItems) {
@@ -78,20 +115,22 @@ export default class TimelineView extends Component {
             results = sortedDataItems.map(dataItem => {
                 const periodLabel = dataItem.period ? `${dataItem.period} : ` : '';
                 const endLabel = dataItem.endDateValue ? ` / ${dataItem.endDateValue}` : '';
+                const media = this.state.showThumbnailForResource ? {
+                    type: "IMAGE",
+                    source: {
+                        url: `${dataItem.resource.thumbnail}`
+                    }
+                }: null;
+                const cardDetailedText = dataItem.annotation ? `${dataItem.annotation.value ? dataItem.annotation.value : ''}${dataItem.annotation.value_in_mm ? dataItem.annotation.value_in_mm : ''}${dataItem.annotation.value_in_deg ? dataItem.annotation.value_in_deg : ''}` : ''
                 return {
                     title: `${periodLabel}${dataItem.startDateValue}${endLabel}`,
-                    cardTitle: `${dataItem.annotation.title}`,
+                    cardTitle: `${dataItem.annotation ? dataItem.annotation.title : ''}`,
                     cardSubtitle: `${dataItem.resource.file_basename}`,
-                    cardDetailedText: `${dataItem.annotation.value ? dataItem.annotation.value : ''}${dataItem.annotation.value_in_mm ? dataItem.annotation.value_in_mm : ''}${dataItem.annotation.value_in_deg ? dataItem.annotation.value_in_deg : ''}`,
-                    media: {
-                        type: "IMAGE",
-                        source: {
-                            url: `${dataItem.resource.thumbnail}`
-                        }
-                    },
+                    cardDetailedText: cardDetailedText,
+                    media: media,
                     resource: dataItem.resource.sha1,
-                    annotation: dataItem.annotation.id,
-                    type: dataItem.annotation.annotationType,
+                    annotation: dataItem.annotation ? dataItem.annotation.id : null,
+                    type: dataItem.annotation ? dataItem.annotation.annotationType: '',
                 }
             })
         }
@@ -129,10 +168,26 @@ export default class TimelineView extends Component {
         }, 100)
     }
 
+    _onFilterChange = (event) => {
+        console.log("_onFilterChange", event)
+        console.log("_onFilterChange", event.target.value)
+        this.setState({
+            filter: event.target.value
+        })
+    }
+
+    _onShowThumbnailForResourceChange = () => {
+        console.log("_onShowThumbnailForResourceChange", this.state.showThumbnailForResource)
+        this.setState({
+            showThumbnailForResource: !this.state.showThumbnailForResource
+        })
+    }
+
     render() {
+        console.log("render")
         const { t } = i18next;
         return (
-            <_Root>
+            <_Root className="timeline-view-container">
                 <div className="lib-actions">
                     <div className="switch-view">
                         <div title={t('library.switch_to_mozaic_view_tooltip')} className="mozaic-view"
@@ -151,6 +206,28 @@ export default class TimelineView extends Component {
                             <img alt="map view" src={TIMELINE_WHITE}/>
                         </div>
                     </div>
+                    <div className="toggle-div">
+                        <div className="mw-toggle-div-menu">
+                            {t('library.timeline-view.lbl_show_thumbnail_for_resource')}
+                        </div>
+                        <ToggleButton value={this.state.showThumbnailForResource}
+                                      onToggle={(e) => {
+                                          this._onShowThumbnailForResourceChange();
+                                      }}/>
+                    </div>
+                    <div className="separator"/>
+                    <Input className='filter-select' type="select" bsSize="md" value={this.state.filter}
+                           onChange={this._onFilterChange}>
+                        <option value={FILTER_VALUE_ALL}>
+                            {t('library.timeline-view.select_filter_all')}
+                        </option>
+                        <option value={FILTER_VALUE_ANNOTATIONS}>
+                            {t('library.timeline-view.select_filter_annotations')}
+                        </option>
+                        <option value={FILTER_VALUE_METADATA}>
+                            {t('library.timeline-view.select_filter_metadata')}
+                        </option>
+                    </Input>
                 </div>
                     <_TimelinePlaceholder>
                         <TimelineWidget

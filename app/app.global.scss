@@ -1010,7 +1010,13 @@ div.leaflet-marker-icon {
     flex-flow: column;
     margin: 0px 0px 5px;
     padding: 0px 0px 0px 5px;
-
+    i {
+      font-size: 20px;
+      align-self: flex-end;
+    }
+    p {
+      margin: 0px;
+    }
   }
   .action {
     cursor: pointer;

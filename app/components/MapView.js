@@ -5,7 +5,7 @@ import LIST from "./pictures/list_icon.svg";
 import classnames from "classnames";
 import MAP_WHITE from "./pictures/map-location-dot-solid-white.svg";
 import React, {Component} from 'react';
-import LeafletMap, {MARKER_TYPE_ANNOTATION, MARKER_TYPE_METADATA} from "./LeafletMap";
+import LeafletMap from "./LeafletMap";
 import {
     ee,
     EVENT_SELECT_TAB,
@@ -15,7 +15,13 @@ import {
 } from "../utils/library";
 import _ from "lodash";
 import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
-import {TAG_MAP_SELECTION, TAG_AUTO, TAG_DPI_NO} from "../constants/constants";
+import {
+    TAG_MAP_SELECTION,
+    TAG_AUTO,
+    TAG_DPI_NO,
+    MARKER_TYPE_METADATA,
+    MARKER_TYPE_ANNOTATION
+} from "../constants/constants";
 import Chance from "chance";
 import {getDecimalLocation, getNewTabName, validateLocationInput} from "./event/utils";
 import TIMELINE from "./pictures/clock-regular.svg";

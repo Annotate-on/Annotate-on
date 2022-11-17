@@ -446,4 +446,20 @@
   margin-bottom: 5px;
 }
 
-
+.timeline-view-container {
+  .lib-actions {
+    .separator {
+      flex-grow: 1;
+    }
+    .filter-select {
+      width: 200px;
+      margin-right: 10px;
+    }
+    .toggle-div {
+      margin-left: 10px;
+      color: #565656;
+      display: flex;
+      align-items: center;
+    }
+  }
+}

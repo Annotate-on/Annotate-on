@@ -19,6 +19,7 @@ import fs from "fs-extra";
 import path from "path";
 import GeolocationWidget from "./GeolocationWidget";
 import {validateLocationInput} from "./event/utils";
+import DatingWidget from "./DatingWidget";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 
@@ -464,6 +465,13 @@ export default class extends Component {
                                    value={this.state.metadata.iptc.created || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
+                        {/*<DatingWidget value={"2022/12/12"}*/}
+                        {/*              openEdit={this.props.openEditDating}*/}
+                        {/*              start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}*/}
+                        {/*              end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}*/}
+                        {/*              period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}*/}
+                        {/*              onValueChange={this.handleTemporalCoverageChange}*/}
+                        {/*/>*/}
                         <FormGroup>
                             <Input type="text" name="iptc.type" id="type"
                                    placeholder={t('inspector.metadata.textbox_placeholder_type')}

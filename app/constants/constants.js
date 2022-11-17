@@ -119,5 +119,7 @@ export const DEFAULT_VOLUME = 0.75;
 
 export const APP_NAME = 'Annotate-on';
 
+export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
+export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 

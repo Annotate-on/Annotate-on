@@ -356,7 +356,11 @@
         "number_of_selected_resources": "{{count}} selected resources"
       },
       "timeline-view": {
-        "btn_tooltip.export_timeline_in_pdf_format": "Export timeline in pdf format"
+        "btn_tooltip.export_timeline_in_pdf_format": "Export timeline in pdf format",
+        "select_filter_all": "All",
+        "select_filter_annotations": "Annotations",
+        "select_filter_metadata": "Metadata",
+        "lbl_show_thumbnail_for_resource": "Show thumbnail for resource"
       },
       "import_images": {
         "title": "Import",

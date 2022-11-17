@@ -12,6 +12,7 @@ import PIN_RED from "./pictures/location-dot-solid-red.svg";
 import PIN_BLUE from "./pictures/location-dot-solid-blue.svg";
 import moment from "moment";
 import {EditControl} from "react-leaflet-draw";
+import {MARKER_TYPE_METADATA} from "../constants/constants";
 
 
 const _Root = styled.div`
@@ -24,9 +25,6 @@ const _LeafletDiv = styled.div`
     width: 100%;
     height: 100%;
 `;
-
-export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
-export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 export const pointerIcon = new L.Icon({
     iconUrl: PIN,
