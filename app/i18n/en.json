@@ -258,7 +258,7 @@
         "lbl_original_dpi_x_y": "Original DPI X:{{x}}, Y:{{y}}",
         "lbl_original_dpi_not_detected": "Original DPI not detected",
         "lbl_select_one_calibration_below": "Select one calibration below:",
-        "alert_delete_message": "Calibration: [{calibration}}",
+        "alert_delete_message": "Calibration: {{calibration}}",
         "lbl_there_are_no_calibrations": "There are no calibrations.",
         "alert_save_message_empty_name": "Enter calibration name!",
         "alert_save_confirmation_title": "Confirm calibration",
