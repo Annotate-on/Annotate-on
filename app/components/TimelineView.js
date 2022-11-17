@@ -18,6 +18,10 @@ import {MARKER_TYPE_ANNOTATION, MARKER_TYPE_METADATA} from "../constants/constan
 import {Input} from "reactstrap";
 import ToggleButton from "react-toggle-button";
 
+const FILTER_VALUE_ALL = 'all';
+const FILTER_VALUE_ANNOTATIONS = 'annotations';
+const FILTER_VALUE_METADATA = 'metadata';
+
 const _Root = styled.div`
   width: 100%;
   height: 100%;
@@ -33,7 +37,7 @@ export default class TimelineView extends Component {
         super(props);
         this.state = {
             showThumbnailForResource: true,
-            filter: "all"
+            filter: FILTER_VALUE_ALL
         }
     }
 
@@ -42,7 +46,6 @@ export default class TimelineView extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log("componentDidUpdate")
         if (this.props.resources !== prevProps.resources
             || prevState.showThumbnailForResource !== this.state.showThumbnailForResource
             || prevState.filter !== this.state.filter) {
@@ -54,8 +57,8 @@ export default class TimelineView extends Component {
         let dataItems = [];
         for (const resource of this.props.resources) {
             const annotations = this._mergeAnnotations(this.props, resource.sha1)
-            if((this.state.filter === 'all' || this.state.filter === 'annotations') && annotations) {
-                console.log("processing resource", resource)
+            if((this.state.filter === FILTER_VALUE_ALL || this.state.filter === FILTER_VALUE_ANNOTATIONS) && annotations) {
+                // console.log("processing resource", resource)
                 annotations.filter(annotation => {
                     if(annotation.coverage && annotation.coverage.temporal) {
                         if(annotation.coverage.temporal.start) {
@@ -79,21 +82,12 @@ export default class TimelineView extends Component {
                     }
                 });
             }
-            if(this.state.filter === 'all' || this.state.filter === 'metadata') {
+            if(this.state.filter === FILTER_VALUE_ALL || this.state.filter === FILTER_VALUE_METADATA) {
                 console.log("processing resource", resource)
                 if(resource.exifDate) {
-                    // const valid = validateLocationInput(resource.exifPlace);
-                    // if(valid) {
-                    //     locationFromMetadata = {
-                    //         type: MARKER_TYPE_METADATA,
-                    //         latLng : getDecimalLocation(resource.exifPlace),
-                    //         resource : resource,
-                    //         current: resource.sha1 === this.props.currentPictureSelection.sha1
-                    //     };
-                    // }
+                    // TODO for metadata
                 } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.eventdate) {
                     const eventDateValue = resource.erecolnatMetadata.eventdate.split("/");
-                    console.log("eventDateValue",eventDateValue);
                     let startMomentDateTimeSec = moment(eventDateValue[0], 'YYYY-MM-DD', false);
                     let startDate = startMomentDateTimeSec.toDate();
                     let endDate = eventDateValue.length > 0  ? moment(eventDateValue[1], 'YYYY-MM-DD', false) : null;
@@ -214,8 +208,7 @@ export default class TimelineView extends Component {
                     </div>
                     <div className="toggle-div">
                         <div className="mw-toggle-div-menu">
-                            {/*{t('library.mozaic_view.lbl_display_resource_metadata')}*/}
-                            Show thumbnail for resource
+                            {t('library.timeline-view.lbl_show_thumbnail_for_resource')}
                         </div>
                         <ToggleButton value={this.state.showThumbnailForResource}
                                       onToggle={(e) => {
@@ -225,17 +218,14 @@ export default class TimelineView extends Component {
                     <div className="separator"/>
                     <Input className='filter-select' type="select" bsSize="md" value={this.state.filter}
                            onChange={this._onFilterChange}>
-                        <option value="all">
-                            {/*{t('library.mozaic_view.select_order_by_family')}*/}
-                            All
+                        <option value={FILTER_VALUE_ALL}>
+                            {t('library.timeline-view.select_filter_all')}
                         </option>
-                        <option value="annotations">
-                            {/*{t('library.mozaic_view.select_order_by_family')}*/}
-                            Annotations
+                        <option value={FILTER_VALUE_ANNOTATIONS}>
+                            {t('library.timeline-view.select_filter_annotations')}
                         </option>
-                        <option value="metadata">
-                            {/*{t('library.mozaic_view.select_order_by_name_catalog_number')}*/}
-                            Metadata
+                        <option value={FILTER_VALUE_METADATA}>
+                            {t('library.timeline-view.select_filter_metadata')}
                         </option>
                     </Input>
                 </div>

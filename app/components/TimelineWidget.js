@@ -89,9 +89,6 @@ export default class TimelineWidget extends Component {
             const decoded = window.atob(data[1]);
             SVGtoPDF(doc, decoded, 194, indexInPage * cardHeight + cardHeight/2 - 7, {height: 25});
 
-            // doc.lineWidth(1);
-            // doc.rect(220, i * cardHeight, 300, (indexInPage+1) * cardHeight).strokeColor('#eeeeee').stroke();
-
             doc.fill('#000000');
             doc.image(item.media.source.url, 240, indexInPage * cardHeight + 10, {height: 100})
             doc.text(item.cardSubtitle, 240, indexInPage * cardHeight + 115)
@@ -122,34 +119,32 @@ export default class TimelineWidget extends Component {
                 </div>
 
                 {this.props.items &&
-                            <Chrono
-                                items={this.props.items} mode="VERTICAL_ALTERNATING" scrollable allowDynamicUpdate
-                                enableOutline
-                                cardWidth="350"
-                                onItemSelected={e => {
-                                    // console.log("selected", e)
-                                }}
-                            >
-                                <div className="chrono-icons">
-                                    {this.props.items.map((item, index) => {
-                                        return <img key={index} src={this._getIconForAnnotationType(item.type)}
-                                                    alt="image1"/>
-                                    })}
-                                </div>
-                                {this.props.items.map((item, index) => {
-                                    return <div className="card-details-container" key={index}>
-                                        <p>{item.cardDetailedText}</p>
-                                        <i className="fa fa-external-link pointer" aria-hidden="true" title={t('library.map-view.popup_open_in_annotation_editor')}
-                                           onClick={() => {
-                                               if (this.props.onOpenResource) {
-                                                   this.props.onOpenResource(item.resource, item.annotation, item.type);
-                                               }
-                                           }}
-                                        />
-                                    </div>
+                    <Chrono
+                        items={this.props.items} mode="VERTICAL_ALTERNATING" scrollable allowDynamicUpdate
+                        enableOutline
+                        cardWidth="350"
+                    >
+                        <div className="chrono-icons">
+                            {this.props.items.map((item, index) => {
+                                return <img key={index} src={this._getIconForAnnotationType(item.type)}
+                                            alt="image1"/>
+                            })}
+                        </div>
+                        {this.props.items.map((item, index) => {
+                            return <div className="card-details-container" key={index}>
+                                <p>{item.cardDetailedText}</p>
+                                <i className="fa fa-external-link pointer" aria-hidden="true"
+                                   title={t('library.map-view.popup_open_in_annotation_editor')}
+                                   onClick={() => {
+                                       if (this.props.onOpenResource) {
+                                           this.props.onOpenResource(item.resource, item.annotation, item.type);
+                                       }
+                                   }}
+                                />
+                            </div>
 
-                                })}
-                            </Chrono>
+                        })}
+                    </Chrono>
                 }
             </div>
         );
