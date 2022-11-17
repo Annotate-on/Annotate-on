@@ -90,7 +90,9 @@ export default class TimelineWidget extends Component {
             SVGtoPDF(doc, decoded, 194, indexInPage * cardHeight + cardHeight/2 - 7, {height: 25});
 
             doc.fill('#000000');
-            doc.image(item.media.source.url, 240, indexInPage * cardHeight + 10, {height: 100})
+            if(item.media) {
+                doc.image(item.media.source.url, 240, indexInPage * cardHeight + 10, {height: 100})
+            }
             doc.text(item.cardSubtitle, 240, indexInPage * cardHeight + 115)
             doc.text(item.cardTitle, 240, indexInPage * cardHeight + 125)
             doc.text(item.cardDetailedText, 240, indexInPage * cardHeight + 135)
