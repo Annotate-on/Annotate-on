@@ -116,8 +116,11 @@ export default class extends PureComponent {
             }
             if (position === "end") {
                 let end = annotation.end
-                if(!lodash.isNil(annotation.video))
+                if(!lodash.isNil(annotation.video)) {
                     end = annotation.video.end;
+                    if (end === -1)
+                        end = annotation.video.start;
+                }
                 this.player.currentTime(end);
             }
             this.player.pause();

@@ -879,11 +879,16 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
+        if (annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
             this.setState({
                 editedAnnotation: annotation
             });
-        }else {
+        } else if (!lodash.isNil(annotation.video)) {
+            this.setState({
+                editedAnnotation: annotation
+            });
+            this.leafletImage.current.editAnnotation(annotation);
+        } else {
             this.leafletImage.current.editAnnotation(annotation);
         }
         ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , true);

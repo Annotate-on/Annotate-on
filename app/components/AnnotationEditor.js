@@ -46,6 +46,7 @@ import {
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
+import lodash from "lodash";
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
@@ -149,6 +150,13 @@ export default class extends Component {
                 break;
         }
 
+        if (!lodash.isNil(props.annotation.video)) {
+            start = props.annotation.video.start;
+            end = props.annotation.video.end;
+            if (end === -1)
+                end=start;
+        }
+
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] ?
             this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] : {descriptorId: "-1"};
 
@@ -228,8 +236,6 @@ export default class extends Component {
             })
         }
     }
-
-
 
     componentDidMount() {
         ee.on(EVENT_SET_ANNOTATION_POSITION, this._setPosition);
@@ -532,7 +538,7 @@ export default class extends Component {
                             </Col> : null}
                     </FormGroup>
 
-                    {this.state.annotationType === ANNOTATION_CHRONOTHEMATIQUE || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                    {!lodash.isNil(this.props.annotation.video) || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                         <Fragment>
                             {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                 <FormGroup row
