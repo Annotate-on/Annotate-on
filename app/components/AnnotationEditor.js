@@ -48,6 +48,8 @@ import {
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
 import GeolocationWidget from "./GeolocationWidget";
 import DatingWidget from "./DatingWidget";
+import lodash from "lodash";
+
 const VIEW_ANNOTATION_EDITOR = 'VIEW_ANNOTATION_EDITOR';
 const VIEW_PICK_A_TAG = 'VIEW_PICK_A_TAG';
 const VIEW_PICK_A_LOCATION = 'VIEW_PICK_A_LOCATION';
@@ -151,6 +153,13 @@ export default class extends Component {
             case ANNOTATION_OCCURRENCE:
                 value = props.annotation.value;
                 break;
+        }
+
+        if (!lodash.isNil(props.annotation.video)) {
+            start = props.annotation.video.start;
+            end = props.annotation.video.end;
+            if (end === -1)
+                end = start;
         }
 
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] ?
@@ -282,15 +291,6 @@ export default class extends Component {
         }
         ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
     }
-
-    // _saveChronothematiqueAnnotaion = () => {
-    //     if (this.state.annotationType === 'chronothematique'){
-    //         this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
-    //             this.state.targetColor, this.state.descriptor.value, this.state.value,
-    //             this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location);
-    //     }
-    //     ee.emit(EVENT_UPDATE_RECORDING_STATUS, false);
-    // }
 
     backToAnnotationEditor = () => {
         this.setState({view: VIEW_ANNOTATION_EDITOR});
@@ -562,7 +562,7 @@ export default class extends Component {
                             </Col> : null}
                     </FormGroup>
 
-                    {this.state.annotationType === ANNOTATION_CHRONOTHEMATIQUE || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                    {!lodash.isNil(this.props.annotation.video) || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                         <Fragment>
                             {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                 <FormGroup row
@@ -596,127 +596,134 @@ export default class extends Component {
                                         </Col> : null}
                                 </FormGroup> : null}
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'person' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "person")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "personTags")}
-                            >
-                                <Label sm={3} for="person" className="label-for">{t('inspector.annotation_editor.lbl_person')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm"
-                                           type="textarea" name="person" id="person" rows={2}
-                                           onChange={e => this.setState({person: e.target.value})}
-                                           value={this.state.person}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.personTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         tagname={tag.name}
-                                                         alt="delete-tag"
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "personTags")}/>
-                                                </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'date' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "date")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "dateTags")}
-                            >
-                                <Label sm={3} for="videoDate" className="label-for">{t('inspector.annotation_editor.lbl_date')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm" type="textarea" name="videoDate" id="videoDate" rows={2}
-                                           onChange={e => this.setState({videoDate: e.target.value})}
-                                           value={this.state.videoDate}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.dateTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG}
-                                                         alt="delete-tag"
-                                                         className='delete-tag'
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "dateTags")}/>
-                                                </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
+                            {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                                <>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'person' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "person")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "personTags")}
+                                    >
+                                        <Label sm={3} for="person"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_person')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm"
+                                                   type="textarea" name="person" id="person" rows={2}
+                                                   onChange={e => this.setState({person: e.target.value})}
+                                                   value={this.state.person}
+                                            />
+                                        </Col>
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'location' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "location")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "locationTags")}
-                            >
-                                <Label sm={3} for="videoLocation" className="label-for">{t('inspector.annotation_editor.lbl_location')}</Label>
-                                <Col sm={9} className="align-bottom">
-                                    <Input bsSize="sm" type="textarea" name="videoLocation" id="videoLocation" rows={2}
-                                           onChange={e => this.setState({location: e.target.value})}
-                                           value={this.state.location}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.locationTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         alt="delete-tag"
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "locationTags")}/>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.personTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             tagname={tag.name}
+                                                             alt="delete-tag"
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "personTags")}/>
                                                 </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'date' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "date")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "dateTags")}
+                                    >
+                                        <Label sm={3} for="videoDate"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_date')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm" type="textarea" name="videoDate" id="videoDate" rows={2}
+                                                   onChange={e => this.setState({videoDate: e.target.value})}
+                                                   value={this.state.videoDate}
+                                            />
+                                        </Col>
 
-                            <FormGroup row
-                                       className={`tagDropZone ${this.state.activeDropZone === 'note' ? 'tdzHover' : ''}`}
-                                       onDragOver={ (event) => this.handOnDragOverEvent(event , "note")}
-                                       onDragLeave={ event => this.handleOnDragLeaveEvent(event)}
-                                       onDrop={ (event) => this.handOnDropEvent(event , "noteTags")}
-                            >
-                                <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_note')}</Label>
-                                <Col sm={9}>
-                                    <Input bsSize="sm" type="textarea" name="note" id="note" rows={2}
-                                           onChange={e => this.setState({text: e.target.value})}
-                                           value={this.state.text}
-                                    />
-                                </Col>
-                                {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
-                                    <Col sm={12} md={12} lg={12}>
-                                        <div className="tags-panel">
-                                            {this.state.noteTags.map( tag => {
-                                                return <span key={tag.name} className="annotation-tag">{tag.name}&nbsp;
-                                                    <img src={REMOVE_TAG} className='delete-tag'
-                                                         alt="delete-tag"
-                                                         tagname={tag.name}
-                                                         onClick={(e) =>
-                                                             this.handleUntagEventAnnotation(e , tag.name , "noteTags")}/>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.dateTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG}
+                                                             alt="delete-tag"
+                                                             className='delete-tag'
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "dateTags")}/>
                                                 </span>
-                                            })
-                                            }
-                                        </div>
-                                    </Col> : null}
-                            </FormGroup>
-
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'location' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "location")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "locationTags")}
+                                    >
+                                        <Label sm={3} for="videoLocation"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_location')}</Label>
+                                        <Col sm={9} className="align-bottom">
+                                            <Input bsSize="sm" type="textarea" name="videoLocation" id="videoLocation"
+                                                   rows={2}
+                                                   onChange={e => this.setState({location: e.target.value})}
+                                                   value={this.state.location}
+                                            />
+                                        </Col>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.locationTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             alt="delete-tag"
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "locationTags")}/>
+                                                </span>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row
+                                               className={`tagDropZone ${this.state.activeDropZone === 'note' ? 'tdzHover' : ''}`}
+                                               onDragOver={(event) => this.handOnDragOverEvent(event, "note")}
+                                               onDragLeave={event => this.handleOnDragLeaveEvent(event)}
+                                               onDrop={(event) => this.handOnDropEvent(event, "noteTags")}
+                                    >
+                                        <Label sm={3} for="note"
+                                               className="label-for">{t('inspector.annotation_editor.lbl_note')}</Label>
+                                        <Col sm={9}>
+                                            <Input bsSize="sm" type="textarea" name="note" id="note" rows={2}
+                                                   onChange={e => this.setState({text: e.target.value})}
+                                                   value={this.state.text}
+                                            />
+                                        </Col>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <div className="tags-panel">
+                                                {this.state.noteTags.map(tag => {
+                                                    return <span key={tag.name}
+                                                                 className="annotation-tag">{tag.name}&nbsp;
+                                                        <img src={REMOVE_TAG} className='delete-tag'
+                                                             alt="delete-tag"
+                                                             tagname={tag.name}
+                                                             onClick={(e) =>
+                                                                 this.handleUntagEventAnnotation(e, tag.name, "noteTags")}/>
+                                                </span>
+                                                })
+                                                }
+                                            </div>
+                                        </Col>
+                                    </FormGroup>
+                                </> : null}
                             <FormGroup row className="tc-position">
                                 <Label sm={3} for="position" className="label-for">{t('inspector.annotation_editor.lbl_position')}</Label>
                                 <Col sm={9} data-tip data-for={this.props.annotation.id}>

@@ -159,7 +159,7 @@
           margin-top: 5px;
           display: flex;
           align-items: center;
-          height: 50px;
+          height: 25px;
         }
       }
 
@@ -184,12 +184,15 @@
         border: 1px solid #436799;
         align-self: center;
         opacity: .85;
-        height: 50px;
+        height: 25px;
         border-radius: 5px;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        //overflow: hidden;
+        //text-overflow: ellipsis;
         color: #FFF;
+        display: grid;
+        grid-template-columns: auto 0;
+        align-items: center;
       }
 
       .track-wrapper {
@@ -520,11 +523,16 @@
   font-weight: 700;
   padding: 5px;
   background: white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 5px;
 
-  .recording-stop {
-    float: right;
-    display: inline-block;
-  }
+
+
+  //.recording-stop {
+  //  float: right;
+  //  display: inline-block;
+  //}
 }
 
 .timeline_annotation_body {

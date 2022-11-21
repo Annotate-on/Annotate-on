@@ -21,6 +21,7 @@ import {
 } from "../constants/constants";
 import 'leaflet-contextmenu'
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../utils/library";
+import lodash from "lodash";
 
 const EDIT_ANNOTATION_OPTIONS = {
     edit: true,
@@ -553,7 +554,7 @@ class LeafletVideo extends Component {
         const skipRedrawing = [];
 
         featureGroup.eachLayer((layer) => {
-            if(currentTime < layer.start || currentTime > layer.end) {
+            if(lodash.isNil(layer.start) || currentTime < layer.start || currentTime > layer.end) {
                 layer.unbindContextMenu();
                 featureGroup.removeLayer(layer);
             } else {
@@ -563,9 +564,9 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsPointsOfInterest) {
             this.props.annotationsPointsOfInterest.map(point => {
-                if(!'video' in point)
+                if(lodash.isNil(point.video))
                     return
-                if(currentTime < point.video.start || currentTime > point.video.end || skipRedrawing.indexOf(point.id) !== -1)
+                if(currentTime < point.video.start || (currentTime > point.video.end && point.video.end !== -1) || skipRedrawing.indexOf(point.id) !== -1)
                     return;
                 const latLng = map.unproject(new L.Point(point.x, point.y), this.boundsZoomLevel);
 
@@ -594,9 +595,9 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsRectangular) {
             this.props.annotationsRectangular.map(rectangle => {
-                if(!'video' in rectangle)
+                if(lodash.isNil(rectangle.video))
                     return
-                if(currentTime < rectangle.video.start || currentTime > rectangle.video.end  || skipRedrawing.indexOf(rectangle.id) !== -1)
+                if(currentTime < rectangle.video.start || (currentTime > rectangle.video.end && rectangle.video.end !== -1) || skipRedrawing.indexOf(rectangle.id) !== -1)
                     return;
 
                 const first = rectangle.vertices[0];
@@ -625,6 +626,11 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsTranscription) {
             this.props.annotationsTranscription.map(transcription => {
+                if(lodash.isNil(transcription.video))
+                    return
+                if(currentTime < transcription.video.start || (currentTime > transcription.video.end && transcription.video.end !== -1) || skipRedrawing.indexOf(transcription.id) !== -1)
+                    return;
+
                 const first = transcription.vertices[0];
                 const third = transcription.vertices[2];
                 const startLatLng = map.unproject(L.point(first.x, first.y), this.boundsZoomLevel);
@@ -643,6 +649,11 @@ class LeafletVideo extends Component {
 
         if (this.props.annotationsRichtext) {
             this.props.annotationsRichtext.map(richtext => {
+                if(lodash.isNil(richtext.video))
+                    return
+                if(currentTime < richtext.video.start || (currentTime > richtext.video.end && richtext.video.end !== -1) || skipRedrawing.indexOf(richtext.id) !== -1)
+                    return;
+
                 const first = richtext.vertices[0];
                 const third = richtext.vertices[2];
                 const startLatLng = map.unproject(L.point(first.x, first.y), this.boundsZoomLevel);

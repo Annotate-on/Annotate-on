@@ -4,14 +4,14 @@ import Chance from "chance";
 import classnames from "classnames";
 import {
     ee,
-    EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH,
+    EVENT_GOTO_ANNOTATION,
     EVENT_HIGHLIGHT_ANNOTATION,
-    EVENT_SET_ANNOTATION_POSITION,
-    EVENT_UNFOCUS_ANNOTATION,
-    EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION, STOP_ANNOTATION_RECORDING
+    EVENT_SET_ANNOTATION_POSITION, EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
+    STOP_ANNOTATION_RECORDING
 } from "../utils/library";
 import {_formatTimeDisplay} from "../utils/maths";
 import i18next from "i18next";
+import lodash from "lodash";
 
 const chance = new Chance();
 let containerWidth = 0;
@@ -27,16 +27,14 @@ export default class extends Component {
 
         const poi = props.annotationsPointsOfInterest ? props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
         const rec = props.annotationsRectangular ? props.annotationsRectangular.filter(ann => 'video' in ann) : [];
-        const chrono = props.annotationsChronothematique ? props.annotationsChronothematique[props.videoId] : [];
 
         this.state = {
-            tracks: this._sortAnnotationsIntoTracks([...chrono, ...poi, ...rec]),
+            tracks: this._sortAnnotationsIntoTracks([...poi, ...rec]),
             duration: props.player.duration(),
             currentTime: 0,
             zoom: this.props.zoom,
             startTime: null,
             endTime: null,
-            // isAnnotationRecording: false,
             focusedAnnotation: '',
             newAnnotationId: null
         }
@@ -47,14 +45,13 @@ export default class extends Component {
     }
 
     _getTime = (an, property) => {
-        if ('video' in an) {
+        if (!lodash.isNil(an.video)) {
             return an.video[property]
         } else return an[property]
     }
 
     _sortAnnotationsIntoTracks = (allAnnotations) => {
         allAnnotations = allAnnotations.sort((a, b) => {
-
             let aStart = this._getTime(a, 'start'), bStart = this._getTime(b, 'start');
             return aStart - bStart;
         });
@@ -69,7 +66,9 @@ export default class extends Component {
             let start = this._getTime(an, 'start'), end = this._getTime(an, 'end');
 
             if (end === -1) {
-                end = start + 0.1;
+                // end = start + 0.1;
+                tracks[chance.hash({length: 5})] = [an];
+                return
             }
 
             for (let lastTime in tracks) {
@@ -97,63 +96,25 @@ export default class extends Component {
                 duration: this.props.player.duration()
             })
         })
+        ee.on(EVENT_GOTO_ANNOTATION, this._gotoAnnotation);
+        ee.on(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this._gotoAnnotation);
     }
 
     componentWillUnmount() {
         this.props.player.off('timeupdate')
+        ee.removeListener(EVENT_GOTO_ANNOTATION, this._gotoAnnotation);
+        ee.removeListener(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this._gotoAnnotation);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        // const newAnnotationId = chance.guid();
-        //on annotation record start
-        // if (prevState.isAnnotationRecording === false && this.state.isAnnotationRecording === true && this.state.isChronothematique) {
-        //     this._createVideoAnnotationOnRecordStart(this.props.videoId, this.state.startTime, '', '', '', newAnnotationId);
-        // }
-        // //stop annotation creation manually
-        // if (prevState.isAnnotationRecording !== this.state.isAnnotationRecording && this.state.isAnnotationRecording === false && this.state.isChronothematique) {
-        //     this.props.player.pause()
-        //     this._updateEditedAnnotationEndtime(this.props.videoId, this.state.newAnnotationId, this.state.endTime);
-        // }
-
         if (this.props.annotationsPointsOfInterest !== prevProps.annotationsPointsOfInterest ||
-            this.props.annotationsRectangular !== prevProps.annotationsRectangular ||
-            this.props.annotationsChronothematique !== prevProps.annotationsChronothematique) {
+            this.props.annotationsRectangular !== prevProps.annotationsRectangular) {
             const poi = this.props.annotationsPointsOfInterest ? this.props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
             const rec = this.props.annotationsRectangular ? this.props.annotationsRectangular.filter(ann => 'video' in ann) : [];
-            const chrono = this.props.annotationsChronothematique ? this.props.annotationsChronothematique[props.videoId] : [];
             this.setState({
-                tracks: this._sortAnnotationsIntoTracks([...chrono, ...poi, ...rec])
+                tracks: this._sortAnnotationsIntoTracks([...poi, ...rec])
             })
         }
-    }
-
-    _createVideoAnnotationOnRecordStart = (resourceId, start, end, duration, text, id) => {
-        const {t} = i18next;
-        this.props.createAnnotationChronoThematique(resourceId, start, end, duration, text, id);
-        ee.emit(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION);
-        ee.emit(EVENT_UNFOCUS_ANNOTATION)
-        setTimeout(() => {
-            this.props.openEditPanelonVideoAnnotationCreate(resourceId, id);
-        }, 200);
-        this.setState({
-            focusedAnnotation: null,
-            newAnnotationId: id
-        })
-    }
-
-    _updateEditedAnnotationEndtime(videoId, annId, endTime) {
-        if (this.state.startTime > endTime || endTime === undefined || endTime === false || endTime === '') {
-            endTime = this.state.startTime + this.state.startTime * 0.025
-        }
-
-        this.props.editAnnotationChronothematiqueEndtime(videoId, annId, endTime);
-        ee.emit(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH, annId)
-        this.setState({
-            // isAnnotationRecording: false,
-            newAnnotationId: null,
-            endTime: null,
-            startTime: null
-        })
     }
 
     _generateTimelineRuler = () => {
@@ -187,33 +148,6 @@ export default class extends Component {
             </div>
         );
     }
-
-    // _drawAnnotation(annotationsContainerWidth) {
-    //     const width = annotationsContainerWidth * (this.props.player.currentTime() - this.state.startTime) / this.state.duration;
-    //     const startX = this.state.startTime * annotationsContainerWidth / this.state.duration;
-    //
-    //     return <div className="track-annotation-drawing" key='drawing' style={{
-    //         width: `${width}px`,
-    //         backgroundColor: 'yellow',
-    //         transform: `translateX(${(startX)}px)`
-    //     }}>&nbsp;</div>
-    // }
-    //
-    // record = (isChronothematique) => {
-    //     if (this.state.isAnnotationRecording === true) {
-    //         this.setState({
-    //             isAnnotationRecording: false,
-    //             endTime: this.props.player.currentTime(),
-    //             isChronothematique
-    //         });
-    //     } else if (this.state.isAnnotationRecording === false) {
-    //         this.setState({
-    //             isAnnotationRecording: true,
-    //             startTime: this.props.player.currentTime(),
-    //             isChronothematique
-    //         })
-    //     }
-    // }
 
     render() {
         return (
@@ -316,20 +250,24 @@ export default class extends Component {
                             onClick={() => !isRecording && this._selectAnnotation(annotation)}
                             title={annotation.title + " (" + _formatTimeDisplay(annotation.duration) + ")"}>
                     <div
-                        className='timeline_annotation_header'>
+                        className={classnames('timeline_annotation_header', {'highlight-recording': isRecording})}>
                         {annotation.title} ({_formatTimeDisplay(duration)})
 
-                        {isRecording? <img alt="stop_ann_recording" className="btn_menu recording-stop" src={STOP} onClick={event => {
-                            event.preventDefault();
-                            event.stopPropagation();
 
-                            ee.emit(STOP_ANNOTATION_RECORDING , annotation);
-                        }}/>:''}
                     </div>
-                    <div className='timeline_annotation_body'>
-                        {annotation.value}
-                    </div>
+
+                    {isRecording? <img alt="stop_ann_recording" className="recording-stop" src={STOP} onClick={event => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        ee.emit(STOP_ANNOTATION_RECORDING , annotation);
+                    }}/>:''}
+
+                    {/*<div className='timeline_annotation_body'>*/}
+                    {/*    {annotation.value}*/}
+                    {/*</div>*/}
                 </div>
+
             }) : null}
         </div>
     }
@@ -364,6 +302,13 @@ export default class extends Component {
     _updateAnnotationTime = (time) => {
         if (this.props.editedAnnotation) {
             ee.emit(EVENT_SET_ANNOTATION_POSITION, time);
+            Object.entries(this.state.tracks).map(track=>{
+                track[1].map(annotation=>{
+                    if (annotation.id === this.props.editedAnnotation.id) {
+                        annotation.video[this.state.editAnnotationPosition] = time;
+                    }
+                })
+            })
         }
     }
 
@@ -377,7 +322,7 @@ export default class extends Component {
         this.setState({focusedAnnotation: annotation});
         this.props.player.pause();
         let start = annotation.start;
-        if ('video' in annotation)
+        if (!lodash.isNil(annotation.video))
             start = annotation.video.start;
         this.props.player.currentTime(start);
         ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotation.id);
@@ -385,5 +330,9 @@ export default class extends Component {
 
     getZoom = () => {
         return this.state.zoom;
+    }
+
+    _gotoAnnotation = (annotation, position) => {
+        this.setState({editAnnotationPosition: position})
     }
 }
