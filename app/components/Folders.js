@@ -17,6 +17,7 @@ import {IMAGE_STORAGE_DIR} from "../constants/constants";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPhotoVideo} from '@fortawesome/free-solid-svg-icons';
 import {containsSpecialCharacters} from "../utils/js";
+import FoldersFilter from "./FoldersFilter";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const DELETE = require('./pictures/delete-tag.svg');
@@ -66,6 +67,10 @@ export default class extends PureComponent {
         this.setState({editFolder: '', newFolderName: ''});
 
         this.props.renameFolder(newName, path);
+    };
+
+    handleResetFilterSelection = () => {
+        this.props.unselectAllFolders(this.props.tabName);
     };
 
     _createEditFolderNameForm = () => {
@@ -180,15 +185,13 @@ export default class extends PureComponent {
         };
         folders.forEach(totalSizeOfFolders);
 
-        const numberOfFolders = this.props.isImport ? total : this.props.tab.selected_folders.length + '/' + total;
-
         return (
             <Container className="bst rcn_folders">
                 <Row>
                     <Col className="folders-title" md={10} lg={10}>
                         <FontAwesomeIcon icon={faPhotoVideo}/>
                         <span> </span>
-                        {t('folders.lbl_resource_folders')} ({numberOfFolders})
+                        {t('folders.lbl_resource_folders')} ({total})
                         <img alt="arrow down" className="toogleCollapse" onClick={this.toggle}
                              src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))}/>
                     </Col>
@@ -222,6 +225,16 @@ export default class extends PureComponent {
                                 }
                             </Col>
                         </Row> : ''
+                    }
+                    {
+                        (!this.props.isImport && this.props.tab.selected_folders) &&
+                            <FoldersFilter
+                                total={total}
+                                selected={this.props.tab.selected_folders.length}
+                                onCancelFilter={ () => {
+                                    this.handleResetFilterSelection()
+                                }}
+                            />
                     }
                     <div className="folders" id="folderRoot" draggable={true}
                          onDragEnter={e => {

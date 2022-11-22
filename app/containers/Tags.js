@@ -15,7 +15,7 @@ import {
     createTagExpression,
     updateTagExpressionOperator,
     unselectTag,
-    addTagInFilter
+    addTagInFilter, deleteTagFilter
 } from '../actions/app';
 import Component from '../components/Tags';
 import {withTranslation} from "react-i18next";
@@ -69,6 +69,9 @@ const mapDispatchToProps = dispatch => {
         },
         addTagInFilter: (name, skipCheck, tabName) => {
             dispatch(addTagInFilter(name, skipCheck, tabName));
+        },
+        deleteTagFilter: (tabName) => {
+            dispatch(deleteTagFilter(tabName));
         },
         createTagExpression: (tabName) => {
             dispatch(createTagExpression(tabName));

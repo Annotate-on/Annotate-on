@@ -187,4 +187,43 @@
   .folders>.folderHolder:last-child {
     margin-bottom: 10px;
   }
+
+  .folders-filter {
+    display: flex;
+    flex-direction: column;
+    background-color: #9fc5f8;
+    border-radius: 5px;
+    padding: 5px;
+
+    .folders-filter-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .folders-filter-label {
+        margin-left: 5px;
+        margin-right: 5px;
+        flex-grow: 1;
+      }
+      i {
+        font-size: 18px;
+        padding: 5px;
+        color: orange;
+      }
+      i.btn-remove-filter {
+        color: red;
+        cursor: pointer;
+      }
+    }
+
+    .folders-filter-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: 30px;
+      font-size: 16px;
+    }
+  }
+
 }
+
+

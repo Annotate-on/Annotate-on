@@ -316,6 +316,13 @@
           margin-right: 3px;
         }
       }
+      .spacer {
+        flex-grow: 1;
+      }
+      i.btn-remove-filter {
+        color: red;
+        cursor: pointer;
+      }
     }
 
     .tags-filter-content {

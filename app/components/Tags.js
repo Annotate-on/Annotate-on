@@ -445,6 +445,9 @@ export default class extends Component {
                                                 onUpdateTagExpressionOperator={(id, value) => {
                                                     this._handleUpdateTagExpressionOperator(id, value)
                                                 }}
+                                                onCancelFilter={ () => {
+                                                    this._handleResetFilter()
+                                                }}
                                     >
                                     </TagsFilter>
                                 </div>
@@ -535,6 +538,11 @@ export default class extends Component {
     _handleCreateTaxExpression = () => {
         console.log("_handleCreateTaxExpression");
         this.props.createTagExpression(this.props.tabName);
+    };
+
+    _handleResetFilter = () => {
+        console.log("_handleResetFilter");
+        this.props.deleteTagFilter(this.props.tabName);
     };
 
     _renderTags = (_) => {
