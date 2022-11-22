@@ -14,7 +14,7 @@ import {
     getProjectInfoFile,
     getThumbNailsDir,
     getUserWorkspace,
-    doInitConfig
+    doInitConfig, getAppHomePath
 } from "./utils/config";
 
 import './app.global.scss';
@@ -55,7 +55,7 @@ session.resolveProxy('https://www.google.com', proxyUrl => {
 
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: %o', err);
-    fs.appendFile(path.join(remote.app.getPath('home'), 'error.log'), '\n' + err.message + '\n' + err.stack, function (nope) {
+    fs.appendFile(path.join(getAppHomePath(), 'annotate-on-error.log'), '\n' + err.message + '\n' + err.stack, function (nope) {
         if (nope) throw nope;
         console.log('Saved!');
     });
