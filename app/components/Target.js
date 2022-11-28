@@ -6,10 +6,13 @@ import XLSX from 'xlsx';
 import TableHeader from "./TableHeader";
 import {createPagination, formatDateForFileName, formatValue} from "../utils/js";
 import {CATEGORICAL, INTEREST, MODEL_XPER} from "../constants/constants";
+import request from 'request';
 import {convertJsonToSDD} from "../utils/sdd-processor";
 import {getTaxonomyDir} from "../utils/config";
 import path from 'path';
 import {calculateTableHeight, getXlsx} from "../utils/common";
+import fs from "fs-extra";
+import unzipper from "unzipper";
 // Columns titles are stored in a const because we want them to be the same in
 // the React Table & in the exported CSV or XLS(X) files.
 const COLUMN_CHARACTER_NAME = 'Character name';
@@ -169,18 +172,45 @@ class Target extends PureComponent {
     };
 
     _exportDataToSdd = () => {
-        const now = new Date();
-        const { t } = this.props;
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-            title: t('results.characters.dialog_title_save_in_sdd'),
-            defaultPath: `Characters-${formatDateForFileName(now)}.sdd.xml`
-        });
-        if (!file || file.length < 1) return;
+        console.log("_exportDataToSdd");
+        let url = 'http://localhost:8080/xper3/rest/list_bases_for_user';
+        let username = 'annotate@cnam.fr';
+        let password = 'annotate2022';
+        let auth = 'Basic ' + btoa(username + ":" + password);
+        request({
+                url : url,
+                headers : {
+                    "Authorization" : auth
+                }},
+            function (error, response, body) {
+                console.log("body "+body);
+                console.log("response "+response);
+                console.log("error "+error);
+                let result = JSON.parse(body)
+                console.log("result ", result);
+                let found = []
+                if(result) {
+                    for (const resultElement of result) {
+                        found.push(resultElement.datasetName);
+                    }
+                    console.log("found ", found);
+                }
+                alert("Found databases : " + found.join(','))
+            }
+        );
 
-        if (this.props.selectedTaxonomy && this.props.taxonomyInstance) {
-            const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
-            convertJsonToSDD(path.join(getTaxonomyDir(), taxonomy.sddPath), file, this.props.taxonomyInstance, this.props.selectedTaxonomy, this.props.pictures);
-        }
+        // const now = new Date();
+        // const { t } = this.props;
+        // let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+        //     title: t('results.characters.dialog_title_save_in_sdd'),
+        //     defaultPath: `Characters-${formatDateForFileName(now)}.sdd.xml`
+        // });
+        // if (!file || file.length < 1) return;
+        //
+        // if (this.props.selectedTaxonomy && this.props.taxonomyInstance) {
+        //     const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
+        //     convertJsonToSDD(path.join(getTaxonomyDir(), taxonomy.sddPath), file, this.props.taxonomyInstance, this.props.selectedTaxonomy, this.props.pictures);
+        // }
     };
 
     _exportData = (separator) => {
