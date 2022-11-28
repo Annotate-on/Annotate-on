@@ -8,25 +8,8 @@ import {formatDateForEventAnnotationsExport, formatEventAnnotationTags} from "./
 import {_orderAnnotationsByTcInAndFormatTime, exportZipForChronoOrEventAnnotations, getXlsx} from "../../utils/common";
 import AnnotationDropdownMenu from "../common/DropdownMenu";
 
-
-const exportTableColumns = [
+const EXPORT_COLUMNS = [
     'Reference',
-    'Event',
-    'Annotation',
-    'Title',
-    'Topic',
-    'Tcin',
-    'Tcout',
-    'Duration',
-    'Note',
-    'Dates',
-    'Person',
-    'Locations',
-    'General Keywords'
-];
-
-const tableColumns = [
-    'Ref.',
     'Event',
     'Annotation',
     'Title',
@@ -44,6 +27,24 @@ const tableColumns = [
 class EventAnnotations extends Component {
     constructor(props) {
         super(props);
+        const { t } = this.props;
+
+        const tableColumns = [
+            t('results.event_annotations.table_column_ref'),
+            t('results.event_annotations.table_column_event'),
+            t('results.event_annotations.table_column_annotation'),
+            t('results.event_annotations.table_column_title'),
+            t('results.event_annotations.table_column_topic'),
+            t('results.event_annotations.table_column_tcin'),
+            t('results.event_annotations.table_column_tcout'),
+            t('results.event_annotations.table_column_duration'),
+            t('results.event_annotations.table_column_note'),
+            t('results.event_annotations.table_column_dates'),
+            t('results.event_annotations.table_column_person'),
+            t('results.event_annotations.table_column_locations'),
+            t('results.event_annotations.table_column_general_keywords')
+        ];
+
         this.exportXlsx = this.exportXlsx.bind(this);
         this.exportToZip = this.exportToZip.bind(this);
 
@@ -97,11 +98,12 @@ class EventAnnotations extends Component {
     render() {
         let key = 0;
         const isDropdownDisabled = this.state.annotations.length === 0;
+        const { t } = this.props;
         return (
             <div>
                 <Row className="action-bar">
                     <Col md={1}>
-                        <Dropdown title="Export the selected results to a CSV file"
+                        <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')}
                                   isOpen={this.state.dropdownOpen}
                                   size="sm" color="primary" toggle={() => {
                             this.setState(prevState => ({
@@ -109,7 +111,7 @@ class EventAnnotations extends Component {
                             }));
                         }}>
                             <DropdownToggle caret color="primary" disabled={isDropdownDisabled}>
-                                Export to CSV
+                                {t('results.event_annotations.dropdown_export_to_csv')}
                             </DropdownToggle>
                             <AnnotationDropdownMenu exportXlsx={this.exportXlsx} exportToZip={this.exportToZip}/>
                         </Dropdown>
@@ -197,14 +199,14 @@ class EventAnnotations extends Component {
             annotation.person +  this.formatFieldTagsForExport(annotation['personTags'] , annotation.person),
             annotation.location + this.formatFieldTagsForExport(annotation['locationTags'] , annotation.location),
             annotation.tagsByAnnotation,
-
         ];
     }
 
     exportXlsx(separator) {
+        const { t } = this.props;
         const now = new Date();
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-            title: 'Annotations',
+            title: t('results.event_annotations.dialog_title_save'),
             defaultPath: `eventAnnotations-${formatDateForFileName(now)}.csv`
         });
         if (!file || file.length < 1) return;
@@ -217,14 +219,15 @@ class EventAnnotations extends Component {
             const eventName = this.props.pictures[annotation.eventId].name;
             return this.formatAnnotationForExport(eventName, annotation);
         });
-        const worksheet = XLSX.utils.aoa_to_sheet([exportTableColumns.slice(1), ...data]);
+        const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS.slice(1), ...data]);
         getXlsx(worksheet , separator , file);
     }
 
     exportToZip(separator) {
         const now = new Date();
+        const { t } = this.props;
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-            title: 'Annotations',
+            title: t('results.event_annotations.dialog_title_save'),
             defaultPath: `eventAnnotations-${formatDateForFileName(now)}.zip`
         });
         if (!file || file.length < 1) return;
@@ -240,9 +243,8 @@ class EventAnnotations extends Component {
             }
         });
 
-        console.log('export table columns' , exportTableColumns.slice(1));
-        exportZipForChronoOrEventAnnotations(data, file, separator, tableColumns);
-
+        // console.log('export table columns' , EXPORT_COLUMNS.slice(1));
+        exportZipForChronoOrEventAnnotations(data, file, separator, EXPORT_COLUMNS);
     }
 }
 

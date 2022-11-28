@@ -1,28 +1,30 @@
 import {DropdownItem, DropdownMenu} from "reactstrap";
 import React, {Component} from 'react';
+import i18next from "i18next";
 
 class AnnotationDropdownMenu extends Component {
     render() {
+        const { t } = i18next;
         return (
             <DropdownMenu>
                 <DropdownItem onClick={() => {
                     this.props.exportXlsx(';')
-                }}>Export to single file - Use semicolon separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_single_file')} - {t('results.dropdown_item_use_semicolon_separator')}</DropdownItem>
                 <DropdownItem onClick={() => {
                     this.props.exportXlsx(',')
-                }}>Export to single file - Use comma separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_single_file')} - {t('results.dropdown_item_use_comma_separator')}</DropdownItem>
                 <DropdownItem onClick={() => {
                     this.props.exportXlsx('\t')
-                }}>Export to single file - Use tab separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_single_file')} - {t('results.dropdown_item_use_tab_separator')}</DropdownItem>
                 <DropdownItem onClick={() => {
                     this.props.exportToZip(';')
-                }}>Export to separate files - Use semicolon separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_separate_files')} - {t('results.dropdown_item_use_semicolon_separator')}</DropdownItem>
                 <DropdownItem onClick={() => {
                     this.props.exportToZip(',')
-                }}>Export to separate files - Use comma separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_separate_files')} - {t('results.dropdown_item_use_comma_separator')}</DropdownItem>
                 <DropdownItem onClick={() => {
                     this.props.exportToZip('\t')
-                }}>Export to separate files - Use tab separator</DropdownItem>
+                }}>{t('results.dropdown_item_export_to_separate_files')} - {t('results.dropdown_item_use_tab_separator')}</DropdownItem>
             </DropdownMenu>
         );
     }

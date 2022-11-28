@@ -4,6 +4,7 @@ import {push} from 'connected-react-router';
 import Component from '../components/ImportFromErecolnat';
 import {addSubTag, createTag, refreshState, selectFolderGlobally, selectTag, tagPicture} from "../actions/app";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
     return {
@@ -11,7 +12,6 @@ const mapStateToProps = state => {
         selectedTags: state.app.selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode
     };
 };
 
@@ -47,4 +47,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));

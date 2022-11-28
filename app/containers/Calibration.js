@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import Component from '../components/Calibration';
 import {updateTaxonomyValues} from "../actions/app";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -17,4 +18,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

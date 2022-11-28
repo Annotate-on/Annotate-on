@@ -2,6 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 import Component from '../components/ImportVideoWizard';
+import {withTranslation} from "react-i18next";
 import {
     addSubTag,
     createTag,
@@ -18,7 +19,6 @@ const mapStateToProps = state => {
         selectedTags: state.app.selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode,
         allPictures: state.app.pictures
     };
 };
@@ -61,4 +61,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));

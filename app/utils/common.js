@@ -23,25 +23,6 @@ export const calculateTableHeight = (pane , offset) => {
     return node.offsetHeight - offset;
 }
 
-export const loadTags = (tags, selectedTags) => {
-    const tagsFiltered = [];
-    try {
-        tags.map(_ => {
-            if (selectedTags.indexOf(_.name) > -1) {
-                tagsFiltered.push({..._, children: null});
-            }
-            if (_.children && _.children) {
-                tagsFiltered.push(...loadTags(_.children, selectedTags));
-            }
-        });
-        return tagsFiltered;
-    }catch (e){
-        console.log(e);
-        return  [];
-    }
-
-};
-
 export const getXlsx = (worksheet , separator , file) => {
 
     const stream = XLSX.stream.to_csv(worksheet, {FS: separator});

@@ -1,4 +1,5 @@
 import L from "leaflet";
+import i18next from "i18next"
 
 L.Control.FitToView = L.Control.extend({
     options: {
@@ -9,6 +10,7 @@ L.Control.FitToView = L.Control.extend({
         this._bounds = bounds;
     },
     onAdd: function (map) {
+        const { t } = i18next;
         let container = L.DomUtil.create('div', 'leaflet-bar');
         L.DomEvent.disableClickPropagation(container);
         this._currentZoom = L.DomUtil.create('a', 'current-zoom', container);
@@ -17,11 +19,11 @@ L.Control.FitToView = L.Control.extend({
 
         this._link = L.DomUtil.create('a', 'fit-to-view', container);
         this._link.href = '#';
-        this._link.title = "Fit image to screen";
+        this._link.title = t('annotate.editor.btn_tooltip_fit_image_to_screen');
 
         this._maxZoom = L.DomUtil.create('a', 'one-to-one-view', container);
         this._maxZoom.href = '#';
-        this._maxZoom.title = "Display with scan resolution (1 pixel image = 1 pixel to screen)";
+        this._maxZoom.title = t('annotate.editor.btn_tooltip_display_with_scan_resolution');
 
         L.DomEvent
             .on(this._link, 'click', L.DomEvent.stopPropagation)

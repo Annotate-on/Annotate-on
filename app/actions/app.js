@@ -7,7 +7,6 @@ import {ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
 export const CREATE_ANNOTATION_CHRONOTHEMATIQUE = 'CREATE_ANNOTATION_CHRONOTHEMATIQUE';
 export const CREATE_EVENT_ANNOTATION = 'CREATE_EVENT_ANNOTATION';
 export const CREATE_ANNOTATE_EVENT = 'CREATE_ANNOTATE_EVENT';
-export const CREATE_ANNOTATION_MEASURE_LINEAR = 'CREATE_ANNOTATION_MEASURE_LINEAR';
 export const CREATE_ANNOTATION_MEASURE_SIMPLELINE = 'CREATE_ANNOTATION_MEASURE_SIMPLELINE';
 export const CREATE_ANNOTATION_MEASURE_POLYLINE = 'CREATE_ANNOTATION_MEASURE_POLYLINE';
 export const CREATE_ANNOTATION_POINT_OF_INTEREST = 'CREATE_ANNOTATION_POINT_OF_INTEREST';
@@ -56,7 +55,7 @@ export const SAVE_EVENT_AFTER_RECORD = 'SAVE_EVENT_AFTER_RECORD';
 export const EXTEND_EVENT_DURATION = 'EXTEND_EVENT_DURATION';
 export const EDIT_ANNOTATE_EVENT = 'EDIT_ANNOTATE_EVENT';
 export const FINISH_CORRUPTED_EVENT = 'FINISH_CORRUPTED_EVENT';
-export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
+export const EDIT_VIDEO_ANNOTATION_ENDTIME = 'EDIT_VIDEO_ANNOTATION_ENDTIME';
 export const EDIT_EVENT_ANNOTATION_ENDTIME = 'EDIT_EVENT_ANNOTATION_ENDTIME';
 export const FIRST_PICTURE_IN_SELECTION = 'FIRST_PICTURE_IN_SELECTION';
 export const FOCUS_ANNOTATION = 'FOCUS_ANNOTATION';
@@ -68,9 +67,13 @@ export const NEXT_TEN_PICTURE_IN_SELECTION = 'NEXT_TEN_PICTURE_IN_SELECTION';
 export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
+export const ADD_TAG_IN_FILTER = 'ADD_TAG_IN_FILTER';
+export const DELETE_TAG_FILTER = 'DELETE_TAG_FILTER';
+export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
+export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
+export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
 export const SELECT_MENU = 'SELECT_MENU';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
-export const SET_TAGS_SELECTION_MODE = 'SET_TAGS_SELECTION_MODE';
 export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_EVENT_ANNOTATION = 'TAG_EVENT_ANNOTATION';
 export const UNTAG_EVENT_ANNOTATION = 'UNTAG_EVENT_ANNOTATION';
@@ -86,6 +89,7 @@ export const DELETE_TAB = 'DELETE_TAB';
 export const SELECT_FOLDER_GLOBALLY = 'SELECT_FOLDER_GLOBALLY';
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const UNSELECT_FOLDER = 'UNSELECT_FOLDER';
+export const UNSELECT_ALL_FOLDERS = 'UNSELECT_ALL_FOLDERS';
 export const SAVE_SORTED_ARRAY = 'SAVE_SORTED_ARRAY';
 export const ADD_SUB_TAG = 'ADD_SUB_TAG';
 export const OPEN_IN_NEW_TAB = 'OPEN_IN_NEW_TAB';
@@ -121,6 +125,7 @@ export const RENAME_FOLDER = 'RENAME_FOLDER';
 export const DELETE_PICTURE = 'DELETE_PICTURE';
 export const SAVE_LEAFLET_SETTINGS = 'SAVE_LEAFLET_SETTINGS';
 export const SET_STATE = 'SET_STATE';
+export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
     return {
@@ -170,22 +175,24 @@ export const createAnnotationMeasurePolyline = (pictureId, value_in_mm, vertices
     };
 };
 
-export const createAnnotationPointOfInterest = (pictureId, x, y, id) => {
+export const createAnnotationPointOfInterest = (pictureId, x, y, id, video) => {
     return {
         type: CREATE_ANNOTATION_POINT_OF_INTEREST,
         pictureId,
         x,
         y,
-        id
+        id,
+        video
     };
 };
 
-export const createAnnotationRectangular = (pictureId, vertices, id) => {
+export const createAnnotationRectangular = (pictureId, vertices, id, video) => {
     return {
         type: CREATE_ANNOTATION_RECTANGULAR,
         pictureId,
         vertices,
-        id
+        id,
+        video
     };
 };
 
@@ -442,13 +449,14 @@ export const deleteTag = name => ({
     name
 });
 
-export const editAnnotation = (pictureId, annotationType, annotationId, title, text, annotationData) => ({
+export const editAnnotation = (pictureId, annotationType, annotationId, title, text, coverage, annotationData) => ({
     type: EDIT_ANNOTATION,
     annotationId,
     annotationType,
     pictureId,
     text,
     title,
+    coverage,
     annotationData
 });
 
@@ -544,6 +552,36 @@ export const selectTag = (name, skipCheck, tabName) => ({
     tabName
 });
 
+export const addTagInFilter = (name, skipCheck, tabName) => ({
+    type: ADD_TAG_IN_FILTER,
+    name,
+    skipCheck,
+    tabName
+});
+
+export const deleteTagFilter = (tabName) => ({
+    type: DELETE_TAG_FILTER,
+    tabName
+});
+
+export const createTagExpression = (tabName) => ({
+    type: CREATE_TAG_EXPRESSION,
+    tabName
+});
+
+export const deleteTagExpression = (id, tabName) => ({
+    type: DELETE_TAG_EXPRESSION,
+    id,
+    tabName
+});
+
+export const updateTagExpressionOperator = (id, value, tabName) => ({
+    type: UPDATE_TAG_EXPRESSION_OPERATOR,
+    id,
+    value,
+    tabName
+});
+
 export const refreshState = (picturesObject) => ({
     type: REFRESH_STATE,
     picturesObject
@@ -552,12 +590,6 @@ export const refreshState = (picturesObject) => ({
 export const setPictureInSelection = (pictureId, tabName) => ({
     type: SET_PICTURE_IN_SELECTION,
     pictureId,
-    tabName
-});
-
-export const setTagsSelectionMode = (mode, tabName) => ({
-    type: SET_TAGS_SELECTION_MODE,
-    mode,
     tabName
 });
 
@@ -658,6 +690,11 @@ export const unselectFolder = (tab, path) => ({
     type: UNSELECT_FOLDER,
     tab,
     path
+});
+
+export const unselectAllFolders = (tab) => ({
+    type: UNSELECT_ALL_FOLDERS,
+    tab
 });
 
 export const saveAnnotationSort = (tabName, direction) => ({
@@ -772,11 +809,12 @@ export const deleteCartel = (pictureId, id) => ({
     id
 });
 
-export const updatePictureDate = (sha1, date, exifPlace) => ({
+export const updatePictureDate = (sha1, date, exifPlace, placeName) => ({
     type: UPDATE_PICTURE_DATE,
     sha1,
     date,
-    exifPlace
+    exifPlace,
+    placeName
 });
 
 export const updateMozaicToggle = (tabName, showMozaicCollection, showMozaicDetails) => ({
@@ -813,5 +851,7 @@ export const setNewState = newApp => ({
     newApp
 });
 
-
-
+export const saveAnnotationEndTime = (annType, annId, endTime, pictureId) => ({
+    type: STOP_ANNOTATION_RECORDING,
+    annType, annId, endTime, pictureId
+});

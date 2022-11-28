@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 
 import {createTag, deleteTag, editTag, selectTag} from '../actions/app';
 import Component from '../components/PickTag';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
     return {
@@ -28,4 +29,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

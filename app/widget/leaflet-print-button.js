@@ -10,6 +10,7 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION
 } from "../constants/constants";
+import i18next from "i18next"
 
 let fileSaver = require('file-saver');
 
@@ -29,12 +30,12 @@ L.Control.RecolnatPrint = L.Control.extend({
         L.Util.setOptions(this, options);
     },
     onAdd: function (map) {
+        const { t } = i18next;
         let container = L.DomUtil.create('div', 'leaflet-bar leaflet-recolnat-print');
         L.DomEvent.disableClickPropagation(container);
         this._link = L.DomUtil.create('a', 'recolnat-print', container);
         this._link.href = '#';
-        this._link.title = "Export image with annotations";
-
+        this._link.title = t('annotate.editor.btn_tooltip_export_image_with_annotations');
         L.DomEvent
             .on(this._link, 'click', L.DomEvent.stopPropagation)
             .on(this._link, 'click', L.DomEvent.preventDefault)

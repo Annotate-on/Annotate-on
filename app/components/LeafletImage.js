@@ -3,20 +3,7 @@ import styled from 'styled-components';
 import {FeatureGroup, Map} from 'react-leaflet';
 import L from 'leaflet';
 import {EditControl} from 'react-leaflet-draw';
-import '../widget/leaflet-angle'
-import '../widget/leaflet-zoom'
-import '../widget/leaflet-simpleline'
-import '../widget/leaflet-occurrence'
-import '../widget/leaflet-override'
-import '../widget/leaflet-print-button'
-import '../widget/leaflet-color-picker'
-import '../widget/leaflet-ratio'
-import '../widget/leaflet-export-zoi'
-import '../widget/leaflet-transcription'
-import '../widget/leaflet-categorical'
-import '../widget/leaflet-richtext'
-import '../widget/leaflet-cartel'
-import '../widget/leaflet-control-menu'
+import i18next from "i18next";
 
 /**
  * NOTE!
@@ -40,6 +27,7 @@ import {
 } from "../constants/constants";
 import 'leaflet-contextmenu'
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../utils/library";
+import {overide_defaults} from "../widget/leaflet-override";
 
 //
 // STYLE
@@ -252,6 +240,7 @@ let selectedAnnotation = null;
 
 class LeafletImage extends Component {
     constructor(props, context) {
+        const { t } = i18next;
         super(props, context);
         this.sha1 = props.currentPicture.sha1;
         this.state = {
@@ -271,17 +260,16 @@ class LeafletImage extends Component {
         TRANSCRIPTION_OPTIONS.repeatMode = props.repeatMode;
         RICHTEXT_OPTIONS.repeatMode = props.repeatMode;
 
-
         contextMenu = {
             contextmenu: true,
             contextmenuItems: [{
                 icon: require('./pictures/edit-annotation.svg'),
-                text: 'Edit',
+                text: t('global.edit'),
                 index: 0,
                 callback: this._editAnnotationEvent
             }, {
                 icon: require('./pictures/delete-anotation.svg'),
-                text: 'Delete',
+                text: t('global.delete'),
                 index: 1,
                 callback: this._deleteAnnotationEvent
             }]
@@ -289,7 +277,6 @@ class LeafletImage extends Component {
     };
 
     componentWillReceiveProps(nextProps) {
-
         if (this.state.sha1 !== nextProps.currentPicture.sha1)
             this.setState({
                 currentPicture: nextProps.currentPicture,
@@ -380,6 +367,7 @@ class LeafletImage extends Component {
     }
 
     render() {
+        const { t } = i18next;
         return (
             <_Root>
                 <_LeafletDiv>
@@ -410,7 +398,7 @@ class LeafletImage extends Component {
                                              polyline: !this.props.calibrationMode ? POLYLINE_OPTIONS : false,
                                              polygon: !this.props.calibrationMode ? POLYGON_OPTIONS : false,
                                              angle: !this.props.calibrationMode ? ANGLE_OPTIONS : false,
-                                             occurrence: !this.props.calibrationMode,
+                                             occurrence: !this.props.calibrationMode? ANGLE_OPTIONS : false,
                                              // left out delivery of 16.05.2019.
                                              // ratio: !this.props.calibrationMode ? COLORPICKER_OPTIONS : false
                                              marker: !this.props.calibrationMode ? MARKER_OPTIONS : false,
@@ -430,11 +418,13 @@ class LeafletImage extends Component {
         );
     }
 
+
     /**
      * Call this method after component is initiated and add image overlay and minimap.
      * @private
      */
     _initLeaflet = () => {
+        const { t } = i18next;
         const map = this.leafletMap.leafletElement;
         const mapContainer = this.leafletMap.container;
         selectedAnnotation = null;
@@ -468,6 +458,7 @@ class LeafletImage extends Component {
         const northEast = map.unproject([this.state.currentPicture.width, 0], this.boundsZoomLevel);
 
         const bounds = new L.LatLngBounds(southWest, northEast);
+
 
         // add the image overlay, so that it covers the entire map
         this._imageOverlay = L.imageOverlay(this.state.currentPicture.file, bounds);
@@ -512,19 +503,12 @@ class LeafletImage extends Component {
 
         this._zoomControl = L.control.zoom({
             position: 'topright',
-            zoomInTitle: 'Increase zoom',
-            zoomOutTitle: 'Decrease zoom'
+            zoomInTitle: t('annotate.editor.btn_tooltip_increase_zoom'),
+            zoomOutTitle: t('annotate.editor.btn_tooltip_decrease_zoom')
         }).addTo(map);
 
         this._fitToView = L.control.fitToView(bounds).addTo(map);
         // Tradusction of tooltips
-        L.drawLocal.draw.toolbar.buttons.simpleline = "Length tool";
-        L.drawLocal.draw.toolbar.buttons.polyline = "Multiline length tool";
-        L.drawLocal.draw.toolbar.buttons.polygon = "Surface tool";
-        L.drawLocal.draw.toolbar.buttons.angle = "Angle tool";
-        L.drawLocal.draw.toolbar.buttons.rectangle = "Rectangle of interest";
-        L.drawLocal.draw.toolbar.buttons.circlemarker = "Point of interest";
-        L.drawLocal.draw.toolbar.buttons.marker = "Point of interest";
 
         Promise.all([lpp, fdp]).then( () => {
             setTimeout(() => {
@@ -563,7 +547,7 @@ class LeafletImage extends Component {
 
             this._recolnatControlMenu = L.recolnatControlMenu({
                 id: 'toggle-checkbox',
-                radioText: 'Enable repeat mode',
+                radioText: t('annotate.editor.lbl_enable_repeat_mode'),
                 repeatModeHandler: this._setRepeatMode,
                 defaultValue: this.props.repeatMode
             });
@@ -591,7 +575,6 @@ class LeafletImage extends Component {
     _onDrawStop = (e) => {
         if (!this.featureGroup)
             return;
-
         this.props.onDrawStop(e);
         const drawnLayers = this.featureGroup.leafletElement;
         //Return back context menu
@@ -635,7 +618,6 @@ class LeafletImage extends Component {
             annotationId: e.layer.annotationId,
             annotationType: e.layer.annotationType
         })
-
         e.layer.on('click', this._emitEvent);
     };
 
@@ -682,6 +664,7 @@ class LeafletImage extends Component {
      * @private
      */
     _drawAnnotations = () => {
+        // console.log("_drawAnnotations")
         const map = this.leafletMap.leafletElement;
         const featureGroup = this.featureGroup.leafletElement;
 
@@ -804,8 +787,12 @@ class LeafletImage extends Component {
 
         if (this.props.annotationsOccurrence) {
             this.props.annotationsOccurrence.map(occurrence => {
+                const latLngs = [];
+                occurrence.vertices.map(vertex => {
+                    latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
+                });
                 const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
-                const layer = L.occurrence({}, options);
+                const layer = L.occurrence(latLngs, options);
                 layer.annotationId = occurrence.id;
                 layer.annotationType = occurrence.annotationType;
                 featureGroup.addLayer(layer);

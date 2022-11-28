@@ -2,6 +2,9 @@ import Chance from "chance";
 import {TYPE_CATEGORY} from "./Constants";
 
 const chance = new Chance();
+const regexDecimal = new RegExp('^-?(\\d*\\.)?\\d+$');
+const regexDMSLat = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S])');
+const regexDMSLng = new RegExp('([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
 
 export const genId = () => {
     return chance.guid();
@@ -263,5 +266,97 @@ export const _addTagIdIfMissing = (tags) => {
             _addTagIdIfMissing(tag.children);
         }
     })
-
 }
+
+export const getNewTabName = (openTabs) => {
+    const keys = Object.keys(openTabs)
+    // Sort tabs by name and get tab with greatest number in name. Default tab name is: 'Selection xx'
+    keys.sort((a, b) => {
+        if (+a.substring(10) > +b.substring(10))
+            return 1;
+        else if (+a.substring(10) < +b.substring(10))
+            return -1;
+        else return 0;
+    });
+    // Remove string part from name
+    const lastName = +keys[keys.length - 1].substring(10);
+    let tabIndex = isNaN(lastName) ? 1 : +keys[keys.length - 1].substring(10) + 1;
+    return 'Selection ' + tabIndex;
+};
+
+export const isLocationInDecimalFormat = (input) => {
+    if (!input) return false;
+    if (input === '' || input === 'N/A') return false;
+
+
+    const coordinates = input.split(/[ ,]+/);
+    if(!coordinates || coordinates.length < 2) return false;
+
+    const lat = coordinates[0].trim();
+    const lng = coordinates[1].trim();
+    if (regexDecimal.test(lat) && regexDecimal.test(lng) && validateDecimalCoords(lat, lng)) return true;
+    return false;
+}
+
+export const isLocationInDMSFormat = (input) => {
+    if (!input) return false;
+    if (input === '' || input === 'N/A') return false;
+
+    const coordinates = input.split(/[ ,]+/);
+    if(!coordinates || coordinates.length < 2) return false;
+    const lat = coordinates[0].trim();
+    const lng = coordinates[1].trim();
+    if (regexDMSLat.test(lat) && regexDMSLng.test(lng)) {
+        const latD = convertDMStoDecimal(lat);
+        const lngD = convertDMStoDecimal(lng);
+        if (validateDecimalCoords(latD, lngD)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export const validateLocationInput = (input) => {
+    if (input === '' || input === 'N/A') return true;
+    if (isLocationInDecimalFormat(input)) {
+        return true
+    };
+    if (isLocationInDMSFormat(input)) {
+        return true;
+    }
+    return false;
+}
+
+export const getDecimalLocation = (input) => {
+    if(isLocationInDecimalFormat(input)) {
+        const coordinates = input.split(/[ ,]+/);
+        return [+coordinates[0].trim(), +coordinates[1].trim()];
+    }
+    if(isLocationInDMSFormat(input)) {
+        const coordinates = input.split(/[ ,]+/);
+        const latD = convertDMStoDecimal(coordinates[0].trim());
+        const lngD = convertDMStoDecimal(coordinates[1].trim());
+        return [latD, lngD];
+    }
+    return null;
+}
+
+export const validateDecimalCoords = (lat , lng) => {
+    return lat > -90 && lat < 90 && lng > -180 && lng < 180;
+}
+
+export const convertDMStoDecimal = (coordinates) => {
+    let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
+    let degrees = parseFloat(parts[0]);
+    let minutes = parseFloat(parts[1]);
+    let seconds = parseFloat(parts[2].replace(',','.'));
+    let direction = parts[3];
+
+    let dd = degrees + minutes / 60 + seconds / (60 * 60);
+
+    if (direction === 'S' || direction === 'W') {
+        dd = dd * -1;
+    }
+    return dd;
+}
+

@@ -17,13 +17,15 @@ import {METADATA_DETERMINATIONS_TITLES, METADATA_TITLES} from "../utils/erecolna
 import {loadMetadata, saveMetadata} from "../utils/config";
 import fs from "fs-extra";
 import path from "path";
+import GeolocationWidget from "./GeolocationWidget";
+import {validateLocationInput} from "./event/utils";
+import DatingWidget from "./DatingWidget";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 
 export default class extends Component {
     constructor(props, context) {
         super(props, context);
-        console.log(props);
         const metadata = {
             'naturalScienceMetadata': {
                 'catalogNumber': props.picture.catalogNumber || '',
@@ -32,7 +34,6 @@ export default class extends Component {
                 'genre': props.picture.genre || '',
                 'sfName': props.picture.sfName || '',
                 'fieldNumber': props.picture.fieldNumber || ''
-
             },
             'iptc': {
                 'title': props.picture.title || '',
@@ -49,9 +50,9 @@ export default class extends Component {
                 'language':  props.picture.language || '',
                 'relation':  props.picture.relation || '',
                 'location': props.picture.exifPlace || '',
+                'placeName': props.picture.placeName || '',
                 'rights':  props.picture.rights || '',
                 'contact': props.picture.contact || '',
-
             },
             'exif': {
                 'dimensionsX': props.picture.width,
@@ -77,15 +78,14 @@ export default class extends Component {
         };
     }
 
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.picture !== prevProps.picture) {
             let metadata = loadMetadata(this.props.picture.sha1);
             if (metadata === null) {
                 metadata = {
-                    naturalScienceMetadata: {...this.state.initMetadata.naturalScienceMetadata},
-                    iptc: {...this.state.initMetadata.iptc},
-                    exif: {...this.state.initMetadata.exif}
+                    naturalScienceMetadata: {},
+                    iptc: {},
+                    exif: {}
                 }
             }
 
@@ -105,6 +105,7 @@ export default class extends Component {
                 'language':  metadata.iptc.language ? metadata.iptc.language : this.props.picture.language || '',
                 'relation': metadata.iptc.relation ? metadata.iptc.relation : this.props.picture.relation || '',
                 'location': metadata.iptc.location ? metadata.iptc.location : this.props.picture.exifPlace || '',
+                'placeName': metadata.iptc.placeName ? metadata.iptc.placeName : this.props.picture.placeName || '',
                 'rights': metadata.iptc.rights ? metadata.iptc.rights : this.props.picture.rights || '',
                 'contact':  metadata.iptc.contact ? metadata.iptc.contact : this.props.picture.contact || '',
             };
@@ -131,84 +132,35 @@ export default class extends Component {
         }))
     }
 
-    _openInGoogleMaps(locationCoordinates) {
-        shell.openExternal(`https://www.google.com/maps/place/${locationCoordinates}`);
-    }
-    _validateLocationInput(input) {
-
-        const regexDecimal = new RegExp('(^-?\\d*\\.{0,1}\\d+$)');
-        const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S]) ([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
-
-        const coordinates = input.split(/[ ,]+/);
-        const lat = coordinates[0];
-        const lng = coordinates[1];
-
-        if (input === '' || input === 'N/A'){
-            return true
-        }
-        else if (regexDecimal.test(lat) && regexDecimal.test(lng)) {
-            if (this.validateDecimalCoords(lat , lng)){
-                return true;
-            }
-        }
-        else if (regexDMS.test(input)) {
-            const  latD = this.convertDMStoDecimal(lat);
-            const  lngD = this.convertDMStoDecimal(lng);
-            if (this.validateDecimalCoords(latD , lngD)){
-                return  true;
-            }
-        }else {
-            this.setState({_validateLocationInput : false});
-        }
-    }
-
-    validateDecimalCoords(lat , lng) {
-        return lat > -90 && lat < 90 && lng > -180 && lng < 180;
-    }
-
-    convertDMStoDecimal(coordinates){
-
-        let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
-        let degrees = parseFloat(parts[0]);
-        let minutes = parseFloat(parts[1]);
-        let seconds = parseFloat(parts[2].replace(',','.'));
-        let direction = parts[3];
-
-        let dd = degrees + minutes / 60 + seconds / (60 * 60);
-
-        if (direction === 'S' || direction === 'W') {
-            dd = dd * -1;
-        }
-        return dd;
-    }
-
     _formChangeHandler = ( event ) => {
-
+        // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
+        const { t } = this.props;
         let errors = this.state.errors;
 
-        if (name === 'iptc.location'){
-            errors.location =
-                this._validateLocationInput(value)
-                    ? ''
-                    : 'Input is not valid , please provide lat/long [value1,value2] data in DMS or decimal format';
-        }
-
-        const path = event.target.name.split('.');
         const metadata = {...this.state.metadata};
-
-        metadata[path[0]][path[1]] = event.target.value;
-
-
-        this.setState({
-            metadata,
-            formSaved: false,
-            errors: errors
-        });
+        if (name === 'geolocation') {
+            errors.location = event.errors;
+            let location = (!value.latitude && !value.longitude) ? '' : value.latitude + ',' + value.longitude;
+            if(!errors.location) {
+                metadata.iptc.placeName = value.place ? value.place : '';
+                metadata.iptc.location = location;
+            }
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        } else {
+            const path = event.target.name.split('.');
+            metadata[path[0]][path[1]] = value;
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        }
     };
-
-
-
 
     _saveForm = (_) => {
         if(this._validateForm(this.state.errors)) {
@@ -218,7 +170,7 @@ export default class extends Component {
             saveMetadata(this.props.picture.sha1, this.state.metadata);
 
             console.log(this.state.metadata);
-            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location);
+            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName);
 
             let naturalScienceMetadata2 = '';
             let  iptcMetadata ='';
@@ -228,7 +180,6 @@ export default class extends Component {
             let iptc = this.state.metadata.iptc;
             let exif = this.state.metadata.exif;
             const separator = ';';
-
 
             for (let prop in sfMetadata) {
                 if (sfMetadata[prop] !== ''){
@@ -243,10 +194,11 @@ export default class extends Component {
                     }
                 }
             }
-
+            console.log("iptc", iptc)
             for (let prop in iptc) {
                 if (iptc[prop] !== ''){
                     let xmp_tag = `\t\t <dc:${prop}>${iptc[prop]}</dc:${prop}> \n`;
+                    console.log("prop", prop)
                     if (iptc[prop].includes(separator)) {
                         const _array = iptc[prop].split(separator);
                         _array.forEach( ( a ) => {
@@ -309,19 +261,20 @@ export default class extends Component {
         return valid;
     };
 
-
     render() {
         const {errors} = this.state;
+        const { t } = this.props;
         return <Container className="metadata-pane">
             <Row>
-                <Col className="local-title">Keywords</Col>
+                <Col className="local-title">{t('inspector.metadata.title_keywords')}</Col>
                 {!this.props.readOnly && (
                     <Col className="local-title">
                         <Button className="btn btn-secondary" color="gray"
                                 onClick={() => {
                                     this.setState({pickTag: true});
                                 }}>
-                            Create (Modify) keywords</Button>
+                            {t('inspector.metadata.btn_create_modify_keywords')}
+                        </Button>
                     </Col>
                 )}
             </Row>
@@ -356,14 +309,14 @@ export default class extends Component {
                 </Col>
             </Row>
             <Row>
-                <Col className="local-title">Metadata</Col>
+                <Col className="local-title">{t('inspector.metadata.title_metadata')}</Col>
                 {!this.props.picture.erecolnatMetadata ?<Col className="local-title">
                     <Button className="pull-right" color={this.state.formSaved ? 'success' : 'danger'}
-                            onClick={this._saveForm}>Save</Button>
+                            onClick={this._saveForm}>{t('global.save')}</Button>
                 </Col>:''}
             </Row>
             <Row>
-                <Col sm={12} md={12} lg={12} className="metadata-title">File name</Col>
+                <Col sm={12} md={12} lg={12} className="metadata-title">{t('inspector.metadata.lbl_file_name')}</Col>
                 <Col sm={12} md={12} lg={12}
                      className="metadata-value">{this.props.picture.file_basename}</Col>
             </Row>
@@ -395,7 +348,7 @@ export default class extends Component {
                                 }
                             >
                                 <img alt="external link" src={require('./pictures/external-link.svg')}/>
-                                Les Herbonautes
+                                {t('inspector.metadata.lbl_les_herbonautes')}
                             </a>
                         </Col>
                     </Row>
@@ -403,223 +356,236 @@ export default class extends Component {
                 : <div>
                     <br/>
                     <Form ref={_ => this.form = _} id='metadata-form'>
-                        <span className="subtitle">Scientific metadata</span>
+                        <span className="subtitle">{t('inspector.metadata.subtitle_scientific_metadata')}</span>
                         <hr/>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.catalogNumber" id="catalogNumber"
                                    onKeyDown={this._saveForm}
-                                   placeholder="Catalog Number"
-                                   title = "Catalog Number"
-                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber}
+                                   placeholder={t('inspector.metadata.textbox_placeholder_catalog_number')}
+                                   title = {t('inspector.metadata.textbox_tooltip_catalog_number')}
+                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.reference" id="reference"
-                                   placeholder="Reference"
-                                   title = "Reference"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_reference')}
+                                   title = {t('inspector.metadata.textbox_tooltip_reference')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.reference}
+                                   value={this.state.metadata.naturalScienceMetadata.reference || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.family" id="family"
-                                   placeholder="Family"
-                                   title = "Family"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_family')}
+                                   title = {t('inspector.metadata.textbox_tooltip_family')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.family}
+                                   value={this.state.metadata.naturalScienceMetadata.family || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.genre" id="genre"
-                                   placeholder="Genus"
-                                   title = "Genus"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_genus')}
+                                   title = {t('inspector.metadata.textbox_tooltip_genus')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.genre}
+                                   value={this.state.metadata.naturalScienceMetadata.genre || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.sfName" id="sfName"
-                                   placeholder="Scientific name"
-                                   title = "Scientific name"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_scientific_name')}
+                                   title = {t('inspector.metadata.textbox_tooltip_scientific_name')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.sfName}
+                                   value={this.state.metadata.naturalScienceMetadata.sfName || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="naturalScienceMetadata.fieldNumber" id="fieldNumber"
-                                   placeholder="Collection number"
-                                   title = "Collection number"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_collection_number')}
+                                   title = {t('inspector.metadata.textbox_tooltip_collection_number')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber}
+                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
-                        <span className="subtitle">IPTC / Dublin Core</span>
+                        <span className="subtitle">{t('inspector.metadata.subtitle_iptc_dublin_core')}</span>
                         <hr/>
                         <FormGroup>
                             <Input type="text" name="iptc.title" id="title"
-                                   placeholder="Title"
-                                   title = "Title"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_title')}
+                                   title = {t('inspector.metadata.textbox_tooltip_title')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.title}
+                                   value={this.state.metadata.iptc.title || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.creator" id="creator"
-                                   placeholder="Creator"
-                                   title = "Creator"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_creator')}
+                                   title = {t('inspector.metadata.textbox_tooltip_creator')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.creator}
+                                   value={this.state.metadata.iptc.creator || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.subject" id="subject"
-                                   placeholder="Subject/Keywords"
-                                   title = "Subject/Keywords"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_subject_keywords')}
+                                   title = {t('inspector.metadata.textbox_tooltip_subject_keywords')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.subject}
+                                   value={this.state.metadata.iptc.subject || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.description" id="description"
-                                   placeholder="Description"
-                                   title = "Description"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_description')}
+                                   title = {t('inspector.metadata.textbox_tooltip_description')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.description}
+                                   value={this.state.metadata.iptc.description || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.publisher" id="publisher"
-                                   placeholder="Publisher"
-                                   title = "Publisher"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_publisher')}
+                                   title = {t('inspector.metadata.textbox_tooltip_publisher')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.publisher}
+                                   value={this.state.metadata.iptc.publisher || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.contributor" id="contributor"
-                                   placeholder="Contributor"
-                                   title = "Contributor"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_contributor')}
+                                   title = {t('inspector.metadata.textbox_tooltip_contributor')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contributor}
+                                   value={this.state.metadata.iptc.contributor || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.created" id="created"
-                                   placeholder="Date"
-                                   title = "Date"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_date')}
+                                   title = {t('inspector.metadata.textbox_tooltip_date')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.created}
+                                   value={this.state.metadata.iptc.created || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
+                        {/*<DatingWidget value={"2022/12/12"}*/}
+                        {/*              openEdit={this.props.openEditDating}*/}
+                        {/*              start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}*/}
+                        {/*              end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}*/}
+                        {/*              period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}*/}
+                        {/*              onValueChange={this.handleTemporalCoverageChange}*/}
+                        {/*/>*/}
                         <FormGroup>
                             <Input type="text" name="iptc.type" id="type"
-                                   placeholder="Type"
-                                   title = "Type"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_type')}
+                                   title = {t('inspector.metadata.textbox_tooltip_type')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.type}
+                                   value={this.state.metadata.iptc.type || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.format" id="format"
-                                   placeholder="Format"
-                                   title = "Format"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_format')}
+                                   title = {t('inspector.metadata.textbox_tooltip_format')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.format}
+                                   value={this.state.metadata.iptc.format || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.identifier" id="identifier"
-                                   placeholder="Identifier"
-                                   title = "Identifier"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_identifier')}
+                                   title ={t('inspector.metadata.textbox_tooltip_identifier')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.identifier}
+                                   value={this.state.metadata.iptc.identifier || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.source" id="source"
-                                   placeholder="Source"
-                                   title = "Source"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_source')}
+                                   title = {t('inspector.metadata.textbox_tooltip_source')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.source}
+                                   value={this.state.metadata.iptc.source || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.language" id="language"
-                                   placeholder="Language"
-                                   title = "Language"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_language')}
+                                   title = {t('inspector.metadata.textbox_tooltip_language')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.language}
+                                   value={this.state.metadata.iptc.language || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.relation" id="relation"
-                                   placeholder="Relation"
-                                   title = "Relation"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_relation')}
+                                   title = {t('inspector.metadata.textbox_tooltip_relation')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.relation}
+                                   value={this.state.metadata.iptc.relation || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
-                        <FormGroup>
-                            <InputGroup>
-                                <Input type="text" name="iptc.location" id="location"
-                                       placeholder="Coverage / place"
-                                       title = "Coverage / place"
-                                       onKeyDown={this._saveForm}
-                                       value={this.state.metadata.iptc.location}
-                                       onChange={this._formChangeHandler}/>
-                                <InputGroupAddon addonType="append">
-                                    <InputGroupText>
-                                        <i className="fa fa-external-link" aria-hidden="true"
-                                           onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}
-                                        />
-                                    </InputGroupText>
-                                </InputGroupAddon>
-                                {errors.location.length > 0 &&
-                                <span className='error'>{errors.location}</span>}
-                            </InputGroup>
-                        </FormGroup>
+
+                        {/*<FormGroup>*/}
+                        {/*    <InputGroup>*/}
+                        {/*        <Input type="text" name="iptc.location" id="location"*/}
+                        {/*               placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}*/}
+                        {/*               title = {t('inspector.metadata.textbox_tooltip_coverage_place')}*/}
+                        {/*               onKeyDown={this._saveForm}*/}
+                        {/*               value={this.state.metadata.iptc.location}*/}
+                        {/*               onChange={this._formChangeHandler}/>*/}
+                        {/*        <InputGroupAddon addonType="append">*/}
+                        {/*            <InputGroupText>*/}
+                        {/*                <i className="fa fa-external-link" aria-hidden="true"*/}
+                        {/*                   onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}*/}
+                        {/*                />*/}
+                        {/*            </InputGroupText>*/}
+                        {/*        </InputGroupAddon>*/}
+                        {/*        {errors.location.length > 0 &&*/}
+                        {/*            <span className='error'>{errors.location}</span>}*/}
+                        {/*    </InputGroup>*/}
+                        {/*</FormGroup>*/}
+
+                        <GeolocationWidget name="geolocation"
+                                           place={this.state.metadata.iptc.placeName}
+                                           location={this.state.metadata.iptc.location}
+                                           onValueChange={this._formChangeHandler}/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
-                                   placeholder="Rights Usage Terms"
-                                   title = "Rights Usage Terms"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}
+                                   title = {t('inspector.metadata.textbox_tooltip_rights_usage_terms')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.rights}
+                                   value={this.state.metadata.iptc.rights || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="iptc.contact" id="contact"
-                                   placeholder="Contact"
-                                   title = "Contact"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_contact')}
+                                   title = {t('inspector.metadata.textbox_tooltip_contact')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contact}
+                                   value={this.state.metadata.iptc.contact || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
-                        <span className="subtitle">EXIF metadata</span>
+                        <span className="subtitle">{t('inspector.metadata.subtitle_exif_metadata')}</span>
                         <hr/>
                         <FormGroup>
                             <Input type="text" name="exif.dimensions" id="dimensions"
-                                   placeholder="Dimensions"
-                                   title = "Dimensions"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_dimensions')}
+                                   title = {t('inspector.metadata.textbox_tooltip_dimensions')}
                                    readOnly
                                    value={this.state.metadata.exif.dimensionsX + ' x ' + this.state.metadata.exif.dimensionsY}
                             />
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="exif.resolutionX" id="resolutionX"
-                                   placeholder="Resolution"
-                                   title = "Resolution"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_resolution')}
+                                   title = {t('inspector.metadata.textbox_tooltip_resolution')}
                                    readOnly
                                    value={`${this.state.metadata.exif.resolutionX} x ${this.state.metadata.exif.resolutionY}`}
                             />
                         </FormGroup>
                         <FormGroup>
                             <Input type="text" name="exif.orientation" id="orientation"
-                                   placeholder="Orientation"
-                                   title = "Orientation"
+                                   placeholder={t('inspector.metadata.textbox_placeholder_orientation')}
+                                   title = {t('inspector.metadata.textbox_tooltip_orientation')}
                                    readOnly
-                                   value={this.state.metadata.exif.orientation}
+                                   value={this.state.metadata.exif.orientation || ''}
                             />
                         </FormGroup>
                     </Form>

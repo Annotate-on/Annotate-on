@@ -59,10 +59,9 @@ class TargetsInspector extends Component {
             let param = inPictureDescriptorValues.length > 0 ? inPictureValues : null
             this.props.updateAnnotationValueInTaxonomyInstance(annotationsToUpdate , this.props.selectedTaxonomy.id , param , this.props.tab.selected_sha1 , descriptorId);
         }
-
     }
-    _calculateDescriptorInSelectionValues = (descriptorId) => {
 
+    _calculateDescriptorInSelectionValues = (descriptorId) => {
         let inSelectionValue = {
             count: 0,
             avg: 0,
@@ -145,12 +144,13 @@ class TargetsInspector extends Component {
     };
 
     render() {
+        const { t } = this.props;
         let tKey = 0;
         return (
             <div className="targets-list">
                 <Container>
                     <Row className="targets-title">
-                        <Col md={4} lg={4} sm={4}>Characters</Col>
+                        <Col md={4} lg={4} sm={4}>{t('inspector.targets_inspector.lbl_characters')}</Col>
                         <Col md={1} lg={1} sm={1}>#</Col>
                         <Col md={3} lg={3} sm={3}>M</Col>
                         <Col md={3} lg={3} sm={3}>SD</Col>
@@ -164,7 +164,7 @@ class TargetsInspector extends Component {
                                     <Col md={4} lg={4} sm={4} className="targetName" title={target.targetType ? target.targetType +"/"+target.targetName:target.targetName}><span
                                         style={{color: target.targetColor}}>&#9679;</span> {target.targetName}
                                         <div
-                                            className="sub">Selection value</div>
+                                            className="sub">{t('inspector.targets_inspector.lbl_selection_value')}</div>
                                     </Col>
                                     <Col md={1} lg={1} sm={1} className="targetValueM" >
                                         {target.count}

@@ -22,9 +22,8 @@ import {getUserWorkspace} from '../utils/config'
 import {Button, Col, Container, Row} from 'reactstrap';
 import Folders from "../containers/Folders";
 import {ee, EVENT_HIDE_LOADING, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
-import {attachDefaultTags} from "../utils/tags";
+import {attachDefaultTags, loadTags} from "../utils/tags";
 import * as unzipper from "unzipper";
-import {loadTags} from "../utils/common";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const HELP_ICON = require('./pictures/help.svg');
@@ -70,7 +69,6 @@ const _RightColumn = styled.div`
 export default class extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             importType: null,
             selectedExploreJsonFile: null,
@@ -182,11 +180,12 @@ export default class extends Component {
     }
 
     startDownload = () => {
+        const { t } = this.props;
         // Check connectivity
         request('https://www.google.com', {timeout: 10000, proxy: process.env.RECOLNAT_HTTP_PROXY})
             .on('error', err => {
                 console.log(err)
-                remote.dialog.showErrorBox('Error', 'Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!');
+                remote.dialog.showErrorBox(t('global.error'), t('library.import_images.alert_cannot_reach_mediaphoto'));
                 this.setState({selectedExploreJsonFile: null, disableButtons: false});
             }).on('end', () => {
             const limit = promiseLimit(4);
@@ -326,14 +325,11 @@ export default class extends Component {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     })
@@ -349,21 +345,22 @@ export default class extends Component {
     };
 
     render() {
+        const { t } = this.props;
         let iframeSrc = 'https://explore.recolnat.org/search/'
-        let title = 'Import from json';
+        let title = t('library.import_images.lbl_import_from_json');
 
         switch (this.state.importType) {
             case IMPORT_BOTANICAL:
                 iframeSrc = 'https://explore.recolnat.org/search/botanique/type=index';
-                title = "Import Botanical";
+                title = t('library.import_images.lbl_import_botanical');
                 break;
             case IMPORT_ZOOLOGY:
                 iframeSrc = 'https://explore.recolnat.org/search/zoologie/type=index';
-                title = 'Import Zoology';
+                title = t('library.import_images.lbl_import_zoology');
                 break;
             case IMPORT_PALEONTOLOGY:
                 iframeSrc = 'https://explore.recolnat.org/search/paleontologie/type=index';
-                title = 'Import Paleontology';
+                title = t('library.import_images.lbl_import_paleontology');
                 break;
         }
 
@@ -372,8 +369,8 @@ export default class extends Component {
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary();
-                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                    <span className="title">Import</span>
+                    }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
+                    <span className="title">{t('library.import_images.title')}</span>
                 </div>
                 <_Content>
                     <div className="vertical">
@@ -386,18 +383,14 @@ export default class extends Component {
                             <Fragment>
                                 <Container className="import-wizard">
                                     <Row>
-                                        <Col className="page-title"
-                                             sm={12} md={12} lg={12}>{this.state.jobs.length} files and their metadata
-                                            will
-                                            be
-                                            imported ({this.state.jobsCompleted}/{this.state.jobs.length})</Col>
+                                        <Col className="page-title" sm={12} md={12} lg={12}>
+                                            {t('library.import_images.lbl_number_of_files_will_be_imported', {jobs: this.state.jobs.length, jobs_completed: this.state.jobsCompleted})}
+                                        </Col>
                                     </Row>
                                     {this.state.skippedSpecimen > 0 ?
                                         <Row>
                                             <Col className='warning-message'>
-                                                {this.state.skippedSpecimen} specimen will not be imported as it
-                                                contains
-                                                multiple image references.
+                                                {t('library.import_images.lbl_specimen_will_not_be_imported', {skipped_specimen: this.state.skippedSpecimen})}
                                             </Col>
                                         </Row> : ''}
                                     <Row>
@@ -473,9 +466,8 @@ export default class extends Component {
                                                         disableButtons: true
                                                     });
                                                     this.startDownload();
-                                                }}
-                                            >
-                                                Start Import
+                                                }}>
+                                                {t('library.import_images.btn_start_import')}}
                                             </Button>
                                             &emsp;
                                             <Button size="md" color="danger" onClick={() => {
@@ -483,7 +475,7 @@ export default class extends Component {
                                             }}
                                                     disabled={this.state.disableButtons}
                                             >
-                                                Cancel
+                                                {t('global.cancel')}
                                             </Button>
                                         </Col>
                                     </Row>
@@ -496,17 +488,17 @@ export default class extends Component {
                                         }}
                                                  disabled={this.state.disableButtons}
                                         >
-                                            Cancel
+                                            {t('global.cancel')}
                                         </Button></h5>
                                     </div>
                                     <fieldset className="import-fieldset">
-                                        <legend className="import-legend">Import from Recolnat</legend>
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_from_recolnat')}</legend>
                                         <Row>
                                             <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
                                             <span
                                                 className="inline-label">Import Pictures & Metadata from{' '}</span><span
                                                 className="btn-link inline-link" color="primary">
-                                		<a title="Open the search tool into Recolnat database"
+                                		<a title={t('library.import_images.tooltip_open_the_search_tool')}
                                            onClick={() => shell.openExternal('https://explore.recolnat.org/')}>explore.recolnat.org</a>
                                 		</span>
                                             </Col>
@@ -514,7 +506,7 @@ export default class extends Component {
                                         <Row>
                                             <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
                                                 <span className="circle">1</span><span
-                                                className="inline-value">Select & export</span>
+                                                className="inline-value">{t('library.import_images.lbl_select_and_export')}</span>
                                                 <span data-tip data-for='global' className='cardTitle'>
                                                     <img alt="help icon" className="help_icon" src={HELP_ICON}/>
                                                 </span>
@@ -531,10 +523,9 @@ export default class extends Component {
                                         </Row>
                                         <Row>
                                             <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
-                                                <span className="circle">2</span><span className="inline-value">Unzip the downloaded <span
-                                                className="bolder">.zip</span> and </span>
+                                                <span className="circle">2</span><span className="inline-value">{t('library.import_images.lbl_Unzip the downloaded')}<span className="bolder">.zip</span> {t('library.import_images.lbl_and')} </span>
                                                 <Button className="btn btn-primary" color="primary"
-                                                        title="Import images into Annotate library from the database Recolnat with Explore"
+                                                        title={t('library.import_images.btn_tooltip_open_the_json_file')}
                                                         onClick={() => {
                                                             const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
                                                                 properties: ['openFile'],
@@ -549,7 +540,7 @@ export default class extends Component {
                                                 ><img src={require('./pictures/file-plus.svg')}
                                                       alt="open json file"
                                                       width={15}/>
-                                                    open the .json file
+                                                    {t('library.import_images.btn_open_the_json_file')}
                                                 </Button>
                                             </Col>
                                         </Row>
@@ -558,11 +549,11 @@ export default class extends Component {
                                     </fieldset>
                                 </Container>
                             </Fragment> : <Fragment>
-                                <div className="header_import_recolnat"> <h5>{title} specimens from Recolnat
+                                <div className="header_import_recolnat"> <h5>{t('library.import_images.lbl_specimens_from_recolnat', { title_value: title })}
                                     <Button className="btn-secondary pull-right" size="sm" onClick={() => {
                                         const iframe = document.getElementById('iframe');
                                         iframe.contentWindow.history.back()
-                                    }}>Back</Button></h5>
+                                    }}>{t('global.back')}</Button></h5>
                                 </div>
                                 <iframe id="iframe" onLoad={this._appendCss} width="100%" height="100%"
                                         style={{border: "1px", borderColor: "#dee2e6"}}
@@ -593,17 +584,17 @@ export default class extends Component {
                 importType: type
             })
         };
-
+        const { t } = this.props;
         return  <Container className="import-wizard">
             <Row>
                 <Col>
-                    <div className="header_import_recolnat"> <h5>Select mode of import from Recolant
+                    <div className="header_import_recolnat"> <h5>{t('library.import_images.lbl_select_mode_of_import_from_recolant')}
                         <Button  className="btn-secondary pull-right" size="sm"   onClick={() => {
                             this.props.goToImportWizard(encodeURIComponent(this.state.parentFolder));
                         }}
                                  disabled={this.state.disableButtons}
                         >
-                            Cancel
+                            {t('global.cancel')}
                         </Button></h5>
                     </div>
 
@@ -613,25 +604,30 @@ export default class extends Component {
                         <Row>
                             <Col  sm={3} md={3} lg={3}>
                                 <div className="import-recolnat">
-                                    <Button onClick={() => changeImportType(IMPORT_BOTANICAL)}>Search in botanical
-                                        database</Button>
+                                    <Button onClick={() => changeImportType(IMPORT_BOTANICAL)}>
+                                        {t('library.import_images.btn_search_in_botanical_database')}
+                                    </Button>
                                 </div>
                             </Col>
                             <Col  sm={3} md={3} lg={3}>
                                 <div className="import-recolnat">
-                                    <Button onClick={() => changeImportType(IMPORT_ZOOLOGY)}>Search in zoology database</Button>
+                                    <Button onClick={() => changeImportType(IMPORT_ZOOLOGY)}>
+                                        {t('library.import_images.btn_search_in_zoology_database')}
+                                    </Button>
                                 </div>
                             </Col>
                             <Col  sm={3} md={3} lg={3}>
                                 <div className="import-recolnat">
-                                    <Button onClick={() => changeImportType(IMPORT_PALEONTOLOGY)}>Search in paleontology
-                                        database</Button>
+                                    <Button onClick={() => changeImportType(IMPORT_PALEONTOLOGY)}>
+                                        {t('library.import_images.btn_search_in_paleontology_database')}
+                                    </Button>
                                 </div>
                             </Col>
                             <Col  sm={3} md={3} lg={3}>
                                 <div className="import-recolnat">
-                                    <Button onClick={() => changeImportType(IMPORT_FROM_JSON)}>Open json with search
-                                        results</Button>
+                                    <Button onClick={() => changeImportType(IMPORT_FROM_JSON)}>
+                                        {t('library.import_images.btn_open_json_with_search_results')}
+                                    </Button>
                                 </div>
                             </Col>
                         </Row>

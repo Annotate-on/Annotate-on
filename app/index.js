@@ -8,13 +8,13 @@ import Root from './containers/Root';
 import {configureStore, history} from './store/configureStore';
 import {createInitialState} from "./reducers/app";
 import {
-    fromConfigFile,
+    doInitWorkspace,
     getAllPicturesDirectoriesFlatten,
     getCacheDir,
     getProjectInfoFile,
     getThumbNailsDir,
     getUserWorkspace,
-    setConfigFilePath
+    doInitConfig
 } from "./utils/config";
 
 import './app.global.scss';
@@ -25,6 +25,10 @@ import Splash from "./components/Splash";
 import {IMAGE_STORAGE_DIR} from "./constants/constants";
 import {formatDateForFileName} from "./utils/js";
 import lodash from 'lodash';
+import './i18n';
+import i18next from "i18next";
+import {initLeaflet} from './widget/leaflet-override';
+import {convertSelectedTagsToFilter} from "./utils/tags";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -61,15 +65,16 @@ const start = new Date().getTime();
 //
 
 // // Read config file
-setConfigFilePath();
+doInitConfig();
 //
 // // Load config of workspace location.
-fromConfigFile();
+doInitWorkspace();
 
 // Callback which boot the app
 const go = () => {
+        initLeaflet();
         let initialState = createInitialState();
-
+        const { t } = i18next;
         // Load previously working state.
         const file = path.join(getCacheDir(), 'current-work.json');
 
@@ -86,8 +91,14 @@ const go = () => {
                 const taxonomyInstance = tmpState.app.taxonomyInstance || {};
                 for(const tabName in tmpState.app.open_tabs) {
                     const tab = tmpState.app.open_tabs[tabName];
-                    if('taxonomyInstance' in tab)
+                    if('taxonomyInstance' in tab) {
                         lodash.extendWith(taxonomyInstance, tab.taxonomyInstance)
+                    }
+                    if(!tab.selected_filter && tab.selected_tags) {
+                        tab.selected_filter = convertSelectedTagsToFilter(tab.selected_tags, tab.tags_selection_mode);
+                        tab.selected_tags = null;
+                        tab.tags_selection_mode = null;
+                    }
                 }
                 tmpState.app.taxonomyInstance = taxonomyInstance;
 
@@ -106,7 +117,6 @@ const go = () => {
                         correctStructure = false;
                     }
                 }
-
                 if(correctStructure) {
                     initialState = tmpState;
                     for (const sha1 in initialState.app.pictures) {
@@ -119,13 +129,13 @@ const go = () => {
                     fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.old`)
                     remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                         type: 'warning',
-                        message: 'Selected workspace has configuration from older version. Opening project without previous work.',
+                        message: t('global.alert_selected_workspace_has_configuration_from_older_version')
                     });
                 }
             } catch (e) {
                 remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'error',
-                    message: 'Selected workspace state is corrupted. Opening project without previous work.',
+                    message: t('global.alert_selected_workspace_state_is_corrupted'),
                 });
                 // Save corrupted work and create empty state.
                 fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.corrupted`)

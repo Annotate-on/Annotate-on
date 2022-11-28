@@ -7,8 +7,6 @@ import {
     SORT_ALPHABETIC_DESC,
     SORT_DATE_ASC,
     SORT_DATE_DESC,
-    TAGS_SELECTION_MODE_AND,
-    TAGS_SELECTION_MODE_OR
 } from '../constants/constants';
 import {Col, Collapse, Container, Form, Input, Row} from 'reactstrap';
 import classnames from "classnames";
@@ -17,6 +15,7 @@ import {ee, EVENT_SHOW_ALERT} from "../utils/library";
 import {TYPE_CATEGORY, TYPE_TAG} from "./event/Constants";
 import {containsOnlyWhiteSpace} from "./tags/tagUtils";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
+import TagsFilter from "./TagsFilter";
 
 const _Root = styled.div`
   height: 100%;
@@ -45,13 +44,12 @@ export default class extends Component {
 
         this.toggle = this.toggle.bind(this);
 
-        let selectedTags = [], tagsSelectionMode = TAGS_SELECTION_MODE_OR, sortDirection = SORT_ALPHABETIC_DESC;
+        let sortDirection = SORT_ALPHABETIC_DESC, selectedFilter;
         // If this component is created from tab, tabName will no be empty.
         // We are going to use selected tags list from proper source.
         if (this.props.tabName) {
-            selectedTags = this.props.tabData[this.props.tabName].selected_tags;
-            tagsSelectionMode = this.props.tabData[this.props.tabName].tags_selection_mode;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
+            selectedFilter = this.props.tabData[this.props.tabName].selected_filter;
         }
 
         const sortedTags = this._sortTags([...this.props.tags], sortDirection);
@@ -60,12 +58,12 @@ export default class extends Component {
             collapse: true,
             newTagName: '',
             draggableTags: [],
-            selectedTags: selectedTags,
-            tagsSelectionMode: tagsSelectionMode,
+            selectedTags: [],
             sortedTags: sortedTags,
             showDialog: '',
             sortDirection,
-            tagsCount: this._countTags(props.tags)
+            tagsCount: this._countTags(props.tags),
+            selectedFilter
         }
     }
 
@@ -74,17 +72,19 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        let selectedTags, tagsSelectionMode, sortDirection;
+        console.log("componentWillReceiveProps", nextProps)
+        let selectedTags, sortDirection, selectedFilter;
         if (this.props.tabName) {
-            selectedTags = nextProps.tab.selected_tags;
-            tagsSelectionMode = nextProps.tab.tags_selection_mode;
+            selectedTags = [];
+            selectedFilter = nextProps.tab.selected_filter;
             sortDirection = this.props.tabData[this.props.tabName].sortDirection ? this.props.tabData[this.props.tabName].sortDirection : SORT_ALPHABETIC_DESC;
         } else {
             selectedTags = nextProps.selectedTags;
             sortDirection = SORT_ALPHABETIC_DESC;
         }
         this.setState({
-            selectedTags, tagsSelectionMode,
+            selectedTags,
+            selectedFilter,
             sortedTags: this._sortTags([...nextProps.tags], sortDirection),
             sortDirection,
             tagsCount: this._countTags(nextProps.tags)
@@ -145,9 +145,9 @@ export default class extends Component {
     };
 
     _onDrop = (e, tagName , type) => {
-
+        const { t } = this.props;
         if (type !== TYPE_CATEGORY){
-            alert('categories and tags can only be added to another category');
+            alert(t('tags.alert_must_be_added_to_category'));
             return  false;
         }
 
@@ -173,6 +173,7 @@ export default class extends Component {
     };
 
     _createTagsList = (_) => {
+        const { t } = this.props;
         const isTag = _.type !== TYPE_CATEGORY;
         const selected = this.state.selectedTags.indexOf(_.name) !== -1;
         const numberOfTaggedPics = this.props.picturesByTag.hasOwnProperty(_.name) ? this.props.picturesByTag[_.name].length : 0;
@@ -200,7 +201,6 @@ export default class extends Component {
         const html = (
             <div className={classnames('tag', {'multi-selected-tag': dndSelected})}   key={`tag_${_.name}`}>
                 <div className='tag-col'
-
                      onMouseOver={e => {
                          e.stopPropagation();
                          showModif = _.name;
@@ -217,7 +217,7 @@ export default class extends Component {
                          if (enableClicks)
                              this.handleClickOnTag(event, _.name , _.type)
                          else
-                             ee.emit(EVENT_SHOW_ALERT, 'You cannot change selection when manual order is active!')
+                             ee.emit(EVENT_SHOW_ALERT, t('tags.alert_cannot_change_selection_when_manual_order'));
                      }}
                      draggable="true"
                      onDragStart={e => this._onDragStart(e, _.name)}
@@ -231,7 +231,6 @@ export default class extends Component {
                          e.stopPropagation();
                          this._onDrop(e, _.name , _.type)
                      }}
-
                 >
                     {mergeActive ?
                         <img className='merge_icon' src={MERGE_ICON}
@@ -278,10 +277,11 @@ export default class extends Component {
     };
 
     handleEditTagSubmit = event => {
-        console.log("Edit Form submitted....%o", event)
+        console.log("Edit Form submitted....%o", event);
+        const { t } = this.props;
         event.preventDefault();
         if (containsOnlyWhiteSpace(this.state.newEditTagName)){
-            alert('name only contains whitespace (ie. spaces, tabs or line breaks)')
+            alert(t('alert_name_is_whitespace'));
             return false;
         }
         const newName = this.state.newEditTagName;
@@ -323,35 +323,33 @@ export default class extends Component {
                 console.log('category selected do nothing..')
                 return false;
             }
-            selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
+            if(this.props.isImport) {
+                selected ? this.props.unselectTag(tagName, this.props.tabName) : this.props.selectTag(tagName, false, this.props.tabName);
+            } else {
+                this.props.addTagInFilter(tagName, false, this.props.tabName)
+            }
         }
     };
 
-    click_tagsSelectionMode = mode => {
-        this.setState({tagsSelectionMode: mode});
-        this.props.setTagsSelectionMode(mode, this.props.tabName);
-    };
-
     render() {
+        const { t } = this.props;
         let selectedTags;
-        if (this.props.tab) {
-            selectedTags = this.props.tab.selected_tags.length;
-        } else {
+        if (this.props.selectedTags && this.props.selectedTags.length > 0) {
             selectedTags = this.props.selectedTags.length;
         }
         return (
             <_Root>
                 <Container className="bst rcn_tags">
                     <Row className="tags-header">
-                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> Keywords
-                            ({selectedTags}/{this.state.tagsCount})
+                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')}
+                            {selectedTags ? ` (${selectedTags}/${this.state.tagsCount})` : ` (${this.state.tagsCount})`}
                             <img className="toogleCollapse" onClick={this.toggle}
                                  src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))} alt="arrow-up-down"/>
                         </Col>
                         <Col
                             className={classnames('tags-actions')}
                             md={5} lg={5}>
-                            <span title="Sort tags"
+                            <span title={t('tags.tooltip_sort_tags')}
                                   className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "sort-icon", {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
                                   onClick={_ => {
                                       if (this.state.showDialog === SORT_DIALOG)
@@ -359,7 +357,7 @@ export default class extends Component {
                                       else
                                           this.setState({showDialog: SORT_DIALOG, mergeTags: false});
                                   }}/>
-                            <span title="Search tags"
+                            <span title={t('tags.tooltip_search_tags')}
                                   className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "search-icon", {'search-selected-icon': this.state.showDialog === SEARCH_DIALOG})}
                                   onClick={_ => {
                                       if (this.state.showDialog === SEARCH_DIALOG)
@@ -374,7 +372,7 @@ export default class extends Component {
                                         onClick={_ => {
                                             this._handleOnSortChange(SORT_ALPHABETIC_DESC);
                                             this.setState({showDialog: '', mergeTags: false});
-                                        }}>Alphabetical
+                                        }}>{t('popup_sort.alphabetical')}
                                         <img alt="selected icon" src={SELECTED_ICON}/>
                                     </div>
                                     <div
@@ -382,7 +380,7 @@ export default class extends Component {
                                         onClick={_ => {
                                             this._handleOnSortChange(SORT_ALPHABETIC_ASC);
                                             this.setState({showDialog: '', mergeTags: false});
-                                        }}>Alphabetical inverted
+                                        }}>{t('popup_sort.alphabetical_inverted')}
                                         <img alt="selected icon" src={SELECTED_ICON}/>
                                     </div>
                                     <div
@@ -390,7 +388,7 @@ export default class extends Component {
                                         onClick={_ => {
                                             this._handleOnSortChange(SORT_DATE_DESC);
                                             this.setState({showDialog: '', mergeTags: false});
-                                        }}>Newest to oldest
+                                        }}>{t('popup_sort.newest_to_oldest')}
                                         <img alt="selected icon" src={SELECTED_ICON}/>
                                     </div>
                                     <div
@@ -398,7 +396,7 @@ export default class extends Component {
                                         onClick={_ => {
                                             this._handleOnSortChange(SORT_DATE_ASC);
                                             this.setState({showDialog: '', mergeTags: false});
-                                        }}>Oldest to newest
+                                        }}>{t('popup_sort.oldest_to_newest')}
                                         <img alt="selected icon" src={SELECTED_ICON}/>
                                     </div>
                                 </div> : ''
@@ -410,17 +408,17 @@ export default class extends Component {
                             <Row>
                                 <Col className="action-panel">
                                     {this.state.showDialog === MERGE_DIALOG ?
-                                        <span>Drag and drop tags to merge them.</span> : ''}
+                                        <span>{t('tags.lbl_drag_and_drop_tags_to_merge_them')}</span> : ''}
 
                                     {this.state.showDialog === SEARCH_DIALOG ?
-                                        <Input autoFocus placeholder="Search" type="text"
+                                        <Input autoFocus placeholder={t('global.search')} type="text"
                                                value={this.state.searchTag || ''}
                                                onChange={e => this.setState({searchTag: e.target.value})}/> : ''
                                     }
 
                                     {this.state.showDialog === ADD_DIALOG ?
                                         <Form onSubmit={this.handleCreateNewTagSubmit}>
-                                            <Input autoFocus placeholder="Enter tag name and hit 'Enter'"
+                                            <Input autoFocus placeholder={t('tags.textbox_placeholder_tag_name')}
                                                    type="text"
                                                    name="name"
                                                    value={this.state.newTagName}
@@ -432,72 +430,78 @@ export default class extends Component {
                                 </Col>
                             </Row> : ''
                         }
-                        <Row
-                            className={classnames({'not_visible': this.props.autoSelectNew})}>
-                            <Col md={1} lg={1}>
-                                <Input type="checkbox"
-                                       name="name"
-                                       checked={this.state.tagsSelectionMode === TAGS_SELECTION_MODE_AND}
-                                       onChange={() => {
-                                           if (this.state.tagsSelectionMode === TAGS_SELECTION_MODE_OR) {
-                                               this.click_tagsSelectionMode(TAGS_SELECTION_MODE_AND);
-                                           } else {
-                                               this.click_tagsSelectionMode(TAGS_SELECTION_MODE_OR);
-                                           }
-                                       }}
-                                />
-                            </Col>
-                            <Col md={10} lg={10} className="tagCheckBoxLabel">Show resources with all selected keywords.
+                        <Row>
+                            <Col>
+                                <div className={classnames({'not_visible': this.props.autoSelectNew})}>
+                                    <TagsFilter filter={this.state.selectedFilter}
+                                                onDeleteExpression={(id) => {
+                                                    this._handleDeleteTaxExpression(id)
+                                                }}
+
+                                                onCreateExpression={() => {
+                                                    this._handleCreateTaxExpression()
+                                                }}
+
+                                                onUpdateTagExpressionOperator={(id, value) => {
+                                                    this._handleUpdateTagExpressionOperator(id, value)
+                                                }}
+                                                onCancelFilter={ () => {
+                                                    this._handleResetFilter()
+                                                }}
+                                    >
+                                    </TagsFilter>
+                                </div>
+
+                                <div className="tags" id="tagRoot" draggable={true}
+                                     onDragOver={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         if (e.target.classList.contains('tags'))
+                                             e.target.classList.add('root-hover');
+                                     }}
+
+                                     onDragEnd={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         document.getElementById('tagRoot').classList.remove('root-hover');
+                                     }}
+
+                                     onDragExit={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         e.target.classList.remove('root-hover');
+                                     }}
+
+                                     onDrop={e => {
+                                         e.preventDefault();
+                                         e.stopPropagation();
+                                         document.getElementById('tagRoot').classList.remove('root-hover');
+                                         this._onDrop(e, "ROOT");
+                                     }}>
+                                    {this.state.sortedTags.map(_ => {
+                                        const response = this._renderTags(_);
+                                        return response && response.html;
+                                    })}
+                                </div>
+                                <div>
+                                    {!this.props.isImport ?
+                                        <ContextMenu id="tag_context_menu">
+                                            <MenuItem data={{action: 'open'}} onClick={this._handleContextMenu}>
+                                                <img alt="open" src={OPEN}/> {t('tags.context_menu_open_selection_in_new_tab')}
+                                            </MenuItem>
+                                        </ContextMenu> : ''}
+                                </div>
+
                             </Col>
                         </Row>
-
-                        <div className="tags" id="tagRoot" draggable={true}
-                             onDragOver={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 if (e.target.classList.contains('tags'))
-                                     e.target.classList.add('root-hover');
-                             }}
-
-                             onDragEnd={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 document.getElementById('tagRoot').classList.remove('root-hover');
-                             }}
-
-                             onDragExit={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 e.target.classList.remove('root-hover');
-                             }}
-
-                             onDrop={e => {
-                                 e.preventDefault();
-                                 e.stopPropagation();
-                                 document.getElementById('tagRoot').classList.remove('root-hover');
-                                 this._onDrop(e, "ROOT");
-                             }}>
-                            {this.state.sortedTags.map(_ => {
-                                const response = this._renderTags(_);
-                                return response && response.html;
-                            })}
-                        </div>
-                        <div>
-                            {!this.props.isImport ?
-                                <ContextMenu id="tag_context_menu">
-                                    <MenuItem data={{action: 'open'}} onClick={this._handleContextMenu}>
-                                        <img alt="open" src={OPEN}/> Open selection in new tab
-                                    </MenuItem>
-                                </ContextMenu> : ''}
-                        </div>
                     </Collapse>
                 </Container>
             </_Root>
-        )
-            ;
+        );
     }
 
     _handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'edit':
                 this.setState({
@@ -509,9 +513,9 @@ export default class extends Component {
                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
-                    message: `Tag: "${data.tagName}"`,
+                    message: t('tags.alert_delete_tag_message', {tag: data.tagName}),
                     cancelId: 1,
-                    detail: `Are you sure you want to delete it?`
+                    detail: t('global.delete_confirmation')
                 });
                 if (result === 0) this.props.deleteTag(data.tagName);
                 break;
@@ -521,12 +525,32 @@ export default class extends Component {
         }
     };
 
+    _handleUpdateTagExpressionOperator = (id, value) => {
+        console.log("_handleUpdateTagExpressionOperator", id, value, this.props.tabName);
+        this.props.updateTagExpressionOperator(id, value, this.props.tabName);
+    };
+
+    _handleDeleteTaxExpression = (id) => {
+        console.log("_handleDeleteTaxExpression", id);
+        this.props.deleteTagExpression(id, this.props.tabName);
+    };
+
+    _handleCreateTaxExpression = () => {
+        console.log("_handleCreateTaxExpression");
+        this.props.createTagExpression(this.props.tabName);
+    };
+
+    _handleResetFilter = () => {
+        console.log("_handleResetFilter");
+        this.props.deleteTagFilter(this.props.tabName);
+    };
+
     _renderTags = (_) => {
         if (this.state.searchTag) {
             if (!(_.name.toLowerCase().includes(this.state.searchTag.toLowerCase()) ||
                 (_.children && this._tagExist(_.children, this.state.searchTag.toLowerCase()))
             )) {
-                return
+                return;
             }
         }
         if (this.state.editTag === _.name) {

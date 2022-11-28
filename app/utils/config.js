@@ -12,6 +12,11 @@ import os from 'os';
 import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
+import {changeLanguage} from "i18next";
+import {getDefaultLanguage} from "../i18n";
+import i18next from "i18next";
+import {convertSelectedTagsToFilter} from "./tags";
+const {ipcRenderer} = require('electron')
 
 let config;
 // path to global app config
@@ -32,7 +37,6 @@ if (process.env.NODE_ENV === 'production') {
     installatio_root_dir = process.env.INIT_CWD;
 }
 
-
 export const WORK_SPACE_DESCRIPTOR = 'workspace.json';
 export const PROJECT_INFO_DESCRIPTOR = 'project-info.json';
 
@@ -50,6 +54,12 @@ const now = formatDate(new Date());
 export const getYaml = () => {
     return configYaml(config_file_path);
 }
+
+ipcRenderer.on('app-close', _ => {
+    // alert("on close app");
+    unlockProject();
+    ipcRenderer.send('closed');
+});
 
 /**
  * Rename project.
@@ -95,7 +105,6 @@ export const deleteWorkspace = (projectPath) => {
  * @returns {{}}
  */
 export const getProjectInfo = (project_path) => {
-
     let project = {
         label: '',
         date: '',
@@ -115,7 +124,7 @@ export const getProjectInfo = (project_path) => {
 };
 
 /**
- * Create empty project info.
+ * Croeate empty project inf.
  * @param label
  */
 export const setProjectInfo = (label) => {
@@ -134,7 +143,7 @@ export const setProjectInfo = (label) => {
     const path_to_project_info = path.join(config.workspace, PROJECT_INFO_DESCRIPTOR);
 
     if (fs.existsSync(path_to_project_info)) {
-        console.log('project info file already exists no need to update');
+        console.log(' project info file already exists no need to update');
     } else {
         fs.writeFileSync(path_to_project_info, JSON.stringify(project));
     }
@@ -152,8 +161,40 @@ export const unlockProject = () => {
     if (project.locked === id) {
         delete project.locked;
         delete project.lockedBy;
+        delete project.lockedOn;
         fs.writeFileSync(getProjectInfoFile(), JSON.stringify({...project, path: undefined}));
     }
+}
+
+export const markProjectAsShared = (wsPath) => {
+    if(!wsPath) return;
+    console.log(`Mark project on '${wsPath}' as shared`);
+    const projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR);
+    if (fs.existsSync(projectPath)) {
+        const project = JSON.parse(fs.readFileSync(projectPath));
+        project.shared = true;
+        fs.writeFileSync(projectPath, JSON.stringify({...project, path: undefined}));
+    } else {
+        console.log('Project info doesn\'t exist');
+    }
+}
+
+export const forceUnlockProject = (wsPath) => {
+    console.log(`Force unlock file with user  `, os.userInfo())
+    console.log(`wsPath`, wsPath)
+    let project;
+    let projectPath;
+    if(wsPath) {
+        projectPath = path.join(wsPath, PROJECT_INFO_DESCRIPTOR);
+    } else {
+        projectPath = getProjectInfoFile();
+    }
+    console.log(`projectPath`, projectPath)
+    project = JSON.parse(fs.readFileSync(projectPath));
+    delete project.locked;
+    delete project.lockedBy;
+    delete project.lockedOn;
+    fs.writeFileSync(projectPath, JSON.stringify({...project, path: undefined}));
 }
 
 export const lockProject = (wsPath) => {
@@ -162,6 +203,7 @@ export const lockProject = (wsPath) => {
     if (!('locked' in projectToActivate)) {
         projectToActivate.locked = crypto.createHash('sha1').update(os.userInfo().username).digest('hex');
         projectToActivate.lockedBy = os.userInfo().username;
+        projectToActivate.lockedOn = os.hostname();
         fs.writeFileSync(projectPath, JSON.stringify({
             ...projectToActivate,
             path: undefined
@@ -223,7 +265,8 @@ export const addProjectToWorkSpace = (_, toggleActive) => {
  * @param label
  */
 export const setWorkspace = (_, label) => {
-
+    console.log("setWorkspace")
+    const { t } = i18next;
     addProjectToWorkSpace(_, true);
     setProjectInfo(label);
 
@@ -243,8 +286,14 @@ export const setWorkspace = (_, label) => {
             const taxonomyInstance = tmpState.taxonomyInstance || {};
             for (const tabName in tmpState.open_tabs) {
                 const tab = tmpState.open_tabs[tabName];
-                if ('taxonomyInstance' in tab)
+                if ('taxonomyInstance' in tab) {
                     lodash.extendWith(taxonomyInstance, tab.taxonomyInstance)
+                }
+                if(!tab.selected_filter && tab.selected_tags) {
+                    tab.selected_filter = convertSelectedTagsToFilter(tab.selected_tags, tab.tags_selection_mode);
+                    tab.selected_tags = null;
+                    tab.tags_selection_mode = null;
+                }
             }
             tmpState.taxonomyInstance = taxonomyInstance;
 
@@ -271,14 +320,14 @@ export const setWorkspace = (_, label) => {
                 fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.old`);
                 remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                     type: 'warning',
-                    message: 'Selected workspace has configuration from older version. Opening project without previous work.',
+                    message: t('projects.alert_selected_workspace_has_configuration_from_older_version')
                 });
             }
         } catch (e) {
             console.log(e)
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'error',
-                message: 'Selected workspace state is corrupted. Opening project without previous work.',
+                message: t('projects.alert_selected_workspace_state_is_corrupted'),
             });
             // Save corrupted work and create empty state.
             fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.corrupted`)
@@ -291,77 +340,30 @@ export const setWorkspace = (_, label) => {
     }
 };
 
-const SetBackupProject = () => {
+const setBackupProject = () => {
     let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
-    config = {
-        workspace: path.join(installatio_root_dir, 'demo-workspace'),
-        projects: [{path: demoProjectPath, active: true}]
-    };
+    if(!config) {
+        config = {}
+    }
+    if(!config.projects) {
+        config.projects = []
+    }
+    const even = (element) => element.path === demoProjectPath;
+    if (config.projects.some(even)) {
+        config.projects.forEach(p => {
+            p.active = p.path === demoProjectPath;
+        })
+    } else {
+        config.projects.push({path: demoProjectPath, active: true});
+    }
+    config.workspace = demoProjectPath;
     yaml.sync(config_file_path, config);
+    lockProject(config.workspace);
 }
 
 export const getUserWorkspace = () => config.workspace;
 
-export const setConfigFilePath = () => {
-
-    const old_config_file_path = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
-    config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
-
-
-    console.log(config_file_path, fs.existsSync(config_file_path));
-    if (!fs.existsSync(config_file_path)) {
-        let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
-        config = {
-            workspace: path.join(installatio_root_dir, 'demo-workspace'),
-            projects: [{path: demoProjectPath, active: true}]
-        };
-        yaml.sync(config_file_path, config);
-    } else {
-        try {
-            const readYml = configYaml(config_file_path);
-            if (!readYml.workspace || !fs.existsSync(readYml.workspace)) {
-                const projects = readYml.projects;
-                if (projects === undefined || projects.length <= 1) {
-                    SetBackupProject();
-                } else {
-                    let checkedProjects = [];
-                    let workspacePath = null;
-                    projects.forEach(project => {
-                        console.log(fs.existsSync(path.join(project.path, 'project-info.json')));
-                        if (fs.existsSync(path.join(project.path, 'project-info.json'))) {
-                            if (workspacePath === null) {
-                                project.active = true;
-                                workspacePath = project.path;
-                            } else {
-                                project.active = false;
-                            }
-                            checkedProjects.push(project);
-                        } else {
-                            project.corrupted = true;
-                            checkedProjects.push(project);
-                        }
-                    })
-                    console.log('checked projects', checkedProjects);
-                    console.log('workspace', workspacePath)
-                    if (workspacePath !== null && checkedProjects.length > 0) {
-                        config = {
-                            workspace: workspacePath,
-                            projects: checkedProjects
-                        };
-                        yaml.sync(config_file_path, config);
-                    } else {
-                        SetBackupProject();
-                    }
-                }
-            }
-        } catch (e) {
-            console.log(e.message);
-            alert('fatal error while reading yml file , restoring yml file to init state.')
-            SetBackupProject();
-        }
-    }
-
-    // check exiftool config file
+const checkExiftoolConfig = () => {
     const exifConf = path.join(remote.app.getPath('home'), '.ExifTool_config');
     if (process.env.NODE_ENV === 'production') {
         const newExif = fs.readFileSync(path.join(installatio_root_dir, '.ExifTool_config'));
@@ -370,22 +372,26 @@ export const setConfigFilePath = () => {
     if (!fs.existsSync(exifConf)) {
         fs.copySync(path.join(installatio_root_dir, '.ExifTool_config'), exifConf);
     }
+}
 
+const checkOldConfig = () => {
+    const { t } = i18next;
+    const old_config_file_path = path.join(remote.app.getPath('home'), 'collaboratoire2-config.yml');
     if (fs.existsSync(old_config_file_path)) {
         let detail = '';
-        const message = 'Found old config file "' + old_config_file_path + '".';
+        const message = t('projects.alert_title_projects_created_with_old_version_of_can_not_be_loaded', {file_path: old_config_file_path});
         //     const message = 'File "'+old_config_file_path+'" contains paths to projects created with version of Annotate <1.7.0 that can not be loaded.'
         const readPreviousYml = configYaml(old_config_file_path);
         if (readPreviousYml.hasOwnProperty('projects')) {
             const projects = readPreviousYml.projects;
-            detail = 'Projects created with version of Annotate <1.7.0 can not be loaded.' + "\n" + 'Paths to projects:' + "\n\n";
+            detail = t('projects.alert_projects_created_with_old_version_of_can_not_be_loaded');
             projects.forEach(project => {
                 detail += project.path + "\n"
             });
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
                 message: message,
-                buttons: ['Continue', 'Delete this file for me'],
+                buttons: [t('global.continue'), t('global.delete_this_file_for_me')],
                 detail: detail,
                 cancelId: 1
             });
@@ -400,38 +406,198 @@ export const setConfigFilePath = () => {
             }
         }
     }
+}
+
+const validateWorkspace = () => {
+    console.log('validateWorkspace workspace = [' + config.workspace +']')
+    if(!config.workspace) return false;
+    if(!fs.existsSync(config.workspace)) return false;
+    for(let project of config.projects) {
+        if(project.path === config.workspace && !project.corrupted) return true;
+    }
+    return false;
+}
+
+export const checkIfProjectsAreCorrupted = () => {
+    if(!config.projects) return;
+    config.projects.forEach(project => {
+        const corrupted = !fs.existsSync(path.join(project.path, 'project-info.json'));
+        if (corrupted) {
+            project.corrupted = true;
+        } else {
+            delete project.corrupted;
+        }
+    })
+    yaml.sync(config_file_path, config);
+}
+
+export const doInitConfig = () => {
+    const { t } = i18next;
+    const defaultLanguage = getDefaultLanguage();
+    console.log(`default lang = [${defaultLanguage}]`)
+
+    // alert('i18n ' + t('global.save'));
+
+    //init default
+    config = {
+        projects : [],
+        language:defaultLanguage
+    }
+
+    // check exiftool config file
+    checkExiftoolConfig();
+
+    // check old config
+    checkOldConfig();
+
+    config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
+    console.log(config_file_path, fs.existsSync(config_file_path));
+
+    // check if configuration exist
+    if (!fs.existsSync(config_file_path)) {
+        setBackupProject();
+        return;
+    }
+
+    try {
+        config = configYaml(config_file_path);
+
+        //check language
+        if(config.language) {
+            changeLanguage(config.language);
+        } else {
+            updateSelectedLanguage(defaultLanguage);
+        }
+
+        // check if project empty
+        if (config.projects === undefined || config.projects.length < 1) {
+            setBackupProject();
+            return;
+        }
+
+        //check if there are corrupted projects
+        checkIfProjectsAreCorrupted();
+
+        let switchedToProject;
+        // check if workspace is valid
+
+        if (!validateWorkspace()) {
+            console.log(" current workspace [" + config.workspace + "] is not valid" )
+            let workspacePath = null;
+            config.projects.forEach(project => {
+                project.active = false;
+                if (workspacePath === null && !project.corrupted && fs.existsSync(path.join(project.path, 'project-info.json'))) {
+                    project.active = true;
+                    workspacePath = project.path;
+                    switchedToProject = project;
+                }
+            })
+            console.log('switch to workspace', workspacePath)
+            if (workspacePath !== null) {
+                config.workspace = workspacePath;
+                yaml.sync(config_file_path, config);
+                lockProject(config.workspace);
+            } else {
+                console.log("there is no valid projects, switch to demo workspace" )
+                setBackupProject();
+                return;
+            }
+        } else {
+            console.log("current workspace [" + config.workspace + "] is valid" )
+        }
+
+        // check if project is locked
+        const path_to_project = path.join(config.workspace, PROJECT_INFO_DESCRIPTOR);
+        console.log('path_to_projec [' + path_to_project +"]")
+        const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
+        console.log(loadedProject)
+
+        // if project is not locked then lock it
+        if(probeLockedProject(loadedProject)) {
+            console.log(' project is not locked');
+            lockProject(config.workspace);
+            return;
+        }
+
+        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            type: 'question',
+            buttons: ['Yes', 'No'],
+            message: t('global.locked'),
+            cancelId: 1,
+            detail: t('projects.alert_confirmation_unlock_project', {user: loadedProject.lockedBy, machine: loadedProject.lockedOn})
+        });
+
+        // user wants to unlock project
+        if(!result) {
+            forceUnlockProject(config.workspace);
+            lockProject(config.workspace);
+            return;
+        }
+
+        // user doesn't want to unlock project, then switch to other unlocked and not corrupted project
+        let workspacePath = null;
+        config.projects.forEach(project => {
+            project.active = false;
+            if (workspacePath === null) {
+                console.log('project.path ' + project.path);
+                if(project.path !== path_to_project && !project.corrupted) {
+                    const projectToCheck = JSON.parse(fs.readFileSync(path.join(project.path, PROJECT_INFO_DESCRIPTOR)));
+                    console.log(projectToCheck);
+                    if(!projectToCheck.locked) {
+                        project.active = true;
+                        workspacePath = project.path;
+                        switchedToProject = project;
+                    }
+                }
+            }
+        })
+        console.log('workspace', workspacePath)
+        if (workspacePath !== null) {
+            config.workspace = workspacePath;
+            yaml.sync(config_file_path, config);
+            lockProject(config.workspace);
+        } else {
+            console.log(' There is no project to switch, go with demo!');
+            setBackupProject();
+        }
+        remote.dialog.showMessageBox({
+            type: 'info',
+            detail: t('projects.alert_workspace_will_be_switched_to', {workspace: config.workspace}),
+            message: t('global.locked'),
+            buttons: ['OK'],
+            cancelId: 1
+        });
+    } catch (e) {
+        console.error(e);
+        setBackupProject();
+        remote.dialog.showMessageBox({
+            type: 'error',
+            detail: t('projects.alert_fatal_error_while_init_config', {workspace: config.workspace}),
+            message: t('global.locked'),
+            buttons: ['OK'],
+            cancelId: 1
+        });
+    }
 };
 
 /**
  *  Init basic config. Read existing workspace location or init location for the first time.
  */
-export const fromConfigFile = () => {
+export const doInitWorkspace = () => {
     // Default workspace location.
     const USER_DATA_DIR = path.join(installatio_root_dir, 'demo-workspace');
     console.log(USER_DATA_DIR);
     try {
-        config = configYaml(config_file_path);
-        if (!config.hasOwnProperty('workspace')) {
-            fs.ensureDirSync(USER_DATA_DIR);
-            config.workspace = USER_DATA_DIR;
-        }
-        if (!config.workspace) {
-            fs.ensureDirSync(USER_DATA_DIR);
-            config.workspace = USER_DATA_DIR;
-        }
-        initWorkSpace()
+        initWorkSpace();
     } catch (e) {
-        fs.ensureDirSync(USER_DATA_DIR);
-        config = {workspace: USER_DATA_DIR};
+        console.error(e)
     }
-
 };
 
 /**
  * Check if necessary configuration directories exist and create all structure is workspace was empty.
  */
 const initWorkSpace = () => {
-
     const wsDescriptorPath = path.join(config.workspace, WORK_SPACE_DESCRIPTOR);
     //project page disable default workspace
     ws_descriptor = [];
@@ -742,6 +908,30 @@ export const importResources = (resources, parent) => {
 };
 
 /**
+ * Import clipboard resource into parent folder inside workspace.
+ * @param resources
+ * @param parent
+ * @returns {Promise<unknown>}
+ */
+export const importClipboardResource = (resources, parent, fileName) => {
+    return new Promise((resolve, reject) => {
+        const destFile = path.join(path.join(config.workspace, IMAGE_STORAGE_DIR, parent), `${fileName}.png`);
+
+        if (fs.existsSync(destFile)) {
+            reject("Duplicate file");
+        } else {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                fs.writeFileSync(destFile, Buffer.from(event.target.result));
+                toConfigFileWithoutRefresh();
+                resolve([destFile]);
+            }
+            reader.readAsArrayBuffer(resources);
+        }
+    });
+};
+
+/**
  * Returns tree structure of workspace folders.
  * @returns {[]|*[]}
  */
@@ -962,3 +1152,17 @@ export const updateChildrenPath = (children, replacePath, withPath) => {
 export const renameFolder = (oldPath, newPath) => {
     fs.renameSync(path.join(config.workspace, IMAGE_STORAGE_DIR, oldPath), path.join(config.workspace, IMAGE_STORAGE_DIR, newPath));
 };
+
+/**
+ * Update information about chosen language
+ * @param projectPath
+ */
+export const updateSelectedLanguage = (lang) => {
+    console.log("updateSelectedLanguage lang " + lang)
+    // const readYml = configYaml(config_file_path);
+    changeLanguage(lang);
+    config.language = lang;
+    yaml.sync(config_file_path, config);
+};
+
+

@@ -46,17 +46,18 @@ export default class extends Component {
     }
 
     render() {
+        const { t } = this.props;
         return (
             <div>
                 <Modal isOpen={this.state.openModal} className="myCustomModal" toggle={this._toggle} contentClassName="custom-modal-style" wrapClassName="bst rcn_inspector pick-tag"
                        scrollable={true}
                        autoFocus={false}>
-                    <ModalHeader toggle={this._toggle}>Pick a Keyword</ModalHeader>
+                    <ModalHeader toggle={this._toggle}>{t('inspector.pick_tag.dialog_title_pick_a_keyword')}</ModalHeader>
                     <ModalBody>
                         <TagManager pickATag={true} isModalOrTab={true} isModalView={true} onTagSelected={this.props.onTagSelected}/>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="secondary" onClick={this._toggle}>Close</Button>
+                        <Button color="secondary" onClick={this._toggle}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
             </div>
@@ -84,6 +85,7 @@ export default class extends Component {
     };
 
     _renderTags = (tags) => {
+        const { t } = this.props;
         let key = 0;
         return tags.map(_ => {
             return (<Fragment key={`pick_tag_${key++}_`}>
@@ -112,9 +114,9 @@ export default class extends Component {
                                   const result = remote.dialog.showMessageBox({
                                       type: 'question',
                                       buttons: ['Yes', 'No'],
-                                      message: `Tag: "${_.name}"`,
+                                      message: t('tags.alert_delete_tag_message', {tag: _.name}),
                                       cancelId: 1,
-                                      detail: `Are you sure you want to delete it?`
+                                      detail: t('global.delete_confirmation')
                                   });
                                   if (result === 0) this.props.deleteTag(_.name);
                               }}/>
@@ -125,9 +127,10 @@ export default class extends Component {
     };
 
     _saveTag = () => {
+        const { t } = this.props;
         const tagName = this.state.newTagName;
         if (tagName.length === 0) {
-            remote.dialog.showErrorBox('Error', 'Enter tag name!');
+            remote.dialog.showErrorBox(t('global.error'), t('inspector.pick_tag.enter_tag_name_message'));
             return;
         }
         if (this.state.editTag === false)

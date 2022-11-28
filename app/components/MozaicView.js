@@ -9,11 +9,13 @@ import ToggleButton from 'react-toggle-button'
 import Inspector from "../containers/Inspector";
 import {remote} from "electron";
 import lodash from "lodash";
-import {MANUAL_ORDER, RESOURCE_TYPE_EVENT} from "../constants/constants";
+import {MANUAL_ORDER, MAP_VIEW, RESOURCE_TYPE_EVENT} from "../constants/constants";
 import MozaicPlayer from "./MozaicPlayer";
+import MAP from "./pictures/map-location-dot-solid.svg";
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -44,13 +46,14 @@ export default class extends PureComponent {
 
     _startManualOrder = (lock) => {
         let order = undefined;
+        const { t } = this.props;
         if (lock) {
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
-                message: `Start manual order`,
+                message: t('library.mozaic_view.alert_start_manual_order_message'),
                 cancelId: 1,
-                detail: `Do you want to reuse the previously saved classification?`
+                detail: t('library.mozaic_view.alert_start_manual_order_confirmation')
             });
             if (result === 1) {
                 order = {};
@@ -64,12 +67,18 @@ export default class extends PureComponent {
     };
 
     _manualOrder = (value) => {
+        const { t } = this.props;
         // Workaround for component update when currentPictureIndexInSelection changes.
         this.props.skipReSort(true);
         // ask user to revert previous manual order
         this._startManualOrder(!value);
         if (value)
-            ee.emit(EVENT_SHOW_ALERT, "Selection and order of images saved.");
+            ee.emit(EVENT_SHOW_ALERT, t('library.mozaic_view.alert_selection_and_order_saved'));
+    }
+
+    _handleSetPictureInSelection = (pictureId, tabName) => {
+        this.props.skipReSort(true);
+        this.props.setPictureInSelection(pictureId, tabName);
     }
 
     _handleOnSortChange = (event, field) => {
@@ -97,7 +106,6 @@ export default class extends PureComponent {
 
     _onDragStart = (event, sha1, index) => {
         if (this.state.selectedPictures.length > 0) {
-
             event.dataTransfer.setData('draggableImages', JSON.stringify(this.state.selectedPictures));
             event.dataTransfer.setData('draggingList', 'true');
         } else {
@@ -150,23 +158,22 @@ export default class extends PureComponent {
         this.refs[id]._stop(event);
     }
 
-
     _navigationHandler = (e, callAction) => {
+        const { t } = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
-                message: 'Info',
-                detail: 'Please close calibration mode.',
+                message: t('global.info'),
+                detail: t('library.alert_please_close_calibration_mode'),
                 cancelId: 1
             });
-        } else{
+        } else {
             callAction(this.props.tabName);
         }
     }
 
-
-
     render() {
+        const { t } = this.props;
         let key = 0;
         return (
             <div className="bst rcn_mozaic lib-wrap">
@@ -175,20 +182,28 @@ export default class extends PureComponent {
                         <div className={classnames("mozaic-view", "selected-view")}>
                             <img alt="mozaic white" src={MOZAIC_WHITE}/>
                         </div>
-                        <div title="Switch to list view" className="list-view"
+                        <div title={t('library.mozaic_view.switch_to_list_view_tooltip')} className="list-view"
                              onClick={this.props.openListView}>
                             <img alt="list view" src={LIST}/>
                         </div>
+                        <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
+                             onClick={this.props.openMapView}>
+                            <img alt="map view" src={MAP}/>
+                        </div>
+                        <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                             onClick={this.props.openTimelineView}>
+                            <img alt="list view" src={TIMELINE}/>
+                        </div>
                     </div>
 
-                    <div className="toggle-button" title="To order manually the images, drag and drop them">
+                    <div className="toggle-button" title={t('library.mozaic_view.order_manually_the_images_tooltip')}>
                         <div className="toggle-div">
-                            <div className="mw-toggle-div-menu">Manual order</div>
+                            <div className="mw-toggle-div-menu">{t('library.mozaic_view.lbl_manual_order')}</div>
                             <ToggleButton value={this.props.tabData.manualOrderLock || false}
                                           onToggle={this._manualOrder}/>
                         </div>
                         <div className="toggle-div">
-                            <div className="mw-toggle-div-menu">Details sidebar</div>
+                            <div className="mw-toggle-div-menu">{t('library.mozaic_view.lbl_details_sidebar')}</div>
                             <ToggleButton value={this.props.tabData.showMozaicDetails || false}
                                           onToggle={() => {
                                               this.props.updateToggle(this.props.tabName,
@@ -197,7 +212,7 @@ export default class extends PureComponent {
                                           }}/>
                         </div>
                         <div className="toggle-div">
-                            <div className="mw-toggle-div-menu">Display resource metadata</div>
+                            <div className="mw-toggle-div-menu">{t('library.mozaic_view.lbl_display_resource_metadata')}</div>
                             <ToggleButton value={this.props.tabData.showMozaicCollection || false}
                                           onToggle={() => {
                                               this.props.updateToggle(this.props.tabName,
@@ -207,25 +222,23 @@ export default class extends PureComponent {
                         </div>
                     </div>
 
-
                     <Input className='action-bar-item' type="select" bsSize="md" value={this.props.sortBy}
                            disabled={this.props.tabData.manualOrderLock || false}
                            onChange={(e) => this._handleOnSortChange(e, 'sortBy')}>
-                        <option value={MANUAL_ORDER}>Manuel order</option>
-                        <option value="sort_catalognumber">By name / catalog number</option>
-                        <option value="sort_family">By family</option>
-                        <option value="sort_modified">By date</option>
-                        <option value="sort_tags">By number of keywords</option>
-                        <option value="exifDate">By EXIF date</option>
-                        <option value="exifPlace">By EXIF place</option>
+                        <option value={MANUAL_ORDER}>{t('library.mozaic_view.select_order_by_manuel_order')}</option>
+                        <option value="sort_catalognumber">{t('library.mozaic_view.select_order_by_name_catalog_number')}</option>
+                        <option value="sort_family">{t('library.mozaic_view.select_order_by_family')}</option>
+                        <option value="sort_modified">{t('library.mozaic_view.select_order_by_date')}</option>
+                        <option value="sort_tags">{t('library.mozaic_view.select_order_by_number_of_keywords')}</option>
+                        <option value="exifDate">{t('library.mozaic_view.select_order_by_exif_date')}</option>
+                        <option value="exifPlace">{t('library.mozaic_view.select_order_by_exif_place')}</option>
                     </Input>
 
                     <Input className='action-bar-item' type="select" bsSize="md" value={this.props.sortDirection}
                            onChange={(e) => this._handleOnSortChange(e, 'direction')}
-                           disabled={this.props.tabData.manualOrderLock || false}
-                    >
-                        <option value={SortDirection.ASC}>ASC</option>
-                        <option value={SortDirection.DESC}>DESC</option>
+                           disabled={this.props.tabData.manualOrderLock || false}>
+                        <option value={SortDirection.ASC}>{t('global.sort_direction_asc')}</option>
+                        <option value={SortDirection.DESC}>{t('global.sort_direction_desc')}</option>
                     </Input>
 
                     <img alt="select all" className='select-all' src={SELECT_ALL} onClick={() => {
@@ -251,13 +264,12 @@ export default class extends PureComponent {
                              if (this.state.selectedPictures.length === 0) {
                                  return;
                              }
-
                              const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                                  type: 'question',
                                  buttons: ['Yes', 'No'],
-                                 message: `Delete image`,
+                                 message: t('library.alert_delete_image_message'),
                                  cancelId: 1,
-                                 detail: `Are you sure you want to delete ${this.state.selectedPictures.length} ${this.state.selectedPictures.length > 1 ? 'resources' : 'resource'}?`
+                                 detail: t('library.alert_delete_resource_confirmation', {count: this.state.selectedPictures.length})
                              });
                              if (result === 0) {
                                  lodash.forEach(this.state.selectedPictures, sha1 => {
@@ -348,18 +360,18 @@ export default class extends PureComponent {
                                     { pic.resourceType === RESOURCE_TYPE_EVENT ? null :
                                         <ReactTooltip multiline={true} type="dark" effect="solid" id={'global_' + key}
                                                       aria-haspopup='true' role='example'>
-                                            <span>Height: {pic.height}</span><br/>
-                                            <span>Width: {pic.width}</span><br/>
-                                            <span>ExifDate: {pic.exifDate}</span><br/>
-                                            <span>ExifPlace: {pic.exifPlace}</span><br/>
-                                            <span>Sort family: {pic.sort_family}</span><br/>
-                                            <span>Sort modified: {dateModif}</span>
+                                            <span>{t('global.height')}: {pic.height}</span><br/>
+                                            <span>{t('global.height')}: {pic.width}</span><br/>
+                                            <span>{t('library.mozaic_view.tooltip_lbl_exif_date')}: {pic.exifDate}</span><br/>
+                                            <span>{t('library.mozaic_view.tooltip_lbl_exif_place')}: {pic.exifPlace}</span><br/>
+                                            <span>{t('library.mozaic_view.tooltip_lbl_sort_family')}: {pic.sort_family}</span><br/>
+                                            <span>{t('library.mozaic_view.tooltip_lbl_sort_modified')}: {dateModif}</span>
                                         </ReactTooltip>
                                     }
                                 </div>
                                 <MozaicPlayer pic={pic}
                                               ref={pic.sha1}
-                                              setPictureInSelection={this.props.setPictureInSelection}
+                                              setPictureInSelection={this._handleSetPictureInSelection}
                                               tabName={this.props.tabName}
                                               onDragEnd={this._onDragEnd}
                                               onDrop={this._onDrop}
@@ -380,28 +392,27 @@ export default class extends PureComponent {
                                     })}
                                 </div>
                                 {this.props.tabData.showMozaicCollection ?
-
                                     pic.resourceType === RESOURCE_TYPE_EVENT ?
                                         <div className="collection-metadata">
-                                            Event details:
-                                            <div>Title: <span>{pic.name}</span></div>
-                                            <div>Description: <span>{pic.description}</span></div>
-                                            <div>Serie: <span>{pic.serie}</span></div>
-                                            <div>Person: <span>{pic.person}</span></div>
-                                            <div>Location: <span>{pic.location}</span></div>
-
+                                            {t('library.mozaic_view.lbl_event_details')} :
+                                            <div>{t('library.mozaic_view.lbl_title')}: <span>{pic.name}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_description')}: <span>{pic.description}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_serie')}: <span>{pic.serie}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_person')}: <span>{pic.person}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> :
                                         <div className="collection-metadata">
-                                            Collection metadata:
-                                            <div>Title: <span>{title}</span></div>
-                                            <div>Catalog #: <span>{catalognumber}</span></div>
-                                            <div>Scientific name: <span>{scientificname}</span></div>
-                                            <div>Author: <span>{author}</span></div>
-                                            <div>Cartel:
+                                            {t('library.mozaic_view.lbl_collection_metadata')} :
+                                            <div>{t('library.mozaic_view.lbl_title')}: <span>{title}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_catalog')}: <span>{catalognumber}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_scientific_name')}: <span>{scientificname}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_author')}: <span>{author}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_cartel')}:
                                                 <div className="align-left">
                                                     <span dangerouslySetInnerHTML={{__html: cartel}}/>
                                                 </div>
                                             </div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> : ''}
                             </div>
                         })}

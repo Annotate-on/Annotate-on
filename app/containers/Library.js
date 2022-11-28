@@ -1,6 +1,8 @@
 import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 import lodash from 'lodash';
+import { withTranslation } from 'react-i18next';
+
 
 import {
     deleteAnnotateEvent,
@@ -43,7 +45,6 @@ const mapStateToProps = (state, ownProps) => {
         selectedTags: state.app.open_tabs[ownProps.tabName].selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode,
         sortBy,
         annotationsByTag: state.app.annotations_by_tag,
         annotations: lodash.flatten([...Object.values(state.app.annotations_measures_linear),
@@ -108,4 +109,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

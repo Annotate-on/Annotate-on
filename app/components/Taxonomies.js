@@ -60,7 +60,6 @@ export default class extends Component {
         };
     }
 
-
     componentWillReceiveProps(nextProps) {
         const taxonomies = this._sortList(this.state.sortBy, this.state.sortDirection, this.props.taxonomies);
         this.setState({taxonomies: taxonomies});
@@ -145,13 +144,14 @@ export default class extends Component {
 
     _exportTaxonomy = (taxonomy) => {
         console.log('exporting ... ' , taxonomy)
+        const { t } = this.props;
         let saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
-            title: 'Save taxonomy to',
+            title: t('models.dialog_export_model.title_save_taxonomy'),
             defaultPath: path.join(getUserWorkspace(), `${taxonomy.name}.json`)
         });
         if (!saverPath || saverPath.length < 1) return;
         try {
-            ee.emit(EVENT_SHOW_WAITING, "Exporting to a file...");
+            ee.emit(EVENT_SHOW_WAITING, t('models.wait_message_exporting_to_a_file'));
             let descriptors;
             if (taxonomy.model === MODEL_XPER)
                 descriptors = convertSDDtoJson(path.join(getTaxonomyDir(), taxonomy.sddPath)).items;
@@ -171,8 +171,8 @@ export default class extends Component {
             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
                 detail: saverPath,
-                message: `Export finished`,
-                buttons: ['OK', 'Open folder'],
+                message: t('global.export_finished'),
+                buttons: ['OK', t('global.open_folder')],
                 cancelId: 1
             });
             if (result === 1) {
@@ -185,6 +185,7 @@ export default class extends Component {
     }
 
     _importTaxonomy = () => {
+        const { t } = this.props;
         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'JSON explore file', extensions: ['json']}]
@@ -195,7 +196,7 @@ export default class extends Component {
 
         const exist = this.state.taxonomies.find(taxonomy => taxonomy.id === model.taxonomy.id);
         if (exist !== undefined && exist.id === model.taxonomy.id) {
-            alert('Taxonomy already exist!');
+            alert(t('models.alert_taxonomy_already_exist'));
             return;
         }
 
@@ -211,6 +212,7 @@ export default class extends Component {
     }
 
     _handleContextMenu = (e, data) => {
+        const { t } = this.props;
         switch (data.action) {
             case 'view':
                 this._viewTaxonomy(data.taxonomy);
@@ -219,9 +221,9 @@ export default class extends Component {
                 const result = remote.dialog.showMessageBox({
                     type: 'question',
                     buttons: ['Yes', 'No'],
-                    message: `Taxonomy: "${data.taxonomy.name}"`,
+                    message: t('models.delete_taxonomy_message', { taxonomy: data.taxonomy.name}),
                     cancelId: 1,
-                    detail: `Are you sure you want to delete it?`
+                    detail: t('global.delete_confirmation')
                 });
                 if (result === 0) this.props.removeTaxonomy(data.taxonomy.id);
                 break;
@@ -229,8 +231,8 @@ export default class extends Component {
                 if (data.taxonomy.model === MODEL_XPER) {
                     remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                         type: 'info',
-                        detail: "You cannot export XPER taxonomy",
-                        message: `Error`
+                        detail: t('models.alert.cannot_export_taxonomy'),
+                        message: t('global.error')
                     });
                     return;
                 }
@@ -240,6 +242,7 @@ export default class extends Component {
     };
 
     render() {
+        const { t } = this.props;
         switch (this.state.showView) {
             case LIST:
                 return (<Container className="bst rcn_xper">
@@ -248,10 +251,10 @@ export default class extends Component {
                             <Col sm={6} className="hide-overflow">
                                 <a onClick={() => {
                                     this.props.goToLibrary();
-                                }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={"Go back to home page"}/></a>
-                                <span className="project-label">Project:</span><span
+                                }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
+                                <span className="project-label">{t('global.lbl_project')}:</span><span
                                 className="project-name">{this.props.projectName}</span>
-                                <span className="project-label">Model:</span>
+                                <span className="project-label">{t('global.lbl_model')}:</span>
                                 <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
@@ -264,7 +267,7 @@ export default class extends Component {
                             </span>
                             </Col>
                             <Col sm={6}>
-                                <span className="title">Annotations models</span>
+                                <span className="title">{t('models.title')}</span>
                             </Col>
                         </Row>
                     </div>
@@ -273,21 +276,21 @@ export default class extends Component {
                         <Col sm={8} md={8} lg={8}>
                             <Button className="btn btn-primary mr-md-3 mrg" color="primary"
                                     onClick={this._toggle}
-                            >New model</Button>
+                            >{t('models.btn_new_model')}</Button>
                             <Button className="btn btn-primary mr-md-3 mrg" color="primary"
                                     onClick={() => this.setState({
                                         showView: IMPORT,
                                         selectedModel: null
                                     })}
-                            >Import from Xper</Button>
+                            >{t('models.btn_import_from_xper')}</Button>
 
                             <Button className="btn btn-primary mr-md-3 mrg" color="primary"
                                     onClick={() => this._importTaxonomy()}
-                            >Import a model</Button>
+                            >{t('models.btn_import_a_model')}</Button>
                             <Button disabled={this.props.selectedTaxonomy === null || this.props.selectedTaxonomy.model === MODEL_XPER}
                                     className="btn btn-primary mr-md-3 mrg" color="primary"
                                     onClick={() => this._exportTaxonomy(this.props.selectedTaxonomy)}
-                            >Export selected model</Button>
+                            >{t('models.btn_export_selected_model')}</Button>
                         </Col>
 
                         <Col sm={4} md={4} className="text-md-right">
@@ -296,41 +299,38 @@ export default class extends Component {
                                     let i = 1;
                                     return (
                                         <div key={i++}>
-                                            <span>Active model: <span
+                                            <span>{t('models.lbl_active_model')}:<span
                                                 className="lead"> {taxonomy.name}</span>&nbsp;</span>
 
                                             <Button className="btn btn-secondary mrg" color="secondary"
                                                     onClick={() => {
                                                         this.props.updateTaxonomiesStatus(taxonomy.id, !taxonomy.isActive)
                                                     }}
-                                            >Deactivate</Button>
+                                            >{t('models.btn_deactivate')}</Button>
                                         </div>
                                     )
-
                                 }
                             })
                             }
                         </Col>
-
                     </Row>
                     <br/>
                     <Row className="content-table">
                         <Col md={{size: 12, offset: 0}}>
                             <div className="table-wrapper" id="wrapper" ref={_ => (this.pane = _)}>
-
                                 <Table hover size="sm" className="targets-table">
-                                    <thead title="Ascendant or descendant order">
+                                    <thead title={t('thead_tooltip_sort_order')}>
                                     <tr>
-                                        <TableHeader title="Select" sortKey="isActive"
+                                        <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
                                         <th/>
-                                        <TableHeader title="Model name" sortKey="name"
+                                        <TableHeader title={t('models.table_column_model_name')} sortKey="name"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title="Type" sortKey="model"
+                                        <TableHeader title={t('models.table_column_type')} sortKey="model"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title="Version" sortKey="version"
+                                        <TableHeader title={t('models.table_column_version')} sortKey="version"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
-                                        <TableHeader title="Date imported/created" sortKey="importDate"
+                                        <TableHeader title={t('models.table_column_date_imported_created')} sortKey="importDate"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>
                                     </tr>
                                     </thead>
@@ -389,32 +389,30 @@ export default class extends Component {
                             </div>
                         </Col>
                     </Row>
-
                     <div>
                         <ContextMenu id="taxonomies_context_menu">
                             <MenuItem data={{action: 'view'}} onClick={this._handleContextMenu}>
-                                <img alt="select all" className='select-all' src={SELECT_ALL}/>View
+                                <img alt="select all" className='select-all' src={SELECT_ALL}/>{t('global.view')}
                             </MenuItem>
                             <MenuItem divider/>
                             <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                                <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> Delete
+                                <img alt="delete" src={DELETE_IMAGE_CONTEXT}/>{t('global.delete')}
                             </MenuItem>
                             <MenuItem divider/>
                             <MenuItem data={{action: 'export'}} onClick={this._handleContextMenu}>
-                                <img alt="delete" src={EXPORT_IMAGE_CONTEXT}/> Export
+                                <img alt="delete" src={EXPORT_IMAGE_CONTEXT}/>{t('global.export')}
                             </MenuItem>
                         </ContextMenu>
                     </div>
-
                     <Modal isOpen={this.state.modal} toggle={this._toggle} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggle}>Create model</ModalHeader>
+                        <ModalHeader toggle={this._toggle}>{t('models.dialog_create_model.title_create_model')}</ModalHeader>
                         <ModalBody>
                             <Form onSubmit={(e) => {
                                 e.preventDefault();
                                 this._saveTaxonomy();
                             }}>
                                 <FormGroup row>
-                                    <Label for="modelName" sm={5}>Model name</Label>
+                                    <Label for="modelName" sm={5}>{t('models.dialog_create_model.lbl_model_name')}</Label>
                                     <Col sm={7}>
                                         <Input type="text" name="modelName" id="modelName" autoFocus={true}
                                                onChange={(e) => {
@@ -426,7 +424,7 @@ export default class extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label sm={5}>Model type</Label>
+                                    <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                     <Col sm={7}>
                                         <Input plaintext readOnly value="Annotate"/>
                                     </Col>

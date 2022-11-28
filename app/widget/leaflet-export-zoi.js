@@ -4,6 +4,7 @@ import JSZip from 'jszip';
 import XLSX from 'xlsx';
 import {formatDateForFileName} from "../utils/js";
 import fs from 'fs';
+import i18next from "i18next";
 
 let fileSaver = require('file-saver');
 
@@ -28,11 +29,12 @@ L.Control.RecolnatZOIExport = L.Control.extend({
         L.Util.setOptions(this, options);
     },
     onAdd: function (map) {
+        const { t } = i18next;
         let container = L.DomUtil.create('div', 'leaflet-bar leaflet-recolnat-zoi-export');
         L.DomEvent.disableClickPropagation(container);
         this._link = L.DomUtil.create('a', 'recolnat-zoi-export', container);
         this._link.href = '#';
-        this._link.title = "Export ZOI images";
+        this._link.title = t('annotate.editor.btn_tooltip_export_zoi_images');
 
         L.DomEvent
             .on(this._link, 'click', L.DomEvent.stopPropagation)

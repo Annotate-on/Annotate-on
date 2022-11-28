@@ -5,7 +5,7 @@ import styled, {css} from 'styled-components';
 import {
     APP_NAME,
     LIST_VIEW,
-    MANUAL_ORDER,
+    MANUAL_ORDER, MAP_VIEW,
     MODEL_XPER,
     MOZAIC_VIEW,
     NAV_SIZE,
@@ -13,7 +13,7 @@ import {
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
     TABLE_DATA_BG_OVER,
-    TABLE_DATA_FG_OVER,
+    TABLE_DATA_FG_OVER, TIMELINE_VIEW,
 } from '../constants/constants';
 import {MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH} from './Inspector';
 import Inspector from '../containers/Inspector';
@@ -30,9 +30,15 @@ import Nothing from "./Nothing";
 import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
+import MapView from "../containers/MapView";
+import TimelineView from "../containers/TimelineView";
+
+
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
+const MAP = require('./pictures/map-location-dot-solid.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const SELECT_ALL_CONTEXT = require('./pictures/select_all_gray.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -109,11 +115,6 @@ const _Panel = styled.div`
       background: transparent;
     }
 `;
-// const _Image = styled.img`
-//     background-color: #eee;
-//     padding: ${INSPECTOR_MARGIN}px;
-//     box-shadow: inset 0 -0.5px 0 0 #dddddd, inset 0.5px 0 0 0 #dddddd;
-// `;
 
 const _ImagePlaceholder = styled.div`
     background-color: #eee;
@@ -136,10 +137,13 @@ export default class extends Component {
         const sortedPicturesList = this._sortList(sortBy, sortDirection, initPicturesList);
         const currentPictureSelection = this.props.allPictures[this.props.tabData[this.props.tabName].pictures_selection[this.props.currentPictureIndexInSelection]];
 
+        const picView = this.props.match  ? this.props.match.params.picView : this.props.tabData[this.props.tabName].subview || LIST_VIEW;
+        const fitToBounds = this.props.match  ? this.props.match.params.fitToBounds : "true";
+
         this.state = {
             // Current picture for preview
-            currentPicture: sortedPicturesList[0],
-            hardSelection: sortedPicturesList[0],
+            currentPicture: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
+            hardSelection: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
             initPicturesList,
             allPictureLength,
             numberOfPicturesInSelectedFolders: props.tabData[this.props.tabName].folder_pictures_selection.length,
@@ -149,9 +153,9 @@ export default class extends Component {
             sortedPicturesList,
             windowScrollerEnabled: false,
             selectedPictures: [],
-            picView: this.props.tabData[this.props.tabName].subview || LIST_VIEW,
+            picView: picView,
+            fitToBounds: fitToBounds,
             numberOfFolders: this.props.tabData[this.props.tabName].selected_folders.length,
-            numberOfTags: this.props.tabData[this.props.tabName].selected_tags.length,
             selectAll: false,
             scrollTableTo: this.props.tabData[this.props.tabName].lastScrollPositionInList,
             // Current working picture
@@ -163,34 +167,25 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
+        // console.log("library componentWillReceiveProps props", this.props, nextProps);
+        let stateUpdate = {
+            allPictureLength: Object.values(nextProps.allPictures).length,
+            numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
+            numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
+            currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
+        }
         if (skipSort) {
             skipSort = false;
-            return;
-        }
-        // Update list if array has changed because of tabs or folder selection
-        if (this.state.numberOfFolders !== nextProps.tabData[this.props.tabName].selected_folders.length
-            || this.state.numberOfTags !== nextProps.tabData[this.props.tabName].selected_tags.length
-            || this.props.tabData[this.props.tabName].pictures_selection.length !== nextProps.tabData[this.props.tabName].pictures_selection.length
-            || nextProps.currentPictureIndexInSelection !== this.props.currentPictureIndexInSelection
-            || Object.values(nextProps.allPictures).length !== Object.values(this.props.allPictures).length) {
-
+        } else {
+            // console.log("update picture selection in library")
             const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
             const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
-            // this.state.sortedPicturesList = sortedPicturesList;
-
             this._initSortingValues(sortedPicturesList);
 
-            this.setState({
-                sortedPicturesList: sortedPicturesList,
-                allPictureLength: Object.values(nextProps.allPictures).length,
-                currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
-                numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
-                numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
-                numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
-                currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
-            });
+            stateUpdate.sortedPicturesList = sortedPicturesList;
+            stateUpdate.currentPicture = sortedPicturesList[nextProps.currentPictureIndexInSelection];
         }
+        this.setState(stateUpdate);
     }
 
     _initSortingValues = (sortedPicturesList) => {
@@ -250,6 +245,7 @@ export default class extends Component {
                 selectAll: false
             });
         } else {
+            skipSort = true;
             this.props.setPictureInSelection(sha1, this.props.tabName);
         }
     };
@@ -277,11 +273,12 @@ export default class extends Component {
     }
 
     _navigationHandler = (e, callAction) => {
+        const { t } = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
-                message: 'Info',
-                detail: 'Please close calibration mode.',
+                message: t('global.info'),
+                detail: t('library.alert_please_close_calibration_mode'),
                 cancelId: 1
             });
         } else{
@@ -304,18 +301,17 @@ export default class extends Component {
         }
     }
 
-
-
     render() {
+        const { t } = this.props;
         let key = 0;
         return (
             <_Root className="bst rcn_library">
                 <div className="bg">
                     <Row>
                         <Col sm={6} className="hide-overflow">
-                            <span className="project-label">Project:</span><span
+                            <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">Model:</span>
+                            <span className="project-label">{t('global.lbl_model')}:</span>
                             <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
@@ -323,13 +319,13 @@ export default class extends Component {
                                  alt="xper3-logo"
                                  src='http://www.xper3.fr/resources/img/xper3-logo.png'>
                             </img> : APP_NAME})
-                        </Fragment> : 'Without model'
+                        </Fragment> : t('library.lbl_without_model')}
                     }
                             </span>
                         </Col>
                         <Col sm={6}>
                             <span
-                                className="title">Library ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
+                                className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
                         </Col>
                     </Row>
 
@@ -339,10 +335,11 @@ export default class extends Component {
                         <Folders tabName={this.props.tabName}/>
                         <Tags tabName={this.props.tabName} visibleActions={true}/>
                     </div>
+                    {console.log(this.state.picView)}
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>
-                                {this.state.picView === MOZAIC_VIEW ?
+                                {this.state.picView === MOZAIC_VIEW &&
                                     <MozaicView pictures={this.state.sortedPicturesList}
                                                 tabData={this.props.tabData[this.props.tabName]}
                                                 annotations={this.props.annotations}
@@ -357,13 +354,26 @@ export default class extends Component {
                                                     this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                                     this.setState({picView: LIST_VIEW});
                                                 }}
+                                                openMapView={() => {
+                                                    this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                                    this.setState({
+                                                        picView: MAP_VIEW,
+                                                        fitToBounds: "true"
+                                                    });
+                                                }}
+                                                openTimelineView={() => {
+                                                    this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                    this.setState({picView: TIMELINE_VIEW});
+                                                }}
                                                 skipReSort={(value) => skipSort = value}
                                     />
-                                    : <React.Fragment>
+                                }
+                                {this.state.picView === LIST_VIEW &&
+                                    <React.Fragment>
                                         <div className="lib-wrap">
                                             <div className="lib-actions">
                                                 <div className="switch-view">
-                                                    <div title="Switch to mozaic view" className="mozaic-view"
+                                                    <div title={t('library.switch_to_mozaic_view_tooltip')} className="mozaic-view"
                                                          onClick={() => {
                                                              this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
                                                              this.setState({picView: MOZAIC_VIEW})
@@ -373,6 +383,25 @@ export default class extends Component {
                                                     <div
                                                         className={classnames("list-view", {"selected-view": this.state.picView === LIST_VIEW})}>
                                                         <img alt="list view" src={LIST_WHITE}/>
+                                                    </div>
+                                                    <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
+                                                         onClick={() => {
+                                                             this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                                             this.setState({
+                                                                 picView: MAP_VIEW,
+                                                                 fitToBounds: "true"
+                                                             });
+                                                         }}>
+                                                        <img alt="map view" src={MAP}/>
+                                                    </div>
+                                                    <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                                                         onClick={() => {
+                                                             this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                             this.setState({
+                                                                 picView: TIMELINE_VIEW,
+                                                             });
+                                                         }}>
+                                                        <img alt="map view" src={TIMELINE}/>
                                                     </div>
                                                 </div>
                                                 <div className="action-buttons">
@@ -413,7 +442,7 @@ export default class extends Component {
                                                         >
                                                             <Column
                                                                 dataKey="sort_catalognumber"
-                                                                label="Catalog N1°"
+                                                                label={t('library.table_column_catalog_n1')}
                                                                 minWidth={100}
                                                                 width={0.4 * width}
                                                                 className="table-column"
@@ -469,7 +498,8 @@ export default class extends Component {
                                                                 key={key++}
                                                             />
 
-                                                            <Column dataKey="sort_family" label="Family"
+                                                            <Column dataKey="sort_family"
+                                                                    label={t('library.table_column_family')}
                                                                     width={0.15 * width}
                                                                     key={key++}
                                                                     cellRenderer={({rowData}) => {
@@ -483,7 +513,7 @@ export default class extends Component {
 
                                                             <Column
                                                                 dataKey="sort_modified"
-                                                                label="Date"
+                                                                label={t('library.table_column_date')}
                                                                 width={0.15 * width}
                                                                 key={key++}
                                                                 cellRenderer={({rowData}) => {
@@ -498,7 +528,8 @@ export default class extends Component {
                                                                 }}
                                                             />
 
-                                                            <Column dataKey="sort_type" label="Type"
+                                                            <Column dataKey="sort_type"
+                                                                    label={t('library.table_column_type')}
                                                                     width={0.15 * width}
                                                                     key={key++}
                                                                     cellRenderer={({rowData}) => {
@@ -507,9 +538,10 @@ export default class extends Component {
                                                                         return rowData.sort_type;
                                                                     }}
                                                             />
+
                                                             <Column
                                                                 dataKey="sort_tags"
-                                                                label="Tags"
+                                                                label={t('library.table_column_tags')}
                                                                 width={0.1 * width}
                                                                 key={key++}
                                                                 cellRenderer={({rowData}) => {
@@ -525,15 +557,24 @@ export default class extends Component {
                                                                         rowData.sort_tags += this.props.tagsByPicture[rowData.sha1].length
                                                                     }
                                                                     return rowData.sort_tags;
-                                                                }
-                                                                }
+                                                                }}
                                                             />
-                                                            <Column dataKey="exifDate" label="EXIF date"
+                                                            <Column dataKey="exifDate"
+                                                                    label={t('library.table_column_exif_date')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
-                                                            <Column dataKey="exifPlace" label="EXIF place"
+                                                                    key={key++}
+                                                            />
+                                                            <Column dataKey="exifPlace" label={t('library.table_column_exif_place')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                                    cellRenderer={({rowData}) => {
+                                                                        if(rowData.placeName) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.placeName}</div>)
+                                                                        } else if(rowData.exifPlace) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.exifPlace}</div>)
+                                                                        }
+                                                                    }}
+                                                            />
 
                                                         </Table>
                                                     )}
@@ -583,12 +624,52 @@ export default class extends Component {
                                         </_Panel>
                                     </React.Fragment>
                                 }
+                                {this.state.picView === MAP_VIEW &&
+                                    <MapView resources={this.state.sortedPicturesList}
+                                             tabName={this.props.tabName}
+                                             currentPictureSelection={this.state.currentPictureSelection}
+                                             fitToBounds={this.state.fitToBounds}
+                                             openListView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = LIST_VIEW;
+                                                 this.setState({picView: LIST_VIEW});
+                                             }}
+                                             openMozaicView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
+                                                 this.setState({picView: MOZAIC_VIEW});
+                                             }}
+                                             openTimelineView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                 this.setState({picView: TIMELINE_VIEW});
+                                             }}
+                                    ></MapView>
+                                }
+                                {this.state.picView === TIMELINE_VIEW &&
+                                    <TimelineView
+                                        resources={this.state.sortedPicturesList}
+                                        tabName={this.props.tabName}
+                                        openListView={() => {
+                                            this.props.tabData[this.props.tabName].subview = LIST_VIEW;
+                                            this.setState({picView: LIST_VIEW});
+                                        }}
+                                        openMozaicView={() => {
+                                            this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
+                                            this.setState({picView: MOZAIC_VIEW});
+                                        }}
+                                        openMapView={() => {
+                                            this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                            this.setState({
+                                                picView: MAP_VIEW,
+                                                fitToBounds: "true"
+                                            });
+                                        }}
+                                    ></TimelineView>
+                                }
                             </_Pictures>
                             : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?
-                                    <Nothing message={'There are no pictures for selected tags.'}/>
+                                    <Nothing message={t('library.lbl_no_pictures_for_selected_tags')}/>
                                     :
                                     <div>
-                                        <div className="center-button">Select ressources to import</div>
+                                        <div className="center-button">{t('library.lbl_select_resources_to_import')}</div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
                                                     onClick={() => {
@@ -602,7 +683,7 @@ export default class extends Component {
                                                             this.props.goToImportWizard(folders.length ? folders[0].path : null);
                                                         }
                                                     }}
-                                            >Import images</Button>
+                                            >{t('library.btn_import_images')}</Button><br />
                                         </div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="primary"
@@ -617,13 +698,13 @@ export default class extends Component {
                                                             this.props.goToImportVideoWizard(folders.length ? folders[0].path : null);
                                                         }
                                                     }}
-                                            >Import videos</Button>
+                                            >{t('library.btn_import_videos')}</Button>
                                         </div>
                                         <br/>
                                         <hr/>
                                         <br/>
                                         <div className="center-button-events">
-                                            Events
+                                            {t('library.lbl_events')}
                                         </div>
                                         <div className="center-button">
                                             <Button className="btn btn-primary" color="danger"
@@ -638,9 +719,8 @@ export default class extends Component {
                                                             this.props.goToImportEventWizard(folders.length ? folders[0].path : null , this.props.tabName);
                                                         }
                                                     }}
-                                            >Create new event</Button>
+                                            >{t('library.btn_create_new_event')}</Button>
                                         </div>
-
                                     </div>
                             )
                         }
@@ -649,17 +729,16 @@ export default class extends Component {
                 <div>
                     <ContextMenu id="image_context_menu">
                         <MenuItem data={{action: 'select_all'}} onClick={this._handleContextMenu}>
-                            <img alt="select all" className='select-all' src={SELECT_ALL_CONTEXT}/> Select all resources
+                            <img alt="select all" className='select-all' src={SELECT_ALL_CONTEXT}/>{t('library.context_menu_select_all_resources')}
                         </MenuItem>
                         <MenuItem divider/>
                         <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
-                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> Delete resource
+                            <img alt="delete" src={DELETE_IMAGE_CONTEXT}/> {t('library.context_menu_delete_resource')}
                         </MenuItem>
                     </ContextMenu>
                 </div>
             </_Root>
-        )
-            ;
+        );
     }
 
     // TABLE HELPERS
@@ -761,13 +840,13 @@ export default class extends Component {
     _deleteEvents = eventId => {
         console.log('deleting event with id.... -> ' , eventId)
         console.log('dest folder .... -> ' , this._getDestFolder());
-
+        const { t } = this.props;
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
-            message: `Delete image`,
+            message: t('library.alert_delete_event_message'),
             cancelId: 1,
-            detail: `Are you sure you want to delete this event?`
+            detail: t('library.alert_delete_event_confirmation')
         });
 
         if (result === 0) {
@@ -783,18 +862,18 @@ export default class extends Component {
 
     _deleteImages = sha1 => {
         //TODO: when multiple images selected filter delete actions for images/videos & events
+        const { t } = this.props;
         let refresh = false;
         const selectedPictures = sha1 || this.state.selectedPictures;
         if (selectedPictures.length === 0) {
             return;
         }
-
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
-            message: `Delete image`,
+            message: t('library.alert_delete_image_message'),
             cancelId: 1,
-            detail: `Are you sure you want to delete ${selectedPictures.length} ${selectedPictures.length > 1 ? 'images' : 'image'}?`
+            detail: t('library.alert_delete_image_confirmation', {count: selectedPictures.length})
         });
         if (result === 0) {
             for (const sha1 of selectedPictures) {

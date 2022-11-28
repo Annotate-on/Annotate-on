@@ -19,8 +19,13 @@ export default class extends PureComponent {
 
   _selectComponent = (path) => {
     if (lodash.isPlainObject(path)) {
-      this.props.goTo(`/selection/${this.props.tabName}/${path.tab}/${path.param.edit}/${path.param.targetId}`);
-      this.props.openTabs[this.props.tabName].view = path.tab;
+      if(path.param.picView) {
+        this.props.goTo(`/selection/${this.props.tabName}/${path.tab}/${path.param.picView}/${path.param.fitToBounds}`);
+        this.props.openTabs[this.props.tabName].view = path.tab;
+      } else {
+        this.props.goTo(`/selection/${this.props.tabName}/${path.tab}/${path.param.edit}/${path.param.targetId}`);
+        this.props.openTabs[this.props.tabName].view = path.tab;
+      }
     } else {
       this.props.goTo(`/selection/${this.props.tabName}/${path}`);
       this.props.openTabs[this.props.tabName].view = path;
@@ -33,6 +38,8 @@ export default class extends PureComponent {
         <Switch>
           <Route exact path={`${this.props.match.path}/${this.props.tabName}/library`}
                  render={() => <Library tabName={this.props.tabName}/>}/>
+          <Route exact path={`${this.props.match.path}/${this.props.tabName}/library/:picView?/:fitToBounds?`}
+                 render={(props) => <Library tabName={this.props.tabName} match={props.match}/>}/>
           <Route exact path={`${this.props.match.path}/${this.props.tabName}/image`}
                  render={() => <Image tabName={this.props.tabName}/>}/>
           <Route exact path={`${this.props.match.path}/${this.props.tabName}/data/:editTargetTab?/:targetId?`}

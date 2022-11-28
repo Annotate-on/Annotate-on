@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 
 import Component from '../components/Loading';
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = state => {
     return {
@@ -10,4 +11,4 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(Component);
+export default withTranslation()(connect(mapStateToProps)(Component));

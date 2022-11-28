@@ -27,7 +27,7 @@ export const EDIT_EVENT = 'EDIT_EVENT';
 export const DELETE_EVENT = 'DELETE_EVENT';
 
 // SIZES
-export const NAV_SIZE = 50;
+export const NAV_SIZE = 60;
 // COLOURS
 const BG1 = '#333';
 const BG2 = '#666';
@@ -49,6 +49,8 @@ export const INSPECTOR_TEXT = BG1;
 
 export const MOZAIC_VIEW = "MOZAIC_VIEW";
 export const LIST_VIEW = "LIST_VIEW";
+export const MAP_VIEW = "MAP_VIEW";
+export const TIMELINE_VIEW = "TIMELINE_VIEW";
 
 export const SORT_ALPHABETIC_DESC = "sort_alphabetic_desc";
 export const SORT_ALPHABETIC_ASC = "sort_alphabetic_asc";
@@ -75,6 +77,7 @@ export const MANUAL_ORDER = "manual_order";
 
 export const COMMON_TAGS = "Common keywords";
 export const TAG_AUTO = "Automatic keywords";
+export const TAG_MAP_SELECTION = "Map selection";
 export const TAG_DPI_NO = "DPI: no";
 export const TAG_MODE_LANDSCAPE = "Mode: landscape";
 export const TAG_MODE_PORTRAIT = "Mode: portrait";
@@ -116,5 +119,7 @@ export const DEFAULT_VOLUME = 0.75;
 
 export const APP_NAME = 'Annotate-on';
 
+export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
+export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 

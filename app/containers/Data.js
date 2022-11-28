@@ -3,6 +3,7 @@ import lodash from 'lodash';
 
 import Component from '../components/Data';
 import {updateTabularView} from "../actions/app";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     console.log('data own props ' , ownProps)
@@ -36,4 +37,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

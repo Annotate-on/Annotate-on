@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import {push} from "connected-react-router";
 import Component from "../components/XmpMetadata";
+import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -18,4 +19,4 @@ const mapStateToProps = (state, ownProps) => {
         };
     };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(Component));

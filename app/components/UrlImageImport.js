@@ -18,9 +18,7 @@ import {
 import fileType from 'file-type';
 import readChunck from 'read-chunk';
 import Chance from "chance";
-import {attachDefaultTags} from "../utils/tags";
-import {loadTags} from "../utils/common";
-
+import {loadTags, attachDefaultTags} from "../utils/tags";
 
 const chance = new Chance();
 
@@ -238,7 +236,6 @@ export default class extends PureComponent {
                     // Display loading overlay.
                     ee.emit(EVENT_SHOW_LOADING, successfullyDownload.length);
                     initPicturesLibrary(successfullyDownload, [this.props.parentFolder], this.props.pictures).then(pictureObjects => {
-
                         //save url as reference (sf metadata field) create both xmp and xml file
                         if (Object.keys(pictureObjects).length !== 0) {
                             Object.keys(pictureObjects).forEach(e => {
@@ -255,14 +252,11 @@ export default class extends PureComponent {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     })
@@ -275,15 +269,16 @@ export default class extends PureComponent {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <fieldset className="import-fieldset">
-                <legend className="import-legend">Import remote images</legend>
+                <legend className="import-legend">{t('library.import_images.lbl_import_remote_images')}</legend>
                 <div className="bst rcn_urldownloader">
                     <Row>
                         <Col sm={12} md={12} lg={12}>
                             <Input autoFocus type="textarea" rows={10}
                                    disabled={this.state.isDownloading}
-                                   placeholder="Paste image URLs separated with new line."
+                                   placeholder={t('library.import_images.text_area_placeholder_paste_image_urls')}
                                    onChange={(e) => {
                                        this.setState({
                                            urls: e.target.value
@@ -299,15 +294,13 @@ export default class extends PureComponent {
                                 className="btn btn btn-success"
                                 disabled={!this.state.urls || this.state.isDownloading || this.props.parentFolder === null}
                                 onClick={this.startDownload}
-                            >Save</Button>
+                            >{t('global.save')}</Button>
                             &emsp;
                             <Button className="btn btn-danger" size="md" color="warning" onClick={this.props.onClose}>
-                                Cancel
+                                {t('global.cancel')}
                             </Button>
                         </Col>
                     </Row>
-
-
                     {this.state.progress.map((_, index) => {
                         return (
                             <table key={index} className={_.status} cellPadding={0} cellSpacing={0}>
