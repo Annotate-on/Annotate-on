@@ -53,10 +53,16 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
+      "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
       "options": {
         "title": "Options",
+        "language_section_title": "Language",
         "lbl_select_language": "Select language",
-        "select_language.tooltip": "Change application language"
+        "select_language.tooltip": "Change application language",
+        "xper_parameters_section_title": "Xper parameters",
+        "lbl_xper_parameters_url": "Url",
+        "lbl_xper_parameters_email": "E-mail",
+        "lbl_xper_parameters_password": "Password",
       },
       "languages": {
         "EN": "English",
@@ -748,6 +754,17 @@
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_date_imported_created": "Date imported/created",
+      "import_from_xper": {
+        "title": "Model (vocabulaire) import",
+        "btn_select_sdd_file_to_import": "Select SDD file to import",
+        "btn_import_from_xper_database": "Import from Xper database",
+        "btn_save_model": "Save model",
+        "lbl_model_descriptors_found_in_file": "Model descriptors found in file",
+        "lbl_character_name": "Character name",
+        "lbl_character_values": "Character values",
+        "lbl_character_measurement_type": "Character measurement type",
+        "lbl_group_name": "Group name"
+      },
       "dialog_create_model": {
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
