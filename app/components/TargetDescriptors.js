@@ -380,7 +380,7 @@ class TargetDescriptors extends PureComponent {
                              style={{height: this.state.height}}>
 
                             <Table hover size="sm" className="targets-table">
-                                <thead title={t('thead_tooltip_sort_order')}>
+                                <thead title={t('models.thead_tooltip_sort_order')}>
                                 <tr>
                                     <th>&nbsp;</th>
                                     <TableHeader title={t('models.target_descriptors.table_column_character_name')} sortKey="name"

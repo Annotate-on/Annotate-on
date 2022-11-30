@@ -319,7 +319,7 @@ export default class extends Component {
                         <Col md={{size: 12, offset: 0}}>
                             <div className="table-wrapper" id="wrapper" ref={_ => (this.pane = _)}>
                                 <Table hover size="sm" className="targets-table">
-                                    <thead title={t('thead_tooltip_sort_order')}>
+                                    <thead title={t('models.thead_tooltip_sort_order')}>
                                     <tr>
                                         <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>

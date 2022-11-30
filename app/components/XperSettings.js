@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {Button, Col, Container, Input, Label, Row} from 'reactstrap';
-import {remote} from "electron";
+import {remote, shell} from "electron";
 import path from 'path';
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import {CATEGORICAL, NUMERICAL} from "../constants/constants";
 import Chance from 'chance';
 import {getTaxonomyDir, getXperParams} from "../utils/config";
 import request from "request";
+import PickXperDatabase from "./PickXperDatabase";
+import i18next from "i18next";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const chance = new Chance();
@@ -18,12 +20,21 @@ export default class extends Component {
         const sddObject = props.model !== null ? convertSDDtoJson(path.join(getTaxonomyDir(), props.model.sddPath)) : null;
         this.state = {
             sddFile: props.model ? props.model.sddPath : '',
-            sddObject
+            showPickXperBasePopup: false,
+            sddObject,
+            xperDownloadLink:null
         };
     }
 
     _handleImportFromXperDatabase = () => {
-        const { t } = this.props;
+        this.setState({
+            showPickXperBasePopup: true
+        });
+    }
+
+    _onPickXperDatabase = (database, calback) => {
+        console.log("_onPickXperDatabase selected ", database)
+        const {t} = i18next;
         let xperParams = getXperParams();
         console.log("_exportDataToSdd", xperParams);
         const hasParams = xperParams && xperParams.url && xperParams.email && xperParams.password;
@@ -31,7 +42,8 @@ export default class extends Component {
             remote.dialog.showErrorBox(t('global.error'), t('global.xper_params_are_required'));
             return;
         }
-        let url = xperParams.url + '/list_bases_for_user';
+        let url = xperParams.url + '/sdd_export?validateSdd=false&isxperience=true&exportCalculatedDescriptors=false&sddForXper2=false&kbName=' + database;
+        console.log("_exportDataToSdd url", url);
         let username = xperParams.email;
         let password = xperParams.password;
 
@@ -42,21 +54,24 @@ export default class extends Component {
                     "Authorization" : auth
                 }},
             function (error, response, body) {
-                console.log("body "+body);
-                console.log("response "+response);
-                console.log("error "+error);
-                let result = JSON.parse(body)
-                console.log("result ", result);
-                let found = []
-                if(result) {
-                    for (const resultElement of result) {
-                        found.push(resultElement.datasetName);
-                    }
-                    console.log("found ", found);
+                // let result = JSON.parse(body)
+                console.log("error ", error);
+                console.log("response ", response);
+                if(response.statusCode !== 200) {
+                    remote.dialog.showErrorBox(t('global.error'), response.statusMessage);
+                } else {
+                    calback(body);
                 }
-                alert("Found databases : " + found.join(','))
             }
         );
+    }
+
+    _onXperExportResponse = (result) => {
+        console.log("_onXperExportResponse ", result);
+
+        this.setState({
+            xperDownloadLink: result
+        });
     }
 
     render() {
@@ -64,6 +79,20 @@ export default class extends Component {
         let key = 0;
         return (
             <Container className="bst rcn_xper">
+                {this.state.showPickXperBasePopup &&
+                    <PickXperDatabase
+                        openModal={this.state.showPickXperBasePopup}
+                        onClose={() => {
+                            console.log("onClose")
+                            this.setState({showPickXperBasePopup: false});
+                        }}
+                        onPickDatabase={(database) => {
+                            console.log("onPickDatabase")
+                            this._onPickXperDatabase(database, this._onXperExportResponse);
+                        }}
+                    />
+                }
+
                 <div className="bg">
                     <a onClick={() => {
                         this.props.goToLibrary();
@@ -71,6 +100,18 @@ export default class extends Component {
                     <span className="title">{t('models.import_from_xper.title')}</span>
                 </div>
                 <br/>
+
+                {this.state.xperDownloadLink &&
+                    <div>
+                        &nbsp;&nbsp;&nbsp;
+                        <span className="file-name">{this.state.xperDownloadLink}</span>
+                        &nbsp;&nbsp;&nbsp;
+                        <Button onClick={() => {
+                            shell.openExternal(this.state.xperDownloadLink);
+                        }
+                        }>View ssd</Button>
+                    </div>
+                }
 
                 <Row className='content'>
                     <Col md={{size: 6, offset: 3}}>
@@ -109,7 +150,6 @@ export default class extends Component {
                                 <br/>
                                 {this.state.sddFile.length > 0 &&
                                 <div>
-
                                     <Button className="btn btn-primary" color="primary"
                                             onClick={() => {
                                                 this.props.goBack();

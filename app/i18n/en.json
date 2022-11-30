@@ -763,7 +763,14 @@
         "lbl_character_name": "Character name",
         "lbl_character_values": "Character values",
         "lbl_character_measurement_type": "Character measurement type",
-        "lbl_group_name": "Group name"
+        "lbl_group_name": "Group name",
+        "table_column_select": "Select",
+        "table_column_name": "Name",
+        "table_column_owners": "Owner(s)",
+        "table_column_editors": "Editors(s)",
+        "table_column_viewers": "Viewer(s)",
+        "dialog_pick_xper_database_title": "Select xper database",
+        "alert_select_xper_database": "There is no selected database. Please select one!"
       },
       "dialog_create_model": {
         "title_create_model": "Create model",
