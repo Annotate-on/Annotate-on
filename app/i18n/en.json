@@ -54,6 +54,7 @@
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
       "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
+      "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
       "options": {
         "title": "Options",
         "language_section_title": "Language",
@@ -409,7 +410,8 @@
         "btn_search_in_zoology_database": "Search in zoology database",
         "btn_search_in_paleontology_database": "Search in paleontology database",
         "btn_open_json_with_search_results": "Open json with search results",
-        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!"
+        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image."
       },
       "import_video": {
         "title": "Import",
@@ -419,7 +421,9 @@
         "btn_tooltip_select_videos": "Import local videos",
         "btn_paste_urls": "Paste URLs list",
         "btn_tooltip_paste_urls": "Import videos from urls",
-        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop"
+        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper video.",
+        "text_area_placeholder_paste_video_urls_separated_with_new_line": "Paste video URLs separated with new line."
       }
     },
     "projects": {
