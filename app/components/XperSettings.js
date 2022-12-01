@@ -41,16 +41,18 @@ export default class extends Component {
         }
         const filename = genId() + ".xml";
         const filepath =  path.join(app_home_path, filename);
-        request(result).pipe(fs.createWriteStream(filepath));
-        setTimeout(() => {
-            const sddObject = convertSDDtoJson(filepath);
-            this.setState({
-                removeOriginalFile:true,
-                sddFile: filepath,
-                sddObject: sddObject,
-            });
+        request(result)
+            .on('end', () => {
+                setTimeout(() => {
+                    const sddObject = convertSDDtoJson(filepath);
+                    this.setState({
+                        removeOriginalFile:true,
+                        sddFile: filepath,
+                        sddObject: sddObject,
+                    });
 
-        }, 100);
+                }, 100);
+            }).pipe(fs.createWriteStream(filepath));
     }
 
     render() {
