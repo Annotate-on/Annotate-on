@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
-import {Button, Col, Container, Input, Label, Row} from 'reactstrap';
+import {Button, Col, Container, Label, Row} from 'reactstrap';
 import {remote, shell} from "electron";
 import path from 'path';
 import {convertSDDtoJson} from "../utils/sdd-processor";
-import {CATEGORICAL, NUMERICAL} from "../constants/constants";
+import {APP_NAME, CATEGORICAL, NUMERICAL} from "../constants/constants";
 import Chance from 'chance';
-import {getTaxonomyDir, getXperParams} from "../utils/config";
+import {getTaxonomyDir} from "../utils/config";
 import request from "request";
 import PickXperDatabase from "./PickXperDatabase";
-import i18next from "i18next";
+import {getSddForDatabase} from "../utils/xper";
+import fs from "fs";
+import {genId} from "./event/utils";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const chance = new Chance();
@@ -22,7 +24,7 @@ export default class extends Component {
             sddFile: props.model ? props.model.sddPath : '',
             showPickXperBasePopup: false,
             sddObject,
-            xperDownloadLink:null
+            removeOriginalFile:false
         };
     }
 
@@ -32,46 +34,23 @@ export default class extends Component {
         });
     }
 
-    _onPickXperDatabase = (database, calback) => {
-        console.log("_onPickXperDatabase selected ", database)
-        const {t} = i18next;
-        let xperParams = getXperParams();
-        console.log("_exportDataToSdd", xperParams);
-        const hasParams = xperParams && xperParams.url && xperParams.email && xperParams.password;
-        if(!hasParams) {
-            remote.dialog.showErrorBox(t('global.error'), t('global.xper_params_are_required'));
-            return;
-        }
-        let url = xperParams.url + '/sdd_export?validateSdd=false&isxperience=true&exportCalculatedDescriptors=false&sddForXper2=false&kbName=' + database;
-        console.log("_exportDataToSdd url", url);
-        let username = xperParams.email;
-        let password = xperParams.password;
-
-        let auth = 'Basic ' + btoa(username + ":" + password);
-        request({
-                url : url,
-                headers : {
-                    "Authorization" : auth
-                }},
-            function (error, response, body) {
-                // let result = JSON.parse(body)
-                console.log("error ", error);
-                console.log("response ", response);
-                if(response.statusCode !== 200) {
-                    remote.dialog.showErrorBox(t('global.error'), response.statusMessage);
-                } else {
-                    calback(body);
-                }
-            }
-        );
-    }
-
     _onXperExportResponse = (result) => {
-        console.log("_onXperExportResponse ", result);
+        const app_home_path = path.join(remote.app.getPath('home'), APP_NAME);
+        if (!fs.existsSync(app_home_path)){
+            fs.mkdirSync(app_home_path);
+        }
+        const filename = genId() + ".xml";
+        const filepath =  path.join(app_home_path, filename);
+        request(result).pipe(fs.createWriteStream(filepath));
+        setTimeout(() => {
+            const sddObject = convertSDDtoJson(filepath);
+            this.setState({
+                removeOriginalFile:true,
+                sddFile: filepath,
+                sddObject: sddObject,
+            });
 
-        this.setState({
-            xperDownloadLink: result
-        });
+        }, 100);
     }
 
     render() {
@@ -83,12 +62,10 @@ export default class extends Component {
                     <PickXperDatabase
                         openModal={this.state.showPickXperBasePopup}
                         onClose={() => {
-                            console.log("onClose")
                             this.setState({showPickXperBasePopup: false});
                         }}
                         onPickDatabase={(database) => {
-                            console.log("onPickDatabase")
-                            this._onPickXperDatabase(database, this._onXperExportResponse);
+                            getSddForDatabase(database, this._onXperExportResponse);
                         }}
                     />
                 }
@@ -100,18 +77,6 @@ export default class extends Component {
                     <span className="title">{t('models.import_from_xper.title')}</span>
                 </div>
                 <br/>
-
-                {this.state.xperDownloadLink &&
-                    <div>
-                        &nbsp;&nbsp;&nbsp;
-                        <span className="file-name">{this.state.xperDownloadLink}</span>
-                        &nbsp;&nbsp;&nbsp;
-                        <Button onClick={() => {
-                            shell.openExternal(this.state.xperDownloadLink);
-                        }
-                        }>View ssd</Button>
-                    </div>
-                }
 
                 <Row className='content'>
                     <Col md={{size: 6, offset: 3}}>
@@ -132,6 +97,7 @@ export default class extends Component {
                                                     if (!_ || _.length < 1) return;
                                                     const location = _.pop();
                                                     this.setState({
+                                                        removeOriginalFile:false,
                                                         sddFile: location,
                                                         sddObject: convertSDDtoJson(location),
                                                     });
@@ -155,13 +121,19 @@ export default class extends Component {
                                                 this.props.goBack();
                                                 this.props.saveTaxonomy(chance.guid(), this.state.sddObject.name,
                                                     this.state.sddFile, 0);
+                                                if(this.state.removeOriginalFile) {
+                                                    setTimeout(() => {
+                                                        console.log("deleting temporary sdd file", this.state.sddFile);
+                                                        fs.unlinkSync(this.state.sddFile);
+                                                    }, 100);
+                                                }
                                             }}
                                     >{t('models.import_from_xper.btn_save_model')}</Button>&nbsp;&nbsp;
                                     <Button className="btn btn-primary" color="primary"
                                             onClick={() => {
                                                 this.props.goBack();
                                             }}
-                                    >Cancel</Button>
+                                    >{t('global.cancel')}</Button>
                                     <br/>
                                     <Label className="file-name">{t('models.import_from_xper.lbl_model_descriptors_found_in_file')}:</Label>
                                     <Label className="file-name">{path.basename(this.state.sddFile)}</Label>
