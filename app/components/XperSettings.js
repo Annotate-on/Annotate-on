@@ -3,14 +3,12 @@ import {Button, Col, Container, Label, Row} from 'reactstrap';
 import {remote, shell} from "electron";
 import path from 'path';
 import {convertSDDtoJson} from "../utils/sdd-processor";
-import {APP_NAME, CATEGORICAL, NUMERICAL} from "../constants/constants";
+import {CATEGORICAL, NUMERICAL} from "../constants/constants";
 import Chance from 'chance';
 import {getTaxonomyDir} from "../utils/config";
-import request from "request";
 import PickXperDatabase from "./PickXperDatabase";
 import {getSddForDatabase} from "../utils/xper";
 import fs from "fs";
-import {genId} from "./event/utils";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const chance = new Chance();
@@ -34,25 +32,12 @@ export default class extends Component {
         });
     }
 
-    _onXperExportResponse = (result) => {
-        const app_home_path = path.join(remote.app.getPath('home'), APP_NAME);
-        if (!fs.existsSync(app_home_path)){
-            fs.mkdirSync(app_home_path);
-        }
-        const filename = genId() + ".xml";
-        const filepath =  path.join(app_home_path, filename);
-        request(result)
-            .on('end', () => {
-                setTimeout(() => {
-                    const sddObject = convertSDDtoJson(filepath);
-                    this.setState({
-                        removeOriginalFile:true,
-                        sddFile: filepath,
-                        sddObject: sddObject,
-                    });
-
-                }, 100);
-            }).pipe(fs.createWriteStream(filepath));
+    _onXperExportResponse = (filepath, sddObject) => {
+        this.setState({
+            removeOriginalFile:true,
+            sddFile: filepath,
+            sddObject: sddObject,
+        });
     }
 
     render() {

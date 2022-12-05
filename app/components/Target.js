@@ -5,11 +5,13 @@ import {remote} from "electron";
 import XLSX from 'xlsx';
 import TableHeader from "./TableHeader";
 import {createPagination, formatDateForFileName, formatValue} from "../utils/js";
-import {CATEGORICAL, INTEREST, MODEL_XPER} from "../constants/constants";
+import {APP_NAME, CATEGORICAL, INTEREST, MODEL_XPER} from "../constants/constants";
 import {convertJsonToSDD} from "../utils/sdd-processor";
 import {getTaxonomyDir} from "../utils/config";
 import path from 'path';
 import {calculateTableHeight, getXlsx} from "../utils/common";
+import PickXperDatabase from "./PickXperDatabase";
+import {exportSddToDatabase} from "../utils/xper";
 // Columns titles are stored in a const because we want them to be the same in
 // the React Table & in the exported CSV or XLS(X) files.
 const COLUMN_CHARACTER_NAME = 'Character name';
@@ -133,7 +135,8 @@ class Target extends PureComponent {
             sortDirection,
             sortedTargets,
             pageSize: 20,
-            currentPage: 1
+            currentPage: 1,
+            showPickXperBasePopup:false
         };
     }
 
@@ -168,7 +171,17 @@ class Target extends PureComponent {
         });
     };
 
-    _exportDataToSdd = () => {
+    _handleExportToXperDatabase = () => {
+        if (this.props.selectedTaxonomy && this.props.taxonomyInstance) {
+            this.setState({
+                showPickXperBasePopup: true
+            });
+        } else {
+            alert("There is no selected taxomomy!");
+        }
+    }
+
+    _exportDataToSddFile = () => {
         const now = new Date();
         const { t } = this.props;
         let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
@@ -181,6 +194,28 @@ class Target extends PureComponent {
             const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
             convertJsonToSDD(path.join(getTaxonomyDir(), taxonomy.sddPath), file, this.props.taxonomyInstance, this.props.selectedTaxonomy, this.props.pictures);
         }
+    };
+
+    _exportDataToSddXperDatabase = (database) => {
+        const now = new Date();
+        const { t } = this.props;
+
+        const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
+        exportSddToDatabase(path.join(getTaxonomyDir(), taxonomy.sddPath),
+            this.props.taxonomyInstance,
+            this.props.selectedTaxonomy,
+            this.props.pictures,
+            database,
+            () => {
+                console.log("on export ssd completed")
+                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                    type: 'info',
+                    detail: "",
+                    message: t('results.characters.alert_message_data_exported_successfully_to_xper_database'),
+                    buttons: ['OK'],
+                    cancelId: 1
+                });
+            });
     };
 
     _exportData = (separator) => {
@@ -240,6 +275,18 @@ class Target extends PureComponent {
         const { t } = this.props;
         return (
             <div className="bst rcn_targets">
+                {this.state.showPickXperBasePopup &&
+                    <PickXperDatabase
+                        openModal={this.state.showPickXperBasePopup}
+                        onClose={() => {
+                            this.setState({showPickXperBasePopup: false});
+                        }}
+                        onPickDatabase={(database) => {
+                            console.log("selected database", database)
+                            this._exportDataToSddXperDatabase(database);
+                        }}
+                    />
+                }
                 <Row className="action-bar">
                     <Col md={1}>
                         <Dropdown title={t('results.dropdown_tooltip_export_the_selected_characters_to_a_csv_file')} isOpen={this.state.dropdownOpen}
@@ -261,9 +308,12 @@ class Target extends PureComponent {
                                 }}>{t('results.dropdown_item_use_comma_separator')}
                                 </DropdownItem>
                                 {canExportToSdd ?
-                                    <DropdownItem onClick={() => {
-                                        this._exportDataToSdd()
-                                    }}>{t('results.dropdown_item_export_to_xper')}
+                                    <DropdownItem onClick={() => {this._exportDataToSddFile()}}>
+                                        {t('results.dropdown_item_export_to_xper')}
+                                    </DropdownItem> : ''}
+                                {canExportToSdd ?
+                                    <DropdownItem onClick={() => {this._handleExportToXperDatabase()}}>
+                                        {t('results.dropdown_item_export_to_xper_database')}
                                     </DropdownItem> : ''}
                             </DropdownMenu>
                         </Dropdown>

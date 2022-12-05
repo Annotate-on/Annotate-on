@@ -1181,7 +1181,7 @@ export const updateXperParams = (url, email, password) => {
 };
 
 export const getXperParams = () => {
-    console.log("getXperParams")
+    // console.log("getXperParams")
     if(!config.xper) {
         updateXperParams(DEFAULT_XPER_CONNECTION_URL, null, null)
     }

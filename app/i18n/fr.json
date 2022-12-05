@@ -71,7 +71,7 @@
       }
     },
     "main_navbar": {
-      "library": "FR Library",
+      "library": "Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",
@@ -614,6 +614,7 @@
       "dropdown_item_use_comma_separator": "Use comma separator",
       "dropdown_item_use_tab_separator": "Use tab separator",
       "dropdown_item_export_to_xper": "Export to Xper",
+      "dropdown_item_export_to_xper_database": "Export to Xper database",
       "table_header_tooltip_ascendant_or_descendant_order": "Ascendant or descendant order",
       "dropdown_item_export_to_single_file": "Export to single file",
       "dropdown_item_export_to_separate_files": "Export to separate files",
@@ -626,7 +627,8 @@
         "table_column_number_of_measures": "Number of measures",
         "table_column_color": "Color",
         "dialog_title_save_in_sdd": "Save in SDD",
-        "dialog_title_save": "Characters"
+        "dialog_title_save": "Characters",
+        "alert_message_data_exported_successfully_to_xper_database": "Data exported successfully to xper database!"
       },
       "annotations": {
         "lbl_filter_by_tags": "Filter by tags",
