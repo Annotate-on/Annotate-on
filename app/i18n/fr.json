@@ -54,6 +54,11 @@
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
       "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
+      "alert_please_check_your_xper_parameters": "Please check your xper parameters on Options page!",
+      "alert_an_error_occurred_in_communication_with_xper_server": "An error occurred in communication with Xper server!",
+      "alert_bad_xper_3_response": "Bad xper3 response!",
+      "alert_bad_format_for_xper_3_file": "Bad format for xper3 file!",
+      "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
       "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
       "options": {
         "title": "Options",
@@ -614,7 +619,7 @@
       "dropdown_item_use_comma_separator": "Use comma separator",
       "dropdown_item_use_tab_separator": "Use tab separator",
       "dropdown_item_export_to_xper": "Export to Xper",
-      "dropdown_item_export_to_xper_database": "Export to Xper database",
+      "dropdown_item_export_to_sdd_file": "Export to Sdd file",
       "table_header_tooltip_ascendant_or_descendant_order": "Ascendant or descendant order",
       "dropdown_item_export_to_single_file": "Export to single file",
       "dropdown_item_export_to_separate_files": "Export to separate files",
@@ -776,7 +781,8 @@
         "table_column_editors": "Editors(s)",
         "table_column_viewers": "Viewer(s)",
         "dialog_pick_xper_database_title": "Select xper database",
-        "alert_select_xper_database": "There is no selected database. Please select one!"
+        "alert_select_xper_database": "There is no selected database. Please select one!",
+        "lbl_there_is_no_xper_databases_owned_by_user": "There is no xper databases owned by user '{{user}}'"
       },
       "dialog_create_model": {
         "title_create_model": "Create model",

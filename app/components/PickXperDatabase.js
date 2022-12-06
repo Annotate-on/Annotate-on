@@ -7,6 +7,7 @@ import lodash from "lodash";
 import {remote} from "electron";
 import i18next from "i18next";
 import {getXperDatabases} from "../utils/xper";
+import {getXperParams} from "../utils/config";
 
 const _TablePlaceholder = styled.div`
     height: 650px;
@@ -39,14 +40,19 @@ export default class extends Component {
     }
 
     _onXperDatabaseResponse = (result) => {
-        const sortBy = 'name';
-        const sortDirection = 'ASC';
-        const sortedProjects = this._sortList(sortBy, sortDirection, result);
-        this.setState({
-            sortBy,
-            sortDirection,
-            bases:sortedProjects
-        });
+        if(result) {
+            const sortBy = 'name';
+            const sortDirection = 'ASC';
+            const sortedProjects = this._sortList(sortBy, sortDirection, result);
+            this.setState({
+                sortBy,
+                sortDirection,
+                bases:sortedProjects,
+                showEmptyListMessage: !result || result.length === 0
+            });
+        } else {
+            this._toggle();
+        }
     }
 
     _sort = (sortBy, sortDirection) => {
@@ -70,9 +76,9 @@ export default class extends Component {
                     <ModalHeader toggle={this._toggle}>
                         {t('models.import_from_xper.dialog_pick_xper_database_title')}
                     </ModalHeader>
-                    <ModalBody>
+                    <ModalBody className="pick-xper-database-dialog">
                         <_TablePlaceholder>
-                            <Row className="content-table1">
+                            <Row >
                                 <Col md={{size: 12, offset: 0}}>
                                     <div className="table-wrapper" id="wrapper" ref={_ => (this.pane = _)}>
                                         <Table hover size="sm" className="targets-table">
@@ -134,10 +140,15 @@ export default class extends Component {
                                     </div>
                                 </Col>
                             </Row>
+                            {this.state.showEmptyListMessage &&
+                                <Row>
+                                    <div className='empty-list-message'>{t('models.import_from_xper.lbl_there_is_no_xper_databases_owned_by_user', {user:getXperParams().email})}</div>
+                                </Row>
+                            }
                         </_TablePlaceholder>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={() => this._onSelectDatabase()}>Select</Button>
+                        <Button color="primary" disabled={!this.state.bases || this.state.bases.length === 0} onClick={() => this._onSelectDatabase()}>Select</Button>
                         <Button color="secondary" onClick={() => this._toggle()}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
@@ -154,7 +165,7 @@ export default class extends Component {
     _onSelectDatabase = () => {
         const {t} = i18next;
         if(!this.state.selected) {
-            remote.dialog.showMessageBox({
+            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'warning',
                 message: t('models.import_from_xper.alert_select_xper_database'),
                 cancelId: 1

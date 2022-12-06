@@ -7,7 +7,7 @@ import TableHeader from "./TableHeader";
 import {createPagination, formatDateForFileName, formatValue} from "../utils/js";
 import {APP_NAME, CATEGORICAL, INTEREST, MODEL_XPER} from "../constants/constants";
 import {convertJsonToSDD} from "../utils/sdd-processor";
-import {getTaxonomyDir} from "../utils/config";
+import {addProjectToWorkSpace, forceUnlockProject, getTaxonomyDir, updateTargetTypes} from "../utils/config";
 import path from 'path';
 import {calculateTableHeight, getXlsx} from "../utils/common";
 import PickXperDatabase from "./PickXperDatabase";
@@ -197,25 +197,32 @@ class Target extends PureComponent {
     };
 
     _exportDataToSddXperDatabase = (database) => {
-        const now = new Date();
         const { t } = this.props;
-
-        const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
-        exportSddToDatabase(path.join(getTaxonomyDir(), taxonomy.sddPath),
-            this.props.taxonomyInstance,
-            this.props.selectedTaxonomy,
-            this.props.pictures,
-            database,
-            () => {
-                console.log("on export ssd completed")
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
-                    type: 'info',
-                    detail: "",
-                    message: t('results.characters.alert_message_data_exported_successfully_to_xper_database'),
-                    buttons: ['OK'],
-                    cancelId: 1
+        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            type: 'warning',
+            buttons: ['Yes', 'No'],
+            message: "Confirmation",
+            cancelId: 1,
+            detail: "All existing data in selected xper database will be deleted! Do you want to proceed?"
+        });
+        if(!result) {
+            const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
+            exportSddToDatabase(path.join(getTaxonomyDir(), taxonomy.sddPath),
+                this.props.taxonomyInstance,
+                this.props.selectedTaxonomy,
+                this.props.pictures,
+                database,
+                () => {
+                    console.log("on export ssd completed")
+                    const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                        type: 'info',
+                        detail: "",
+                        message: t('results.characters.alert_message_data_exported_successfully_to_xper_database'),
+                        buttons: ['OK'],
+                        cancelId: 1
+                    });
                 });
-            });
+        }
     };
 
     _exportData = (separator) => {
@@ -309,11 +316,12 @@ class Target extends PureComponent {
                                 </DropdownItem>
                                 {canExportToSdd ?
                                     <DropdownItem onClick={() => {this._exportDataToSddFile()}}>
-                                        {t('results.dropdown_item_export_to_xper')}
+                                        {t('results.dropdown_item_export_to_sdd_file')}
                                     </DropdownItem> : ''}
                                 {canExportToSdd ?
                                     <DropdownItem onClick={() => {this._handleExportToXperDatabase()}}>
-                                        {t('results.dropdown_item_export_to_xper_database')}
+                                        {t('results.dropdown_item_export_to_xper')}
+
                                     </DropdownItem> : ''}
                             </DropdownMenu>
                         </Dropdown>
