@@ -12,6 +12,7 @@
       "close": "Close",
       "cancel": "Cancel",
       "error": "Error",
+      "confirmation": "Confirmation",
       "info": "Info",
       "delete_confirmation": "Are you sure you want to delete it?",
       "export": "Export",
@@ -58,6 +59,7 @@
       "alert_an_error_occurred_in_communication_with_xper_server": "An error occurred in communication with Xper server!",
       "alert_bad_xper_3_response": "Bad xper3 response!",
       "alert_bad_format_for_xper_3_file": "Bad format for xper3 file!",
+      "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "All data in selected Xper3 knowledge base will be replaced (delete and insert operation). Do you want to proceed?",
       "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
       "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
       "options": {
@@ -76,7 +78,7 @@
       }
     },
     "main_navbar": {
-      "library": "Library",
+      "library": "FR Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",

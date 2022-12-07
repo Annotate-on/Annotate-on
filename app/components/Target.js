@@ -201,9 +201,9 @@ class Target extends PureComponent {
         const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'warning',
             buttons: ['Yes', 'No'],
-            message: "Confirmation",
+            message: t('global.confirmation'),
             cancelId: 1,
-            detail: "All existing data in selected xper database will be deleted! Do you want to proceed?"
+            detail: t('global.alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced')
         });
         if(!result) {
             const taxonomy = this.props.taxonomies.find(_ => _.id === this.props.selectedTaxonomy.id);
