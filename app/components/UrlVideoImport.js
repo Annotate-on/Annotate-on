@@ -30,6 +30,7 @@ export default class extends PureComponent {
     }
 
     startDownload = () => {
+        const { t } = this.props;
         this.setState({
             isDownloading: true
         });
@@ -37,7 +38,7 @@ export default class extends PureComponent {
         request('https://www.google.com', {timeout: 10000})
             .on('error', err => {
                 console.log(err)
-                remote.dialog.showErrorBox('Error', 'Cannot start download. Check your internet connection!');
+                remote.dialog.showErrorBox(t('global.error'), t('global.alert_cannot_start_download'));
                 this.setState({
                     isDownloading: false
                 });
@@ -174,7 +175,7 @@ export default class extends PureComponent {
                     if (invalidUrls.length > 0) {
                         remote.dialog.showMessageBox({
                             type: 'warning',
-                            message: 'Following URLs are invalid or don\'t contain proper video.',
+                            message: t('library.import_video.alert_following_urls_are_invalid'),
                             detail: invalidUrls.join('\n')
                         });
                     }
@@ -219,6 +220,7 @@ export default class extends PureComponent {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <fieldset className="import-fieldset">
                 <legend className="import-legend">Import remote videos</legend>
@@ -227,7 +229,7 @@ export default class extends PureComponent {
                         <Col sm={12} md={12} lg={12}>
                             <Input autoFocus type="textarea" rows={10}
                                    disabled={this.state.isDownloading}
-                                   placeholder="Paste video URLs separated with new line."
+                                   placeholder={t('library.import_video.text_area_placeholder_paste_video_urls_separated_with_new_line')}
                                    onChange={(e) => {
                                        this.setState({
                                            urls: e.target.value
@@ -243,10 +245,10 @@ export default class extends PureComponent {
                                 className="btn btn btn-success"
                                 disabled={!this.state.urls || this.state.isDownloading || this.props.parentFolder === null}
                                 onClick={this.startDownload}
-                            >Save</Button>
+                            >{t('global.save')}</Button>
                             &emsp;
                             <Button className="btn btn-danger" size="md" color="warning" onClick={this.props.onClose}>
-                                Cancel
+                                {t('global.cancel')}
                             </Button>
                         </Col>
                     </Row>
