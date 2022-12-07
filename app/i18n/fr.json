@@ -12,6 +12,7 @@
       "close": "Close",
       "cancel": "Cancel",
       "error": "Error",
+      "confirmation": "Confirmation",
       "info": "Info",
       "delete_confirmation": "Are you sure you want to delete it?",
       "export": "Export",
@@ -53,10 +54,23 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
+      "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
+      "alert_please_check_your_xper_parameters": "Please check your xper parameters on Options page!",
+      "alert_an_error_occurred_in_communication_with_xper_server": "An error occurred in communication with Xper server!",
+      "alert_bad_xper_3_response": "Bad xper3 response!",
+      "alert_bad_format_for_xper_3_file": "Bad format for xper3 file!",
+      "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "All data in selected Xper3 knowledge base will be replaced (delete and insert operation). Do you want to proceed?",
+      "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
+      "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
       "options": {
         "title": "Options",
+        "language_section_title": "Language",
         "lbl_select_language": "Select language",
-        "select_language.tooltip": "Change application language"
+        "select_language.tooltip": "Change application language",
+        "xper_parameters_section_title": "Xper parameters",
+        "lbl_xper_parameters_url": "Url",
+        "lbl_xper_parameters_email": "E-mail",
+        "lbl_xper_parameters_password": "Password"
       },
       "languages": {
         "EN": "English",
@@ -403,7 +417,8 @@
         "btn_search_in_zoology_database": "Search in zoology database",
         "btn_search_in_paleontology_database": "Search in paleontology database",
         "btn_open_json_with_search_results": "Open json with search results",
-        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!"
+        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image."
       },
       "import_video": {
         "title": "Import",
@@ -413,7 +428,9 @@
         "btn_tooltip_select_videos": "Import local videos",
         "btn_paste_urls": "Paste URLs list",
         "btn_tooltip_paste_urls": "Import videos from urls",
-        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop"
+        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper video.",
+        "text_area_placeholder_paste_video_urls_separated_with_new_line": "Paste video URLs separated with new line."
       }
     },
     "projects": {
@@ -604,6 +621,7 @@
       "dropdown_item_use_comma_separator": "Use comma separator",
       "dropdown_item_use_tab_separator": "Use tab separator",
       "dropdown_item_export_to_xper": "Export to Xper",
+      "dropdown_item_export_to_sdd_file": "Export to Sdd file",
       "table_header_tooltip_ascendant_or_descendant_order": "Ascendant or descendant order",
       "dropdown_item_export_to_single_file": "Export to single file",
       "dropdown_item_export_to_separate_files": "Export to separate files",
@@ -616,7 +634,8 @@
         "table_column_number_of_measures": "Number of measures",
         "table_column_color": "Color",
         "dialog_title_save_in_sdd": "Save in SDD",
-        "dialog_title_save": "Characters"
+        "dialog_title_save": "Characters",
+        "alert_message_data_exported_successfully_to_xper_database": "Data exported successfully to xper database!"
       },
       "annotations": {
         "lbl_filter_by_tags": "Filter by tags",
@@ -748,6 +767,25 @@
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_date_imported_created": "Date imported/created",
+      "import_from_xper": {
+        "title": "Model (vocabulaire) import",
+        "btn_select_sdd_file_to_import": "Select SDD file to import",
+        "btn_import_from_xper_database": "Import from Xper database",
+        "btn_save_model": "Save model",
+        "lbl_model_descriptors_found_in_file": "Model descriptors found in file",
+        "lbl_character_name": "Character name",
+        "lbl_character_values": "Character values",
+        "lbl_character_measurement_type": "Character measurement type",
+        "lbl_group_name": "Group name",
+        "table_column_select": "Select",
+        "table_column_name": "Name",
+        "table_column_owners": "Owner(s)",
+        "table_column_editors": "Editors(s)",
+        "table_column_viewers": "Viewer(s)",
+        "dialog_pick_xper_database_title": "Select xper database",
+        "alert_select_xper_database": "There is no selected database. Please select one!",
+        "lbl_there_is_no_xper_databases_owned_by_user": "There is no xper databases owned by user '{{user}}'"
+      },
       "dialog_create_model": {
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",

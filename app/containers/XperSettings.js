@@ -4,6 +4,7 @@ import Component from '../components/XperSettings';
 import {saveTaxonomy} from "../actions/app";
 import {MODEL_XPER} from "../constants/constants";
 import {push} from "connected-react-router";
+import {withTranslation} from "react-i18next";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 
 const mapStateToProps = state => {
@@ -25,4 +26,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));
