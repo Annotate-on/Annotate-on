@@ -467,7 +467,7 @@ export default class extends Component {
                                                     });
                                                     this.startDownload();
                                                 }}>
-                                                {t('library.import_images.btn_start_import')}
+                                                {t('library.import_images.btn_start_import')}}
                                             </Button>
                                             &emsp;
                                             <Button size="md" color="danger" onClick={() => {

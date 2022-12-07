@@ -76,7 +76,6 @@ export default class extends PureComponent {
     }
 
     startDownload = () => {
-        const { t } = this.props;
         this.setState({
             isDownloading: true
         });
@@ -84,7 +83,7 @@ export default class extends PureComponent {
         request('https://www.google.com', {timeout: 10000, proxy: process.env.RECOLNAT_HTTP_PROXY})
             .on('error', err => {
                 console.log(err)
-                remote.dialog.showErrorBox(t('global.error'), t('global.alert_cannot_start_download'));
+                remote.dialog.showErrorBox('Error', 'Cannot start download. Check your internet connection!');
                 this.setState({
                     isDownloading: false
                 });
@@ -221,7 +220,7 @@ export default class extends PureComponent {
                     if (invalidUrls.length > 0) {
                         remote.dialog.showMessageBox({
                             type: 'warning',
-                            message: t('library.import_images.alert_following_urls_are_invalid'),
+                            message: 'Following URLs are invalid or don\'t contain proper image.',
                             detail: invalidUrls.join('\n')
                         });
                     }
