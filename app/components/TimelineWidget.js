@@ -60,7 +60,7 @@ export default class TimelineWidget extends Component {
         if(!this.props.items) return;
         const doc = new PDFDocument({font: 'Helvetica',  autoFirstPage: false});
         const cardPerPage = 5;
-        const cardHeight = 160;
+        const cardHeight = 158;
         for (let i = 0; i < this.props.items.length; i++) {
             let item = this.props.items[i];
             let indexInPage = i % cardPerPage;
@@ -69,33 +69,34 @@ export default class TimelineWidget extends Component {
                     margins: {
                         top: 0,
                         bottom: 0,
-                        left: 0,
-                        right: 0
+                        left: 5,
+                        right: 5
                     }
                 })
                 doc.lineWidth(2);
                 doc.lineCap('butt')
                     .strokeColor('#0f52ba')
-                    .moveTo(200, 10)
-                    .lineTo(200, 785)
+                    .moveTo(130, 10)
+                    .lineTo(130, 785)
                     .stroke();
             }
             doc.fontSize(8);
-            doc.text(item.title, 20, indexInPage * cardHeight + cardHeight/2 - 4, {width:165, align: 'right'})
-            doc.circle(200, indexInPage * cardHeight + cardHeight/2, 10).fill('#FFFFFF');
+            doc.text(item.title, 0, indexInPage * cardHeight + cardHeight/2 - 4, {width:115, align: 'right'})
+            doc.circle(130, indexInPage * cardHeight + cardHeight/2, 10).fill('#FFFFFF');
 
             let icon = this._getIconForAnnotationType(item.type)
             const data = icon.split(',');
             const decoded = window.atob(data[1]);
-            SVGtoPDF(doc, decoded, 194, indexInPage * cardHeight + cardHeight/2 - 7, {height: 25});
+            SVGtoPDF(doc, decoded, 124, indexInPage * cardHeight + cardHeight/2 - 7, {height: 25});
 
             doc.fill('#000000');
             if(item.media) {
-                doc.image(item.media.source.url, 240, indexInPage * cardHeight + 10, {height: 100})
+                doc.image(item.media.source.url, 170, indexInPage * cardHeight + 10, {height: 100})
             }
-            doc.text(item.cardSubtitle, 240, indexInPage * cardHeight + 115)
-            doc.text(item.cardTitle, 240, indexInPage * cardHeight + 125)
-            doc.text(item.cardDetailedText, 240, indexInPage * cardHeight + 135)
+            doc.text(item.cardSubtitle, 170, indexInPage * cardHeight + 115)
+            const cardTitle = item.cardTitle ? (item.cardTitle.length > 200 ? item.cardTitle.substring(0,199) +'...' :  item.cardTitle): '';
+            doc.text(cardTitle, 170, indexInPage * cardHeight + 125)
+            // doc.text(item.cardDetailedText, 190, indexInPage * cardHeight + 135)
         }
         doc.end();
         const stream = doc.pipe(blobStream());
@@ -125,6 +126,7 @@ export default class TimelineWidget extends Component {
                         items={this.props.items} mode="VERTICAL_ALTERNATING" scrollable allowDynamicUpdate
                         enableOutline
                         cardWidth="350"
+                        activeItemIndex={this.props.currentActiveItem}
                     >
                         <div className="chrono-icons">
                             {this.props.items.map((item, index) => {
@@ -134,7 +136,7 @@ export default class TimelineWidget extends Component {
                         </div>
                         {this.props.items.map((item, index) => {
                             return <div className="card-details-container" key={index}>
-                                <p>{item.cardDetailedText}</p>
+                                {/*<p>{item.cardDetailedText}</p>*/}
                                 <i className="fa fa-external-link pointer" aria-hidden="true"
                                    title={t('library.map-view.popup_open_in_annotation_editor')}
                                    onClick={() => {

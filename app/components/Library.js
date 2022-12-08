@@ -647,6 +647,7 @@ export default class extends Component {
                                     <TimelineView
                                         resources={this.state.sortedPicturesList}
                                         tabName={this.props.tabName}
+                                        currentPictureSelection={this.state.currentPictureSelection}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                             this.setState({picView: LIST_VIEW});
