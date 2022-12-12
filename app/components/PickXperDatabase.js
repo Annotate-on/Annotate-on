@@ -12,6 +12,8 @@ import {getXperParams} from "../utils/config";
 const _TablePlaceholder = styled.div`
     height: 650px;
     position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
 `;
 
 export default class extends Component {
