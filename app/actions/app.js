@@ -72,6 +72,7 @@ export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
 export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
 export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
 export const SELECT_MENU = 'SELECT_MENU';
+export const SELECT_LIBRARY_TAB = 'SELECT_LIBRARY_TAB';
 export const SET_PICTURE_IN_SELECTION = 'SET_PICTURE_IN_SELECTION';
 export const TAG_ANNOTATION = 'TAG_ANNOTATION';
 export const TAG_EVENT_ANNOTATION = 'TAG_EVENT_ANNOTATION';
@@ -671,6 +672,11 @@ export const saveSortedArray = (tabName, sortedArray, sortBy, sortDirection) => 
 export const selectMenu = (menu) => ({
     type: SELECT_MENU,
     menu
+});
+export const selectLibraryTab = (tab, libraryTab) => ({
+    type: SELECT_LIBRARY_TAB,
+    tab,
+    libraryTab,
 });
 
 export const selectFolder = (tab, path) => ({

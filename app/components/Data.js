@@ -43,6 +43,7 @@ import {loadMetadata} from "../utils/config";
 import ChronoThematicAnnotations from "../containers/ChronoThematicAnnotations";
 import EventAnnotations from "../containers/EventAnnotations";
 import {calculateTableHeight, getXlsx} from "../utils/common";
+import LibraryTabs from "../containers/LibraryTabs";
 
 const EXPORT_COLUMNS = [
     'Name',
@@ -486,8 +487,9 @@ class Data extends PureComponent {
         return (
             <div className="bst rcn_data">
                 <div className="bg">
+
                     <Row>
-                        <Col sm={5} className="hide-overflow">
+                        <Col sm={3} className="hide-overflow">
                             <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
                             <span className="project-label">{t('global.lbl_model')}:</span>
@@ -503,8 +505,9 @@ class Data extends PureComponent {
                     }
                             </span>
                         </Col>
-                        <Col sm={7}>
-                            <span className="title">{t('results.title')}</span>
+                        <Col sm={9}>
+                            <LibraryTabs tabName={this.props.tabName}/>
+                            {/*<span className="title">{t('results.title')}</span>*/}
                         </Col>
                     </Row>
                 </div>

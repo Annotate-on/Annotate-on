@@ -729,6 +729,57 @@ div.leaflet-marker-icon {
 .rcn_library {
 
 }
+
+.library-tabs-container {
+  margin-top: 5px;
+  //padding-top: 3px;
+  //padding-bottom: 3px;
+  //padding-left: 10px;
+  .library-tabs {
+    display: flex;
+    .library-tabs-button {
+      box-shadow: none;
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 2px 2px 2px 2px;
+      margin-left: 1px;
+      margin-right: 1px;
+      border-radius: 1px;
+      border: solid 1px #ddd;
+      .library-tabs-button-icon {
+        cursor: pointer;
+        font-size: 16px;
+        padding-right: 8px;
+        i{
+          cursor: pointer;
+        }
+      }
+      .library-tabs-button-content {
+        cursor: pointer;
+        .library-tabs-button-title {
+          font-weight: bold;
+          text-align: left;
+          font-size: 10px;
+          height: 12px;
+          opacity: 0.7;
+          text-transform: uppercase;
+          cursor: pointer;
+        }
+        .library-tabs-button-subtitle {
+          text-align: left;
+          height: 20px;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 .action-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;

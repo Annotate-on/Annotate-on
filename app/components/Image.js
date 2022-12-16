@@ -53,6 +53,7 @@ import {
 import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
 import {_checkImageType} from "../utils/js";
+import LibraryTabs from "../containers/LibraryTabs";
 
 //
 // STYLE
@@ -224,7 +225,7 @@ class Image extends PureComponent {
                 {label: 'OL', style: 'ordered-list-item'}
             ]
         };
-        if (!this.state.currentPicture) return <Nothing message={t('annotate.lbl_no_picture')}/>;
+        if (!this.state.currentPicture) ;
 
         const targetColors = {};
         this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
@@ -236,7 +237,7 @@ class Image extends PureComponent {
             <_Root className="rcn_image">
                 <div className="bg">
                     <Row>
-                        <Col sm={6} className="hide-overflow">
+                        <Col sm={3} className="hide-overflow">
                             <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
                             <span className="project-label">{t('global.lbl_model')}:</span>
@@ -251,168 +252,174 @@ class Image extends PureComponent {
                     }
                             </span>
                         </Col>
-                        <Col sm={6}>
-                            <span className="title">{t('annotate.title')}</span>
+                        <Col sm={9}>
+                            <LibraryTabs tabName={this.props.tabName}/>
+                            {/*<span className="title">{t('annotate.title')}</span>*/}
                         </Col>
                     </Row>
                 </div>
-
-                <div className='picture-wrapper'>
-                    <div className="picture-wrapper-sub">
-                        {this.state.zoomLevel && (
-                            <_ViewerInfo>
-                                <i className="fa fa-search fa" aria-hidden="true"/>
-                                &nbsp;&nbsp;
-                                <span>{`${(100 * this.state.zoomLevel).toFixed(2)}%`}</span>
-                            </_ViewerInfo>
-                        )}
-                        <Inspector
-                            eventAnnotations={this.props.annotationsEventAnnotations}
-                            annotationsChronothematique={this.props.annotationsChronothematique}
-                            videoAnnAddedId = {this.state.videoAnnAddedId}
-                            isAnnotationRecording = {this.state.isAnnotationRecording}
-                            annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
-                            annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
-                            annotationsRectangular={this.props.annotationsRectangular}
-                            annotationsPolygon={this.props.annotationsPolygon}
-                            annotationsAngle={this.props.annotationsAngle}
-                            annotationsOccurrence={this.props.annotationsOccurrence}
-                            annotationsColorPicker={this.props.annotationsColorPicker}
-                            annotationsRatio={this.props.annotationsRatio}
-                            annotationsTranscription={this.props.annotationsTranscription}
-                            annotationsCategorical={this.props.annotationsCategorical}
-                            annotationsRichtext={this.props.annotationsRichtext}
-                            selectAnnotation={this._callEditAnnotation}
-                            saveOrCancelEditAnnotation={this._callSaveOrCancelEdit}
-                            setAnnotationColor={this._setAnnotationColor}
-                            deleteAnnotationChronothematique={this.props.deleteAnnotationChronothematique}
-                            deleteEventAnnotation={this.props.deleteEventAnnotation}
-                            deleteAnnotationMeasureLinear={this._deleteAnnotationMeasureLinear}
-                            deleteAnnotationPointOfInterest={this._deleteAnnotationPointOfInterest}
-                            deleteAnnotationRectangular={this._deleteAnnotationRectangular}
-                            deleteAnnotationPolygon={this._deleteAnnotationPolygon}
-                            deleteAnnotationAngle={this._deleteAnnotationAngle}
-                            deleteAnnotationOccurrence={this._deleteAnnotationOccurrence}
-                            deleteAnnotationColorPicker={this._deleteAnnotationColorPicker}
-                            deleteAnnotationRatio={this._deleteAnnotationRatio}
-                            deleteAnnotationTranscription={this._deleteAnnotationTranscription}
-                            deleteAnnotationRichtext={this._deleteAnnotationRichtext}
-                            deleteCartel={this._deleteCartel}
-                            picture={this.state.currentPicture}
-                            tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
-                            activateCalibration={this.tabChangeHandler}
-                            pixels={this.state.pixels}
-                            selectAxis={this.state.selectAxis}
-                            changeMeasureType={this._changeMeasureType}
-                            deleteAxis={this._deleteAxis}
-                            changeCalibration={this._changeCalibration}
-                            fireSaveEvent={this.state.fireSaveEvent}
-                            editedAnnotation={this.state.editedAnnotation}
-                            readOnly={false}
-                            tabName={this.props.tabName}
-                            currentAnnotationTool={this.state.currentAnnotationTool}
-                            updateAnnotation={this._updateAnnotation}
-                            navigationHandler={this._navigationHandler}
-                            leafletImage={this.leafletImage}
-                            currentPicture={this.state.currentPicture}
-                            isFromLibraryView={false}
-                        />
-                    </div>
-                    <_RightColumn>
-                        <div className="navigation">
-                            <div className="navigation-buttons">
-                                <img alt="navigation icon" src={require('./pictures/fast-backward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.firstPictureInSelection)}/>
-                                <img alt="navigation icon" src={require('./pictures/backward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.previousTenPictureInSelection)}/>
-                                <img alt="navigation icon"  src={require('./pictures/step-backward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}/>
-                                <span className="navigation-title">
-                                    {t('annotate.lbl_picture_in_current_selection', {index_in_selection: this.props.currentPictureIndexInSelection + 1, pictures_length:this.props.picturesSelection.length, catalog_number: this.state.catalognumber})}
-                                    <div title={this.state.currentPicture.file_basename}
-                                         className="file-name">{t('annotate.lbl_filename')}: {this.state.currentPicture.file_basename}</div>
-                                </span>
-                                <img alt="navigation icon" src={require('./pictures/step-forward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.nextPictureInSelection)}/>
-                                <img alt="navigation icon" src={require('./pictures/forward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.nextTenPictureInSelection)}/>
-                                <img alt="navigation icon" src={require('./pictures/fast-forward.svg')}
-                                     onClick={e => this._navigationHandler(e, this.props.lastPictureInSelection)}/>
+                {
+                    this.state.currentPicture ?
+                        <div className='picture-wrapper'>
+                            <div className="picture-wrapper-sub">
+                                {this.state.zoomLevel && (
+                                    <_ViewerInfo>
+                                        <i className="fa fa-search fa" aria-hidden="true"/>
+                                        &nbsp;&nbsp;
+                                        <span>{`${(100 * this.state.zoomLevel).toFixed(2)}%`}</span>
+                                    </_ViewerInfo>
+                                )}
+                                <Inspector
+                                    eventAnnotations={this.props.annotationsEventAnnotations}
+                                    annotationsChronothematique={this.props.annotationsChronothematique}
+                                    videoAnnAddedId = {this.state.videoAnnAddedId}
+                                    isAnnotationRecording = {this.state.isAnnotationRecording}
+                                    annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
+                                    annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                    annotationsRectangular={this.props.annotationsRectangular}
+                                    annotationsPolygon={this.props.annotationsPolygon}
+                                    annotationsAngle={this.props.annotationsAngle}
+                                    annotationsOccurrence={this.props.annotationsOccurrence}
+                                    annotationsColorPicker={this.props.annotationsColorPicker}
+                                    annotationsRatio={this.props.annotationsRatio}
+                                    annotationsTranscription={this.props.annotationsTranscription}
+                                    annotationsCategorical={this.props.annotationsCategorical}
+                                    annotationsRichtext={this.props.annotationsRichtext}
+                                    selectAnnotation={this._callEditAnnotation}
+                                    saveOrCancelEditAnnotation={this._callSaveOrCancelEdit}
+                                    setAnnotationColor={this._setAnnotationColor}
+                                    deleteAnnotationChronothematique={this.props.deleteAnnotationChronothematique}
+                                    deleteEventAnnotation={this.props.deleteEventAnnotation}
+                                    deleteAnnotationMeasureLinear={this._deleteAnnotationMeasureLinear}
+                                    deleteAnnotationPointOfInterest={this._deleteAnnotationPointOfInterest}
+                                    deleteAnnotationRectangular={this._deleteAnnotationRectangular}
+                                    deleteAnnotationPolygon={this._deleteAnnotationPolygon}
+                                    deleteAnnotationAngle={this._deleteAnnotationAngle}
+                                    deleteAnnotationOccurrence={this._deleteAnnotationOccurrence}
+                                    deleteAnnotationColorPicker={this._deleteAnnotationColorPicker}
+                                    deleteAnnotationRatio={this._deleteAnnotationRatio}
+                                    deleteAnnotationTranscription={this._deleteAnnotationTranscription}
+                                    deleteAnnotationRichtext={this._deleteAnnotationRichtext}
+                                    deleteCartel={this._deleteCartel}
+                                    picture={this.state.currentPicture}
+                                    tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
+                                    activateCalibration={this.tabChangeHandler}
+                                    pixels={this.state.pixels}
+                                    selectAxis={this.state.selectAxis}
+                                    changeMeasureType={this._changeMeasureType}
+                                    deleteAxis={this._deleteAxis}
+                                    changeCalibration={this._changeCalibration}
+                                    fireSaveEvent={this.state.fireSaveEvent}
+                                    editedAnnotation={this.state.editedAnnotation}
+                                    readOnly={false}
+                                    tabName={this.props.tabName}
+                                    currentAnnotationTool={this.state.currentAnnotationTool}
+                                    updateAnnotation={this._updateAnnotation}
+                                    navigationHandler={this._navigationHandler}
+                                    leafletImage={this.leafletImage}
+                                    currentPicture={this.state.currentPicture}
+                                    isFromLibraryView={false}
+                                />
                             </div>
+                            <_RightColumn>
+                                <div className="navigation">
+                                    <div className="navigation-buttons">
+                                        <img alt="navigation icon" src={require('./pictures/fast-backward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.firstPictureInSelection)}/>
+                                        <img alt="navigation icon" src={require('./pictures/backward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.previousTenPictureInSelection)}/>
+                                        <img alt="navigation icon"  src={require('./pictures/step-backward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}/>
+                                        <span className="navigation-title">
+                                    {t('annotate.lbl_picture_in_current_selection', {index_in_selection: this.props.currentPictureIndexInSelection + 1, pictures_length:this.props.picturesSelection.length, catalog_number: this.state.catalognumber})}
+                                            <div title={this.state.currentPicture.file_basename}
+                                                 className="file-name">{t('annotate.lbl_filename')}: {this.state.currentPicture.file_basename}</div>
+                                </span>
+                                        <img alt="navigation icon" src={require('./pictures/step-forward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.nextPictureInSelection)}/>
+                                        <img alt="navigation icon" src={require('./pictures/forward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.nextTenPictureInSelection)}/>
+                                        <img alt="navigation icon" src={require('./pictures/fast-forward.svg')}
+                                             onClick={e => this._navigationHandler(e, this.props.lastPictureInSelection)}/>
+                                    </div>
+                                </div>
+                                {
+                                    this.state.currentPicture.resourceType === RESOURCE_TYPE_VIDEO ?
+                                        <VideoPlayer
+                                            annotationsChronothematique={this.props.annotationsChronothematique[this.state.currentPicture.sha1]}
+                                            currentPicture={this.state.currentPicture}
+                                            isEditing={this.state.currentAnnotationTool}
+                                            editedAnnotation={this.state.editedAnnotation}
+                                            openEditPanelonVideoAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
+
+                                            leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                            annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+                                            annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+                                            annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+                                            annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
+                                            annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
+                                            annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
+                                            annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
+                                            annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
+                                            annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                            targetColors={targetColors}
+
+                                            onCreated={this._onCreated}
+                                            onEditStop={this._onEditStop}
+                                            onDrawStart={this._onDrawStart}
+                                            onDrawStop={this._onDrawStop}
+                                            calibrationMode={this.state.calibrationActive}
+                                            fireSaveEvent={this._fireSaveEvent}
+                                            onContextMenuEvent={this._handleLeafletContextMenu}
+                                            taxonomyInstance={this.props.taxonomyInstance}
+                                            repeatMode={this.props.repeatMode}
+                                            saveLeafletSettings={this.props.saveLeafletSettings}
+                                            leafletVideo={this.leafletImage}
+                                        /> : null
+                                }
+                                {
+                                    _checkImageType(this.state.currentPicture) ?
+                                        <LeafletImage currentPicture={this.state.currentPicture} ref={this.leafletImage}
+                                                      leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                                      annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+                                                      annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+                                                      annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+                                                      annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
+                                                      annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
+                                                      annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
+                                                      annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
+                                                      annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
+                                                      annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                                      onCreated={this._onCreated}
+                                                      onEditStop={this._onEditStop}
+                                                      onDrawStart={this._onDrawStart}
+                                                      onDrawStop={this._onDrawStop}
+                                                      calibrationMode={this.state.calibrationActive}
+                                                      fireSaveEvent={this._fireSaveEvent}
+                                                      onContextMenuEvent={this._handleLeafletContextMenu}
+                                                      targetColors={targetColors}
+                                                      taxonomyInstance={this.props.taxonomyInstance}
+                                                      repeatMode={this.props.repeatMode}
+                                                      saveLeafletSettings={this.props.saveLeafletSettings}
+                                        /> : null
+                                }
+                                {
+                                    this.state.currentPicture.resourceType === RESOURCE_TYPE_EVENT ?
+                                        <EventController
+                                            eventAnnotations={this.props.annotationsEventAnnotations[this.state.currentPicture.sha1] || []}
+                                            currentPicture={this.state.currentPicture}
+                                            isEditing={this.state.currentAnnotationTool}
+                                            editedAnnotation={this.state.editedAnnotation}
+                                            openEditPanelonAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
+
+                                        /> : null
+                                }
+                            </_RightColumn>
                         </div>
-                        {
-                            this.state.currentPicture.resourceType === RESOURCE_TYPE_VIDEO ?
-                                <VideoPlayer
-                                    annotationsChronothematique={this.props.annotationsChronothematique[this.state.currentPicture.sha1]}
-                                    currentPicture={this.state.currentPicture}
-                                    isEditing={this.state.currentAnnotationTool}
-                                    editedAnnotation={this.state.editedAnnotation}
-                                    openEditPanelonVideoAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
+                        :
+                    <Nothing message={t('annotate.lbl_no_picture')}/>
+                }
 
-                                    leafletPositionByPicture={this.props.leafletPositionByPicture}
-                                    annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
-                                    annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
-                                    annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
-                                    annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
-                                    annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
-                                    annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
-                                    annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
-                                    annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
-                                    annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
-                                    targetColors={targetColors}
-
-                                    onCreated={this._onCreated}
-                                    onEditStop={this._onEditStop}
-                                    onDrawStart={this._onDrawStart}
-                                    onDrawStop={this._onDrawStop}
-                                    calibrationMode={this.state.calibrationActive}
-                                    fireSaveEvent={this._fireSaveEvent}
-                                    onContextMenuEvent={this._handleLeafletContextMenu}
-                                    taxonomyInstance={this.props.taxonomyInstance}
-                                    repeatMode={this.props.repeatMode}
-                                    saveLeafletSettings={this.props.saveLeafletSettings}
-                                    leafletVideo={this.leafletImage}
-                                /> : null
-                        }
-                        {
-                            _checkImageType(this.state.currentPicture) ?
-                                <LeafletImage currentPicture={this.state.currentPicture} ref={this.leafletImage}
-                                          leafletPositionByPicture={this.props.leafletPositionByPicture}
-                                          annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
-                                          annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
-                                          annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
-                                          annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
-                                          annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
-                                          annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
-                                          annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
-                                          annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
-                                          annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
-                                          onCreated={this._onCreated}
-                                          onEditStop={this._onEditStop}
-                                          onDrawStart={this._onDrawStart}
-                                          onDrawStop={this._onDrawStop}
-                                          calibrationMode={this.state.calibrationActive}
-                                          fireSaveEvent={this._fireSaveEvent}
-                                          onContextMenuEvent={this._handleLeafletContextMenu}
-                                          targetColors={targetColors}
-                                          taxonomyInstance={this.props.taxonomyInstance}
-                                          repeatMode={this.props.repeatMode}
-                                          saveLeafletSettings={this.props.saveLeafletSettings}
-                            /> : null
-                        }
-                        {
-                            this.state.currentPicture.resourceType === RESOURCE_TYPE_EVENT ?
-                                <EventController
-                                    eventAnnotations={this.props.annotationsEventAnnotations[this.state.currentPicture.sha1] || []}
-                                    currentPicture={this.state.currentPicture}
-                                    isEditing={this.state.currentAnnotationTool}
-                                    editedAnnotation={this.state.editedAnnotation}
-                                    openEditPanelonAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
-
-                                /> : null
-                        }
-                    </_RightColumn>
-                </div>
                 <div>
                     <Modal isOpen={this.state.modal}
                            size="lg"

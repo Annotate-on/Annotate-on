@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {push} from 'connected-react-router';
 
-import {createTag} from '../actions/app';
+import {createTag, selectLibraryTab} from '../actions/app';
 import Component from '../components/Tab';
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
 
@@ -24,7 +24,10 @@ const mapDispatchToProps = dispatch => {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, 'library')
             }, 100)
-        }
+        },
+        setSelectedLibraryTab: (tab, libraryTab) => {
+            dispatch(selectLibraryTab(tab, libraryTab))
+        },
     };
 };
 

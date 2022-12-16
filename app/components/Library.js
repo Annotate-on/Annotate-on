@@ -32,7 +32,7 @@ import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
 import MapView from "../containers/MapView";
 import TimelineView from "../containers/TimelineView";
-
+import LibraryTabs from "../containers/LibraryTabs";
 
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
@@ -307,8 +307,9 @@ export default class extends Component {
         return (
             <_Root className="bst rcn_library">
                 <div className="bg">
+                    {/*<LibraryTabs tabName={this.props.tabName}/>*/}
                     <Row>
-                        <Col sm={6} className="hide-overflow">
+                        <Col sm={3} className="hide-overflow">
                             <span className="project-label">{t('global.lbl_project')}:</span><span
                             className="project-name">{this.props.projectName}</span>
                             <span className="project-label">{t('global.lbl_model')}:</span>
@@ -319,13 +320,14 @@ export default class extends Component {
                                  alt="xper3-logo"
                                  src='http://www.xper3.fr/resources/img/xper3-logo.png'>
                             </img> : APP_NAME})
-                        </Fragment> : t('library.lbl_without_model')}
+                        </Fragment> : t('library.lbl_without_model')
                     }
                             </span>
                         </Col>
-                        <Col sm={6}>
-                            <span
-                                className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
+                        <Col sm={9}>
+                            {/*<span*/}
+                            {/*    className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>*/}
+                            <LibraryTabs tabName={this.props.tabName}/>
                         </Col>
                     </Row>
 
