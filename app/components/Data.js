@@ -488,12 +488,17 @@ class Data extends PureComponent {
             <div className="bst rcn_data">
                 <div className="bg">
 
-                    <Row>
-                        <Col sm={3} className="hide-overflow">
-                            <span className="project-label">{t('global.lbl_project')}:</span><span
-                            className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
+                    <Row className="app-page-tile">
+                        <Col sm={4} className="hide-overflow">
+                            <LibraryTabs tabName={this.props.tabName}/>
+                            {/*<span className="title">{t('results.title')}</span>*/}
+                        </Col>
+                        <Col sm={8}>
+                            <div className="project-model-title">
+                                <span className="project-label">{t('global.lbl_project')}:</span><span
+                                className="project-name">{this.props.projectName}</span>
+                                <span className="project-label">{t('global.lbl_model')}:</span>
+                                <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
                             <img height='16px'
@@ -504,10 +509,7 @@ class Data extends PureComponent {
                         t('library.lbl_without_model')
                     }
                             </span>
-                        </Col>
-                        <Col sm={9}>
-                            <LibraryTabs tabName={this.props.tabName}/>
-                            {/*<span className="title">{t('results.title')}</span>*/}
+                            </div>
                         </Col>
                     </Row>
                 </div>

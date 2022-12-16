@@ -307,13 +307,19 @@ export default class extends Component {
         return (
             <_Root className="bst rcn_library">
                 <div className="bg">
-                    {/*<LibraryTabs tabName={this.props.tabName}/>*/}
-                    <Row>
-                        <Col sm={3} className="hide-overflow">
-                            <span className="project-label">{t('global.lbl_project')}:</span><span
-                            className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
+                    <Row className="app-page-tile">
+                        <Col sm={4} className="hide-overflow">
+                            {/*<span*/}
+                            {/*    className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>*/}
+                            <LibraryTabs tabName={this.props.tabName} />
+
+                        </Col>
+                        <Col sm={8}>
+                            <div className="project-model-title">
+                                <span className="project-label">{t('global.lbl_project')}:</span><span
+                                className="project-name">{this.props.projectName}</span>
+                                <span className="project-label">{t('global.lbl_model')}:</span>
+                                <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
                             <img height='16px'
@@ -323,11 +329,8 @@ export default class extends Component {
                         </Fragment> : t('library.lbl_without_model')
                     }
                             </span>
-                        </Col>
-                        <Col sm={9}>
-                            {/*<span*/}
-                            {/*    className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>*/}
-                            <LibraryTabs tabName={this.props.tabName}/>
+
+                            </div>
                         </Col>
                     </Row>
 

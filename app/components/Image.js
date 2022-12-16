@@ -86,6 +86,7 @@ const _RightColumn = styled.div`
   height: 100%;
   border-left: 0.5px solid #ddd;
   background: black;
+  margin-top: 1px;
 `;
 
 //
@@ -236,12 +237,16 @@ class Image extends PureComponent {
         return (
             <_Root className="rcn_image">
                 <div className="bg">
-                    <Row>
-                        <Col sm={3} className="hide-overflow">
-                            <span className="project-label">{t('global.lbl_project')}:</span><span
-                            className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
+                    <Row className="app-page-tile">
+                        <Col sm={4} className="hide-overflow">
+                            <LibraryTabs tabName={this.props.tabName}/>
+                        </Col>
+                        <Col sm={8}>
+                            <div className="project-model-title">
+                                <span className="project-label">{t('global.lbl_project')}:</span><span
+                                className="project-name">{this.props.projectName}</span>
+                                <span className="project-label">{t('global.lbl_model')}:</span>
+                                <span className="project-name">
                     {this.props.selectedTaxonomy ?
                         <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
                             <img height='16px'
@@ -251,10 +256,7 @@ class Image extends PureComponent {
                         : t('annotate.lbl_without_model')
                     }
                             </span>
-                        </Col>
-                        <Col sm={9}>
-                            <LibraryTabs tabName={this.props.tabName}/>
-                            {/*<span className="title">{t('annotate.title')}</span>*/}
+                            </div>
                         </Col>
                     </Row>
                 </div>
