@@ -22,6 +22,7 @@ import pjson from "../../package";
 const REC_LOGO = require('./pictures/annotate-on_logo.jpg');
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 import {withTranslation} from "react-i18next";
+import PageTitle from "./PageTitle";
 
 export default class Credits extends PureComponent {
 
@@ -37,7 +38,8 @@ export default class Credits extends PureComponent {
                     <a onClick={() => {
                         this.props.goToLibrary()
                     }}>
-                        <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
+                        <img alt="logo" height="18px" src={require('./pictures/home.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
+                        {/*<img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>*/}
                     </a>
                 </div>
                 <section className="border-bottom">

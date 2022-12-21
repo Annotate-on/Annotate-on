@@ -6,6 +6,7 @@ import RECOLNAT_LOGO from "./pictures/logo.svg";
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {DEFAULT_XPER_CONNECTION_URL} from "../constants/constants";
 import {remote} from "electron";
+import PageTitle from "./PageTitle";
 
 export default class Options extends Component {
 
@@ -96,19 +97,13 @@ export default class Options extends Component {
         const { t } = this.props;
         return (
             <Container className="bst options">
-                <div className="bg">
-                    <Row>
-                        <Col sm={6} className="hide-overflow">
-                            <a onClick={() => {
-                                this.props.goToLibrary();
-                            }}>
-                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
-                            </a>
-                        </Col>
-                        <Col sm={6}>
-                            <span className="title">{t('global.options.title')}</span>
-                        </Col>
-                    </Row>
+                <div >
+                    <PageTitle
+                        showLogo={true}
+                        pageTitle={t('options.title')}
+                        showProjectInfo={false}>
+                    </PageTitle>
+
                     <Row>
                         <div className="options-form">
                             <div className="options-form-section">

@@ -54,6 +54,7 @@ import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
 import {_checkImageType} from "../utils/js";
 import LibraryTabs from "../containers/LibraryTabs";
+import PageTitle from "./PageTitle";
 
 //
 // STYLE
@@ -236,30 +237,12 @@ class Image extends PureComponent {
 
         return (
             <_Root className="rcn_image">
-                <div className="bg">
-                    <Row className="app-page-tile">
-                        <Col sm={4} className="hide-overflow">
-                            <LibraryTabs tabName={this.props.tabName}/>
-                        </Col>
-                        <Col sm={8}>
-                            <div className="project-model-title">
-                                <span className="project-label">{t('global.lbl_project')}:</span><span
-                                className="project-name">{this.props.projectName}</span>
-                                <span className="project-label">{t('global.lbl_model')}:</span>
-                                <span className="project-name">
-                    {this.props.selectedTaxonomy ?
-                        <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
-                            <img height='16px'
-                                 alt="app logo"
-                                 src='http://www.xper3.fr/resources/img/xper3-logo.png'>
-                            </img> : APP_NAME} )</Fragment>
-                        : t('annotate.lbl_without_model')
-                    }
-                            </span>
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
+                <PageTitle
+                    showProjectInfo={true}
+                    projectName={this.props.projectName}
+                    selectedTaxonomy={this.props.selectedTaxonomy}
+                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
+                </PageTitle>
                 {
                     this.state.currentPicture ?
                         <div className='picture-wrapper'>

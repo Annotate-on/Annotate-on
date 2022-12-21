@@ -216,6 +216,7 @@
 .logo {
   padding-left: 10px;
   margin-right: 10px;
+  margin-top: 7px;
   cursor: pointer;
 }
 
@@ -731,9 +732,23 @@ div.leaflet-marker-icon {
 
 }
 
+.rcn_tabsholder {
+  .app-page-tile {
+    border-top: none;
+  }
+}
+
 .app-page-tile {
   background-color: #eee;
   border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  .logo {
+    margin-top: -6px;
+  }
+  .title {
+    padding-left: 5px;
+    font-size: 16px;
+  }
 }
 
 .library-tabs-container {
