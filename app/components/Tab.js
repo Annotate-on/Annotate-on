@@ -21,14 +21,17 @@ export default class extends PureComponent {
     if (lodash.isPlainObject(path)) {
       if(path.param.picView) {
         this.props.goTo(`/selection/${this.props.tabName}/${path.tab}/${path.param.picView}/${path.param.fitToBounds}`);
-        this.props.openTabs[this.props.tabName].view = path.tab;
+        this.props.setSelectedLibraryTab(this.props.tabName, path.tab);
+        // this.props.openTabs[this.props.tabName].view = path.tab;
       } else {
         this.props.goTo(`/selection/${this.props.tabName}/${path.tab}/${path.param.edit}/${path.param.targetId}`);
-        this.props.openTabs[this.props.tabName].view = path.tab;
+        this.props.setSelectedLibraryTab(this.props.tabName, path.tab);
+        // this.props.openTabs[this.props.tabName].view = path.tab;
       }
     } else {
       this.props.goTo(`/selection/${this.props.tabName}/${path}`);
-      this.props.openTabs[this.props.tabName].view = path;
+      this.props.setSelectedLibraryTab(this.props.tabName, path);
+      // this.props.openTabs[this.props.tabName].view = path;
     }
   };
 

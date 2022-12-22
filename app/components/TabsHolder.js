@@ -101,7 +101,7 @@ export default class extends PureComponent {
                             this.props.goToLibrary();
                         }
                     }}>
-                        <img alt="logo" src={require('./pictures/logo.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
+                        <img alt="logo" height="18px" src={require('./pictures/home.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
                     {this.state.tabs.map((name, index) => {
                         return <NavItem key={index}>

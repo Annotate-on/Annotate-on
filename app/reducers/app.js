@@ -117,7 +117,8 @@ import {
     DELETE_TAG_EXPRESSION,
     CREATE_TAG_EXPRESSION,
     UPDATE_TAG_EXPRESSION_OPERATOR,
-    STOP_ANNOTATION_RECORDING
+    STOP_ANNOTATION_RECORDING,
+    SELECT_LIBRARY_TAB
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -2832,10 +2833,26 @@ export default (state = {}, action) => {
             break;
 
         case SELECT_MENU:
+
             return {
                 ...state,
                 selected_menu: action.menu
             };
+            break;
+        case SELECT_LIBRARY_TAB: {
+            const counter = state.counter + 1;
+            console.log("SELECT_LIBRARY_TAB", action.tab, action.libraryTab)
+            const tabs = {...state.open_tabs};
+            const tab = tabs[action.tab];
+            if(tab) {
+                tab.view = action.libraryTab
+            }
+            return {
+                ...state,
+                open_tabs: {...tabs},
+                counter
+            };
+        }
             break;
         case SELECT_FOLDER_GLOBALLY: {
             const counter = state.counter + 1;

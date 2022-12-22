@@ -33,6 +33,7 @@ import TableHeader from "./TableHeader";
 import {remote, shell} from "electron";
 import path from "path";
 import {
+    APP_NAME,
     COMMON_TAGS,
     IMAGE_STORAGE_DIR,
     MODEL_XPER, SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC,
@@ -56,7 +57,11 @@ import configYaml from 'config-yaml';
 import lodash from "lodash";
 import packageJson from "../../package.json";
 import {getValidTags, lvlAutomaticTags, lvlTags} from "./tags/tagUtils";
+import LibraryTabs from "../containers/LibraryTabs";
+import PageTitle from "./PageTitle";
+import i18next from "i18next";
 import DocLink from "../widget/DocLink";
+
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
@@ -325,34 +330,15 @@ export default class extends PureComponent {
         const { t } = this.props;
         let status = '';
 
+
         return (<Container className="bst rcn_xper">
-                <div className="bg">
-                    <Row>
-                        <Col sm={6} className="hide-overflow">
-                            <a onClick={() => {
-                                    this.props.goToLibrary();
-                                }}>
-                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
-                            </a>
-                            <span className="project-label">{t('global.lbl_project')}:</span><span className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
-                    {this.props.selectedTaxonomy ?
-                        <Fragment>
-                            {this.props.selectedTaxonomy.name}(type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
-                            <img
-                                alt="xper3-logo"
-                                height='16px'
-                                src='http://www.xper3.fr/resources/img/xper3-logo.png'/> : 'Annotate-ON'} )
-                        </Fragment> : t('library.lbl_without_model')
-                    }
-                            </span>
-                        </Col>
-                        <Col sm={6}>
-                            <span className="title">{t('projects.title')}</span>
-                        </Col>
-                    </Row>
-                </div>
+                <PageTitle
+                    showLogo={true}
+                    pageTitle={t('projects.title')}
+                    showProjectInfo={true}
+                    projectName={this.props.projectName}
+                    selectedTaxonomy={this.props.selectedTaxonomy}>
+                </PageTitle>
                 <br/>
                 <Row className="action-bar">
                     <Col sm={12} md={12} lg={12}>

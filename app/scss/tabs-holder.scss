@@ -36,12 +36,16 @@
     overflow-y: hidden;
     border: none;
     box-shadow: inset 0px -1px 0 #dee2e6;
-    background: orangered;
+    //background: orangered;
 
     .nav-item {
       display: inline-block;
-      border-bottom: 1px solid #dee2e6;
+      border-bottom: 1px solid #eee;
       margin-bottom: 0;
+      .nav-link.active {
+        background-color: #eee;
+        border-bottom: #eee;
+      }
     }
 
     .new-tab-wrapper {

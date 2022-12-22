@@ -98,7 +98,9 @@
       "keywords": "Keywords",
       "tooltip_keywords": "Tag manager",
       "options": "Options",
-      "tooltip_options": "Global application options"
+      "tooltip_options": "Global application options",
+      "resources": "Resources",
+      "tooltip_resources": "Resources"
     },
     "popup_sort": {
       "alphabetical": "Alphabetical",

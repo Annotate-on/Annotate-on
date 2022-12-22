@@ -32,7 +32,8 @@ import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
 import MapView from "../containers/MapView";
 import TimelineView from "../containers/TimelineView";
-
+import LibraryTabs from "../containers/LibraryTabs";
+import PageTitle from "./PageTitle";
 
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
@@ -107,6 +108,7 @@ const _FileName = styled.span`
 const _Panel = styled.div`
   // background-color: black;
   // width: ${NAV_SIZE}px;
+  margin-top: 1px;
   height: 100%;
   overflow: scroll;
   box-shadow: inset 0 -0.5px 0 0 #dddddd, inset 0.5px 0 0 0 #dddddd;
@@ -306,30 +308,12 @@ export default class extends Component {
         let key = 0;
         return (
             <_Root className="bst rcn_library">
-                <div className="bg">
-                    <Row>
-                        <Col sm={6} className="hide-overflow">
-                            <span className="project-label">{t('global.lbl_project')}:</span><span
-                            className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
-                    {this.props.selectedTaxonomy ?
-                        <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
-                            <img height='16px'
-                                 alt="xper3-logo"
-                                 src='http://www.xper3.fr/resources/img/xper3-logo.png'>
-                            </img> : APP_NAME})
-                        </Fragment> : t('library.lbl_without_model')}
-                    }
-                            </span>
-                        </Col>
-                        <Col sm={6}>
-                            <span
-                                className="title">{t('library.title')} ({this.state.sortedPicturesList.length}/{this.state.numberOfPicturesInSelectedFolders}/{this.state.allPictureLength})</span>
-                        </Col>
-                    </Row>
-
-                </div>
+                <PageTitle
+                    showProjectInfo={true}
+                    projectName={this.props.projectName}
+                    selectedTaxonomy={this.props.selectedTaxonomy}
+                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
+                </PageTitle>
                 <_Content>
                     <div className="vertical">
                         <Folders tabName={this.props.tabName}/>
