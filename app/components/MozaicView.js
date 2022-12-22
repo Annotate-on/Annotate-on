@@ -15,6 +15,7 @@ import MAP from "./pictures/map-location-dot-solid.svg";
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -73,6 +74,11 @@ export default class extends PureComponent {
         this._startManualOrder(!value);
         if (value)
             ee.emit(EVENT_SHOW_ALERT, t('library.mozaic_view.alert_selection_and_order_saved'));
+    }
+
+    _handleSetPictureInSelection = (pictureId, tabName) => {
+        this.props.skipReSort(true);
+        this.props.setPictureInSelection(pictureId, tabName);
     }
 
     _handleOnSortChange = (event, field) => {
@@ -183,6 +189,10 @@ export default class extends PureComponent {
                         <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
                              onClick={this.props.openMapView}>
                             <img alt="map view" src={MAP}/>
+                        </div>
+                        <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                             onClick={this.props.openTimelineView}>
+                            <img alt="list view" src={TIMELINE}/>
                         </div>
                     </div>
 
@@ -361,7 +371,7 @@ export default class extends PureComponent {
                                 </div>
                                 <MozaicPlayer pic={pic}
                                               ref={pic.sha1}
-                                              setPictureInSelection={this.props.setPictureInSelection}
+                                              setPictureInSelection={this._handleSetPictureInSelection}
                                               tabName={this.props.tabName}
                                               onDragEnd={this._onDragEnd}
                                               onDrop={this._onDrop}
@@ -389,7 +399,7 @@ export default class extends PureComponent {
                                             <div>{t('library.mozaic_view.lbl_description')}: <span>{pic.description}</span></div>
                                             <div>{t('library.mozaic_view.lbl_serie')}: <span>{pic.serie}</span></div>
                                             <div>{t('library.mozaic_view.lbl_person')}: <span>{pic.person}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.location}</span></div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> :
                                         <div className="collection-metadata">
                                             {t('library.mozaic_view.lbl_collection_metadata')} :
@@ -402,6 +412,7 @@ export default class extends PureComponent {
                                                     <span dangerouslySetInnerHTML={{__html: cartel}}/>
                                                 </div>
                                             </div>
+                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
                                         </div> : ''}
                             </div>
                         })}

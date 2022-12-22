@@ -348,6 +348,30 @@ class Image extends PureComponent {
                                     isEditing={this.state.currentAnnotationTool}
                                     editedAnnotation={this.state.editedAnnotation}
                                     openEditPanelonVideoAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
+
+                                    leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                    annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+                                    annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+                                    annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+                                    annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
+                                    annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
+                                    annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
+                                    annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
+                                    annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
+                                    annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                    targetColors={targetColors}
+
+                                    onCreated={this._onCreated}
+                                    onEditStop={this._onEditStop}
+                                    onDrawStart={this._onDrawStart}
+                                    onDrawStop={this._onDrawStop}
+                                    calibrationMode={this.state.calibrationActive}
+                                    fireSaveEvent={this._fireSaveEvent}
+                                    onContextMenuEvent={this._handleLeafletContextMenu}
+                                    taxonomyInstance={this.props.taxonomyInstance}
+                                    repeatMode={this.props.repeatMode}
+                                    saveLeafletSettings={this.props.saveLeafletSettings}
+                                    leafletVideo={this.leafletImage}
                                 /> : null
                         }
                         {
@@ -613,6 +637,7 @@ class Image extends PureComponent {
         } else if (this.state.currentAnnotationTool !== null) {
             e.layer.annotationId = chance.guid();
             e.layer.annotationType = this.state.currentAnnotationTool;
+
             switch (this.state.currentAnnotationTool) {
                 case ANNOTATION_POLYGON:
                     this.completeAnnotationPolygon(e.layer.getLatLngs()[0].map(latLng => {
@@ -643,7 +668,7 @@ class Image extends PureComponent {
                 case ANNOTATION_RECTANGLE:
                     this.completeAnnotationRectangular(e.layer.getLatLngs()[0].map(latLng => {
                         return this.leafletImage.current.getRealCoordinates(latLng);
-                    }), e.layer.annotationId);
+                    }), e.layer.annotationId, e.layer.video);
 
                     const rects = this.props.annotationsRectangular[this.state.currentPicture.sha1].filter(annotation => annotation.id === e.layer.annotationId);
                     if (rects.length > 0) {
@@ -660,7 +685,7 @@ class Image extends PureComponent {
                 case ANNOTATION_CIRCLEMARKER:
                 case ANNOTATION_MARKER:
                     const point = this.leafletImage.current.getRealCoordinates(e.layer.getLatLng());
-                    this.makeAnnotationPointOfInterest(point.x, point.y, e.layer.annotationId);
+                    this.makeAnnotationPointOfInterest(point.x, point.y, e.layer.annotationId, e.layer.video);
 
                     const points = this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1].filter(annotation => annotation.id === e.layer.annotationId);
                     if (points.length > 0) {
@@ -788,6 +813,7 @@ class Image extends PureComponent {
                 , ...this.props.annotationsAngle[sha1] || ''
                 , ...this.props.annotationsTranscription[sha1] || ''
                 , ...this.props.annotationsRichtext[sha1] || ''
+                , ...this.props.annotationsOccurrence[sha1] || ''
             ].filter(_ => _.id === annotationId);
 
             if (annotation && annotation.length > 0) {
@@ -823,6 +849,9 @@ class Image extends PureComponent {
                 case ANNOTATION_RICHTEXT:
                     this._deleteAnnotationRichtext(this.state.currentPicture.sha1, annotationId);
                     break;
+                case ANNOTATION_OCCURRENCE:
+                    this._deleteAnnotationOccurrence(this.state.currentPicture.sha1, annotationId);
+                    break;
             }
         }
     };
@@ -854,11 +883,16 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
+        if (annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
             this.setState({
                 editedAnnotation: annotation
             });
-        }else {
+        } else if (!lodash.isNil(annotation.video)) {
+            this.setState({
+                editedAnnotation: annotation
+            });
+            this.leafletImage.current.editAnnotation(annotation);
+        } else {
             this.leafletImage.current.editAnnotation(annotation);
         }
         ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , true);
@@ -866,6 +900,7 @@ class Image extends PureComponent {
     };
 
     _callSaveOrCancelEdit = (save, title, value , isVideoAnnotation , person , date, location , tags , topic) => {
+
         if (isVideoAnnotation){
             let annotation = {
                 value: value,
@@ -1009,6 +1044,7 @@ class Image extends PureComponent {
 
     _deleteAnnotationOccurrence = (sha1, id) => {
         this.props.deleteAnnotationOccurrence(sha1, id, this.props.tabName);
+        this.leafletImage.current.deleteAnnotation(id);
     };
 
     _deleteAnnotationRatio = (sha1, id) => {
@@ -1045,12 +1081,12 @@ class Image extends PureComponent {
         );
     }
 
-    makeAnnotationPointOfInterest(x, y, id) {
-        this.props.createAnnotationPointOfInterest(this.state.currentPicture.sha1, x, y, id);
+    makeAnnotationPointOfInterest(x, y, id, video) {
+        this.props.createAnnotationPointOfInterest(this.state.currentPicture.sha1, x, y, id, video);
     }
 
-    completeAnnotationRectangular(vertices, id) {
-        this.props.createAnnotationRectangular(this.state.currentPicture.sha1, vertices, id);
+    completeAnnotationRectangular(vertices, id, video) {
+        this.props.createAnnotationRectangular(this.state.currentPicture.sha1, vertices, id, video);
     }
 
     completeAnnotationPolygon(vertices, id) {

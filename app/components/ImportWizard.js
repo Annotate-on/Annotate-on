@@ -10,7 +10,7 @@ import Folders from "../containers/Folders";
 import UrlImageImport from "../containers/UrlImageImport";
 import DragAndDropImport from "../containers/DragAndDropImport";
 import {ee, EVENT_HIDE_LOADING, EVENT_SELECT_TAB, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
-import {attachDefaultTags} from "../utils/tags";
+import {attachDefaultTags, findTag, loadTags} from "../utils/tags";
 import PasteImageImport from "../containers/PasteImageImport";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
@@ -100,19 +100,16 @@ export default class extends Component {
             // Select parent folder.
             this.props.selectFolderGlobally(this.state.parentFolder);
             // Tag new pictures.
-            const newTags = this.props.tags.filter(_ => this.props.selectedTags.indexOf(_.name) > -1);
+            const newTags = loadTags(this.props.tags, this.props.selectedTags);
             for (const sha1 in pictureObjects) {
                 for (const tag of newTags) {
                     this.props.tagPicture(sha1, tag.name);
                 }
-
                 attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
             }
-
             for (const tag of newTags) {
                 this.props.selectTag(tag.name, true);
             }
-
             ee.emit(EVENT_HIDE_LOADING);
             this.props.goToLibrary();
         });

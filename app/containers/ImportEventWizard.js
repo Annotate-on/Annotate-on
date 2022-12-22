@@ -19,7 +19,6 @@ const mapStateToProps = state => {
         selectedTags: state.app.selected_tags,
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
-        tagsSelectionMode: state.app.tags_selection_mode,
         allPictures: state.app.pictures,
         tabData: state.app.open_tabs,
     };

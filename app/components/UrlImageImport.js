@@ -18,9 +18,7 @@ import {
 import fileType from 'file-type';
 import readChunck from 'read-chunk';
 import Chance from "chance";
-import {attachDefaultTags} from "../utils/tags";
-import {loadTags} from "../utils/common";
-
+import {loadTags, attachDefaultTags} from "../utils/tags";
 
 const chance = new Chance();
 
@@ -78,6 +76,7 @@ export default class extends PureComponent {
     }
 
     startDownload = () => {
+        const { t } = this.props;
         this.setState({
             isDownloading: true
         });
@@ -85,7 +84,7 @@ export default class extends PureComponent {
         request('https://www.google.com', {timeout: 10000, proxy: process.env.RECOLNAT_HTTP_PROXY})
             .on('error', err => {
                 console.log(err)
-                remote.dialog.showErrorBox('Error', 'Cannot start download. Check your internet connection!');
+                remote.dialog.showErrorBox(t('global.error'), t('global.alert_cannot_start_download'));
                 this.setState({
                     isDownloading: false
                 });
@@ -222,7 +221,7 @@ export default class extends PureComponent {
                     if (invalidUrls.length > 0) {
                         remote.dialog.showMessageBox({
                             type: 'warning',
-                            message: 'Following URLs are invalid or don\'t contain proper image.',
+                            message: t('library.import_images.alert_following_urls_are_invalid'),
                             detail: invalidUrls.join('\n')
                         });
                     }
@@ -238,7 +237,6 @@ export default class extends PureComponent {
                     // Display loading overlay.
                     ee.emit(EVENT_SHOW_LOADING, successfullyDownload.length);
                     initPicturesLibrary(successfullyDownload, [this.props.parentFolder], this.props.pictures).then(pictureObjects => {
-
                         //save url as reference (sf metadata field) create both xmp and xml file
                         if (Object.keys(pictureObjects).length !== 0) {
                             Object.keys(pictureObjects).forEach(e => {
@@ -255,14 +253,11 @@ export default class extends PureComponent {
                             for (const tag of newTags) {
                                 this.props.tagPicture(sha1, tag.name);
                             }
-
                             attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
                         }
-
                         for (const tag of newTags) {
                             this.props.selectTag(tag.name, true);
                         }
-
                         ee.emit(EVENT_HIDE_LOADING);
                         this.props.goToLibrary();
                     })

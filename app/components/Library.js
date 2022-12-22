@@ -13,7 +13,7 @@ import {
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
     TABLE_DATA_BG_OVER,
-    TABLE_DATA_FG_OVER,
+    TABLE_DATA_FG_OVER, TIMELINE_VIEW,
 } from '../constants/constants';
 import {MARGIN as INSPECTOR_MARGIN, WIDTH as INSPECTOR_WIDTH} from './Inspector';
 import Inspector from '../containers/Inspector';
@@ -31,12 +31,14 @@ import {getAllPicturesDirectories} from "../utils/config";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import MozaicPlayer from "./MozaicPlayer";
 import MapView from "../containers/MapView";
+import TimelineView from "../containers/TimelineView";
 
 
 
 const MOZAIC = require('./pictures/mozaic_icon.svg');
 const LIST_WHITE = require('./pictures/list_white_icon.svg');
 const MAP = require('./pictures/map-location-dot-solid.svg');
+const TIMELINE = require('./pictures/clock-regular.svg');
 const SELECT_ALL = require('./pictures/select_all.svg');
 const SELECT_ALL_CONTEXT = require('./pictures/select_all_gray.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
@@ -113,11 +115,6 @@ const _Panel = styled.div`
       background: transparent;
     }
 `;
-// const _Image = styled.img`
-//     background-color: #eee;
-//     padding: ${INSPECTOR_MARGIN}px;
-//     box-shadow: inset 0 -0.5px 0 0 #dddddd, inset 0.5px 0 0 0 #dddddd;
-// `;
 
 const _ImagePlaceholder = styled.div`
     background-color: #eee;
@@ -140,10 +137,13 @@ export default class extends Component {
         const sortedPicturesList = this._sortList(sortBy, sortDirection, initPicturesList);
         const currentPictureSelection = this.props.allPictures[this.props.tabData[this.props.tabName].pictures_selection[this.props.currentPictureIndexInSelection]];
 
+        const picView = this.props.match  ? this.props.match.params.picView : this.props.tabData[this.props.tabName].subview || LIST_VIEW;
+        const fitToBounds = this.props.match  ? this.props.match.params.fitToBounds : "true";
+
         this.state = {
             // Current picture for preview
-            currentPicture: sortedPicturesList[0],
-            hardSelection: sortedPicturesList[0],
+            currentPicture: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
+            hardSelection: currentPictureSelection ? currentPictureSelection : sortedPicturesList[0],
             initPicturesList,
             allPictureLength,
             numberOfPicturesInSelectedFolders: props.tabData[this.props.tabName].folder_pictures_selection.length,
@@ -153,9 +153,9 @@ export default class extends Component {
             sortedPicturesList,
             windowScrollerEnabled: false,
             selectedPictures: [],
-            picView: this.props.tabData[this.props.tabName].subview || LIST_VIEW,
+            picView: picView,
+            fitToBounds: fitToBounds,
             numberOfFolders: this.props.tabData[this.props.tabName].selected_folders.length,
-            numberOfTags: this.props.tabData[this.props.tabName].selected_tags.length,
             selectAll: false,
             scrollTableTo: this.props.tabData[this.props.tabName].lastScrollPositionInList,
             // Current working picture
@@ -167,33 +167,25 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        // console.log("library componentWillReceiveProps props", this.props, nextProps);
+        let stateUpdate = {
+            allPictureLength: Object.values(nextProps.allPictures).length,
+            numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
+            numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
+            currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
+        }
         if (skipSort) {
             skipSort = false;
-            return;
-        }
-        // Update list if array has changed because of tabs or folder selection
-        if (this.state.numberOfFolders !== nextProps.tabData[this.props.tabName].selected_folders.length
-            || this.state.numberOfTags !== nextProps.tabData[this.props.tabName].selected_tags.length
-            || this.props.tabData[this.props.tabName].pictures_selection.length !== nextProps.tabData[this.props.tabName].pictures_selection.length
-            || nextProps.currentPictureIndexInSelection !== this.props.currentPictureIndexInSelection
-            || Object.values(nextProps.allPictures).length !== Object.values(this.props.allPictures).length) {
-
+        } else {
+            // console.log("update picture selection in library")
             const unsortedPicturesList = nextProps.tabData[this.props.tabName].pictures_selection.map(_ => this.props.allPictures[_]);
             const sortedPicturesList = this._sortList(this.state.sortBy, this.state.sortDirection, unsortedPicturesList);
-            // this.state.sortedPicturesList = sortedPicturesList;
-
             this._initSortingValues(sortedPicturesList);
 
-            this.setState({
-                sortedPicturesList: sortedPicturesList,
-                allPictureLength: Object.values(nextProps.allPictures).length,
-                currentPicture: sortedPicturesList[nextProps.currentPictureIndexInSelection], sorted: false,
-                numberOfFolders: nextProps.tabData[this.props.tabName].selected_folders.length,
-                numberOfTags: nextProps.tabData[this.props.tabName].selected_tags.length,
-                numberOfPicturesInSelectedFolders: nextProps.tabData[this.props.tabName].folder_pictures_selection.length,
-                currentPictureSelection: nextProps.allPictures[nextProps.tabData[this.props.tabName].pictures_selection[nextProps.currentPictureIndexInSelection]]
-            });
+            stateUpdate.sortedPicturesList = sortedPicturesList;
+            stateUpdate.currentPicture = sortedPicturesList[nextProps.currentPictureIndexInSelection];
         }
+        this.setState(stateUpdate);
     }
 
     _initSortingValues = (sortedPicturesList) => {
@@ -253,6 +245,7 @@ export default class extends Component {
                 selectAll: false
             });
         } else {
+            skipSort = true;
             this.props.setPictureInSelection(sha1, this.props.tabName);
         }
     };
@@ -342,6 +335,7 @@ export default class extends Component {
                         <Folders tabName={this.props.tabName}/>
                         <Tags tabName={this.props.tabName} visibleActions={true}/>
                     </div>
+                    {console.log(this.state.picView)}
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>
@@ -362,7 +356,14 @@ export default class extends Component {
                                                 }}
                                                 openMapView={() => {
                                                     this.props.tabData[this.props.tabName].subview = MAP_VIEW;
-                                                    this.setState({picView: MAP_VIEW});
+                                                    this.setState({
+                                                        picView: MAP_VIEW,
+                                                        fitToBounds: "true"
+                                                    });
+                                                }}
+                                                openTimelineView={() => {
+                                                    this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                    this.setState({picView: TIMELINE_VIEW});
                                                 }}
                                                 skipReSort={(value) => skipSort = value}
                                     />
@@ -386,9 +387,21 @@ export default class extends Component {
                                                     <div title={t('library.map-view.switch_to_map_view_tooltip')} className="map-view"
                                                          onClick={() => {
                                                              this.props.tabData[this.props.tabName].subview = MAP_VIEW;
-                                                             this.setState({picView: MAP_VIEW})
+                                                             this.setState({
+                                                                 picView: MAP_VIEW,
+                                                                 fitToBounds: "true"
+                                                             });
                                                          }}>
                                                         <img alt="map view" src={MAP}/>
+                                                    </div>
+                                                    <div title={t('library.switch_to_timeline_view_tooltip')} className="timeline-view"
+                                                         onClick={() => {
+                                                             this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                             this.setState({
+                                                                 picView: TIMELINE_VIEW,
+                                                             });
+                                                         }}>
+                                                        <img alt="map view" src={TIMELINE}/>
                                                     </div>
                                                 </div>
                                                 <div className="action-buttons">
@@ -525,6 +538,7 @@ export default class extends Component {
                                                                         return rowData.sort_type;
                                                                     }}
                                                             />
+
                                                             <Column
                                                                 dataKey="sort_tags"
                                                                 label={t('library.table_column_tags')}
@@ -543,16 +557,24 @@ export default class extends Component {
                                                                         rowData.sort_tags += this.props.tagsByPicture[rowData.sha1].length
                                                                     }
                                                                     return rowData.sort_tags;
-                                                                }
-                                                                }
+                                                                }}
                                                             />
                                                             <Column dataKey="exifDate"
                                                                     label={t('library.table_column_exif_date')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                            />
                                                             <Column dataKey="exifPlace" label={t('library.table_column_exif_place')}
                                                                     width={0.1 * width}
-                                                                    key={key++}/>
+                                                                    key={key++}
+                                                                    cellRenderer={({rowData}) => {
+                                                                        if(rowData.placeName) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.placeName}</div>)
+                                                                        } else if(rowData.exifPlace) {
+                                                                            return (<div title={rowData.exifPlace}>{rowData.exifPlace}</div>)
+                                                                        }
+                                                                    }}
+                                                            />
 
                                                         </Table>
                                                     )}
@@ -605,6 +627,27 @@ export default class extends Component {
                                 {this.state.picView === MAP_VIEW &&
                                     <MapView resources={this.state.sortedPicturesList}
                                              tabName={this.props.tabName}
+                                             currentPictureSelection={this.state.currentPictureSelection}
+                                             fitToBounds={this.state.fitToBounds}
+                                             openListView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = LIST_VIEW;
+                                                 this.setState({picView: LIST_VIEW});
+                                             }}
+                                             openMozaicView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
+                                                 this.setState({picView: MOZAIC_VIEW});
+                                             }}
+                                             openTimelineView={() => {
+                                                 this.props.tabData[this.props.tabName].subview = TIMELINE_VIEW;
+                                                 this.setState({picView: TIMELINE_VIEW});
+                                             }}
+                                    ></MapView>
+                                }
+                                {this.state.picView === TIMELINE_VIEW &&
+                                    <TimelineView
+                                        resources={this.state.sortedPicturesList}
+                                        tabName={this.props.tabName}
+                                        currentPictureSelection={this.state.currentPictureSelection}
                                         openListView={() => {
                                             this.props.tabData[this.props.tabName].subview = LIST_VIEW;
                                             this.setState({picView: LIST_VIEW});
@@ -613,7 +656,14 @@ export default class extends Component {
                                             this.props.tabData[this.props.tabName].subview = MOZAIC_VIEW;
                                             this.setState({picView: MOZAIC_VIEW});
                                         }}
-                                    ></MapView>
+                                        openMapView={() => {
+                                            this.props.tabData[this.props.tabName].subview = MAP_VIEW;
+                                            this.setState({
+                                                picView: MAP_VIEW,
+                                                fitToBounds: "true"
+                                            });
+                                        }}
+                                    ></TimelineView>
                                 }
                             </_Pictures>
                             : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?

@@ -398,7 +398,7 @@ class LeafletImage extends Component {
                                              polyline: !this.props.calibrationMode ? POLYLINE_OPTIONS : false,
                                              polygon: !this.props.calibrationMode ? POLYGON_OPTIONS : false,
                                              angle: !this.props.calibrationMode ? ANGLE_OPTIONS : false,
-                                             occurrence: !this.props.calibrationMode,
+                                             occurrence: !this.props.calibrationMode? ANGLE_OPTIONS : false,
                                              // left out delivery of 16.05.2019.
                                              // ratio: !this.props.calibrationMode ? COLORPICKER_OPTIONS : false
                                              marker: !this.props.calibrationMode ? MARKER_OPTIONS : false,
@@ -458,6 +458,7 @@ class LeafletImage extends Component {
         const northEast = map.unproject([this.state.currentPicture.width, 0], this.boundsZoomLevel);
 
         const bounds = new L.LatLngBounds(southWest, northEast);
+
 
         // add the image overlay, so that it covers the entire map
         this._imageOverlay = L.imageOverlay(this.state.currentPicture.file, bounds);
@@ -663,6 +664,7 @@ class LeafletImage extends Component {
      * @private
      */
     _drawAnnotations = () => {
+        // console.log("_drawAnnotations")
         const map = this.leafletMap.leafletElement;
         const featureGroup = this.featureGroup.leafletElement;
 
@@ -785,8 +787,12 @@ class LeafletImage extends Component {
 
         if (this.props.annotationsOccurrence) {
             this.props.annotationsOccurrence.map(occurrence => {
+                const latLngs = [];
+                occurrence.vertices.map(vertex => {
+                    latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
+                });
                 const options = {...ANGLE_OPTIONS.shapeOptions, ...contextMenu};
-                const layer = L.occurrence({}, options);
+                const layer = L.occurrence(latLngs, options);
                 layer.annotationId = occurrence.id;
                 layer.annotationType = occurrence.annotationType;
                 featureGroup.addLayer(layer);

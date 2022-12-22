@@ -17,13 +17,15 @@ import {METADATA_DETERMINATIONS_TITLES, METADATA_TITLES} from "../utils/erecolna
 import {loadMetadata, saveMetadata} from "../utils/config";
 import fs from "fs-extra";
 import path from "path";
+import GeolocationWidget from "./GeolocationWidget";
+import {validateLocationInput} from "./event/utils";
+import DatingWidget from "./DatingWidget";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
 
 export default class extends Component {
     constructor(props, context) {
         super(props, context);
-        console.log(props);
         const metadata = {
             'naturalScienceMetadata': {
                 'catalogNumber': props.picture.catalogNumber || '',
@@ -32,7 +34,6 @@ export default class extends Component {
                 'genre': props.picture.genre || '',
                 'sfName': props.picture.sfName || '',
                 'fieldNumber': props.picture.fieldNumber || ''
-
             },
             'iptc': {
                 'title': props.picture.title || '',
@@ -49,9 +50,9 @@ export default class extends Component {
                 'language':  props.picture.language || '',
                 'relation':  props.picture.relation || '',
                 'location': props.picture.exifPlace || '',
+                'placeName': props.picture.placeName || '',
                 'rights':  props.picture.rights || '',
                 'contact': props.picture.contact || '',
-
             },
             'exif': {
                 'dimensionsX': props.picture.width,
@@ -77,15 +78,14 @@ export default class extends Component {
         };
     }
 
-
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.picture !== prevProps.picture) {
             let metadata = loadMetadata(this.props.picture.sha1);
             if (metadata === null) {
                 metadata = {
-                    naturalScienceMetadata: {...this.state.initMetadata.naturalScienceMetadata},
-                    iptc: {...this.state.initMetadata.iptc},
-                    exif: {...this.state.initMetadata.exif}
+                    naturalScienceMetadata: {},
+                    iptc: {},
+                    exif: {}
                 }
             }
 
@@ -105,6 +105,7 @@ export default class extends Component {
                 'language':  metadata.iptc.language ? metadata.iptc.language : this.props.picture.language || '',
                 'relation': metadata.iptc.relation ? metadata.iptc.relation : this.props.picture.relation || '',
                 'location': metadata.iptc.location ? metadata.iptc.location : this.props.picture.exifPlace || '',
+                'placeName': metadata.iptc.placeName ? metadata.iptc.placeName : this.props.picture.placeName || '',
                 'rights': metadata.iptc.rights ? metadata.iptc.rights : this.props.picture.rights || '',
                 'contact':  metadata.iptc.contact ? metadata.iptc.contact : this.props.picture.contact || '',
             };
@@ -131,79 +132,34 @@ export default class extends Component {
         }))
     }
 
-    _openInGoogleMaps(locationCoordinates) {
-        shell.openExternal(`https://www.google.com/maps/place/${locationCoordinates}`);
-    }
-    _validateLocationInput(input) {
-
-        const regexDecimal = new RegExp('(^-?\\d*\\.{0,1}\\d+$)');
-        const regexDMS = new RegExp('([0-9]{1,2})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([N|S]) ([0-9]{1,3})[:|°]([0-9]{1,2})[:|\'|′]?([0-9]{1,2}(?:\\.[0-9]+)?)?["|″|\'\']([E|W])');
-
-        const coordinates = input.split(/[ ,]+/);
-        const lat = coordinates[0];
-        const lng = coordinates[1];
-
-        if (input === '' || input === 'N/A'){
-            return true
-        }
-        else if (regexDecimal.test(lat) && regexDecimal.test(lng)) {
-            if (this.validateDecimalCoords(lat , lng)){
-                return true;
-            }
-        }
-        else if (regexDMS.test(input)) {
-            const  latD = this.convertDMStoDecimal(lat);
-            const  lngD = this.convertDMStoDecimal(lng);
-            if (this.validateDecimalCoords(latD , lngD)){
-                return  true;
-            }
-        }else {
-            this.setState({_validateLocationInput : false});
-        }
-    }
-
-    validateDecimalCoords(lat , lng) {
-        return lat > -90 && lat < 90 && lng > -180 && lng < 180;
-    }
-
-    convertDMStoDecimal(coordinates){
-
-        let parts = coordinates.split(/[^\d+(\,\d+)\d+(\.\d+)?\w]+/);
-        let degrees = parseFloat(parts[0]);
-        let minutes = parseFloat(parts[1]);
-        let seconds = parseFloat(parts[2].replace(',','.'));
-        let direction = parts[3];
-
-        let dd = degrees + minutes / 60 + seconds / (60 * 60);
-
-        if (direction === 'S' || direction === 'W') {
-            dd = dd * -1;
-        }
-        return dd;
-    }
-
     _formChangeHandler = ( event ) => {
+        // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
         const { t } = this.props;
         let errors = this.state.errors;
 
-        if (name === 'iptc.location'){
-            errors.location =
-                this._validateLocationInput(value)
-                    ? ''
-                    : t('inspector.metadata.alert_input_is_not_valid_please_provide_lat_long');
-        }
-
-        const path = event.target.name.split('.');
         const metadata = {...this.state.metadata};
-
-        metadata[path[0]][path[1]] = event.target.value;
-
-        this.setState({
-            metadata,
-            formSaved: false,
-            errors: errors
-        });
+        if (name === 'geolocation') {
+            errors.location = event.errors;
+            let location = (!value.latitude && !value.longitude) ? '' : value.latitude + ',' + value.longitude;
+            if(!errors.location) {
+                metadata.iptc.placeName = value.place ? value.place : '';
+                metadata.iptc.location = location;
+            }
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        } else {
+            const path = event.target.name.split('.');
+            metadata[path[0]][path[1]] = value;
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        }
     };
 
     _saveForm = (_) => {
@@ -214,7 +170,7 @@ export default class extends Component {
             saveMetadata(this.props.picture.sha1, this.state.metadata);
 
             console.log(this.state.metadata);
-            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location);
+            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName);
 
             let naturalScienceMetadata2 = '';
             let  iptcMetadata ='';
@@ -238,10 +194,11 @@ export default class extends Component {
                     }
                 }
             }
-
+            console.log("iptc", iptc)
             for (let prop in iptc) {
                 if (iptc[prop] !== ''){
                     let xmp_tag = `\t\t <dc:${prop}>${iptc[prop]}</dc:${prop}> \n`;
+                    console.log("prop", prop)
                     if (iptc[prop].includes(separator)) {
                         const _array = iptc[prop].split(separator);
                         _array.forEach( ( a ) => {
@@ -406,7 +363,7 @@ export default class extends Component {
                                    onKeyDown={this._saveForm}
                                    placeholder={t('inspector.metadata.textbox_placeholder_catalog_number')}
                                    title = {t('inspector.metadata.textbox_tooltip_catalog_number')}
-                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber}
+                                   value={this.state.metadata.naturalScienceMetadata.catalogNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -414,7 +371,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_reference')}
                                    title = {t('inspector.metadata.textbox_tooltip_reference')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.reference}
+                                   value={this.state.metadata.naturalScienceMetadata.reference || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -422,7 +379,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_family')}
                                    title = {t('inspector.metadata.textbox_tooltip_family')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.family}
+                                   value={this.state.metadata.naturalScienceMetadata.family || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -430,7 +387,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_genus')}
                                    title = {t('inspector.metadata.textbox_tooltip_genus')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.genre}
+                                   value={this.state.metadata.naturalScienceMetadata.genre || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -438,7 +395,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_scientific_name')}
                                    title = {t('inspector.metadata.textbox_tooltip_scientific_name')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.sfName}
+                                   value={this.state.metadata.naturalScienceMetadata.sfName || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -446,7 +403,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_collection_number')}
                                    title = {t('inspector.metadata.textbox_tooltip_collection_number')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber}
+                                   value={this.state.metadata.naturalScienceMetadata.fieldNumber || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
@@ -457,7 +414,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_title')}
                                    title = {t('inspector.metadata.textbox_tooltip_title')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.title}
+                                   value={this.state.metadata.iptc.title || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -465,7 +422,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_creator')}
                                    title = {t('inspector.metadata.textbox_tooltip_creator')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.creator}
+                                   value={this.state.metadata.iptc.creator || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -473,7 +430,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_subject_keywords')}
                                    title = {t('inspector.metadata.textbox_tooltip_subject_keywords')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.subject}
+                                   value={this.state.metadata.iptc.subject || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -481,7 +438,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_description')}
                                    title = {t('inspector.metadata.textbox_tooltip_description')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.description}
+                                   value={this.state.metadata.iptc.description || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -489,7 +446,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_publisher')}
                                    title = {t('inspector.metadata.textbox_tooltip_publisher')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.publisher}
+                                   value={this.state.metadata.iptc.publisher || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -497,7 +454,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_contributor')}
                                    title = {t('inspector.metadata.textbox_tooltip_contributor')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contributor}
+                                   value={this.state.metadata.iptc.contributor || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -505,15 +462,22 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_date')}
                                    title = {t('inspector.metadata.textbox_tooltip_date')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.created}
+                                   value={this.state.metadata.iptc.created || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
+                        {/*<DatingWidget value={"2022/12/12"}*/}
+                        {/*              openEdit={this.props.openEditDating}*/}
+                        {/*              start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}*/}
+                        {/*              end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}*/}
+                        {/*              period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}*/}
+                        {/*              onValueChange={this.handleTemporalCoverageChange}*/}
+                        {/*/>*/}
                         <FormGroup>
                             <Input type="text" name="iptc.type" id="type"
                                    placeholder={t('inspector.metadata.textbox_placeholder_type')}
                                    title = {t('inspector.metadata.textbox_tooltip_type')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.type}
+                                   value={this.state.metadata.iptc.type || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -521,7 +485,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_format')}
                                    title = {t('inspector.metadata.textbox_tooltip_format')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.format}
+                                   value={this.state.metadata.iptc.format || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -529,7 +493,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_identifier')}
                                    title ={t('inspector.metadata.textbox_tooltip_identifier')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.identifier}
+                                   value={this.state.metadata.iptc.identifier || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -537,7 +501,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_source')}
                                    title = {t('inspector.metadata.textbox_tooltip_source')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.source}
+                                   value={this.state.metadata.iptc.source || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -545,7 +509,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_language')}
                                    title = {t('inspector.metadata.textbox_tooltip_language')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.language}
+                                   value={this.state.metadata.iptc.language || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -553,34 +517,40 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_relation')}
                                    title = {t('inspector.metadata.textbox_tooltip_relation')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.relation}
+                                   value={this.state.metadata.iptc.relation || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
-                        <FormGroup>
-                            <InputGroup>
-                                <Input type="text" name="iptc.location" id="location"
-                                       placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}
-                                       title = {t('inspector.metadata.textbox_tooltip_coverage_place')}
-                                       onKeyDown={this._saveForm}
-                                       value={this.state.metadata.iptc.location}
-                                       onChange={this._formChangeHandler}/>
-                                <InputGroupAddon addonType="append">
-                                    <InputGroupText>
-                                        <i className="fa fa-external-link" aria-hidden="true"
-                                           onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}
-                                        />
-                                    </InputGroupText>
-                                </InputGroupAddon>
-                                {errors.location.length > 0 &&
-                                <span className='error'>{errors.location}</span>}
-                            </InputGroup>
-                        </FormGroup>
+
+                        {/*<FormGroup>*/}
+                        {/*    <InputGroup>*/}
+                        {/*        <Input type="text" name="iptc.location" id="location"*/}
+                        {/*               placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}*/}
+                        {/*               title = {t('inspector.metadata.textbox_tooltip_coverage_place')}*/}
+                        {/*               onKeyDown={this._saveForm}*/}
+                        {/*               value={this.state.metadata.iptc.location}*/}
+                        {/*               onChange={this._formChangeHandler}/>*/}
+                        {/*        <InputGroupAddon addonType="append">*/}
+                        {/*            <InputGroupText>*/}
+                        {/*                <i className="fa fa-external-link" aria-hidden="true"*/}
+                        {/*                   onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}*/}
+                        {/*                />*/}
+                        {/*            </InputGroupText>*/}
+                        {/*        </InputGroupAddon>*/}
+                        {/*        {errors.location.length > 0 &&*/}
+                        {/*            <span className='error'>{errors.location}</span>}*/}
+                        {/*    </InputGroup>*/}
+                        {/*</FormGroup>*/}
+
+                        <GeolocationWidget name="geolocation"
+                                           place={this.state.metadata.iptc.placeName}
+                                           location={this.state.metadata.iptc.location}
+                                           onValueChange={this._formChangeHandler}/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}
                                    title = {t('inspector.metadata.textbox_tooltip_rights_usage_terms')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.rights}
+                                   value={this.state.metadata.iptc.rights || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
                         <FormGroup>
@@ -588,7 +558,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_contact')}
                                    title = {t('inspector.metadata.textbox_tooltip_contact')}
                                    onKeyDown={this._saveForm}
-                                   value={this.state.metadata.iptc.contact}
+                                   value={this.state.metadata.iptc.contact || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
@@ -615,7 +585,7 @@ export default class extends Component {
                                    placeholder={t('inspector.metadata.textbox_placeholder_orientation')}
                                    title = {t('inspector.metadata.textbox_tooltip_orientation')}
                                    readOnly
-                                   value={this.state.metadata.exif.orientation}
+                                   value={this.state.metadata.exif.orientation || ''}
                             />
                         </FormGroup>
                     </Form>

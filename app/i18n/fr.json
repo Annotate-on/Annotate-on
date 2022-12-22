@@ -12,6 +12,7 @@
       "close": "Close",
       "cancel": "Cancel",
       "error": "Error",
+      "confirmation": "Confirmation",
       "info": "Info",
       "delete_confirmation": "Are you sure you want to delete it?",
       "export": "Export",
@@ -53,11 +54,26 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
+
       "doc_link_title": "Documentation link to {{section}}",
+      "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
+      "alert_please_check_your_xper_parameters": "Please check your xper parameters on Options page!",
+      "alert_an_error_occurred_in_communication_with_xper_server": "An error occurred in communication with Xper server!",
+      "alert_bad_xper_3_response": "Bad xper3 response!",
+      "alert_bad_format_for_xper_3_file": "Bad format for xper3 file!",
+      "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "All data in selected Xper3 knowledge base will be replaced (delete and insert operation). Do you want to proceed?",
+      "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
+      "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
+
       "options": {
         "title": "Options",
+        "language_section_title": "Language",
         "lbl_select_language": "Select language",
-        "select_language.tooltip": "Change application language"
+        "select_language.tooltip": "Change application language",
+        "xper_parameters_section_title": "Xper parameters",
+        "lbl_xper_parameters_url": "Url",
+        "lbl_xper_parameters_email": "E-mail",
+        "lbl_xper_parameters_password": "Password"
       },
       "languages": {
         "EN": "English",
@@ -84,7 +100,7 @@
       "keywords": "Keywords",
       "tooltip_keywords": "Tag manager",
       "options": "Options",
-      "tooltip_options" : "Global application options"
+      "tooltip_options": "Global application options"
     },
     "popup_sort": {
       "alphabetical": "Alphabetical",
@@ -129,6 +145,8 @@
       "tooltip_edit_annotation": "Edit annotation",
       "tooltip_delete_annotation": "Delete annotation",
       "tooltip_add_keyword": "Add keyword",
+      "tooltip_add_location": "Add location",
+      "tooltip_add_dating": "Add dating",
       "dialog_title_select_values_for_character": "Select value(s) for character",
       "dialog_title_enter_text": "Enter text",
       "select_character_label": "Choose a character",
@@ -158,6 +176,9 @@
         "lbl_tc_out": "TcOut",
         "lbl_character": "Character",
         "lbl_values": "Values",
+        "lbl_coverage": "Coverage",
+        "lbl_temporal": "Temporal",
+        "lbl_spatial": "Spatial",
         "tooltip_pick_a_value": "Pick a value",
         "dialog_title_select_value_for_character": "Select value for character",
         "dialog_title_edit_text": "Edit text"
@@ -187,6 +208,7 @@
         "textbox_placeholder_creator": "Creator",
         "textbox_tooltip_creator": "Creator",
         "textbox_placeholder_subject_keywords": "Subject/Keywords",
+        "textbox_tooltip_subject_keywords": "Subject/Keywords",
         "textbox_placeholder_description": "Description",
         "textbox_tooltip_description": "Description",
         "textbox_placeholder_publisher": "Publisher",
@@ -209,6 +231,8 @@
         "textbox_tooltip_relation": "Relation",
         "textbox_placeholder_coverage_place": "Coverage / place",
         "textbox_tooltip_coverage_place": "Coverage / place",
+        "textbox_placeholder_coverage_temporal": "Coverage / temporal",
+        "textbox_tooltip_coverage_temporal": "Coverage / temporal",
         "textbox_placeholder_rights_usage_terms": "Rights Usage Terms",
         "textbox_tooltip_rights_usage_terms": "Rights Usage Terms",
         "textbox_placeholder_contact": "Contact",
@@ -220,7 +244,28 @@
         "textbox_tooltip_resolution": "Resolution",
         "textbox_placeholder_orientation": "Orientation",
         "textbox_tooltip_orientation": "Orientation",
-        "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid , please provide lat/long [value1,value2] data in DMS or decimal format"
+        "alert_input_is_not_valid_please_provide_lat_long": "Input is not valid, please provide lat/long data in DMS or decimal format.",
+        "geolocation": {
+          "lbl_search_for_location": "Search for location",
+          "btn_open_map_to_select_location": "Choose location on map",
+          "textbox_placeholder_text_search": "Text search (showing 5 results in a list)",
+          "textbox_placeholder_place_name": "Place name",
+          "textbox_placeholder_latitude": "Latitude",
+          "textbox_placeholder_longitude": "Longitude",
+          "dialog_pick_location_title": "Pick a location",
+          "popup_lbl_new_edit_geolocation": "New/edit geolocation",
+          "popup_lbl_place_name": "Locality name",
+          "popup_lbl_lat_lng": "Latitude, Longitude",
+          "popup_btn_add_location": "Add location",
+          "popup_lbl_place": "Place",
+          "popup_lbl_lat": "Lat",
+          "popup_lbl_lng": "Lng"
+        },
+        "temporal": {
+          "popup_lbl_new_edit_temporal_coverage": "New/edit temporal coverage",
+          "popup_lbl_period": "Period",
+          "popup_lbl_name_of_period": "Date name or period name (optional)"
+        }
       },
       "calibration": {
         "btn_tooltip_new_calibration": "Do a new calibration",
@@ -230,7 +275,7 @@
         "lbl_original_dpi_x_y": "Original DPI X:{{x}}, Y:{{y}}",
         "lbl_original_dpi_not_detected": "Original DPI not detected",
         "lbl_select_one_calibration_below": "Select one calibration below:",
-        "alert_delete_message": "Calibration: [{calibration}}",
+        "alert_delete_message": "Calibration: {{calibration}}",
         "lbl_there_are_no_calibrations": "There are no calibrations.",
         "alert_save_message_empty_name": "Enter calibration name!",
         "alert_save_confirmation_title": "Confirm calibration",
@@ -255,6 +300,7 @@
       "lbl_without_model": "Without model",
       "title": "Library",
       "switch_to_mozaic_view_tooltip": "Switch to mozaic view",
+      "switch_to_timeline_view_tooltip": "Switch to timeline view",
       "table_column_catalog_n1": "Catalog N1°",
       "table_column_family": "Family",
       "table_column_date": "Date",
@@ -299,7 +345,7 @@
         "tooltip_lbl_exif_date": "ExifDate",
         "tooltip_lbl_exif_place": "ExifPlace",
         "tooltip_lbl_sort_family": "Sort family",
-        "lbl_sort_modified": "Sort modified",
+        "tooltip_lbl_sort_modified": "Sort modified",
         "lbl_event_details": "Event details",
         "lbl_title": "Title",
         "lbl_description": "Description",
@@ -310,6 +356,7 @@
         "lbl_scientific_name": "Scientific name",
         "lbl_author": "Author",
         "lbl_cartel": "Cartel",
+        "lbl_person": "Person",
         "alert_start_manual_order_message": "Start manual order",
         "alert_start_manual_order_confirmation": "Do you want to reuse the previously saved classification?",
         "alert_selection_and_order_saved": "Selection and order of images saved."
@@ -325,7 +372,14 @@
         "number_of_resources_without_geolocation": "{{count}} resources without geolocation",
         "number_of_selected_resources": "{{count}} selected resources"
       },
-      "import_images" : {
+      "timeline-view": {
+        "btn_tooltip.export_timeline_in_pdf_format": "Export timeline in pdf format",
+        "select_filter_all": "All",
+        "select_filter_annotations": "Annotations",
+        "select_filter_metadata": "Metadata",
+        "lbl_show_thumbnail_for_resource": "Show thumbnail for resource"
+      },
+      "import_images": {
         "title": "Import",
         "lbl_select_mode_of_import": "Select mode of import",
         "lbl_import_local_images": "Import local images",
@@ -366,9 +420,10 @@
         "btn_search_in_zoology_database": "Search in zoology database",
         "btn_search_in_paleontology_database": "Search in paleontology database",
         "btn_open_json_with_search_results": "Open json with search results",
-        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!"
+        "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image."
       },
-      "import_video" : {
+      "import_video": {
         "title": "Import",
         "loading_preparing_files_to_import": "Preparing files to import...",
         "lbl_import_local_videos": "Import local videos",
@@ -376,7 +431,9 @@
         "btn_tooltip_select_videos": "Import local videos",
         "btn_paste_urls": "Paste URLs list",
         "btn_tooltip_paste_urls": "Import videos from urls",
-        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop"
+        "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper video.",
+        "text_area_placeholder_paste_video_urls_separated_with_new_line": "Paste video URLs separated with new line."
       }
     },
     "projects": {
@@ -512,7 +569,8 @@
         "tooltip_click_to_continue_drawing_shape": "Click to continue drawing shape",
         "tooltip_click_first_point_to_close_shape": "Click first point to close this shape",
         "tooltip_click_to_start_drawing_rectangle": "Click and drag to draw rectangle",
-        "tooltip_release_mouse_to_finish_drawing": "Release mouse to finish drawing"
+        "tooltip_release_mouse_to_finish_drawing": "Release mouse to finish drawing",
+        "tooltip_click_cancel_to_undo_changes": "Click cancel to undo changes"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",
@@ -566,6 +624,7 @@
       "dropdown_item_use_comma_separator": "Use comma separator",
       "dropdown_item_use_tab_separator": "Use tab separator",
       "dropdown_item_export_to_xper": "Export to Xper",
+      "dropdown_item_export_to_sdd_file": "Export to Sdd file",
       "table_header_tooltip_ascendant_or_descendant_order": "Ascendant or descendant order",
       "dropdown_item_export_to_single_file": "Export to single file",
       "dropdown_item_export_to_separate_files": "Export to separate files",
@@ -578,7 +637,8 @@
         "table_column_number_of_measures": "Number of measures",
         "table_column_color": "Color",
         "dialog_title_save_in_sdd": "Save in SDD",
-        "dialog_title_save": "Characters"
+        "dialog_title_save": "Characters",
+        "alert_message_data_exported_successfully_to_xper_database": "Data exported successfully to xper database!"
       },
       "annotations": {
         "lbl_filter_by_tags": "Filter by tags",
@@ -598,7 +658,12 @@
         "table_column_x": "X",
         "table_column_y": "Y",
         "table_column_w": "W",
-        "table_column_h": "H"
+        "table_column_h": "H",
+        "table_column_coverage_spatial_location": "Lat,Lng",
+        "table_column_coverage_spatial_place_name": "Place name",
+        "table_column_coverage_temporal_start": "Temporal start",
+        "table_column_coverage_temporal_end": "Temporal end",
+        "table_column_coverage_temporal_name": "Temporal name"
       },
       "collections": {
         "dropdown_export_collection": "Export collection",
@@ -644,6 +709,7 @@
         "table_column_language": "Language",
         "table_column_relation": "Relation",
         "table_column_coverage": "Coverage",
+        "table_column_place_name": "Place name",
         "table_column_rights": "Rights",
         "table_column_contact": "Contact",
         "table_column_dimension_x": "Dimension X",
@@ -704,6 +770,25 @@
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_date_imported_created": "Date imported/created",
+      "import_from_xper": {
+        "title": "Model (vocabulaire) import",
+        "btn_select_sdd_file_to_import": "Select SDD file to import",
+        "btn_import_from_xper_database": "Import from Xper database",
+        "btn_save_model": "Save model",
+        "lbl_model_descriptors_found_in_file": "Model descriptors found in file",
+        "lbl_character_name": "Character name",
+        "lbl_character_values": "Character values",
+        "lbl_character_measurement_type": "Character measurement type",
+        "lbl_group_name": "Group name",
+        "table_column_select": "Select",
+        "table_column_name": "Name",
+        "table_column_owners": "Owner(s)",
+        "table_column_editors": "Editors(s)",
+        "table_column_viewers": "Viewer(s)",
+        "dialog_pick_xper_database_title": "Select xper database",
+        "alert_select_xper_database": "There is no selected database. Please select one!",
+        "lbl_there_is_no_xper_databases_owned_by_user": "There is no xper databases owned by user '{{user}}'"
+      },
       "dialog_create_model": {
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
@@ -759,6 +844,7 @@
       "lbl_keyword": "Keyword",
       "sort_tooltip_categories": "Sort categories",
       "btn_add_new_category": "Add new category",
+      "btn_tooltip_add_new_keyword": "Add new keyword",
       "btn_add_new_keyword": "Add new keyword",
       "lbl_keywords": "Keywords",
       "textbox_placeholder_search_keywords": "Search keywords",
@@ -775,9 +861,14 @@
       "alert_category_with_name_already_exit": "category with name '{{name}}' already exists",
       "alert_tag_already_exit_in_category": "tag with that name already exists in category: '{{parent}}'",
       "alert_can_not_add_tag_or_subcategory_without_parent": "error you can not add tag or subcategory without parent category!",
+      "alert_to_add_a_new_keyword_you_need_to_select_category": "To add a new keyword you need to select category first...",
+      "btn_back_to_keywords": "Back to keywords",
       "dialog_modify_category": {
         "title_edit_new_category": "Edit category",
-        "title_create_new_category": "Create category",
+        "title_create_new_category": "Create new category",
+        "title_edit_new_keyword": "Edit keyword",
+        "title_create_new_keyword": "Create new keyword",
+        "textbox_placeholder_enter_name": "Enter name ...",
         "alert_category_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)",
         "alert_category_name_is_empty": "You can not submit empty name.",
         "alert_tag_already_exit_in_selected_category": "tag with name '{{name}}' already exists in selected category.",

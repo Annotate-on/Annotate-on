@@ -39,7 +39,7 @@ import {
     ANNOTATION_TRANSCRIPTION,
     CATEGORICAL,
     INTEREST,
-    NUMERICAL,
+    NUMERICAL, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_PICTURE, RESOURCE_TYPE_VIDEO,
     SORT_ALPHABETIC_ASC,
     SORT_ALPHABETIC_DESC,
     SORT_DATE_ASC,
@@ -58,16 +58,23 @@ import {
     EVENT_DISHONOR_ANNOTATION,
     EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET,
     EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH,
-    EVENT_UNFOCUS_ANNOTATION, EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, EVENT_UPDATE_EVENT_RECORDING_STATUS
+    EVENT_UNFOCUS_ANNOTATION,
+    EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
+    EVENT_UPDATE_EVENT_RECORDING_STATUS,
+    STOP_ANNOTATION_RECORDING
 } from "../utils/library";
 import RichTextEditor from "react-rte";
 import Select from "react-select";
 import {acceptedTypes} from "../utils/annotationRecording";
 import {withTranslation} from "react-i18next";
+import lodash from "lodash";
 
+const EDIT_DATING = require('./pictures/clock-regular.svg');
+const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
 const ADD_TAG = require('./pictures/add-tag-annotation.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
 const DELETE_ANNOTATION = require('./pictures/delete-anotation.svg');
+const STOP = require('./pictures/stop.svg');
 
 // STATE CONSTANTS
 
@@ -157,18 +164,18 @@ export default class extends Component {
         ee.on(EVENT_HIGHLIGHT_ANNOTATION, this._highlightAnnotation);
         ee.on(EVENT_EDIT_CARTEL, this.editCartel);
         ee.on(EVENT_DISHONOR_ANNOTATION, this.dishonorAnnotation)
-        ee.on(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH , this._focusVideoAnnotation)
-        ee.on(EVENT_UNFOCUS_ANNOTATION , this._unfocusVideoAnnotation)
-        ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsAnnotateEventRecording)
+        ee.on(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH, this._focusVideoAnnotation)
+        ee.on(EVENT_UNFOCUS_ANNOTATION, this._unfocusVideoAnnotation)
+        ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS, this.updateIsAnnotateEventRecording)
     }
 
     componentWillUnmount() {
         ee.removeListener(EVENT_HIGHLIGHT_ANNOTATION, this._highlightAnnotation);
         ee.removeListener(EVENT_EDIT_CARTEL, this.editCartel);
         ee.removeListener(EVENT_DISHONOR_ANNOTATION, this.dishonorAnnotation);
-        ee.removeListener(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH , this._focusVideoAnnotation)
-        ee.removeListener(EVENT_UNFOCUS_ANNOTATION , this._unfocusVideoAnnotation)
-        ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsAnnotateEventRecording)
+        ee.removeListener(EVENT_FOCUS_NEW_VIDEO_ANNOTATION_ON_ANNOTATION_FINISH, this._focusVideoAnnotation)
+        ee.removeListener(EVENT_UNFOCUS_ANNOTATION, this._unfocusVideoAnnotation)
+        ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS, this.updateIsAnnotateEventRecording)
 
     }
 
@@ -179,11 +186,11 @@ export default class extends Component {
     }
 
     dishonorAnnotation = () => {
-        this.setState({highlightAnn: null , isFromLeaflet: false});
+        this.setState({highlightAnn: null, isFromLeaflet: false});
     }
 
-    _highlightAnnotation = (annId , isFromLeaflet) => {
-        this.setState({highlightAnn: annId , isFromLeaflet: isFromLeaflet});
+    _highlightAnnotation = (annId, isFromLeaflet) => {
+        this.setState({highlightAnn: annId, isFromLeaflet: isFromLeaflet});
     }
 
     componentWillReceiveProps(nextProps) {
@@ -247,13 +254,13 @@ export default class extends Component {
         if (nextProps.editedAnnotation && nextProps.editedAnnotation !== this.state.editedAnnotation && canEdit) {
             this.setState({editedAnnotation: nextProps.editedAnnotation});
         } else if (!canEdit) {
-            this.setState({editedAnnotation: null, openAddTag: false});
+            this.setState({editedAnnotation: null, openAddTag: false, openEditLocation: false, openEditDating: false});
         }
 
         // Open edit of video and event annotation on annotation record start.
         if (acceptedTypes.includes(nextProps.picture.resourceType) && this.state.annotations.length < nextState.annotations.length
-            && this.props.currentPicture  && this.props.currentPicture.sha1 === nextProps.currentPicture.sha1){
-            const annotation = this._sortAnnotations(nextState.annotations , SORT_DATE_DESC)[0];
+            && this.props.currentPicture && this.props.currentPicture.sha1 === nextProps.currentPicture.sha1) {
+            const annotation = this._sortAnnotations(nextState.annotations, SORT_DATE_DESC)[0];
             this.setState({editedAnnotation: annotation});
         }
     }
@@ -272,7 +279,7 @@ export default class extends Component {
 
     render() {
         let key = 0;
-        const { t } = this.props;
+        const {t} = this.props;
         const cartel = this.props.cartels[this.props.picture.sha1];
 
         const toolbarConfig = {
@@ -302,18 +309,25 @@ export default class extends Component {
                 fireSaveEvent={this.props.fireSaveEvent}
                 annotation={this.state.editedAnnotation}
                 openAddTag={this.state.openAddTag}
+                openEditLocation={this.state.openEditLocation}
+                openEditDating={this.state.openEditDating}
                 tabName={this.props.tabName}
                 sha1={this.props.picture.sha1}
-                isAnnotationRecording = {this.props.isAnnotationRecording}
+                isAnnotationRecording={this.props.isAnnotationRecording}
                 cancel={() => {
-                    ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , false);
-                    this.props.saveOrCancelEditAnnotation(false , null , null , this.state.editedAnnotation.annotationType === 'chronothematique');
-                    this.setState({editedAnnotation: null, openAddTag: false});
+                    ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
+                    this.props.saveOrCancelEditAnnotation(false, null, null, this.state.editedAnnotation.annotationType === 'chronothematique');
+                    this.setState({
+                        editedAnnotation: null,
+                        openAddTag: false,
+                        openEditLocation: false,
+                        openEditDating: false
+                    });
                 }}
-                save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType , person , date, location , tags , topic) => {
-                    ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , false);
+                save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType, person, date, location, tags, topic, coverage) => {
+                    ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
                     if (this.state.editedAnnotation) {
-                        const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue , this.state.editedAnnotation.annotationType === 'chronothematique' , person , date, location);
+                        const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, this.state.editedAnnotation.annotationType === 'chronothematique', person, date, location);
                         if (this.state.editedAnnotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE) {
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
@@ -321,21 +335,22 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
-                        }else if (this.state.editedAnnotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
+                        } else if (this.state.editedAnnotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
                             console.log('edited annotation in inspector', this.state.editedAnnotation);
-                            const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, true, person, date, location , [] , topic);
+                            const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, true, person, date, location, [], topic);
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
                                 this.state.editedAnnotation.annotationType,
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
-                        }
-                        else if (this.state.editedAnnotation.annotationType === ANNOTATION_MARKER ||
+                        } else if (this.state.editedAnnotation.annotationType === ANNOTATION_MARKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_RECTANGLE ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_COLORPICKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
@@ -356,6 +371,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                             this.props.setAnnotationColor(this.state.editedAnnotation.id, color);
@@ -385,6 +401,7 @@ export default class extends Component {
                                 this.state.editedAnnotation.id,
                                 title,
                                 text,
+                                coverage,
                                 annotation
                             );
                             this.props.createTargetInstance(NUMERICAL, this.props.tabName, this.state.editedAnnotation.id, targetId, value);
@@ -392,7 +409,12 @@ export default class extends Component {
                         }
 
                         targetUpdated = true;
-                        this.setState({editedAnnotation: null, openAddTag: false});
+                        this.setState({
+                            editedAnnotation: null,
+                            openAddTag: false,
+                            openEditLocation: false,
+                            openEditDating: false
+                        });
                     }
                 }}
             />
@@ -444,7 +466,8 @@ export default class extends Component {
                     </TabPane>
                     <TabPane tabId={TAB_ANNOTATIONS}>
                         {this.state.selectedTab === TAB_ANNOTATIONS && (
-                            <div className="annotations-tab" style={{gridTemplateRows: this.props.isFromLibraryView ? 'auto' : 'auto 220px'}}>
+                            <div className="annotations-tab"
+                                 style={{gridTemplateRows: this.props.isFromLibraryView ? 'auto' : 'auto 220px'}}>
                                 <div className="annotations-list"
                                      ref={el => {
                                          if (el && this.state.isFromLeaflet === true) {
@@ -462,12 +485,17 @@ export default class extends Component {
                                                 <Input type="select" bsSize="md"
                                                        value={this.props.tab.sortDirectionAnnotation}
                                                        onChange={this._handleOnSortChange}>
-                                                    <option value={SORT_DATE_DESC}>{t('popup_sort.newest_to_oldest')}</option>
-                                                    <option value={SORT_DATE_ASC}>{t('popup_sort.oldest_to_newest')}</option>
-                                                    <option value={SORT_ALPHABETIC_DESC}>{t('popup_sort.alphabetical')}</option>
-                                                    <option value={SORT_ALPHABETIC_ASC}>{t('popup_sort.alphabetical_inverted')}</option>
+                                                    <option
+                                                        value={SORT_DATE_DESC}>{t('popup_sort.newest_to_oldest')}</option>
+                                                    <option
+                                                        value={SORT_DATE_ASC}>{t('popup_sort.oldest_to_newest')}</option>
+                                                    <option
+                                                        value={SORT_ALPHABETIC_DESC}>{t('popup_sort.alphabetical')}</option>
+                                                    <option
+                                                        value={SORT_ALPHABETIC_ASC}>{t('popup_sort.alphabetical_inverted')}</option>
                                                     <option value={SORT_TYPE_ASC}>{t('popup_sort.by_type')}</option>
-                                                    <option value={SORT_TYPE_DESC}>{t('popup_sort.by_type_inverted')}</option>
+                                                    <option
+                                                        value={SORT_TYPE_DESC}>{t('popup_sort.by_type_inverted')}</option>
                                                 </Input>
                                             </Col>
                                         </Row>
@@ -493,10 +521,11 @@ export default class extends Component {
                                                          className={'action-row'}>
                                                         <img className="btn_menu" src={EDIT_ANNOTATION}
                                                              alt="edit annotation"
-                                                             title={t('inspector.tooltip_edit_annotation')} onClick={event => {
-                                                            event.preventDefault();
-                                                            this.editCartel();
-                                                        }}/>
+                                                             title={t('inspector.tooltip_edit_annotation')}
+                                                             onClick={event => {
+                                                                 event.preventDefault();
+                                                                 this.editCartel();
+                                                             }}/>
                                                         <img className="btn_menu" src={DELETE_ANNOTATION}
                                                              alt="delete annotation"
                                                              title={t('inspector.tooltip_delete_annotation')}
@@ -522,7 +551,8 @@ export default class extends Component {
                                             this.state.annotations.map(_ => this.makeAnnotation(_, key++, this._deleteAnnotation))}
                                         <Modal isOpen={this.state.modal} toggle={this._toggle} wrapClassName="bst"
                                                autoFocus={false}>
-                                            <ModalHeader toggle={this._toggle}>{t('inspector.dialog_title_select_values_for_character')}</ModalHeader>
+                                            <ModalHeader
+                                                toggle={this._toggle}>{t('inspector.dialog_title_select_values_for_character')}</ModalHeader>
                                             <ModalBody>
                                                 <Row className="action-bar">
                                                     <Col>
@@ -543,33 +573,33 @@ export default class extends Component {
                                                                 className="stateValue">{t('global.unknown_values')}</span>
                                                             </div>
                                                             {this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
-                                                            && this.props.selectedTaxonomy.descriptors.map(target => {
-                                                                if (target.id === this.state.targetId && target.targetType === this.state.targetGroup) {
-                                                                    return target.states.map((state, index) => {
-                                                                        return <div key={`option_${index}`}>
-                                                                            <Input type="checkbox" value={state.id}
-                                                                                   onChange={_ => {
-                                                                                   }}
-                                                                                   checked={!this.state.disableCategoricalValues && this.state.categoricalIds.indexOf(state.id) !== -1}
-                                                                                   disabled={this.state.disableCategoricalValues}
-                                                                                   onClick={_ => {
-                                                                                       const values = [...this.state.categoricalIds];
-                                                                                       const index = values.indexOf(state.id);
-                                                                                       if (index !== -1) {
-                                                                                           values.splice(index, 1);
-                                                                                       } else if (_.target.checked) {
-                                                                                           values.push(state.id);
-                                                                                       }
-                                                                                       this.setState({
-                                                                                           categoricalIds: values
-                                                                                       })
-                                                                                   }}
-                                                                            /> <span
-                                                                            className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
-                                                                        </div>
-                                                                    })
-                                                                }
-                                                            })}
+                                                                && this.props.selectedTaxonomy.descriptors.map(target => {
+                                                                    if (target.id === this.state.targetId && target.targetType === this.state.targetGroup) {
+                                                                        return target.states.map((state, index) => {
+                                                                            return <div key={`option_${index}`}>
+                                                                                <Input type="checkbox" value={state.id}
+                                                                                       onChange={_ => {
+                                                                                       }}
+                                                                                       checked={!this.state.disableCategoricalValues && this.state.categoricalIds.indexOf(state.id) !== -1}
+                                                                                       disabled={this.state.disableCategoricalValues}
+                                                                                       onClick={_ => {
+                                                                                           const values = [...this.state.categoricalIds];
+                                                                                           const index = values.indexOf(state.id);
+                                                                                           if (index !== -1) {
+                                                                                               values.splice(index, 1);
+                                                                                           } else if (_.target.checked) {
+                                                                                               values.push(state.id);
+                                                                                           }
+                                                                                           this.setState({
+                                                                                               categoricalIds: values
+                                                                                           })
+                                                                                       }}
+                                                                                /> <span
+                                                                                className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
+                                                                            </div>
+                                                                        })
+                                                                    }
+                                                                })}
                                                         </div>
                                                     </Col>
                                                 </Row>
@@ -578,7 +608,8 @@ export default class extends Component {
                                             <ModalFooter>
                                                 <Button color="primary"
                                                         onClick={this._saveCategoricalValue}>{t('global.save')}</Button>
-                                                <Button color="secondary" onClick={this._toggle}>{t('global.cancel')}</Button>
+                                                <Button color="secondary"
+                                                        onClick={this._toggle}>{t('global.cancel')}</Button>
                                             </ModalFooter>
                                         </Modal>
 
@@ -588,7 +619,8 @@ export default class extends Component {
                                                    scrollable={true}
                                                    toggle={this._toggleCartelModal} wrapClassName="bst"
                                                    autoFocus={false}>
-                                                <ModalHeader toggle={this._toggleCartelModal}>{t('inspector.dialog_title_enter_text')}</ModalHeader>
+                                                <ModalHeader
+                                                    toggle={this._toggleCartelModal}>{t('inspector.dialog_title_enter_text')}</ModalHeader>
                                                 <ModalBody>
                                                     <Form className="rte-container" onSubmit={(e) => {
                                                         e.preventDefault();
@@ -607,7 +639,8 @@ export default class extends Component {
                                                     </Form>
                                                 </ModalBody>
                                                 <ModalFooter>
-                                                    <Button color="primary" onClick={this._editCartel}>{t('global.save')}</Button>
+                                                    <Button color="primary"
+                                                            onClick={this._editCartel}>{t('global.save')}</Button>
                                                     <Button color="secondary"
                                                             onClick={() => this._toggleCartelModal()}>{t('global.cancel')}</Button>
                                                 </ModalFooter>
@@ -616,7 +649,8 @@ export default class extends Component {
                                     </Container>
                                 </div>
                                 {
-                                    !this.props.isFromLibraryView ? <TargetsInspector tabName={this.props.tabName}/> : null
+                                    !this.props.isFromLibraryView ?
+                                        <TargetsInspector tabName={this.props.tabName}/> : null
                                 }
                             </div>
                         )}
@@ -651,10 +685,10 @@ export default class extends Component {
                 this.props.deleteAnnotationMeasureLinear(sha1, annotation.id, this.props.tabName);
                 break;
             case ANNOTATION_CHRONOTHEMATIQUE:
-                this.props.deleteAnnotationChronothematique(sha1 , annotation.id)
+                this.props.deleteAnnotationChronothematique(sha1, annotation.id)
                 break;
             case ANNOTATION_EVENT_ANNOTATION:
-                this.props.deleteEventAnnotation(sha1 , annotation.id)
+                this.props.deleteEventAnnotation(sha1, annotation.id)
                 break;
             case ANNOTATION_RECTANGLE:
                 this.props.deleteAnnotationRectangular(sha1, annotation.id);
@@ -698,10 +732,10 @@ export default class extends Component {
         this.props.unfocusAnnotation();
     }
 
-    _focusVideoAnnotation = ( annotationId ) => {
-        this.props.focusAnnotation(annotationId,  'chronothematique' , this.props.picture.sha1,
+    _focusVideoAnnotation = (annotationId) => {
+        this.props.focusAnnotation(annotationId, 'chronothematique', this.props.picture.sha1,
             undefined, undefined);
-        this._highlightAnnotation(annotationId , false);
+        this._highlightAnnotation(annotationId, false);
     }
 
     _focusAnnotation = (e, annotation) => {
@@ -716,8 +750,8 @@ export default class extends Component {
         e.stopPropagation();
     }
 
-    _emitEvent = (event , id , type) => {
-        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id , type);
+    _emitEvent = (event, id, type) => {
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id, type);
     }
 
     // RENDERING HELPERS
@@ -725,7 +759,7 @@ export default class extends Component {
         let tags = [];
         if (this.props.tagsByAnnotation)
             tags = this.props.tagsByAnnotation[annotation.id] || [];
-        const { t } = this.props;
+        const {t} = this.props;
         const targetColors = {};
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[annotation.id] ?
             this.props.taxonomyInstance.taxonomyByAnnotation[annotation.id] : {descriptorId: -1};
@@ -743,11 +777,10 @@ export default class extends Component {
         && this.props.selectedTaxonomy.descriptors.map(target => {
             targetColors[target.id] = target.targetColor;
             const type = target.targetType ? `${target.targetType}\\` : '';
-
             if ((annotation.annotationType === 'simple-line' || annotation.annotationType === 'polyline') && target.annotationType === 'NUMERICAL' && target.unit === 'mm') {
                 options.push({
                     value: target.id,
-                    label: `${type}${target.targetName} ${target.unit}`,
+                    label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                     color: target.targetColor,
                     measure: target.unit
                 })
@@ -755,7 +788,7 @@ export default class extends Component {
                 if ((annotation.annotationType === 'polygon') && target.annotationType === 'NUMERICAL' && (target.unit === 'mm²' || target.unit === 'mm2')) {
                     options.push({
                         value: target.id,
-                        label: `${type}${target.targetName} ${target.unit}`,
+                        label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                         color: target.targetColor,
                         measure: target.unit
                     })
@@ -763,7 +796,7 @@ export default class extends Component {
                     if ((annotation.annotationType === 'angle') && target.annotationType === 'NUMERICAL' && (target.unit === '°' || target.unit === 'DEG' || target.unit === 'deg')) {
                         options.push({
                             value: target.id,
-                            label: `${type}${target.targetName} ${target.unit}`,
+                            label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                             color: target.targetColor,
                             measure: target.unit
                         })
@@ -771,7 +804,7 @@ export default class extends Component {
                         if ((annotation.annotationType === 'occurrence') && target.annotationType === 'NUMERICAL' && (target.unit === '#' || target.unit === 'N')) {
                             options.push({
                                 value: target.id,
-                                label: `${type}${target.targetName} ${target.unit}`,
+                                label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                                 color: target.targetColor,
                                 measure: target.unit
                             })
@@ -788,7 +821,7 @@ export default class extends Component {
                                     measure: target.unit,
                                     color: target.targetColor,
                                     targetGroup: target.targetType,
-                                    label: `${type}${target.targetName} ${target.unit}`,
+                                    label: `${type}${target.targetName} ${target.unit ? target.unit : ''}`,
                                 })
                             }
                         }
@@ -797,8 +830,8 @@ export default class extends Component {
             }
         });
 
-        let defaultValue = options.filter(_=>_.value === descriptor.descriptorId)[0];
-        if(!defaultValue) {
+        let defaultValue = options.filter(_ => _.value === descriptor.descriptorId)[0];
+        if (!defaultValue) {
             defaultValue = options[0]
         }
 
@@ -814,33 +847,38 @@ export default class extends Component {
                     }, 300);
                 }
             }}
-                 className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id}, 'react-contextmenu-wrapper row')}
-                 onClick={annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION ? e => {
-                     if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
-                         if (this.state.isAnnotateEventRecording){
-                             return false;
-                         }
-                         this._focusAnnotation(e, annotation);
-                         this._gotoAnnotation(e, annotation, "start");
-                         this.setState({
-                             isFromLeaflet: false,
-                             highlightAnn: annotation.id
-                         });
+                 className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
+                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1)},
+                     'react-contextmenu-wrapper row')}
+                 onClick={(this.props.currentPicture.resourceType === RESOURCE_TYPE_EVENT || this.props.currentPicture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
+                     if (this.state.isAnnotateEventRecording) {
+                         return false;
                      }
+                     this._focusAnnotation(e, annotation);
+                     this._gotoAnnotation(e, annotation, "start");
+                     this.setState({
+                         isFromLeaflet: false,
+                         highlightAnn: annotation.id
+                     });
+
                  } : undefined}
-                 onMouseOver={annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE ? e => {
-                     if (this.state.isAnnotateEventRecording){
+                 onMouseOver={this.props.currentPicture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                     if (this.state.isAnnotateEventRecording) {
                          return false;
                      }
 
-                     if (annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && annotation.annotationType !== ANNOTATION_EVENT_ANNOTATION) {
-                         console.log('emitting even....')
-                         this._emitEvent(e , annotation.id , annotation.annotationType);
-                         this.setState({
-                             isFromLeaflet: false,
-                             highlightAnn: annotation.id
-                         });
-                     }
+                     if (!lodash.isNil(annotation.video)) {
+                         this._focusAnnotation(e, annotation);
+                         console.log(annotation.video.end)
+                         if (annotation.video.end !== -1)
+                             this._gotoAnnotation(e, annotation, "start");
+                     } else
+                         this._emitEvent(e, annotation.id, annotation.annotationType);
+
+                     this.setState({
+                         isFromLeaflet: false,
+                         highlightAnn: annotation.id
+                     });
                  } : undefined}
                  key={key}
             >
@@ -852,13 +890,13 @@ export default class extends Component {
                                  alt={annotation.annotationType}
                                  src={require('./pictures/' + annotation.annotationType + '.svg')}/>
                         </Col>
-                        <Col md={8} lg={8} sm={8}>
+                        <Col md={5} lg={5} sm={5}>
                             <div className="annotation_title"
                                  style={{color: (!('color' in annotation) || annotation.color === "-1") ? "#333333" : targetColors[descriptor.descriptorId]}}>
                                 {
                                     annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE ?
                                         <span title={annotation.title}
-                                              onClick={ ()=> {
+                                              onClick={() => {
                                                   // TODO: move to timeline annotation
                                               }}
                                         >{annotation.title}</span> :
@@ -899,13 +937,63 @@ export default class extends Component {
                             </div>
                         </Col>
                         {
-                            !this.props.isFromLibraryView ? <Col md={3} lg={3} sm={3}
+                            !this.props.isFromLibraryView ? <Col md={6} lg={6} sm={6}
                                 // className={(!this.props.readOnly && this.state.hover === annotation.id) ? 'action-row' : 'hidden'}>
                                                                  className={'action-row'}>
+                                {!lodash.isNil(annotation.video) && annotation.video.end === -1 ?
+                                    <img alt="stop_ann_recording" className="btn_menu" src={STOP}
+                                         title={t('inspector.tooltip_stop_ann_recording')} onClick={event => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+
+                                        ee.emit(STOP_ANNOTATION_RECORDING, annotation);
+                                    }}/> : ''}
+
+                                <img alt="add dating " className="btn_menu" src={EDIT_DATING} title={t('inspector.tooltip_add_dating')} height="16px"
+                                     onClick={event => {
+                                         event.preventDefault();
+                                         event.stopPropagation();
+                                         if (this.state.isAnnotateEventRecording) {
+                                             return false;
+                                         }
+                                         if (this.props.currentAnnotationTool) {
+                                             let options = {
+                                                 type: "info",
+                                                 title: t('global.attention'),
+                                                 buttons: ["OK"],
+                                                 message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
+                                             }
+                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                         } else {
+                                             this.setState({editedAnnotation: annotation, openEditDating: true});
+                                         }
+                                     }
+                                }/>
+
+                                <img alt="add location " className="btn_menu" src={MAP_LOCATION} title={t('inspector.tooltip_add_location')} height="16px"
+                                     onClick={event => {
+                                         event.preventDefault();
+                                         event.stopPropagation();
+                                         if (this.state.isAnnotateEventRecording) {
+                                             return false;
+                                         }
+                                         if (this.props.currentAnnotationTool) {
+                                             let options = {
+                                                 type: "info",
+                                                 title: t('global.attention'),
+                                                 buttons: ["OK"],
+                                                 message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
+                                             }
+                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                         } else {
+                                             this.setState({editedAnnotation: annotation, openEditLocation: true});
+                                         }
+                                     }
+                                }/>
                                 <img alt="add keyword" className="btn_menu" src={ADD_TAG} title={t('inspector.tooltip_add_keyword')} onClick={event => {
                                     event.preventDefault();
                                     event.stopPropagation();
-                                    if (this.state.isAnnotateEventRecording){
+                                    if (this.state.isAnnotateEventRecording) {
                                         return false;
                                     }
                                     if (this.props.currentAnnotationTool) {
@@ -926,7 +1014,7 @@ export default class extends Component {
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
-                                         if (this.state.isAnnotateEventRecording){
+                                         if (this.state.isAnnotateEventRecording) {
                                              return false;
                                          }
                                          if (this.props.currentAnnotationTool) {
@@ -953,24 +1041,26 @@ export default class extends Component {
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
-                                         if (this.state.isAnnotateEventRecording){
+                                         if (this.state.isAnnotateEventRecording) {
                                              return false;
                                          }
                                          deleteCallback(this.props.picture.sha1, annotation)
                                      }}/>
-                            </Col> : <Col md={3} lg={3} sm={3}/>
+                            </Col> : <Col md={4} lg={4} sm={4}/>
                         }
                     </Row>
                     {this.props.selectedTaxonomy ?
                         <div>
                             {annotation.annotationType !== ANNOTATION_CHRONOTHEMATIQUE ? <Row>
-                                <Col md={3} lg={3} sm={3}><span className="btn_menu">{t('inspector.lbl_character')}</span></Col>
+                                <Col md={3} lg={3} sm={3}><span
+                                    className="btn_menu">{t('inspector.lbl_character')}</span></Col>
                                 <Col md={9} lg={9} sm={9}
-                                     onClick={ (e) => {
+                                     onClick={(e) => {
                                          e.stopPropagation();
                                      }}
                                 >
-                                    <Select className="annotation_target" title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
+                                    <Select className="annotation_target"
+                                            title={t('inspector.select_tooltip_affect_this_annotation_to_a_character')}
                                             value={defaultValue}
                                             menuShouldBlockScroll={true}
                                             menuPosition={"fixed"}
@@ -1050,7 +1140,7 @@ export default class extends Component {
         console.log(selectedTargetOptions.measure === "-1")
         console.log(selectedTargetOptions.measure === '')
 
-        const { t } = this.props;
+        const {t} = this.props;
         if (selectedTargetOptions.measure === annotation.measure
             || (selectedTargetOptions.measure === "N" && annotation.measure === "#")
             || (selectedTargetOptions.measure === "deg" && annotation.measure === "°")
@@ -1079,7 +1169,7 @@ export default class extends Component {
             //undefined
             if (annotation.annotationType === ANNOTATION_OCCURRENCE)
                 value = annotation.value;
-            else if ('value_in_mm' in annotation && annotation.value_in_mm != undefined )
+            else if ('value_in_mm' in annotation && annotation.value_in_mm != undefined)
                 value = annotation.value_in_mm;
             else if ('value_in_deg' in annotation)
                 value = annotation.value_in_deg;
@@ -1115,7 +1205,7 @@ export default class extends Component {
     }
 
     selectTab(tab) {
-        if (this.props.isFromMozaicView){
+        if (this.props.isFromMozaicView) {
             console.log('annotation editor disabled from mozaic view');
             return false;
         }

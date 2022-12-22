@@ -13,7 +13,7 @@ import {
     EVENT_SHOW_LOADING, EVENT_SHOW_LOADING_ON_RESOURCE_IMPORT,
     initVideosLibrary
 } from "../utils/library";
-import {attachDefaultVideoTags} from "../utils/tags";
+import {attachDefaultVideoTags, findTag, loadTags} from "../utils/tags";
 import UrlVideoImport from "../containers/UrlVideoImport";
 import DragAndDropImport from "../containers/DragAndDropImport";
 import LoadingSpinner from "./LoadingSpinner";
@@ -113,12 +113,10 @@ export default class extends Component {
             // Select parent folder.
             this.props.selectFolderGlobally(this.state.parentFolder);
             // Tag new pictures.
-            const newTags = this.props.tags.filter(_ => this.props.selectedTags.indexOf(_.name) > -1);
-            for (const sha1 in videoObjects) {
+            const newTags = loadTags(this.props.tags, this.props.selectedTags);            for (const sha1 in videoObjects) {
                 for (const tag of newTags) {
                     this.props.tagPicture(sha1, tag.name);
                 }
-
                 attachDefaultVideoTags(videoObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
             }
 

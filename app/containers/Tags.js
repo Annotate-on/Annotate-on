@@ -1,7 +1,22 @@
 import {connect} from 'react-redux';
 
-import {createTag, deleteTag, editTag, selectTag, setTagsSelectionMode, tagPicture, unselectTag,
-    untagPicture, addSubTag, openInNewTab, mergeTags, saveTagSort} from '../actions/app';
+import {
+    createTag,
+    deleteTag,
+    editTag,
+    selectTag,
+    tagPicture,
+    untagPicture,
+    addSubTag,
+    openInNewTab,
+    mergeTags,
+    saveTagSort,
+    deleteTagExpression,
+    createTagExpression,
+    updateTagExpressionOperator,
+    unselectTag,
+    addTagInFilter
+} from '../actions/app';
 import Component from '../components/Tags';
 import {withTranslation} from "react-i18next";
 
@@ -12,7 +27,6 @@ const mapStateToProps = (state, ownProps) => {
         tags: state.app.tags,
         tagsByPicture: state.app.tags_by_picture,
         annotationsByTag: state.app.annotations_by_tag,
-        tagsSelectionMode: state.app.tags_selection_mode,
         tab: state.app.open_tabs[ownProps.tabName],
         tabData: state.app.open_tabs
     };
@@ -31,9 +45,6 @@ const mapDispatchToProps = dispatch => {
         },
         selectTag: (name, skipCheck, tabName) => {
             dispatch(selectTag(name, skipCheck, tabName));
-        },
-        setTagsSelectionMode: (mode, tabName) => {
-            dispatch(setTagsSelectionMode(mode, tabName));
         },
         tagPicture: (pictureId, tagName) => {
             dispatch(tagPicture(pictureId, tagName));
@@ -55,6 +66,18 @@ const mapDispatchToProps = dispatch => {
         },
         saveTagSort: (tabName, direction) => {
             dispatch(saveTagSort(tabName, direction));
+        },
+        addTagInFilter: (name, skipCheck, tabName) => {
+            dispatch(addTagInFilter(name, skipCheck, tabName));
+        },
+        createTagExpression: (tabName) => {
+            dispatch(createTagExpression(tabName));
+        },
+        deleteTagExpression: (id, tabName) => {
+            dispatch(deleteTagExpression(id, tabName));
+        },
+        updateTagExpressionOperator: (id, value, tabName) => {
+            dispatch(updateTagExpressionOperator(id, value, tabName));
         }
     };
 };

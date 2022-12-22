@@ -45,7 +45,7 @@ class EventController extends Component {
 
     render() {
         return (
-            <div id="rcn_event" className="bst rcn_video">
+            <div id="rcn_event" className="bst rcn_event">
                 <EventAndTagManager
                     editEvent={this._editEvent}
                     event={this.props.currentPicture}/>

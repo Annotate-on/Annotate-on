@@ -50,6 +50,7 @@ export const INSPECTOR_TEXT = BG1;
 export const MOZAIC_VIEW = "MOZAIC_VIEW";
 export const LIST_VIEW = "LIST_VIEW";
 export const MAP_VIEW = "MAP_VIEW";
+export const TIMELINE_VIEW = "TIMELINE_VIEW";
 
 export const SORT_ALPHABETIC_DESC = "sort_alphabetic_desc";
 export const SORT_ALPHABETIC_ASC = "sort_alphabetic_asc";
@@ -118,5 +119,7 @@ export const DEFAULT_VOLUME = 0.75;
 
 export const APP_NAME = 'Annotate-on';
 
+export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
+export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
-
+export const DEFAULT_XPER_CONNECTION_URL = 'http://experimental.xper3.fr/rest';

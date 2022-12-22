@@ -98,7 +98,6 @@ import {
     SET_PICTURE_IN_SELECTION,
     SET_SELECTED_TAXONOMY,
     SET_STATE,
-    SET_TAGS_SELECTION_MODE,
     TAG_ANNOTATION,
     TAG_EVENT_ANNOTATION,
     TAG_PICTURE,
@@ -112,7 +111,13 @@ import {
     UPDATE_MOZAIC_TOGGLE,
     UPDATE_PICTURE_DATE,
     UPDATE_TABULAR_VIEW,
-    UPDATE_TAXONOMY_VALUES, EDIT_CATEGORY_BY_ID, flatOldTags
+    UPDATE_TAXONOMY_VALUES,
+    EDIT_CATEGORY_BY_ID,
+    ADD_TAG_IN_FILTER,
+    DELETE_TAG_EXPRESSION,
+    CREATE_TAG_EXPRESSION,
+    UPDATE_TAG_EXPRESSION_OPERATOR,
+    STOP_ANNOTATION_RECORDING
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -141,9 +146,18 @@ import {
     RESOURCE_TYPE_EVENT,
     SORT_ALPHABETIC_DESC,
     SORT_DATE_DESC, TAG_AUTO,
-    TAGS_SELECTION_MODE_OR
 } from '../constants/constants';
-import {findPictures} from '../utils/tags';
+import {
+    AND,
+    changeOperatorValueInFilter,
+    convertSelectedTagsToFilter,
+    EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION,
+    EXP_ITEM_TYPE_OPERATOR,
+    findPicturesByTagFilter,
+    findTag,
+    OR,
+    tagExist
+} from '../utils/tags';
 import {
     copySdd,
     deleteTaxonomy,
@@ -166,7 +180,13 @@ import {
     getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,
 } from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
-import {_addTagIdIfMissing, categoryExists, checkItemInParentCategory, getNewTabName} from "../components/event/utils";
+import {
+    _addTagIdIfMissing,
+    categoryExists,
+    checkItemInParentCategory,
+    genId,
+    getNewTabName
+} from "../components/event/utils";
 import i18next from "i18next";
 
 // The 'shape' of the state is defined here
@@ -196,7 +216,6 @@ export const createInitialState = () => ({
         tags_by_annotation: {},
         tags_by_picture: {},
         tags: [],
-        tags_selection_mode: TAGS_SELECTION_MODE_OR,
         calibrations: [],
         pictures_by_calibration: {},
         leaflet_position_by_picture: {},
@@ -208,10 +227,9 @@ export const createInitialState = () => ({
                 view: 'library',
                 subview: LIST_VIEW,
                 selected_folders: [],
-                selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 current_picture_index_in_selection: 0,
@@ -430,7 +448,7 @@ export default (state = {}, action) => {
                 delete pictures[sha1];
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -873,10 +891,9 @@ export default (state = {}, action) => {
                 view: action.view,
                 subview: LIST_VIEW,
                 selected_folders: allFolders,
-                selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 manualOrderLock: false,
@@ -938,10 +955,9 @@ export default (state = {}, action) => {
                 view: 'library',
                 subview: LIST_VIEW,
                 selected_folders: allFolders,
-                selected_tags: [],
+                selected_filter: null,
                 pictures_selection: [],
                 folder_pictures_selection: [],
-                tags_selection_mode: TAGS_SELECTION_MODE_OR,
                 sortDirection: SORT_ALPHABETIC_DESC,
                 sortDirectionAnnotation: SORT_DATE_DESC,
                 manualOrderLock: false,
@@ -969,8 +985,9 @@ export default (state = {}, action) => {
             appendTag(selectedTags, tag);
 
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.selected_tags = [...selectedTags];
-            tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+            tab.selected_filter = convertSelectedTagsToFilter(selectedTags);
+            tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -1049,15 +1066,6 @@ export default (state = {}, action) => {
             // Remove source tag from all selections.
             const selectedTagIndex = state.selected_tags.indexOf(action.source);
             state.selected_tags.splice(selectedTagIndex, 1);
-
-            for (const tabName in state.open_tabs) {
-                const tab = state.open_tabs[tabName];
-                if (tab.selected_tags) {
-                    lodash.remove(tab.selected_tags, (tag) => {
-                        return tag === action.source;
-                    });
-                }
-            }
 
             return {
                 ...state,
@@ -1348,7 +1356,6 @@ export default (state = {}, action) => {
                         updateTagName(cat.children);
                     }
                 });
-
             };
 
             updateTagName(state.tags);
@@ -1400,15 +1407,6 @@ export default (state = {}, action) => {
                 const picturesByTag = state.pictures_by_tag[action.oldName];
                 new_pictures_by_tag = lodash.omit(state.pictures_by_tag, action.oldName);
                 new_pictures_by_tag[action.newName] = picturesByTag;
-            }
-
-            for (const tabName in state.open_tabs) {
-                const tab = state.open_tabs[tabName];
-                if (tab.selected_tags) {
-                    lodash.remove(tab.selected_tags, (tag) => {
-                        return tag === action.oldName;
-                    });
-                }
             }
 
             let new_annotations_by_tag = state.annotations_by_tag;
@@ -1497,15 +1495,6 @@ export default (state = {}, action) => {
                 const picturesByTag = state.pictures_by_tag[action.oldName];
                 new_pictures_by_tag = lodash.omit(state.pictures_by_tag, action.oldName);
                 new_pictures_by_tag[action.newName] = picturesByTag;
-            }
-
-            for (const tabName in state.open_tabs) {
-                const tab = state.open_tabs[tabName];
-                if (tab.selected_tags) {
-                    lodash.remove(tab.selected_tags, (tag) => {
-                        return tag === action.oldName;
-                    });
-                }
             }
 
             let new_annotations_by_tag = state.annotations_by_tag;
@@ -1831,14 +1820,6 @@ export default (state = {}, action) => {
                 annotations_by_tag = lodash.omit(annotations_by_tag, tagToBeRemoved);
                 pictures_by_tag = lodash.omit(pictures_by_tag, tagToBeRemoved);
 
-                for (const tabName in state.open_tabs) {
-                    const tab = state.open_tabs[tabName];
-                    if (tab.selected_tags) {
-                        lodash.remove(tab.selected_tags, (tag) => {
-                            return tag === tagToBeRemoved;
-                        });
-                    }
-                }
             };
 
             // Omit selected tag
@@ -2248,6 +2229,7 @@ export default (state = {}, action) => {
 
             annotation.text = action.text;
             annotation.title = action.title;
+            annotation.coverage = action.coverage;
             if (action.annotationType === ANNOTATION_MARKER ||
                 action.annotationType === ANNOTATION_RECTANGLE ||
                 action.annotationType === ANNOTATION_COLORPICKER ||
@@ -2455,7 +2437,6 @@ export default (state = {}, action) => {
                 current_picture_index_in_selection = tab.pictures_selection.length - 1;
             else current_picture_index_in_selection--;
 
-
             return {
                 ...state, counter, open_tabs: {
                     ...state.open_tabs, [action.tabName]: {
@@ -2502,7 +2483,137 @@ export default (state = {}, action) => {
             };
         }
             break;
+
+        case CREATE_TAG_EXPRESSION: {
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+
+            if(!tab.selected_filter) {
+                tab.selected_filter = {
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_EXPRESSION,
+                    value: []
+                }
+            }
+            if(tab.selected_filter.value.length > 0) {
+                tab.selected_filter.value.push({
+                    id: genId(),
+                    type: EXP_ITEM_TYPE_OPERATOR,
+                    value:OR
+                });
+            }
+            const newExpression = {
+                id: genId(),
+                type: EXP_ITEM_TYPE_EXPRESSION,
+                value: []
+            }
+            tab.selected_filter.value.push(newExpression);
+            tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+            const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+            if (newIndex !== -1) {
+                tab.current_picture_index_in_selection = newIndex;
+            } else {
+                tab.current_picture_index_in_selection = 0;
+                tab.selected_sha1 = tab.pictures_selection[0];
+            }
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case DELETE_TAG_EXPRESSION: {
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+
+            if(tab.selected_filter && tab.selected_filter.value.length > 0) {
+                let updated = []
+                let indexOfDeleted;
+                for (let i = 0; i < tab.selected_filter.value.length; i++) {
+                    const item = tab.selected_filter.value[i];
+                    if(item.id === action.id) {
+                        indexOfDeleted = i;
+                        continue;
+                    }
+                }
+                for (let i = 0; i < tab.selected_filter.value.length; i++) {
+                    const item = tab.selected_filter.value[i];
+                    const indexToSkip = indexOfDeleted == 0 ? indexOfDeleted +1 : indexOfDeleted - 1
+                    if( i !== indexOfDeleted && (i !== indexToSkip)) {
+                        updated.push(item);
+                    }
+                }
+
+                tab.selected_filter.value = [...updated];
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+                if (newIndex !== -1) {
+                    tab.current_picture_index_in_selection = newIndex;
+                } else {
+                    tab.current_picture_index_in_selection = 0;
+                    tab.selected_sha1 = tab.pictures_selection[0];
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case UPDATE_TAG_EXPRESSION_OPERATOR: {
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+            if(tab.selected_filter) {
+                changeOperatorValueInFilter(tab.selected_filter, action.id, action.value);
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+                if (newIndex !== -1) {
+                    tab.current_picture_index_in_selection = newIndex;
+                } else {
+                    tab.current_picture_index_in_selection = 0;
+                    tab.selected_sha1 = tab.pictures_selection[0];
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
         case SELECT_TAG: {
+            console.log("select tag action", action)
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            let selectedTags;
+            // Skip check if tag is already selected.
+            if (!action.skipCheck) {
+                if (state.selected_tags.indexOf(action.name) !== -1) return state;
+                selectedTags = [action.name, ...state.selected_tags];
+                state.selected_tags = selectedTags;
+            } else {
+                selectedTags = state.selected_tags;
+            }
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
+        case ADD_TAG_IN_FILTER: {
+            console.log("add tag in filter action", action)
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
             let selectedTags;
@@ -2511,10 +2622,51 @@ export default (state = {}, action) => {
                 // If adding tag from tabbed component take list from tabs object.
                 if (action.tabName) {
                     const tab = tabs[action.tabName];
-                    if (tab.selected_tags.indexOf(action.name) !== -1) return state;
-                    selectedTags = [action.name, ...tab.selected_tags];
-                    tab.selected_tags = [...selectedTags];
-                    tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
+
+                    let currentExpression;
+                    if(!tab.selected_filter) {
+                        tab.selected_filter = {
+                            id: genId(),
+                            type: EXP_ITEM_TYPE_EXPRESSION,
+                            value: []
+                        }
+                    }
+                    if(tab.selected_filter.value.length === 0) {
+                        currentExpression = {
+                            id: genId(),
+                            type: EXP_ITEM_TYPE_EXPRESSION,
+                            value: []
+                        }
+                        tab.selected_filter.value.push(currentExpression);
+                    } else {
+                        for (let i = tab.selected_filter.value.length-1; i >= 0; i--) {
+                            const item = tab.selected_filter.value[i];
+                            // console.log("currentExpression item", item)
+                            if(item.type === EXP_ITEM_TYPE_EXPRESSION) {
+                                currentExpression = item;
+                                break;
+                            }
+                        }
+                    }
+                    // console.log("currentExpression", currentExpression)
+                    let condition = {
+                        id: genId(),
+                        type: EXP_ITEM_TYPE_CONDITION,
+                        value: {
+                            has: true,
+                            tag: action.name
+                        }
+                    }
+
+                    if(currentExpression.value.length > 0) {
+                        currentExpression.value.push({
+                            id: genId(),
+                            type:EXP_ITEM_TYPE_OPERATOR,
+                            value: OR
+                        })
+                    }
+                    currentExpression.value.push(condition);
+                    tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
 
                     const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                     if (newIndex !== -1) {
@@ -2523,10 +2675,6 @@ export default (state = {}, action) => {
                         tab.current_picture_index_in_selection = 0;
                         tab.selected_sha1 = tab.pictures_selection[0];
                     }
-                } else {
-                    if (state.selected_tags.indexOf(action.name) !== -1) return state;
-                    selectedTags = [action.name, ...state.selected_tags];
-                    state.selected_tags = selectedTags;
                 }
             } else {
                 selectedTags = state.selected_tags;
@@ -2560,29 +2708,6 @@ export default (state = {}, action) => {
                 ...state, counter, open_tabs: {
                     ...state.open_tabs, [action.tabName]: {
                         ...tab
-                    }
-                }
-            };
-        }
-            break;
-        case SET_TAGS_SELECTION_MODE: {
-            const counter = state.counter + 1;
-            const tab = state.open_tabs[action.tabName];
-            if (action.mode === tab.tags_selection_mode) return state;
-
-            const pictures_selection = findPicturesByTags(state, tab.selected_tags, action.mode, tab.folder_pictures_selection);
-            const newIndex = pictures_selection.indexOf(tab.selected_sha1);
-            if (newIndex !== -1) {
-                tab.current_picture_index_in_selection = newIndex;
-            } else {
-                tab.current_picture_index_in_selection = 0;
-                tab.selected_sha1 = tab.pictures_selection[0];
-            }
-
-            return {
-                ...state, counter, open_tabs: {
-                    ...state.open_tabs, [action.tabName]: {
-                        ...tab, tags_selection_mode: action.mode, pictures_selection: pictures_selection
                     }
                 }
             };
@@ -2638,33 +2763,17 @@ export default (state = {}, action) => {
         }
             break;
         case UNSELECT_TAG: {
+            console.log("unselect tag action", action)
             const counter = state.counter + 1;
             let selectedTags;
             const tabs = state.open_tabs;
-            if (action.tabName) {
-                const tab = tabs[action.tabName];
-                const index = tab.selected_tags.indexOf(action.name);
-                if (index === -1) return state;
-                tab.selected_tags.splice(index, 1);
-                selectedTags = [...tab.selected_tags];
-                tab.selected_tags = [...tab.selected_tags];
-                tab.pictures_selection = findPicturesByTags(state, selectedTags, tab.tags_selection_mode, tab.folder_pictures_selection);
-                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
-                if (newIndex !== -1) {
-                    tab.current_picture_index_in_selection = newIndex;
-                } else {
-                    tab.current_picture_index_in_selection = 0;
-                    tab.selected_sha1 = tab.pictures_selection[0];
-                }
-            } else {
-                const tag_to_remove_index = state.selected_tags.indexOf(action.name);
-                if (tag_to_remove_index === -1) return state;
-                selectedTags = [
-                    ...state.selected_tags.slice(0, tag_to_remove_index),
-                    ...state.selected_tags.slice(tag_to_remove_index + 1)
-                ];
-                state.selected_tags = selectedTags;
-            }
+            const tag_to_remove_index = state.selected_tags.indexOf(action.name);
+            if (tag_to_remove_index === -1) return state;
+            selectedTags = [
+                ...state.selected_tags.slice(0, tag_to_remove_index),
+                ...state.selected_tags.slice(tag_to_remove_index + 1)
+            ];
+            state.selected_tags = selectedTags;
             return {
                 ...state,
                 counter,
@@ -2738,7 +2847,7 @@ export default (state = {}, action) => {
                     tab.selected_folders.push(action.path);
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -2765,7 +2874,7 @@ export default (state = {}, action) => {
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+            tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2790,7 +2899,7 @@ export default (state = {}, action) => {
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
-            tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+            tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
             const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
             if (newIndex !== -1) {
                 tab.current_picture_index_in_selection = newIndex;
@@ -2884,7 +2993,7 @@ export default (state = {}, action) => {
 
                         // Filter pictures by selected folders
                         tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                        tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                        tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
                         const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                         if (newIndex !== -1) {
                             tab.current_picture_index_in_selection = newIndex;
@@ -2980,7 +3089,7 @@ export default (state = {}, action) => {
                 delete pictures[sha1];
                 // Filter pictures by selected folders
                 tab.folder_pictures_selection = [...filterPicturesByFolder(tab, pictures)];
-                tab.pictures_selection = findPicturesByTags(state, tab.selected_tags, tab.tags_selection_mode, tab.folder_pictures_selection);
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
                 const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
                 if (newIndex !== -1) {
                     tab.current_picture_index_in_selection = newIndex;
@@ -3677,6 +3786,7 @@ export default (state = {}, action) => {
             const pictures = {...state.pictures};
             pictures[action.sha1].exifDate = action.date;
             pictures[action.sha1].exifPlace = action.exifPlace;
+            pictures[action.sha1].placeName = action.placeName;
             return {
                 ...state, counter, pictures
             }
@@ -3787,21 +3897,87 @@ export default (state = {}, action) => {
             };
         }
             break;
+        case STOP_ANNOTATION_RECORDING: {
+            const counter = state.counter + 1;
+            let branch;
+            switch (action.annType) {
+                case ANNOTATION_EVENT_ANNOTATION:
+                    branch = "annotations_eventAnnotations"
+                    break;
+                case ANNOTATION_CHRONOTHEMATIQUE:
+                    branch = 'annotations_chronothematique'
+                    break;
+                case ANNOTATION_SIMPLELINE:
+                case ANNOTATION_POLYLINE:
+                    branch = 'annotations_measures_linear';
+                    break;
+                case ANNOTATION_MARKER:
+                    branch = 'annotations_points_of_interest';
+                    break;
+                case ANNOTATION_RECTANGLE:
+                    branch = 'annotations_rectangular';
+                    break;
+                case ANNOTATION_POLYGON:
+                    branch = 'annotations_polygon';
+                    break;
+                case ANNOTATION_ANGLE:
+                    branch = 'annotations_angle';
+                    break;
+                case ANNOTATION_OCCURRENCE:
+                    branch = 'annotations_occurrence';
+                    break;
+                case ANNOTATION_COLORPICKER:
+                    branch = 'annotations_color_picker';
+                    break;
+                case ANNOTATION_RATIO:
+                    branch = 'annotations_ratio';
+                    break;
+                case ANNOTATION_TRANSCRIPTION:
+                    branch = 'annotations_transcription';
+                    break;
+                case ANNOTATION_CATEGORICAL:
+                    branch = 'annotations_categorical';
+                    break;
+                case ANNOTATION_RICHTEXT:
+                    branch = 'annotations_richtext';
+                    break;
+                default:
+                    return state;
+            }
+
+            const annotation = state[branch][action.pictureId].filter(_ => _.id === action.annId).pop();
+
+            if (annotation === undefined) {
+                return state;
+            }
+            if (action.endTime <= annotation.video.start)
+                return state;
+
+            annotation.video.end = action.endTime;
+
+            const response = {
+                ...state,
+                counter,
+                [branch]: {
+                    ...state[branch],
+                    [action.pictureId]: [...state[branch][action.pictureId].filter(_ => _.id !== action.annId), annotation].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+
+            return response;
+        }
+        break;
         default:
             return state;
     }
-}
-;
-
-//
-// HELPERS
-//
-//
-const findPicturesByTags = (state, selectedTags, tagsSelectionMode, allPics) => {
-    if (selectedTags.length === 0) return allPics;
-    const list = findPictures(state.tags_by_picture, state.pictures_by_tag, selectedTags, tagsSelectionMode, state);
-    const ll = lodash.intersection(allPics, list) || []
-    return ll;
 };
 
 const filterPicturesByFolder = (tab, allPictures) => {
@@ -3843,78 +4019,6 @@ const findTagById = (tags, target, remove) => {
     return response;
 };
 
-const findTag = (tags, target, remove) => {
-    let response = null;
-    tags.some(tag => {
-        if (tag.name === target) {
-            response = tag;
-            if (remove) {
-                const rootTags = tags.filter(_ => _.name !== target)
-                tags.splice(0, tags.length);
-                tags.push(...rootTags);
-            }
-            return true;
-        } else if (tag.children) {
-            response = findTag(tag.children, target, remove);
-            const output = null != response;
-            if (output) {
-                if (remove) {
-                    tag.children = tag.children.filter(_ => _.name !== target);
-                }
-            }
-            return output;
-        }
-    });
-    return response;
-};
-
-const findParentTag = (tags, name) => {
-    if (tags === undefined) {
-        return false;
-    }
-    return tags.some(tag => {
-        if (tag.name === name) {
-            return tag;
-        } else if (tag.children && tag.children.length > 0) {
-            return tagExist(tag.children, name);
-        } else {
-            return null;
-        }
-    });
-};
-
-const tagExistById = (tags, id) => {
-
-    if (tags === undefined) {
-        return false;
-    }
-    return tags.some(tag => {
-        if (tag.id === id) {
-            return true;
-        } else if (tag.children && tag.children.length > 0) {
-            return tagExist(tag.children, id);
-        } else {
-            return false;
-        }
-    });
-};
-
-const tagExist = (tags, name) => {
-
-    if (tags === undefined) {
-        return false;
-    }
-    return tags.some(tag => {
-        if (tag.name === name) {
-            return true;
-        } else if (tag.children && tag.children.length > 0) {
-            return tagExist(tag.children, name);
-        } else {
-            return false;
-        }
-    });
-};
-
 const getAnnotationNum = (patt, text) => {
     const result = patt.exec(text);
     if (result != null) {
@@ -3930,8 +4034,6 @@ const getAnnotationNumForVideoOrEvent = (title , type) => {
         return null;
     }
 };
-
-
 
 const getNextAnnotationNameForVideo = (sha1, annotationGroup  , type) => {
     // Get greatest auto generated number from annotation name.
@@ -4081,10 +4183,7 @@ const deleteAnnotationValues = (state, annId) => {
     }
 };
 
-
 const isValidInputGroup = (name) => {
     const validInputGroups = ["nameTags" , "titleTags" , "personTags" , "dateTags" , "locationTags" , "noteTags" , "topicTags"];
     return validInputGroups.some(grp => grp === name);
 }
-
-

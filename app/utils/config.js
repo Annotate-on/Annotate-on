@@ -6,15 +6,16 @@ import path from 'path';
 import {authorized_pictures_extensions} from "./library";
 import {escapePathString, formatDate, formatDateForFileName} from "./js";
 import lodash from 'lodash';
-import {IMAGE_STORAGE_DIR} from "../constants/constants";
+import {DEFAULT_XPER_CONNECTION_URL, IMAGE_STORAGE_DIR} from "../constants/constants";
 import klaw from "klaw";
 import os from 'os';
 import crypto from "crypto";
 import {createInitialState} from "../reducers/app";
 import packageJson from '../../package.json';
-import {changeLanguage} from "i18next";
+import i18next, {changeLanguage} from "i18next";
 import {getDefaultLanguage} from "../i18n";
-import i18next from "i18next";
+import {convertSelectedTagsToFilter} from "./tags";
+
 const {ipcRenderer} = require('electron')
 
 let config;
@@ -264,6 +265,7 @@ export const addProjectToWorkSpace = (_, toggleActive) => {
  * @param label
  */
 export const setWorkspace = (_, label) => {
+    console.log("setWorkspace")
     const { t } = i18next;
     addProjectToWorkSpace(_, true);
     setProjectInfo(label);
@@ -284,8 +286,14 @@ export const setWorkspace = (_, label) => {
             const taxonomyInstance = tmpState.taxonomyInstance || {};
             for (const tabName in tmpState.open_tabs) {
                 const tab = tmpState.open_tabs[tabName];
-                if ('taxonomyInstance' in tab)
+                if ('taxonomyInstance' in tab) {
                     lodash.extendWith(taxonomyInstance, tab.taxonomyInstance)
+                }
+                if(!tab.selected_filter && tab.selected_tags) {
+                    tab.selected_filter = convertSelectedTagsToFilter(tab.selected_tags, tab.tags_selection_mode);
+                    tab.selected_tags = null;
+                    tab.tags_selection_mode = null;
+                }
             }
             tmpState.taxonomyInstance = taxonomyInstance;
 
@@ -1156,5 +1164,33 @@ export const updateSelectedLanguage = (lang) => {
     config.language = lang;
     yaml.sync(config_file_path, config);
 };
+
+/**
+ * Update Xper connection parameters
+ * @param projectPath
+ */
+export const updateXperParams = (url, email, password) => {
+    console.log("updateXperParams ", url, email, password)
+    const encryptedPassword = password ? btoa(password) : password;
+    config.xper = {
+        url,
+        email,
+        password: encryptedPassword
+    };
+    yaml.sync(config_file_path, config);
+};
+
+export const getXperParams = () => {
+    // console.log("getXperParams")
+    if(!config.xper) {
+        updateXperParams(DEFAULT_XPER_CONNECTION_URL, null, null)
+    }
+    return {
+        url: config.xper.url,
+        email: config.xper.email,
+        password: config.xper.password ? atob(config.xper.password):config.xper.password
+    };
+};
+
 
 
