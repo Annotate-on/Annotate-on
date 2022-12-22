@@ -1066,6 +1066,17 @@ div.leaflet-marker-icon {
   cursor: pointer;
 }
 
+.doc-link {
+  height: 22px;
+  width: 22px;
+  cursor: pointer;
+}
+
+.action-bar .doc-link {
+  margin-top: 3px;
+  float: right;
+}
+
 .flex {
   display: flex;
 }
