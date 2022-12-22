@@ -2,6 +2,7 @@ import React, {Fragment, Component} from 'react';
 import {Col, Row} from "reactstrap";
 import {APP_NAME, MODEL_XPER} from "../constants/constants";
 import i18next from "i18next";
+import DocLink from "../widget/DocLink";
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -12,10 +13,11 @@ export default class extends Component {
         const { t } = i18next;
         return (
             <div className="bg">
-                <Row className="app-page-tile">
+                <Row className="app-page-title">
                     <Col sm={5} className="hide-overflow">
-                        {this.props.showLogo &&
-                            <img alt="logo" height="18px" src={require('./pictures/home.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
+                        <div className="app-page-title-left-container">
+                        {this.props.logo &&
+                            <img alt="logo" height="18px" src={this.props.logo} className="logo"/>
                         }
                         {this.props.pageTitle &&
                             <span className="title">{this.props.pageTitle}</span>
@@ -23,6 +25,10 @@ export default class extends Component {
                         {this.props.titleWidget &&
                             this.props.titleWidget
                         }
+                        {this.props.docLink &&
+                            <DocLink permalink={this.props.docLink}/>
+                        }
+                        </div>
                     </Col>
                     <Col sm={7}>
                         {this.props.showProjectInfo &&

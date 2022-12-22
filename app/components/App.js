@@ -457,23 +457,6 @@ export default class AppMenu extends Component {
                         <div className="right-menu-title">{t('main_navbar.credits')}</div>
                     </_Link>
                     <div className="menu_separator"/>
-                    {/*<_Link className={(this.state.selectedMenu === IMAGE ? 'active-menu-item' : '') + ' menu-item'}*/}
-                    {/*       to="/selection"*/}
-                    {/*       onClick={(e) => {*/}
-                    {/*           if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){*/}
-                    {/*               e.preventDefault();*/}
-                    {/*               this._showEditFormViolationModalWarning();*/}
-                    {/*           }else {*/}
-                    {/*               setTimeout(() => {*/}
-                    {/*                   ee.emit(EVENT_SELECT_TAB, 'image')*/}
-                    {/*               }, 100)*/}
-                    {/*           }*/}
-                    {/*       }} title={t('main_navbar.tooltip_annotate')}>*/}
-                    {/*    <div className="nav_box">*/}
-                    {/*        <div className="image"/>*/}
-                    {/*        <div className="right-menu-title">{t('main_navbar.annotate')}</div>*/}
-                    {/*    </div>*/}
-                    {/*</_Link>*/}
                     <_Link
                            className={(this.state.selectedMenu === EVENT ? 'active-menu-item' : '') + ' menu-item'}
                            to="/selection"
@@ -496,23 +479,6 @@ export default class AppMenu extends Component {
                         </div>
                     </_Link>
                     <div className="menu_separator"/>
-                    {/*<_Link className={(this.state.selectedMenu === DATA ? 'active-menu-item' : '') + ' menu-item'}*/}
-                    {/*       to="/selection"*/}
-                    {/*       onClick={(e) => {*/}
-                    {/*           if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){*/}
-                    {/*               e.preventDefault();*/}
-                    {/*               this._showEditFormViolationModalWarning();*/}
-                    {/*           }else {*/}
-                    {/*               setTimeout(() => {*/}
-                    {/*                   ee.emit(EVENT_SELECT_TAB, 'data')*/}
-                    {/*               }, 100)*/}
-                    {/*           }*/}
-                    {/*       }} title={t('main_navbar.tooltip_results')}>*/}
-                    {/*    <div className="nav_box">*/}
-                    {/*        <div className="list"/>*/}
-                    {/*        <div className="right-menu-title">{t('main_navbar.results')}</div>*/}
-                    {/*    </div>*/}
-                    {/*</_Link>*/}
                     <_Link
                            disabled={true}
                            to="/this_path_needs_to_be_replaces_with_iiif"

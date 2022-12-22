@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import {Button, Col, Container, Input, Row} from 'reactstrap';
 
 import {getXperParams, loadMetadata, updateSelectedLanguage, updateXperParams,} from "../utils/config";
-import RECOLNAT_LOGO from "./pictures/logo.svg";
+const OPTIONS_IMAGE_CONTEXT = require('./pictures/options.svg');
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {DEFAULT_XPER_CONNECTION_URL} from "../constants/constants";
 import {remote} from "electron";
 import PageTitle from "./PageTitle";
+import PROJECTS_IMAGE_CONTEXT from "./pictures/projects2.svg";
 
 export default class Options extends Component {
 
@@ -99,9 +100,11 @@ export default class Options extends Component {
             <Container className="bst options">
                 <div >
                     <PageTitle
-                        showLogo={true}
+                        logo={OPTIONS_IMAGE_CONTEXT}
                         pageTitle={t('options.title')}
-                        showProjectInfo={false}>
+                        showProjectInfo={false}
+                        docLink={"options"}
+                    >
                     </PageTitle>
 
                     <Row>

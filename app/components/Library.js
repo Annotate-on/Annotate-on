@@ -312,7 +312,9 @@ export default class extends Component {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
+                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}
+                    docLink={"resources"}
+                >
                 </PageTitle>
                 <_Content>
                     <div className="vertical">

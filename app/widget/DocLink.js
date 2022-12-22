@@ -21,7 +21,7 @@ export default class DocLink extends PureComponent {
         const {t} = i18next;
         return (
             <>
-            <span className="doc-link"
+            <span className="doc-link-container"
                 onClick={this._openDokLink}>
                 <img className="doc-link"
                      alt="add annotation"

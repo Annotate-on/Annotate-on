@@ -16,8 +16,8 @@ export default class LibraryTabs extends Component {
         console.log("render ", this.props.selectedTab);
         const {t} = i18next;
         return (
-            <Row className="library-tabs-container">
-                <Col sm={12} className="hide-overflow">
+            <div className="library-tabs-container">
+
                     <div className="library-tabs">
                         <Button title={t('main_navbar.tooltip_resources')}
                                 color={(!this.props.selectedTab || this.props.selectedTab === 'library') ? "primary" : "default"}
@@ -59,8 +59,7 @@ export default class LibraryTabs extends Component {
                             </div>
                         </Button>
                     </div>
-                </Col>
-            </Row>
+            </div>
         );
     }
 }

@@ -65,7 +65,7 @@ import DocLink from "../widget/DocLink";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
-const RECOLNAT_LOGO = require('./pictures/logo.svg');
+const PROJECTS_IMAGE_CONTEXT = require('./pictures/projects2.svg');
 const DELETE_IMAGE_CONTEXT = require('./pictures/delete-tag.svg');
 const LOCK = require('./pictures/lock.svg');
 const UNLOCK = require('./pictures/unlock.svg');
@@ -333,11 +333,13 @@ export default class extends PureComponent {
 
         return (<Container className="bst rcn_xper">
                 <PageTitle
-                    showLogo={true}
+                    logo={PROJECTS_IMAGE_CONTEXT}
                     pageTitle={t('projects.title')}
                     showProjectInfo={true}
                     projectName={this.props.projectName}
-                    selectedTaxonomy={this.props.selectedTaxonomy}>
+                    selectedTaxonomy={this.props.selectedTaxonomy}
+                    docLink={"projects"}
+                >
                 </PageTitle>
                 <br/>
                 <Row className="action-bar">
@@ -366,7 +368,6 @@ export default class extends PureComponent {
                                     this.props.goToImportExistingProject();
                                 }}
                         >{t('projects.btn_open_project')}</Button>
-                        <DocLink permalink={"projects"}/>
                     </Col>
                 </Row>
                 <br/>
