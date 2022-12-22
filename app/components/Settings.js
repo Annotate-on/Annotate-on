@@ -56,6 +56,7 @@ import configYaml from 'config-yaml';
 import lodash from "lodash";
 import packageJson from "../../package.json";
 import {getValidTags, lvlAutomaticTags, lvlTags} from "./tags/tagUtils";
+import DocLink from "../widget/DocLink";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
@@ -354,7 +355,7 @@ export default class extends PureComponent {
                 </div>
                 <br/>
                 <Row className="action-bar">
-                    <Col sm={11} md={11} lg={11}>
+                    <Col sm={12} md={12} lg={12}>
                         <Button className="btn btn-primary mr-md-3" color="primary"
                                 title={t('projects.btn_tooltip_create_new_project')}
                                 onClick={() => {
@@ -379,6 +380,7 @@ export default class extends PureComponent {
                                     this.props.goToImportExistingProject();
                                 }}
                         >{t('projects.btn_open_project')}</Button>
+                        <DocLink permalink={"projects"}/>
                     </Col>
                 </Row>
                 <br/>

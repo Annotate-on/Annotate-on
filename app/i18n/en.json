@@ -54,6 +54,7 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
+      "doc_link_title": "Documentation link to {{section}}",
       "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
       "alert_please_check_your_xper_parameters": "Please check your xper parameters on Options page!",
       "alert_an_error_occurred_in_communication_with_xper_server": "An error occurred in communication with Xper server!",
