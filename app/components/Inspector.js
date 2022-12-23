@@ -255,7 +255,7 @@ export default class extends Component {
             this.setState({editedAnnotation: null, openAddTag: false});
         }
 
-        // Open edit of video and event annotation on annotation record start.
+        // Open edit of event annotation on annotation record start.
         if (acceptedTypes.includes(nextProps.picture.resourceType) && this.state.annotations.length < nextState.annotations.length
             && this.props.currentPicture && this.props.currentPicture.sha1 === nextProps.currentPicture.sha1) {
             const annotation = this._sortAnnotations(nextState.annotations, SORT_DATE_DESC)[0];

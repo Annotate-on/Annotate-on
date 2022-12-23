@@ -801,10 +801,6 @@ class Image extends PureComponent {
 
             this.props.createAnnotationChronoThematique(this.state.currentPicture.sha1, e.layer.video.start, e.layer.video.end, '', '', e.layer.annotationId);
             ee.emit(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION);
-            ee.emit(EVENT_UNFOCUS_ANNOTATION)
-            setTimeout( () => {
-                this.openEditPanelonVideoAnnotationCreate(this.state.currentPicture.sha1, e.layer.annotationId);
-            } , 200);
         }
     };
 
