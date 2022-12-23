@@ -3937,18 +3937,6 @@ export default (state = {}, action) => {
                 case ANNOTATION_POLYGON:
                     branch = 'annotations_polygon';
                     break;
-                case ANNOTATION_ANGLE:
-                    branch = 'annotations_angle';
-                    break;
-                case ANNOTATION_OCCURRENCE:
-                    branch = 'annotations_occurrence';
-                    break;
-                case ANNOTATION_COLORPICKER:
-                    branch = 'annotations_color_picker';
-                    break;
-                case ANNOTATION_RATIO:
-                    branch = 'annotations_ratio';
-                    break;
                 case ANNOTATION_TRANSCRIPTION:
                     branch = 'annotations_transcription';
                     break;
@@ -3967,10 +3955,19 @@ export default (state = {}, action) => {
             if (annotation === undefined) {
                 return state;
             }
-            if (action.endTime <= annotation.video.start)
-                return state;
 
-            annotation.video.end = action.endTime;
+            if (!lodash.isNil(annotation.video)) {
+                if (action.endTime <= annotation.video.start)
+                    return state;
+
+                annotation.video.end = action.endTime;
+                annotation.video.duration = action.endTime - annotation.video.start;
+            } else {
+                if (action.endTime <= annotation.start)
+                    return state;
+                annotation.end = action.endTime;
+                annotation.duration = action.endTime - annotation.start;
+            }
 
             const response = {
                 ...state,
