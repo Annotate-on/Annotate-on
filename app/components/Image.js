@@ -87,7 +87,7 @@ const _RightColumn = styled.div`
   height: 100%;
   border-left: 0.5px solid #ddd;
   background: black;
-  margin-top: 1px;
+  margin-top: 2px;
 `;
 
 //
