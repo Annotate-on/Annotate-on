@@ -342,7 +342,8 @@ class LeafletVideo extends Component {
                                              transcription: !this.props.calibrationMode ? TRANSCRIPTION_OPTIONS : false,
                                              categorical: !this.props.calibrationMode,
                                              richtext: !this.props.calibrationMode ? RICHTEXT_OPTIONS : false,
-                                             cartel: !this.props.calibrationMode
+                                             cartel: false,
+                                             chronotematic: !this.props.calibrationMode
                                          }}
                             />
 

@@ -831,7 +831,7 @@ export default class extends Component {
                 }
             }}
                  className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
-                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1)},
+                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
                      'react-contextmenu-wrapper row')}
                  onClick={(this.props.currentPicture.resourceType === RESOURCE_TYPE_EVENT || this.props.currentPicture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
                      if (this.state.isAnnotateEventRecording) {
@@ -925,7 +925,8 @@ export default class extends Component {
                                                                  className={'action-row'}>
 
 
-                                {!lodash.isNil(annotation.video) && annotation.video.end === -1 ?
+                                {(!lodash.isNil(annotation.video) && annotation.video.end === -1) ||
+                                    annotation.end === -1 ?
                                     <img alt="stop_ann_recording" className="btn_menu" src={STOP}
                                          title={t('inspector.tooltip_stop_ann_recording')} onClick={event => {
                                         event.preventDefault();

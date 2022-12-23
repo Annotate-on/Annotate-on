@@ -43,7 +43,7 @@ import {
     EVENT_GOTO_ANNOTATION, EVENT_ON_TAG_DROP,
     EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL,
     EVENT_SET_ANNOTATION_POSITION,
-    EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME,
+    EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME, STOP_ANNOTATION_RECORDING,
 } from "../utils/library";
 import {_formatTimeDisplay, _formatTimeDisplayForEvent} from "../utils/maths";
 import lodash from "lodash";
@@ -394,14 +394,16 @@ export default class extends Component {
                 }} className="tag-form">
                     <FormGroup row>
                         {
-                            this.props.isAnnotationRecording ?
+                            this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                 <Label sm={12} className="rec_ann_text">Click "Annotate" button to
                                     save <b>{this.state.title}</b>.</Label> :
                                 <Row>
                                     <Col sm={{size: 3, offset: 5}}>
                                         <Button
-                                            disabled={this.state.title.length < 3 || this.state.end < this.state.start}
+                                            disabled={this.state.title.length < 3 || (this.state.end < this.state.start && this.state.end !== -1)}
                                             color="primary" onClick={() => {
+                                            if(this.props.isAnnotationRecording)
+                                                ee.emit(STOP_ANNOTATION_RECORDING , this.props.annotation);
                                             this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
                                                 this.state.targetColor, this.state.descriptor.value, this.state.value,
                                                 this.state.descriptor.type, this.state.person, this.state.videoDate, this.state.location, null, this.state.topic);
@@ -537,7 +539,7 @@ export default class extends Component {
                             </Col> : null}
                     </FormGroup>
 
-                    {!lodash.isNil(this.props.annotation.video) || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                    {!lodash.isNil(this.props.annotation.video) || this.state.annotationType === ANNOTATION_CHRONOTHEMATIQUE || this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                         <Fragment>
                             {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
                                 <FormGroup row
