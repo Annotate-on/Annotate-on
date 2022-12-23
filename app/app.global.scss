@@ -741,9 +741,8 @@ div.leaflet-marker-icon {
 .app-page-title {
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  //border-top: 1px solid #ddd;
   .app-page-title-left-container {
-    //margin-top: 2px;
     margin-left: 10px;
     display: flex;
     align-items: center;
@@ -1052,7 +1051,6 @@ div.leaflet-marker-icon {
     color: #007bff;
     margin-left: -2px;
   }
-
 }
 
 .import-menu {
@@ -1068,7 +1066,6 @@ div.leaflet-marker-icon {
     color: #999999;
     cursor: pointer;
   }
-
   .dropdown-item {
     padding: 0px;
     .import-menu-item {

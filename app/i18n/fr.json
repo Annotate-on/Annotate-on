@@ -54,7 +54,6 @@
       "online": "Online",
       "offline": "Offline",
       "connection_status_tooltip": "Internet connection status",
-
       "doc_link_title": "Documentation link to {{section}}",
       "xper_params_are_required": "Xper params are required! Please update your Xper params on Options page!",
       "alert_please_check_your_xper_parameters": "Please check your xper parameters on Options page!",
@@ -64,7 +63,10 @@
       "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "All data in selected Xper3 knowledge base will be replaced (delete and insert operation). Do you want to proceed?",
       "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
       "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
-
+      "btn_import": "Import",
+      "dropdown_item_import_images": "Image(s)",
+      "dropdown_item_import_videos": "Videos(s)",
+      "dropdown_item_create_event": "Create event",
       "options": {
         "title": "Options",
         "language_section_title": "Language",
@@ -79,6 +81,7 @@
         "EN": "English",
         "FR": "French"
       }
+
     },
     "main_navbar": {
       "library": "FR Library",
