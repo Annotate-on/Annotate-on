@@ -1044,13 +1044,10 @@ div.leaflet-marker-icon {
   }
 
   .model-type-icon {
-    //border: 1px solid #007bff;
-    //border-radius: 9px;
     padding-left: 4px;
     font-size: 10px;
     font-style: normal;
     height: 16px;
-    //width: 20px;
     line-height: 0px;
     color: #007bff;
     margin-left: -2px;
@@ -1060,14 +1057,10 @@ div.leaflet-marker-icon {
 
 .import-menu {
   margin-left: 10px;
-  //.dropdown-menu {
-  //  z-index: 10000000000;
-  //}
-  //margin-right: 30px;
   span {
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: bold;
     cursor: pointer;
-    font-weight: 500;
   }
   i {
     margin-left: 5px;
@@ -1083,24 +1076,7 @@ div.leaflet-marker-icon {
       margin-right: 5px;
     }
   }
-
 }
-
-
-//.project-name {
-//  font-family: HelveticaNeue;
-//  font-size: 12px;
-//  color: #333333;
-//  margin: 10px 10px 10px 3px;
-//  font-weight: bold;
-//}
-//
-//.project-label {
-//  font-family: HelveticaNeue;
-//  font-size: 12px;
-//  color: #666;
-//  margin: 10px 0px 10px 10px;
-//}
 
 .visible {
   display: block !important;
@@ -1111,7 +1087,6 @@ div.leaflet-marker-icon {
   justify-content: space-around;
 }
 .right-menu-title{
-  //font-style:;
   font-size: 11px;
   text-decoration: none;
   line-height: 20px;
