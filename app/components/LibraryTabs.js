@@ -31,6 +31,9 @@ export default class LibraryTabs extends Component {
                             <div className="library-tabs-button-content">
                                 <div className="library-tabs-button-title">{t('main_navbar.resources')}</div>
                             </div>
+                            <div className="library-tabs-button-content">
+                                <div className="library-tabs-button-nb-resources">23</div>
+                            </div>
                         </Button>
                         <Button title={t('main_navbar.tooltip_annotate')}
                                 color={this.props.selectedTab === 'image' ? "primary" : "default"}
