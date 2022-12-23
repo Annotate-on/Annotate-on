@@ -7,3 +7,5 @@ main.prod.js.map
 main.prod.js
 yarn.lock
 package-lock.json
+/flow-typed/
+/demo-workspace/
