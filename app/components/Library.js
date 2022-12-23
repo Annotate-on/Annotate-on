@@ -312,7 +312,12 @@ export default class extends Component {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}
+                    titleWidget = {
+                        <LibraryTabs
+                            tabName={this.props.tabName}
+                            numberOfResources={this.props.tabData[this.props.tabName].folder_pictures_selection.length}
+                        />
+                    }
                     docLink={"resources"}
                 >
                 </PageTitle>

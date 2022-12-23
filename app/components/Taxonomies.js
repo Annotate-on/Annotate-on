@@ -249,12 +249,12 @@ export default class extends Component {
             case LIST:
                 return (<Container className="bst rcn_xper">
                     <PageTitle
-                        showProjectInfo="true"
+                        showProjectInfo={true}
                         logo={MODELS_IMAGE_CONTEXT}
                         pageTitle={t('models.title')}
                         projectName={this.props.projectName}
                         selectedTaxonomy={this.props.selectedTaxonomy}
-                        docLink={"models"}
+                        docLink="models"
                     >
                     </PageTitle>
                     <br/>

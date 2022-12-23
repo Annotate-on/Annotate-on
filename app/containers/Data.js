@@ -25,7 +25,8 @@ const mapStateToProps = (state, ownProps) => {
         selectedTaxonomy: state.app.selectedTaxonomy,
         projectName: state.app.selectedProjectName,
         taxonomyInstance: state.app.taxonomyInstance,
-        tagsByPicture: state.app.tags_by_picture
+        tagsByPicture: state.app.tags_by_picture,
+
     };
 };
 

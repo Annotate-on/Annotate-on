@@ -1471,10 +1471,12 @@ class TagManager extends Component {
             <Container className="bst tm-container" >
                 {!this.props.isModalOrTab ? <div>
                     <PageTitle
+                        showProjectInfo={true}
                         logo={TAGS_IMAGE_CONTEXT}
-                        showProjectInfo={false}
                         pageTitle={t('keywords.title')}
-                        docLink={"keywords"}>
+                        projectName={this.props.projectName}
+                        selectedTaxonomy={this.props.selectedTaxonomy}
+                        docLink="keywords">
                     </PageTitle>
 
                     <Row className="vertical-spread">

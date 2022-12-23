@@ -18,6 +18,8 @@ const mapStateToProps = (state, ownProps) => {
         tagsByPicture: state.app.tags_by_picture,
         annotationsByTag: state.app.annotations_by_tag,
         tagsByAnnotation: state.app.tags_by_annotation,
+        selectedTaxonomy: state.app.selectedTaxonomy,
+        projectName: state.app.selectedProjectName
     };
 };
 

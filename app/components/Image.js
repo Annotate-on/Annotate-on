@@ -241,10 +241,14 @@ class Image extends PureComponent {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}
-                    docLink={"annotate"}
-                >
-                </PageTitle>
+                    titleWidget = {
+                        <LibraryTabs
+                            tabName={this.props.tabName}
+                            numberOfResources={this.props.tabData.folder_pictures_selection.length}
+                        />
+                    }
+                    docLink="annotate"
+                ></PageTitle>
                 {
                     this.state.currentPicture ?
                         <div className='picture-wrapper'>

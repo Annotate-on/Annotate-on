@@ -7,7 +7,7 @@ import {SUPPORTED_LANGUAGES} from "../i18n";
 import {DEFAULT_XPER_CONNECTION_URL} from "../constants/constants";
 import {remote} from "electron";
 import PageTitle from "./PageTitle";
-import PROJECTS_IMAGE_CONTEXT from "./pictures/projects2.svg";
+
 
 export default class Options extends Component {
 
@@ -102,8 +102,10 @@ export default class Options extends Component {
                     <PageTitle
                         logo={OPTIONS_IMAGE_CONTEXT}
                         pageTitle={t('options.title')}
-                        showProjectInfo={false}
-                        docLink={"options"}
+                        showProjectInfo={true}
+                        projectName={this.props.projectName}
+                        selectedTaxonomy={this.props.selectedTaxonomy}
+                        docLink="options"
                     >
                     </PageTitle>
 
