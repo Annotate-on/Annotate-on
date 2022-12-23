@@ -575,7 +575,7 @@ export default class extends Component {
                                         </Col> : null}
                                 </FormGroup> : null}
 
-                            {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ?
+                            {this.state.annotationType === ANNOTATION_EVENT_ANNOTATION || this.state.annotationType === ANNOTATION_CHRONOTHEMATIQUE ?
                                 <>
                                     <FormGroup row
                                                className={`tagDropZone ${this.state.activeDropZone === 'person' ? 'tdzHover' : ''}`}
