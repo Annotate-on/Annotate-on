@@ -306,7 +306,6 @@ export default class extends Component {
     render() {
         const { t } = this.props;
         let key = 0;
-        console.log("num of picutres", this.props.tabData[this.props.tabName])
         return (
             <_Root className="bst rcn_library">
                 <PageTitle
@@ -327,7 +326,6 @@ export default class extends Component {
                         <Folders tabName={this.props.tabName}/>
                         <Tags tabName={this.props.tabName} visibleActions={true}/>
                     </div>
-                    {console.log(this.state.picView)}
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>

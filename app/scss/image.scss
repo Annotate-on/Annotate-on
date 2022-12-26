@@ -23,12 +23,14 @@
     vertical-align: middle;
     margin-left: 2px;
     margin-right: 2px;
+    cursor: pointer;
   }
 
   .navigation-title {
     margin: 0 20px;
     min-width: 500px;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
   }
 
   .picture-wrapper {
@@ -45,13 +47,51 @@
     background-color: rgba(255, 253, 30, .30) !important;
   }
 
+  .file-name-cat-number-container {
+    display: inline-flex;
+    flex-grow: 1;
+    align-items: center;
+    width: 400px;
+  }
+
   .file-name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 160px;
+    //width: 160px;
     display: inline-block;
     vertical-align: bottom;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .cat-number {
+    font-size: 14px;
+    color: #999;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .navigation-title-index {
+    margin: 0px 0px 0px 5px;
+    padding: 2px 5px;
+    border-radius: 10px;
+    background-color: #eee;
+    color: black;
+    min-width: 25px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+
+  }
+
+  .map-timeline-indicators-container {
+    display: flex;
+    align-items: center;
+     img {
+       height: 16px;
+       margin-left: 3px;
+       opacity: 0.7;
+     }
   }
 
   .recording-ann {
