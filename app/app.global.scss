@@ -538,8 +538,6 @@ div.leaflet-marker-icon {
   height: 18px;
   width: 18px;
   display: inline-block;
-  //margin: auto;
-  margin-left: auto;
   margin-right: 5px;
 }
 
@@ -970,7 +968,7 @@ div.leaflet-marker-icon {
 
 .vertical {
   display: grid;
-  grid-template-rows: minmax(100px, auto) minmax(20%, 100%);
+  grid-template-rows: minmax(25px, auto) minmax(25px, 100%);
 }
 
 @-webkit-keyframes root-hover-blink {
@@ -1205,5 +1203,15 @@ div.leaflet-marker-icon {
     margin: 0px;
   }
 
+}
+
+.collapse-panel {
+  display: flex;
+  align-items: center;
+  .collapse-panel-title {
+    margin-left: 5px;
+    flex-grow: 1;
+    cursor: pointer;
+  }
 }
 

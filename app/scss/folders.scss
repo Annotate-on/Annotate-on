@@ -66,9 +66,8 @@
   .folders-title {
     display: inline;
     font-size: 17px;
-    line-height: 1.5;
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
     color: #000;
   }
 
@@ -101,10 +100,6 @@
   }
 
   .folders {
-    //margin-top: -10px;
-    //margin-bottom: -10px;
-    //padding-top: 10px;
-    //padding-bottom: 10px;
     overflow-y: scroll;
     height: calc(100% - 60px);
     &::-webkit-scrollbar {

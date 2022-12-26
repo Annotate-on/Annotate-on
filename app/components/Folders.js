@@ -185,22 +185,28 @@ export default class extends PureComponent {
         return (
             <Container className="bst rcn_folders">
                 <Row>
-                    <Col className="folders-title" md={10} lg={10}>
-                        <FontAwesomeIcon icon={faPhotoVideo}/>
-                        <span> </span>
-                        {t('folders.lbl_resource_folders')} ({numberOfFolders})
-                        <img alt="arrow down" className="toogleCollapse" onClick={this.toggle}
-                             src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))}/>
-                    </Col>
-                    <Col md={1} lg={1} className={classnames({'hidden': !this.state.collapse}, 'tags-actions')}>
-                        <span title={t('folders.tooltip_add_new_folder')} style={{marginTop: '14px'}}
-                              className={classnames("add-icon", {'add-selected-icon': this.state.showDialog === ADD_DIALOG})}
-                              onClick={_ => {
-                                  if (this.state.showDialog === ADD_DIALOG)
-                                      this.setState({showDialog: ''});
-                                  else
-                                      this.setState({showDialog: ADD_DIALOG});
-                              }}/>
+                    <Col className="folders-title" md={12} lg={12}>
+                        <div className="collapse-panel">
+                            <FontAwesomeIcon icon={faPhotoVideo}/>
+                            <span className="collapse-panel-title" onClick={this.toggle}>
+                                {t('folders.lbl_resource_folders')} ({numberOfFolders})
+                            </span>
+
+                            {this.state.collapse &&
+                                <span title={t('folders.tooltip_add_new_folder')}
+                                      className={classnames("add-icon", {'add-selected-icon': this.state.showDialog === ADD_DIALOG})}
+                                      onClick={_ => {
+                                          if (this.state.showDialog === ADD_DIALOG)
+                                              this.setState({showDialog: ''});
+                                          else
+                                              this.setState({showDialog: ADD_DIALOG});
+                                      }}/>
+                            }
+
+                            <img alt="arrow down" className="toogleCollapse" onClick={this.toggle}
+                                 src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))}/>
+
+                        </div>
                     </Col>
                 </Row>
                 <Collapse className={classnames({'more-space': this.state.showDialog === ADD_DIALOG}, 'folders-collapse')} isOpen={this.state.collapse}>

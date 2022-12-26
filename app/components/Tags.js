@@ -1,5 +1,5 @@
 import {remote} from 'electron';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import styled from 'styled-components';
 
 import {
@@ -341,67 +341,77 @@ export default class extends Component {
             <_Root>
                 <Container className="bst rcn_tags">
                     <Row className="tags-header">
-                        <Col className="tags-title" md={7} lg={7}><img src={TAGS} alt="tags-logo"/> {t('tags.title')}
-                            {selectedTags ? ` (${selectedTags}/${this.state.tagsCount})` : ` (${this.state.tagsCount})`}
-                            <img className="toogleCollapse" onClick={this.toggle}
-                                 src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))} alt="arrow-up-down"/>
+                        <Col className="tags-title" md={12} lg={12}>
+                            <div className="collapse-panel">
+                                <img src={TAGS} alt="tags-logo"/>
+                                <span className="collapse-panel-title" onClick={this.toggle}>
+                                    {t('tags.title')}{selectedTags ? ` (${selectedTags}/${this.state.tagsCount})` : ` (${this.state.tagsCount})`}
+                                </span>
+                                {this.state.collapse &&
+                                    <Fragment>
+                                        <span title={t('tags.tooltip_sort_tags')}
+                                              className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "sort-icon", {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
+                                              onClick={_ => {
+                                                  if (this.state.showDialog === SORT_DIALOG)
+                                                      this.setState({showDialog: '', mergeTags: false});
+                                                  else
+                                                      this.setState({showDialog: SORT_DIALOG, mergeTags: false});
+                                              }}/>
+                                        <span title={t('tags.tooltip_search_tags')}
+                                              className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "search-icon", {'search-selected-icon': this.state.showDialog === SEARCH_DIALOG})}
+                                              onClick={_ => {
+                                                  if (this.state.showDialog === SEARCH_DIALOG)
+                                                      this.setState({showDialog: '', mergeTags: false});
+                                                  else
+                                                      this.setState({showDialog: SEARCH_DIALOG, mergeTags: false});
+                                              }}/>
+                                        {this.state.showDialog === SORT_DIALOG ?
+                                            <div className="sort-dialog">
+                                                <div
+                                                    className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_ALPHABETIC_DESC})}
+                                                    onClick={_ => {
+                                                        this._handleOnSortChange(SORT_ALPHABETIC_DESC);
+                                                        this.setState({showDialog: '', mergeTags: false});
+                                                    }}>{t('popup_sort.alphabetical')}
+                                                    <img alt="selected icon" src={SELECTED_ICON}/>
+                                                </div>
+                                                <div
+                                                    className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_ALPHABETIC_ASC})}
+                                                    onClick={_ => {
+                                                        this._handleOnSortChange(SORT_ALPHABETIC_ASC);
+                                                        this.setState({showDialog: '', mergeTags: false});
+                                                    }}>{t('popup_sort.alphabetical_inverted')}
+                                                    <img alt="selected icon" src={SELECTED_ICON}/>
+                                                </div>
+                                                <div
+                                                    className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_DATE_DESC})}
+                                                    onClick={_ => {
+                                                        this._handleOnSortChange(SORT_DATE_DESC);
+                                                        this.setState({showDialog: '', mergeTags: false});
+                                                    }}>{t('popup_sort.newest_to_oldest')}
+                                                    <img alt="selected icon" src={SELECTED_ICON}/>
+                                                </div>
+                                                <div
+                                                    className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_DATE_ASC})}
+                                                    onClick={_ => {
+                                                        this._handleOnSortChange(SORT_DATE_ASC);
+                                                        this.setState({showDialog: '', mergeTags: false});
+                                                    }}>{t('popup_sort.oldest_to_newest')}
+                                                    <img alt="selected icon" src={SELECTED_ICON}/>
+                                                </div>
+                                            </div> : ''
+                                        }
+                                    </Fragment>
+                                }
+                                <img className="toogleCollapse" onClick={this.toggle}
+                                     src={(this.state.collapse ? require('./pictures/arrow_down.svg') : require('./pictures/arrow_up.svg'))} alt="arrow-up-down"/>
+                            </div>
                         </Col>
-                        <Col
-                            className={classnames('tags-actions')}
-                            md={5} lg={5}>
-                            <span title={t('tags.tooltip_sort_tags')}
-                                  className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "sort-icon", {'sort-selected-icon': this.state.showDialog === SORT_DIALOG})}
-                                  onClick={_ => {
-                                      if (this.state.showDialog === SORT_DIALOG)
-                                          this.setState({showDialog: '', mergeTags: false});
-                                      else
-                                          this.setState({showDialog: SORT_DIALOG, mergeTags: false});
-                                  }}/>
-                            <span title={t('tags.tooltip_search_tags')}
-                                  className={classnames({'hidden': !this.state.collapse || this.props.autoSelectNew}, "search-icon", {'search-selected-icon': this.state.showDialog === SEARCH_DIALOG})}
-                                  onClick={_ => {
-                                      if (this.state.showDialog === SEARCH_DIALOG)
-                                          this.setState({showDialog: '', mergeTags: false});
-                                      else
-                                          this.setState({showDialog: SEARCH_DIALOG, mergeTags: false});
-                                  }}/>
-                            {this.state.showDialog === SORT_DIALOG ?
-                                <div className="sort-dialog">
-                                    <div
-                                        className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_ALPHABETIC_DESC})}
-                                        onClick={_ => {
-                                            this._handleOnSortChange(SORT_ALPHABETIC_DESC);
-                                            this.setState({showDialog: '', mergeTags: false});
-                                        }}>{t('popup_sort.alphabetical')}
-                                        <img alt="selected icon" src={SELECTED_ICON}/>
-                                    </div>
-                                    <div
-                                        className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_ALPHABETIC_ASC})}
-                                        onClick={_ => {
-                                            this._handleOnSortChange(SORT_ALPHABETIC_ASC);
-                                            this.setState({showDialog: '', mergeTags: false});
-                                        }}>{t('popup_sort.alphabetical_inverted')}
-                                        <img alt="selected icon" src={SELECTED_ICON}/>
-                                    </div>
-                                    <div
-                                        className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_DATE_DESC})}
-                                        onClick={_ => {
-                                            this._handleOnSortChange(SORT_DATE_DESC);
-                                            this.setState({showDialog: '', mergeTags: false});
-                                        }}>{t('popup_sort.newest_to_oldest')}
-                                        <img alt="selected icon" src={SELECTED_ICON}/>
-                                    </div>
-                                    <div
-                                        className={classnames('dialog-item', {'dialog-item-selected': this.state.sortDirection === SORT_DATE_ASC})}
-                                        onClick={_ => {
-                                            this._handleOnSortChange(SORT_DATE_ASC);
-                                            this.setState({showDialog: '', mergeTags: false});
-                                        }}>{t('popup_sort.oldest_to_newest')}
-                                        <img alt="selected icon" src={SELECTED_ICON}/>
-                                    </div>
-                                </div> : ''
-                            }
-                        </Col>
+                        {/*<Col*/}
+                        {/*    className={classnames('tags-actions')}*/}
+                        {/*    md={5} lg={5}>*/}
+                        {/*    */}
+                        {/*</Col>*/}
                     </Row>
                     <Collapse className="tags-collapse" isOpen={this.state.collapse}>
                         {this.state.showDialog !== '' && this.state.showDialog !== 'SORT_DIALOG' ?
