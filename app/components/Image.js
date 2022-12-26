@@ -244,7 +244,7 @@ class Image extends PureComponent {
                     titleWidget = {
                         <LibraryTabs
                             tabName={this.props.tabName}
-                            numberOfResources={this.props.tabData.folder_pictures_selection.length}
+                            numberOfResources={this.props.tabData.pictures_selection.length}
                         />
                     }
                     docLink="annotate"

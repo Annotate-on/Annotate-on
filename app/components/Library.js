@@ -306,6 +306,7 @@ export default class extends Component {
     render() {
         const { t } = this.props;
         let key = 0;
+        console.log("num of picutres", this.props.tabData[this.props.tabName])
         return (
             <_Root className="bst rcn_library">
                 <PageTitle
@@ -315,7 +316,7 @@ export default class extends Component {
                     titleWidget = {
                         <LibraryTabs
                             tabName={this.props.tabName}
-                            numberOfResources={this.props.tabData[this.props.tabName].folder_pictures_selection.length}
+                            numberOfResources={this.props.tabData[this.props.tabName].pictures_selection.length}
                         />
                     }
                     docLink={"resources"}
