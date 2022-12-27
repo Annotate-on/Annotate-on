@@ -309,7 +309,6 @@ export default class AppMenu extends Component {
 
     _showWaiting = (text) => {
         try{
-            console.log('Show waiting')
             waitPane.classList.add('visible');
             waitText.classList.add('visible');
             waitText.textContent = text;
@@ -319,7 +318,6 @@ export default class AppMenu extends Component {
     };
 
     _hideWaiting = () => {
-        console.log('Hide waiting')
         setTimeout(() => {
             waitPane.classList.remove('visible');
             waitText.classList.remove('visible');
@@ -358,7 +356,6 @@ export default class AppMenu extends Component {
     };
 
     _selectLibraryTab = (selection) => {
-        console.log("_selectLibraryTab", selection)
         if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
             this._showEditFormViolationModalWarning();
         } else {
@@ -535,9 +532,12 @@ export default class AppMenu extends Component {
                         <div className="right-menu-title">{t('main_navbar.credits')}</div>
                     </_Link>
                     <_Link
+                        to=""
                         disabled={true}
                         style={{background: 'lightgrey'}}
-                        title={t('main_navbar.tooltip_iiif')}>
+                        title={t('main_navbar.tooltip_iiif')}
+                        onClick={event => event.preventDefault()}
+                    >
                         <div className="nav_box">
                             <div className="iiif"/>
                             <div className="right-menu-title">{t('main_navbar.iiif')}</div>
