@@ -113,7 +113,7 @@
       "by_type_inverted": "By type inverted"
     },
     "folders": {
-      "lbl_resource_folders": "Resource folders",
+      "lbl_resource_folders": "Folders",
       "tooltip_add_new_folder": "Add new folder",
       "textbox_placeholder_folder_name": "Enter folder name and hit 'Enter'",
       "context_menu_import_image": "Import image",
@@ -125,7 +125,10 @@
       "context_menu_delete_folder": "Delete folder",
       "alert_delete_folder_message": "Folder: '{{folder}}'",
       "alert_folder_contains_special_characters": "folder contains special characters < , > , : , \" , /, \\ , | , ? *",
-      "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!"
+      "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
+      "lbl_filter": "Filter",
+      "lbl_filters_selected": "{{numberOfFolders}} Folders selected",
+      "btn_tooltip_cancel_folders_filter": "Cancel folders filter"
     },
     "tags": {
       "title": "Keywords",
@@ -138,7 +141,9 @@
       "alert_delete_tag_message": "Tag: '{{tag}}'",
       "alert_must_be_added_to_category": "categories and tags can only be added to another category",
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
-      "alert_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)"
+      "alert_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)",
+      "lbl_filter": "Filter",
+      "btn_tooltip_cancel_tags_filter": "Cancel tags filter"
     },
     "inspector": {
       "tab_metadata": "Metadata",

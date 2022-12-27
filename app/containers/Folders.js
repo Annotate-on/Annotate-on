@@ -1,6 +1,13 @@
 import {connect} from 'react-redux';
 import PureComponent from '../components/Folders';
-import {moveFolder, prepareFolderForDeletion, renameFolder, selectFolder, unselectFolder} from '../actions/app';
+import {
+    moveFolder,
+    prepareFolderForDeletion,
+    renameFolder,
+    selectFolder,
+    unselectAllFolders,
+    unselectFolder
+} from '../actions/app';
 import {push} from "connected-react-router";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../utils/library";
 import {withTranslation} from "react-i18next";
@@ -22,6 +29,11 @@ const mapDispatchToProps = dispatch => {
         unselectFolder: (tab, path) => {
             ee.emit(EVENT_SHOW_WAITING, "Filtering images...");
             dispatch(unselectFolder(tab, path));
+            ee.emit(EVENT_HIDE_WAITING);
+        },
+        unselectAllFolders: (tab) => {
+            ee.emit(EVENT_SHOW_WAITING, "Filtering images...");
+            dispatch(unselectAllFolders(tab));
             ee.emit(EVENT_HIDE_WAITING);
         },
         moveFolder: (moveTo, folder) => {

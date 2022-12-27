@@ -20,7 +20,6 @@ export default class TagsFilter extends Component {
     }
 
     renderExpression = (item) => {
-        // console.log("renderExpression", item)
         if(item && item.value) return (
             <div className="tags-filter-expression-container" key={item.id}>
                 <i className="fa fa-times" onClick={
@@ -47,7 +46,6 @@ export default class TagsFilter extends Component {
     }
 
     renderCondition = (item) => {
-        // console.log("renderCondition", item)
         if(item && item.value) return (
             <div className="tags-filter-expression-keyword" key={item.id}>{item.value.tag}
         </div>)
@@ -88,14 +86,13 @@ export default class TagsFilter extends Component {
     }
 
     render() {
-        // console.log(" tags filter selected filter", this.props.filter)
         const {t} = i18next;
         return (
             (this.props.filter && this.props.filter.value && this.props.filter.value.length > 0) ?
                 <div className="tags-filter">
                     <div className="tags-filter-header">
                         <i className="fa fa-filter"></i>
-                        <span>Filter</span>
+                        <span>{t('tags.lbl_filter')}</span>
                         <Button size="sm" color="primary" onClick={
                             (e) => {
                                 this.props.onCreateExpression();
@@ -103,6 +100,12 @@ export default class TagsFilter extends Component {
                         }>
                             <i className="fa fa-plus-circle"/>( )
                         </Button>
+                        <span className="spacer"/>
+                        <i className="fa fa-times btn-remove-filter" title={t('tags.btn_tooltip_cancel_tags_filter')} onClick={
+                            (e) => {
+                                this.props.onCancelFilter()
+                            }
+                        }/>
                     </div>
                     <div className="tags-filter-content">
                         {this.props.filter.value.map(item => {
