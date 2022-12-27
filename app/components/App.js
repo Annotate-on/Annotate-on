@@ -441,90 +441,30 @@ export default class AppMenu extends Component {
                             <div className="right-menu-title">{t('main_navbar.projects')}</div>
                         </div>
                     </_Link>
-                    <_Link className={(this.state.selectedMenu === CREDITS ? 'active-menu-item' : '') + ' menu-item'}
-                           to="/credits"
-                           onClick={(e) => {
-                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
-                                   e.preventDefault();
-                                   this._showEditFormViolationModalWarning();
-                               }else{
-                                   this.setState({
-                                       selectedMenu: CREDITS
-                                   });
-                               }
-                           }} title={t('main_navbar.tooltip_credits')}>
-                        <div className="credits"/>
-                        <div className="right-menu-title">{t('main_navbar.credits')}</div>
-                    </_Link>
-                    <div className="menu_separator"/>
-                    {/*<_Link className={(this.state.selectedMenu === IMAGE ? 'active-menu-item' : '') + ' menu-item'}*/}
+                    {/*<div className="menu_separator"/>*/}
+                    {/*<_Link*/}
+                    {/*       className={(this.state.selectedMenu === EVENT ? 'active-menu-item' : '') + ' menu-item'}*/}
                     {/*       to="/selection"*/}
                     {/*       onClick={(e) => {*/}
                     {/*           if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){*/}
                     {/*               e.preventDefault();*/}
                     {/*               this._showEditFormViolationModalWarning();*/}
                     {/*           }else {*/}
+                    {/*               this.setState({*/}
+                    {/*                   selectedMenu: EVENT*/}
+                    {/*               })*/}
                     {/*               setTimeout(() => {*/}
-                    {/*                   ee.emit(EVENT_SELECT_TAB, 'image')*/}
+                    {/*                   ee.emit(EVENT_SELECT_TAB, 'eventHome')*/}
                     {/*               }, 100)*/}
                     {/*           }*/}
-                    {/*       }} title={t('main_navbar.tooltip_annotate')}>*/}
+                    {/*       }} title={t('main_navbar.tooltip_event')}>*/}
                     {/*    <div className="nav_box">*/}
-                    {/*        <div className="image"/>*/}
-                    {/*        <div className="right-menu-title">{t('main_navbar.annotate')}</div>*/}
+                    {/*        <div className="event"/>*/}
+                    {/*        <div className="right-menu-title">{t('main_navbar.event')}</div>*/}
                     {/*    </div>*/}
                     {/*</_Link>*/}
-                    <_Link
-                           className={(this.state.selectedMenu === EVENT ? 'active-menu-item' : '') + ' menu-item'}
-                           to="/selection"
-                           onClick={(e) => {
-                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
-                                   e.preventDefault();
-                                   this._showEditFormViolationModalWarning();
-                               }else {
-                                   this.setState({
-                                       selectedMenu: EVENT
-                                   })
-                                   setTimeout(() => {
-                                       ee.emit(EVENT_SELECT_TAB, 'eventHome')
-                                   }, 100)
-                               }
-                           }} title={t('main_navbar.tooltip_event')}>
-                        <div className="nav_box">
-                            <div className="event"/>
-                            <div className="right-menu-title">{t('main_navbar.event')}</div>
-                        </div>
-                    </_Link>
-                    <div className="menu_separator"/>
-                    {/*<_Link className={(this.state.selectedMenu === DATA ? 'active-menu-item' : '') + ' menu-item'}*/}
-                    {/*       to="/selection"*/}
-                    {/*       onClick={(e) => {*/}
-                    {/*           if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){*/}
-                    {/*               e.preventDefault();*/}
-                    {/*               this._showEditFormViolationModalWarning();*/}
-                    {/*           }else {*/}
-                    {/*               setTimeout(() => {*/}
-                    {/*                   ee.emit(EVENT_SELECT_TAB, 'data')*/}
-                    {/*               }, 100)*/}
-                    {/*           }*/}
-                    {/*       }} title={t('main_navbar.tooltip_results')}>*/}
-                    {/*    <div className="nav_box">*/}
-                    {/*        <div className="list"/>*/}
-                    {/*        <div className="right-menu-title">{t('main_navbar.results')}</div>*/}
-                    {/*    </div>*/}
-                    {/*</_Link>*/}
-                    <_Link
-                           disabled={true}
-                           to="/this_path_needs_to_be_replaces_with_iiif"
-                           style={{background: 'lightgrey'}}
-                           onClick={() => {}} title={t('main_navbar.tooltip_iiif')}>
-                        <div className="nav_box">
-                            <div className="iiif"/>
-                            <div className="right-menu-title">{t('main_navbar.iiif')}</div>
-                        </div>
-
-                    </_Link>
-                    <div className="menu_separator"/>
+                    {/*<div className="menu_separator"/>*/}
+                    {/*<div className="menu_separator"/>*/}
                     <_Link className={(this.state.selectedMenu === TAXONOMIES ? 'active-menu-item' : '') + ' menu-item'}
                            to="/taxonomies"
                            onClick={(e) => {
@@ -578,7 +518,31 @@ export default class AppMenu extends Component {
                             <div className="right-menu-title">{t('main_navbar.options')}</div>
                         </div>
                     </_Link>
-                    <div className="menu_separator"/>
+                    {/*<div className="menu_separator"/>*/}
+                    <_Link className={(this.state.selectedMenu === CREDITS ? 'active-menu-item' : '') + ' menu-item'}
+                           to="/credits"
+                           onClick={(e) => {
+                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
+                                   e.preventDefault();
+                                   this._showEditFormViolationModalWarning();
+                               }else{
+                                   this.setState({
+                                       selectedMenu: CREDITS
+                                   });
+                               }
+                           }} title={t('main_navbar.tooltip_credits')}>
+                        <div className="credits"/>
+                        <div className="right-menu-title">{t('main_navbar.credits')}</div>
+                    </_Link>
+                    <_Link
+                        disabled={true}
+                        style={{background: 'lightgrey'}}
+                        title={t('main_navbar.tooltip_iiif')}>
+                        <div className="nav_box">
+                            <div className="iiif"/>
+                            <div className="right-menu-title">{t('main_navbar.iiif')}</div>
+                        </div>
+                    </_Link>
                     <div className="navbar-spacer"/>
                     <div className={this.state.online ? "connection-status connection-status-online" :"connection-status connection-status-offline"} title={t('global.connection_status_tooltip')}>
                         <FontAwesomeIcon className="tm-fa-icon" icon={faWifi}/>

@@ -55,6 +55,8 @@ import EventController from "../containers/EventController";
 import {_checkImageType} from "../utils/js";
 import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
+const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
+const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
 
 //
 // STYLE
@@ -87,7 +89,7 @@ const _RightColumn = styled.div`
   height: 100%;
   border-left: 0.5px solid #ddd;
   background: black;
-  margin-top: 1px;
+  margin-top: 2px;
 `;
 
 //
@@ -241,8 +243,14 @@ class Image extends PureComponent {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
-                </PageTitle>
+                    titleWidget = {
+                        <LibraryTabs
+                            tabName={this.props.tabName}
+                            numberOfResources={this.props.tabData.pictures_selection.length}
+                        />
+                    }
+                    docLink="annotate"
+                ></PageTitle>
                 {
                     this.state.currentPicture ?
                         <div className='picture-wrapper'>
@@ -310,22 +318,54 @@ class Image extends PureComponent {
                                 <div className="navigation">
                                     <div className="navigation-buttons">
                                         <img alt="navigation icon" src={require('./pictures/fast-backward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.firstPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.firstPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_to_first_resource')}
+                                        />
                                         <img alt="navigation icon" src={require('./pictures/backward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.previousTenPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.previousTenPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_backward_ten_resources')}
+                                        />
                                         <img alt="navigation icon"  src={require('./pictures/step-backward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_to_previous_resource')}
+                                        />
                                         <span className="navigation-title">
-                                    {t('annotate.lbl_picture_in_current_selection', {index_in_selection: this.props.currentPictureIndexInSelection + 1, pictures_length:this.props.picturesSelection.length, catalog_number: this.state.catalognumber})}
-                                            <div title={this.state.currentPicture.file_basename}
-                                                 className="file-name">{t('annotate.lbl_filename')}: {this.state.currentPicture.file_basename}</div>
-                                </span>
+                                            <span className="navigation-title-index">
+                                                {`${this.props.currentPictureIndexInSelection + 1} / ${this.props.picturesSelection.length}`}
+                                            </span>
+                                            <div className="file-name-cat-number-container">
+                                                <div title={this.state.currentPicture.file_basename} className="file-name">
+                                                    {this.state.currentPicture.file_basename}
+                                                </div>
+                                            </div>
+                                            {console.log("picture1", this.state.currentPicture, this.state.catalognumber)}
+                                            {this.state.catalognumber &&
+                                                <div title={this.state.catalognumber} className="cat-number">
+                                                    {this.state.catalognumber}
+                                                </div>
+                                            }
+
+                                            <div className="map-timeline-indicators-container">
+                                                {this.state.currentPicture.exifPlace &&
+                                                    <img src={MAP_IMAGE_CONTEXT} title={this.state.currentPicture.placeName + ", " + this.state.currentPicture.exifPlace}/>
+                                                }
+                                                {this.state.currentPicture.erecolnatMetadata &&  this.state.currentPicture.erecolnatMetadata.eventdate &&
+                                                    <img src={TIME_IMAGE_CONTEXT} title={this.state.currentPicture.erecolnatMetadata.eventdate}/>
+                                                }
+                                            </div>
+                                    </span>
                                         <img alt="navigation icon" src={require('./pictures/step-forward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.nextPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.nextPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_to_next_resource')}
+                                        />
                                         <img alt="navigation icon" src={require('./pictures/forward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.nextTenPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.nextTenPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_forward_ten_resources')}
+                                        />
                                         <img alt="navigation icon" src={require('./pictures/fast-forward.svg')}
-                                             onClick={e => this._navigationHandler(e, this.props.lastPictureInSelection)}/>
+                                             onClick={e => this._navigationHandler(e, this.props.lastPictureInSelection)}
+                                             title={t('annotate.btn_tooltip_go_to_last_resource')}
+                                        />
                                     </div>
                                 </div>
                                 {
@@ -1211,7 +1251,7 @@ class Image extends PureComponent {
     };
 
     _extractCatalogNumber = (currentPicture) => {
-        let catalognumber = 'N/A';
+        let catalognumber = '';
         if (currentPicture) {
             if (currentPicture.erecolnatMetadata !== undefined && currentPicture.erecolnatMetadata.catalognumber !== undefined) {
                 catalognumber = currentPicture.erecolnatMetadata.catalognumber;

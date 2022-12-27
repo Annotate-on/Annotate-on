@@ -41,8 +41,10 @@ import classnames from "classnames";
 import {SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC, SORT_DATE_ASC, SORT_DATE_DESC} from "../constants/constants";
 import SELECTED_ICON from "./pictures/selected_icon.svg";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
+import PageTitle from "./PageTitle";
+import PROJECTS_IMAGE_CONTEXT from "./pictures/projects2.svg";
 const readline = require('readline');
-const RECOLNAT_LOGO = require('./pictures/logo.svg');
+const TAGS_IMAGE_CONTEXT = require('./pictures/tags.svg');
 const chance = new Chance();
 const SORT_DIALOG = 'SORT_DIALOG';
 const SORT_CATEGORY_DIALOG = 'SORT_CATEGORY_DIALOG';
@@ -1468,18 +1470,15 @@ class TagManager extends Component {
         return (
             <Container className="bst tm-container" >
                 {!this.props.isModalOrTab ? <div>
-                    <div className="tagManager-heading">
-                        <div>
-                            <a onClick={() => {
-                                this.props.goToLibrary();
-                            }}>
-                                <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
-                            </a>
-                        </div>
-                        <div className="tm-title">
-                            {t('keywords.title')}
-                        </div>
-                    </div>
+                    <PageTitle
+                        showProjectInfo={true}
+                        logo={TAGS_IMAGE_CONTEXT}
+                        pageTitle={t('keywords.title')}
+                        projectName={this.props.projectName}
+                        selectedTaxonomy={this.props.selectedTaxonomy}
+                        docLink="keywords">
+                    </PageTitle>
+
                     <Row className="vertical-spread">
                         <hr/>
                         <Col sm={6} md={6} lg={6}>

@@ -5,7 +5,6 @@ import {Button, Col, Row} from "reactstrap";
 import {ee, EVENT_SELECT_LIBRARY_TAB} from "../utils/library";
 
 export default class LibraryTabs extends Component {
-
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -16,8 +15,7 @@ export default class LibraryTabs extends Component {
         console.log("render ", this.props.selectedTab);
         const {t} = i18next;
         return (
-            <Row className="library-tabs-container">
-                <Col sm={12} className="hide-overflow">
+            <div className="library-tabs-container">
                     <div className="library-tabs">
                         <Button title={t('main_navbar.tooltip_resources')}
                                 color={(!this.props.selectedTab || this.props.selectedTab === 'library') ? "primary" : "default"}
@@ -30,6 +28,9 @@ export default class LibraryTabs extends Component {
                             </div>
                             <div className="library-tabs-button-content">
                                 <div className="library-tabs-button-title">{t('main_navbar.resources')}</div>
+                            </div>
+                            <div className="library-tabs-button-content">
+                                <div className="library-tabs-button-nb-resources">{this.props.numberOfResources}</div>
                             </div>
                         </Button>
                         <Button title={t('main_navbar.tooltip_annotate')}
@@ -59,8 +60,7 @@ export default class LibraryTabs extends Component {
                             </div>
                         </Button>
                     </div>
-                </Col>
-            </Row>
+            </div>
         );
     }
 }

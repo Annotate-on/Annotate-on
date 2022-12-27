@@ -6,7 +6,10 @@ import {withTranslation} from "react-i18next";
 import Options from "../components/Options";
 
 const mapStateToProps = state => {
-    return {};
+    return {
+        selectedTaxonomy: state.app.selectedTaxonomy,
+        projectName: state.app.selectedProjectName
+    };
 };
 
 const mapDispatchToProps = dispatch => {

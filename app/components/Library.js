@@ -312,14 +312,20 @@ export default class extends Component {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
+                    titleWidget = {
+                        <LibraryTabs
+                            tabName={this.props.tabName}
+                            numberOfResources={this.props.tabData[this.props.tabName].pictures_selection.length}
+                        />
+                    }
+                    docLink={"resources"}
+                >
                 </PageTitle>
                 <_Content>
                     <div className="vertical">
                         <Folders tabName={this.props.tabName}/>
                         <Tags tabName={this.props.tabName} visibleActions={true}/>
                     </div>
-                    {console.log(this.state.picView)}
                     <_PicturesPanel>
                         {this.state.currentPicture ?
                             <_Pictures>

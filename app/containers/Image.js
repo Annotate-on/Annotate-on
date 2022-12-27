@@ -70,7 +70,7 @@ const mapStateToProps = (state, ownProps) => {
         cartels: state.app.cartel_by_picture,
         repeatMode: state.app.leafletSettings.repeatMode,
         taxonomyInstance,
-        projectName: state.app.selectedProjectName
+        projectName: state.app.selectedProjectName,
     };
 };
 

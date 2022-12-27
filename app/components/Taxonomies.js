@@ -30,13 +30,14 @@ import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../utils/library";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import Chance from "chance";
 import PageTitle from "./PageTitle";
+import PROJECTS_IMAGE_CONTEXT from "./pictures/projects2.svg";
 
-const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const LIST = "LIST";
 const IMPORT = "IMPORT";
 const ADD_VIEW_DESCRIPTORS = "ADD_VIEW_DESCRIPTORS";
 const DELETE_IMAGE_CONTEXT = require('./pictures/delete-tag.svg');
 const EXPORT_IMAGE_CONTEXT = require('./pictures/export-gray.svg');
+const MODELS_IMAGE_CONTEXT = require('./pictures/models.svg');
 const SELECT_ALL = require('./pictures/select_all_gray.svg');
 
 const chance = new Chance();
@@ -248,11 +249,12 @@ export default class extends Component {
             case LIST:
                 return (<Container className="bst rcn_xper">
                     <PageTitle
-                        showProjectInfo="true"
-                        showLogo="true"
+                        showProjectInfo={true}
+                        logo={MODELS_IMAGE_CONTEXT}
                         pageTitle={t('models.title')}
                         projectName={this.props.projectName}
                         selectedTaxonomy={this.props.selectedTaxonomy}
+                        docLink="models"
                     >
                     </PageTitle>
                     <br/>

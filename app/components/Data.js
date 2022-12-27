@@ -491,8 +491,14 @@ class Data extends PureComponent {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
-                </PageTitle>
+                    titleWidget = {
+                        <LibraryTabs
+                            tabName={this.props.tabName}
+                            numberOfResources={this.props.tabData.pictures_selection.length}
+                        />
+                    }
+                    docLink="results"
+                ></PageTitle>
                 <Row className="no-margin">
                     <Col lg={12} className="no-padding">
                         <Nav tabs>
