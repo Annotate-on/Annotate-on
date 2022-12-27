@@ -48,7 +48,7 @@ import {
     EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION,
     EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
     SHOW_EDIT_MODE_VIOLATION_MODAL,
-    EVENT_UPDATE_EVENT_RECORDING_STATUS
+    EVENT_UPDATE_EVENT_RECORDING_STATUS, EVENT_UNFOCUS_ANNOTATION
 } from "../utils/library";
 import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
@@ -375,7 +375,6 @@ class Image extends PureComponent {
                                             currentPicture={this.state.currentPicture}
                                             isEditing={this.state.currentAnnotationTool}
                                             editedAnnotation={this.state.editedAnnotation}
-                                            openEditPanelonVideoAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
 
                                             leafletPositionByPicture={this.props.leafletPositionByPicture}
                                             annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
@@ -775,7 +774,7 @@ class Image extends PureComponent {
                 case ANNOTATION_TRANSCRIPTION: {
                     this.completeAnnotationTranscription(e.layer.getLatLngs()[0].map(latLng => {
                         return this.leafletImage.current.getRealCoordinates(latLng);
-                    }), e.layer.annotationId);
+                    }), e.layer.annotationId, e.layer.video);
                     // Open edit mode right after annotation creation.
                     setTimeout(_ => {
                         if (this.props.annotationsTranscription[this.state.currentPicture.sha1]) {
@@ -812,7 +811,7 @@ class Image extends PureComponent {
             this.props.createAnnotationCategorical(this.state.currentPicture.sha1, [{
                 x: 0,
                 y: 0
-            }], e.layer.annotationId);
+            }], e.layer.annotationId, e.layer.video);
         } else if (e.layerType === CARTEL) {
             if (this.state.currentPicture.sha1 in this.props.cartels) {
                 ee.emit(EVENT_EDIT_CARTEL);
@@ -828,6 +827,12 @@ class Image extends PureComponent {
                 rteAnnotationId: e.layer.annotationId,
                 richTextLayer: e.layer
             });
+        } else if (e.layerType === ANNOTATION_CHRONOTHEMATIQUE) {
+            e.layer.annotationId = chance.guid();
+            e.layer.annotationType = ANNOTATION_CHRONOTHEMATIQUE;
+
+            this.props.createAnnotationChronoThematique(this.state.currentPicture.sha1, e.layer.video.start, e.layer.video.end, '', '', e.layer.annotationId);
+            ee.emit(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION);
         }
     };
 
@@ -915,7 +920,7 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
+        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
             this.setState({
                 editedAnnotation: annotation
             });
@@ -1152,12 +1157,12 @@ class Image extends PureComponent {
         this.props.createAnnotationOccurrence(this.state.currentPicture.sha1, vertices, id);
     }
 
-    completeAnnotationTranscription(vertices, id) {
-        this.props.createAnnotationTranscription(this.state.currentPicture.sha1, vertices, id);
+    completeAnnotationTranscription(vertices, id, video) {
+        this.props.createAnnotationTranscription(this.state.currentPicture.sha1, vertices, id, video);
     }
 
-    completeAnnotationRichtext(vertices, id, richText) {
-        this.props.createAnnotationRichtext(this.state.currentPicture.sha1, vertices, id, richText);
+    completeAnnotationRichtext(vertices, id, richText, video) {
+        this.props.createAnnotationRichtext(this.state.currentPicture.sha1, vertices, id, richText, video);
     }
 
 

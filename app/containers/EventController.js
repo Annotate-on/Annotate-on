@@ -2,8 +2,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Component from '../components/event/EventController';
 import {
-    createAnnotationChronoThematique, createEventAnnotation,
-    editAnnotationChronothematiqueEndtime,
+    createEventAnnotation,
     editEvent, editEventAnnotationEndtime,
     extendEventDuration, finishCorruptedEvent,
     saveEventAfterRecord

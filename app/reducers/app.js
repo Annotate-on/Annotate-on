@@ -117,7 +117,7 @@ import {
     DELETE_TAG_EXPRESSION,
     CREATE_TAG_EXPRESSION,
     UPDATE_TAG_EXPRESSION_OPERATOR,
-    STOP_ANNOTATION_RECORDING,
+    STOP_ANNOTATION_RECORDING, UNSELECT_ALL_FOLDERS, DELETE_TAG_FILTER,
     SELECT_LIBRARY_TAB
 } from '../actions/app';
 import {
@@ -2526,6 +2526,31 @@ export default (state = {}, action) => {
         }
             break;
 
+        case DELETE_TAG_FILTER: {
+            const counter = state.counter + 1;
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tabName];
+
+            if(tab.selected_filter && tab.selected_filter.value.length > 0) {
+                tab.selected_filter = null;
+                tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+                const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+                if (newIndex !== -1) {
+                    tab.current_picture_index_in_selection = newIndex;
+                } else {
+                    tab.current_picture_index_in_selection = 0;
+                    tab.selected_sha1 = tab.pictures_selection[0];
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                open_tabs: {...tabs}
+            };
+        }
+            break;
+
         case DELETE_TAG_EXPRESSION: {
             const counter = state.counter + 1;
             const tabs = state.open_tabs;
@@ -2913,6 +2938,31 @@ export default (state = {}, action) => {
             const tabs = state.open_tabs;
             const tab = tabs[action.tab];
             tab.selected_folders.splice(found, 1);
+
+            // Filter pictures by selected folders
+            tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
+            tab.pictures_selection = findPicturesByTagFilter(tab.selected_filter, tab.folder_pictures_selection, state);
+            const newIndex = tab.pictures_selection.indexOf(tab.selected_sha1);
+            if (newIndex !== -1) {
+                tab.current_picture_index_in_selection = newIndex;
+            } else {
+                tab.current_picture_index_in_selection = 0;
+                tab.selected_sha1 = tab.pictures_selection[0];
+            }
+
+            return {
+                ...state,
+                open_tabs: {...tabs},
+                counter
+            };
+        }
+            break;
+        case UNSELECT_ALL_FOLDERS: {
+            const counter = state.counter + 1;
+
+            const tabs = state.open_tabs;
+            const tab = tabs[action.tab];
+            tab.selected_folders = [];
 
             // Filter pictures by selected folders
             tab.folder_pictures_selection = [...filterPicturesByFolder(tab, state.pictures)];
@@ -3937,18 +3987,6 @@ export default (state = {}, action) => {
                 case ANNOTATION_POLYGON:
                     branch = 'annotations_polygon';
                     break;
-                case ANNOTATION_ANGLE:
-                    branch = 'annotations_angle';
-                    break;
-                case ANNOTATION_OCCURRENCE:
-                    branch = 'annotations_occurrence';
-                    break;
-                case ANNOTATION_COLORPICKER:
-                    branch = 'annotations_color_picker';
-                    break;
-                case ANNOTATION_RATIO:
-                    branch = 'annotations_ratio';
-                    break;
                 case ANNOTATION_TRANSCRIPTION:
                     branch = 'annotations_transcription';
                     break;
@@ -3967,10 +4005,19 @@ export default (state = {}, action) => {
             if (annotation === undefined) {
                 return state;
             }
-            if (action.endTime <= annotation.video.start)
-                return state;
 
-            annotation.video.end = action.endTime;
+            if (!lodash.isNil(annotation.video)) {
+                if (action.endTime <= annotation.video.start)
+                    return state;
+
+                annotation.video.end = action.endTime;
+                annotation.video.duration = action.endTime - annotation.video.start;
+            } else {
+                if (action.endTime <= annotation.start)
+                    return state;
+                annotation.end = action.endTime;
+                annotation.duration = action.endTime - annotation.start;
+            }
 
             const response = {
                 ...state,

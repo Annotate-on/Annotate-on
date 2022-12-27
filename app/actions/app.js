@@ -68,6 +68,7 @@ export const PREVIOUS_PICTURE_IN_SELECTION = 'PREVIOUS_PICTURE_IN_SELECTION';
 export const PREVIOUS_TEN_PICTURE_IN_SELECTION = 'PREVIOUS_TEN_PICTURE_IN_SELECTION';
 export const SELECT_TAG = 'SELECT_TAG';
 export const ADD_TAG_IN_FILTER = 'ADD_TAG_IN_FILTER';
+export const DELETE_TAG_FILTER = 'DELETE_TAG_FILTER';
 export const DELETE_TAG_EXPRESSION = 'DELETE_TAG_EXPRESSION';
 export const CREATE_TAG_EXPRESSION = 'CREATE_TAG_EXPRESSION';
 export const UPDATE_TAG_EXPRESSION_OPERATOR = 'UPDATE_TAG_EXPRESSION_OPERATOR';
@@ -89,6 +90,7 @@ export const DELETE_TAB = 'DELETE_TAB';
 export const SELECT_FOLDER_GLOBALLY = 'SELECT_FOLDER_GLOBALLY';
 export const SELECT_FOLDER = 'SELECT_FOLDER';
 export const UNSELECT_FOLDER = 'UNSELECT_FOLDER';
+export const UNSELECT_ALL_FOLDERS = 'UNSELECT_ALL_FOLDERS';
 export const SAVE_SORTED_ARRAY = 'SAVE_SORTED_ARRAY';
 export const ADD_SUB_TAG = 'ADD_SUB_TAG';
 export const OPEN_IN_NEW_TAB = 'OPEN_IN_NEW_TAB';
@@ -558,6 +560,11 @@ export const addTagInFilter = (name, skipCheck, tabName) => ({
     tabName
 });
 
+export const deleteTagFilter = (tabName) => ({
+    type: DELETE_TAG_FILTER,
+    tabName
+});
+
 export const createTagExpression = (tabName) => ({
     type: CREATE_TAG_EXPRESSION,
     tabName
@@ -689,6 +696,11 @@ export const unselectFolder = (tab, path) => ({
     type: UNSELECT_FOLDER,
     tab,
     path
+});
+
+export const unselectAllFolders = (tab) => ({
+    type: UNSELECT_ALL_FOLDERS,
+    tab
 });
 
 export const saveAnnotationSort = (tabName, direction) => ({

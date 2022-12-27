@@ -480,6 +480,17 @@ div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-d
   background-image: url(components/pictures/cartel_white.svg) !important;
 }
 
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-chronothematique {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/chronothematique.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-chronothematique.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-chronothematique:hover {
+  background-image: url(components/pictures/chronothematique-white.svg) !important;
+}
+
 .leaflet-div-color-picker.leaflet-editing-color-picker {
   background: url(components/pictures/color_picker.svg) 50% 50% no-repeat !important;
   -webkit-background-size: 16px 16px;
