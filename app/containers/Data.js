@@ -6,7 +6,6 @@ import {updateTabularView} from "../actions/app";
 import {withTranslation} from "react-i18next";
 
 const mapStateToProps = (state, ownProps) => {
-    console.log('data own props ' , ownProps)
     return {
         annotations: lodash.flatten([...Object.values(state.app.annotations_measures_linear),
             ...Object.values(state.app.annotations_rectangular),

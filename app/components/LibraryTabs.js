@@ -12,7 +12,6 @@ export default class LibraryTabs extends Component {
     }
 
     render() {
-        console.log("render ", this.props.selectedTab);
         const {t} = i18next;
         return (
             <div className="library-tabs-container">

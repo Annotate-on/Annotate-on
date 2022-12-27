@@ -2866,7 +2866,6 @@ export default (state = {}, action) => {
             break;
         case SELECT_LIBRARY_TAB: {
             const counter = state.counter + 1;
-            console.log("SELECT_LIBRARY_TAB", action.tab, action.libraryTab)
             const tabs = {...state.open_tabs};
             const tab = tabs[action.tab];
             if(tab) {

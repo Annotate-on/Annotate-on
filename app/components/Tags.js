@@ -72,7 +72,6 @@ export default class extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log("componentWillReceiveProps", nextProps)
         let selectedTags, sortDirection, selectedFilter;
         if (this.props.tabName) {
             selectedTags = [];
@@ -536,22 +535,18 @@ export default class extends Component {
     };
 
     _handleUpdateTagExpressionOperator = (id, value) => {
-        console.log("_handleUpdateTagExpressionOperator", id, value, this.props.tabName);
         this.props.updateTagExpressionOperator(id, value, this.props.tabName);
     };
 
     _handleDeleteTaxExpression = (id) => {
-        console.log("_handleDeleteTaxExpression", id);
         this.props.deleteTagExpression(id, this.props.tabName);
     };
 
     _handleCreateTaxExpression = () => {
-        console.log("_handleCreateTaxExpression");
         this.props.createTagExpression(this.props.tabName);
     };
 
     _handleResetFilter = () => {
-        console.log("_handleResetFilter");
         this.props.deleteTagFilter(this.props.tabName);
     };
 

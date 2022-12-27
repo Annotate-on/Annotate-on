@@ -72,8 +72,6 @@ export const changeOperatorValueInFilter = (filter, id, value) => {
 }
 
 export const findPicturesByTagFilter = (expression, allPictures, state) => {
-    console.log("findPictures expression", expression);
-    console.log("findPictures allPictures", allPictures);
 
     if(!expression || expression.value.length === 0) return [...allPictures];
 
@@ -119,10 +117,7 @@ export const findPicturesByTagFilter = (expression, allPictures, state) => {
             }
         })
     }
-
-    // console.log("picturesByTag", picturesByTag)
     let result = evaluateTagsExpression(expression, allPictures, picturesByTag);
-    console.log("findPictures expression, result", expression, allPictures, result);
     let finalResult = lodash.intersection(allPictures, result);
     return finalResult;
 }
