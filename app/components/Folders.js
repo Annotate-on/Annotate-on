@@ -192,7 +192,7 @@ export default class extends PureComponent {
                         <div className="collapse-panel">
                             <FontAwesomeIcon icon={faPhotoVideo}/>
                             <span className="collapse-panel-title" onClick={this.toggle}>
-                                {t('folders.lbl_resource_folders')} ({numberOfFolders})
+                                {t('folders.lbl_resource_folders')} ({total})
                             </span>
 
                             {this.state.collapse &&
