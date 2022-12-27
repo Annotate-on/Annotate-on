@@ -147,9 +147,11 @@
   
   .tags-title {
     font-size: 17px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     color: #000;
+    background-color: #fff;
+    border-right: 1px #ccc solid;
     .sort-icon {
       margin-right: 5px;
     }
