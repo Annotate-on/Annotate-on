@@ -122,4 +122,4 @@ export const APP_NAME = 'Annotate-on';
 export const MARKER_TYPE_METADATA = "MARKER_TYPE_METADATA";
 export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
-
+export const DEFAULT_XPER_CONNECTION_URL = 'http://experimental.xper3.fr/rest';

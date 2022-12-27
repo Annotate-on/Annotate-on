@@ -29,6 +29,7 @@ import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../utils/library";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import Chance from "chance";
+import PageTitle from "./PageTitle";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const LIST = "LIST";
@@ -246,31 +247,14 @@ export default class extends Component {
         switch (this.state.showView) {
             case LIST:
                 return (<Container className="bst rcn_xper">
-                    <div className="bg">
-                        <Row>
-                            <Col sm={6} className="hide-overflow">
-                                <a onClick={() => {
-                                    this.props.goToLibrary();
-                                }}> <img alt="logo" src={RECOLNAT_LOGO} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/></a>
-                                <span className="project-label">{t('global.lbl_project')}:</span><span
-                                className="project-name">{this.props.projectName}</span>
-                                <span className="project-label">{t('global.lbl_model')}:</span>
-                                <span className="project-name">
-                    {this.props.selectedTaxonomy ?
-                        <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
-                            <img height='16px'
-                                 alt="xper3-logo"
-                                 src='http://www.xper3.fr/resources/img/xper3-logo.png'/> : APP_NAME} )</Fragment>
-                        :
-                        'Without model'
-                    }
-                            </span>
-                            </Col>
-                            <Col sm={6}>
-                                <span className="title">{t('models.title')}</span>
-                            </Col>
-                        </Row>
-                    </div>
+                    <PageTitle
+                        showProjectInfo="true"
+                        showLogo="true"
+                        pageTitle={t('models.title')}
+                        projectName={this.props.projectName}
+                        selectedTaxonomy={this.props.selectedTaxonomy}
+                    >
+                    </PageTitle>
                     <br/>
                     <Row className="action-bar">
                         <Col sm={8} md={8} lg={8}>
@@ -319,7 +303,7 @@ export default class extends Component {
                         <Col md={{size: 12, offset: 0}}>
                             <div className="table-wrapper" id="wrapper" ref={_ => (this.pane = _)}>
                                 <Table hover size="sm" className="targets-table">
-                                    <thead title={t('thead_tooltip_sort_order')}>
+                                    <thead title={t('models.thead_tooltip_sort_order')}>
                                     <tr>
                                         <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                      sortedBy={this.state.sortBy} sort={this._sort}/>

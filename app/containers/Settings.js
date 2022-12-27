@@ -10,7 +10,8 @@ const mapStateToProps = state => {
         appState: state.app,
         counter: state.app.counter,
         selectedMenu: state.app.selected_menu,
-        projectName: state.app.selectedProjectName
+        projectName: state.app.selectedProjectName,
+        selectedTaxonomy: state.app.selectedTaxonomy
     };
 };
 

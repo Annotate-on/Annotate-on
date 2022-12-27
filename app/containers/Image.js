@@ -103,14 +103,14 @@ const mapDispatchToProps = dispatch => {
         createAnnotationRatio: (pictureId, value1, value2, line1, line2, id) => {
             dispatch(createAnnotationRatio(pictureId, value1, value2, line1, line2, id));
         },
-        createAnnotationTranscription: (pictureId, vertices, id) => {
-            dispatch(createAnnotationTranscription(pictureId, vertices, id));
+        createAnnotationTranscription: (pictureId, vertices, id, video) => {
+            dispatch(createAnnotationTranscription(pictureId, vertices, id, video));
         },
-        createAnnotationCategorical: (pictureId, vertices, id) => {
-            dispatch(createAnnotationCategorical(pictureId, vertices, id));
+        createAnnotationCategorical: (pictureId, vertices, id, video) => {
+            dispatch(createAnnotationCategorical(pictureId, vertices, id, video));
         },
-        createAnnotationRichtext: (pictureId, vertices, id, richText) => {
-            dispatch(createAnnotationRichtext(pictureId, vertices, id, richText));
+        createAnnotationRichtext: (pictureId, vertices, id, richText, video) => {
+            dispatch(createAnnotationRichtext(pictureId, vertices, id, richText, video));
         },
         deleteAnnotationMeasureLinear: (pictureId, annotationId, tabName) => {
             dispatch(deleteAnnotationMeasureLinear(pictureId, annotationId));

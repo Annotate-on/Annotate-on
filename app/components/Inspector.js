@@ -257,7 +257,7 @@ export default class extends Component {
             this.setState({editedAnnotation: null, openAddTag: false, openEditLocation: false, openEditDating: false});
         }
 
-        // Open edit of video and event annotation on annotation record start.
+        // Open edit of event annotation on annotation record start.
         if (acceptedTypes.includes(nextProps.picture.resourceType) && this.state.annotations.length < nextState.annotations.length
             && this.props.currentPicture && this.props.currentPicture.sha1 === nextProps.currentPicture.sha1) {
             const annotation = this._sortAnnotations(nextState.annotations, SORT_DATE_DESC)[0];
@@ -848,7 +848,7 @@ export default class extends Component {
                 }
             }}
                  className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
-                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1)},
+                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
                      'react-contextmenu-wrapper row')}
                  onClick={(this.props.currentPicture.resourceType === RESOURCE_TYPE_EVENT || this.props.currentPicture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
                      if (this.state.isAnnotateEventRecording) {
@@ -940,7 +940,7 @@ export default class extends Component {
                             !this.props.isFromLibraryView ? <Col md={6} lg={6} sm={6}
                                 // className={(!this.props.readOnly && this.state.hover === annotation.id) ? 'action-row' : 'hidden'}>
                                                                  className={'action-row'}>
-                                {!lodash.isNil(annotation.video) && annotation.video.end === -1 ?
+                                {!lodash.isNil(annotation.video) && annotation.video.end === -1 || annotation.end === -1 ?
                                     <img alt="stop_ann_recording" className="btn_menu" src={STOP}
                                          title={t('inspector.tooltip_stop_ann_recording')} onClick={event => {
                                         event.preventDefault();

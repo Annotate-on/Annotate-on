@@ -43,6 +43,8 @@ import {loadMetadata} from "../utils/config";
 import ChronoThematicAnnotations from "../containers/ChronoThematicAnnotations";
 import EventAnnotations from "../containers/EventAnnotations";
 import {calculateTableHeight, getXlsx} from "../utils/common";
+import LibraryTabs from "../containers/LibraryTabs";
+import PageTitle from "./PageTitle";
 
 const EXPORT_COLUMNS = [
     'Name',
@@ -485,29 +487,12 @@ class Data extends PureComponent {
         const isDropdownDisabled = this.state.sortedAnnotations.length === 0;
         return (
             <div className="bst rcn_data">
-                <div className="bg">
-                    <Row>
-                        <Col sm={5} className="hide-overflow">
-                            <span className="project-label">{t('global.lbl_project')}:</span><span
-                            className="project-name">{this.props.projectName}</span>
-                            <span className="project-label">{t('global.lbl_model')}:</span>
-                            <span className="project-name">
-                    {this.props.selectedTaxonomy ?
-                        <Fragment>{this.props.selectedTaxonomy.name} (type: {this.props.selectedTaxonomy.model === MODEL_XPER ?
-                            <img height='16px'
-                                 alt="annotate"
-                                 src='http://www.xper3.fr/resources/img/xper3-logo.png'>
-                            </img> : APP_NAME} )</Fragment>
-                        :
-                        t('library.lbl_without_model')
-                    }
-                            </span>
-                        </Col>
-                        <Col sm={7}>
-                            <span className="title">{t('results.title')}</span>
-                        </Col>
-                    </Row>
-                </div>
+                <PageTitle
+                    showProjectInfo={true}
+                    projectName={this.props.projectName}
+                    selectedTaxonomy={this.props.selectedTaxonomy}
+                    titleWidget = {<LibraryTabs tabName={this.props.tabName} />}>
+                </PageTitle>
                 <Row className="no-margin">
                     <Col lg={12} className="no-padding">
                         <Nav tabs>

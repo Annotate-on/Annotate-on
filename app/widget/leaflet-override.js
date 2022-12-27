@@ -14,6 +14,7 @@ import './leaflet-categorical'
 import './leaflet-richtext'
 import './leaflet-cartel'
 import './leaflet-control-menu'
+import './leaflet-chronotematic'
 
 i18next.on('languageChanged', () => {
     overrideLeafletDefaultLabels();
@@ -70,6 +71,7 @@ export const overrideLeafletDefaultLabels = () => {
     L.drawLocal.draw.toolbar.buttons.categorical =  t('annotate.editor.btn_tooltip_categorical_tool');
     L.drawLocal.draw.toolbar.buttons.colorPicker = t('annotate.editor.btn_tooltip_color_picker_tool');
     L.drawLocal.draw.toolbar.buttons.cartel = i18next.t('annotate.editor.btn_tooltip_cartel');
+    L.drawLocal.draw.toolbar.buttons.chronotematic = i18next.t('annotate.editor.btn_tooltip_chronotematic');
 
     L.drawLocal.draw.toolbar.buttons.angle = t('annotate.editor.btn_tooltip_angle_tool');
     L.drawLocal.draw.handlers.angle = {
@@ -195,6 +197,11 @@ export const initLeaflet = () => {
                     enabled: this.options.cartel,
                     handler: new L.Draw.Cartel(map, this.options.cartel),
                     title: L.drawLocal.draw.toolbar.buttons.cartel
+                },
+                {
+                    enabled: this.options.chronotematic,
+                    handler: new L.Draw.Chronotematic(map, this.options.chronotematic),
+                    title: L.drawLocal.draw.toolbar.buttons.chronotematic
                 }
             ];
         }

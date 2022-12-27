@@ -339,10 +339,11 @@ class LeafletVideo extends Component {
                                              marker: !this.props.calibrationMode ? MARKER_OPTIONS : false,
                                              rectangle: !this.props.calibrationMode ? RECTANGLE_OPTIONS : false,
                                              colorPicker: false,
-                                             transcription: !this.props.calibrationMode ? TRANSCRIPTION_OPTIONS : false,
-                                             categorical: !this.props.calibrationMode,
-                                             richtext: !this.props.calibrationMode ? RICHTEXT_OPTIONS : false,
-                                             cartel: !this.props.calibrationMode
+                                             transcription: false,
+                                             categorical: false,
+                                             richtext: false,
+                                             cartel: false,
+                                             chronotematic: !this.props.calibrationMode
                                          }}
                             />
 

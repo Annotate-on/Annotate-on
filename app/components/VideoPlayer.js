@@ -174,8 +174,6 @@ export default class extends PureComponent {
                               zoom={this.state.originalZoom}
                               volume={this.state.originalVolume}
                               playbackRate={this.state.originalPlaybackRate}
-                              openEditPanelonVideoAnnotationCreate={this.props.openEditPanelonVideoAnnotationCreate}
-                              createAnnotationChronoThematique={this.props.createAnnotationChronoThematique}
                               annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
                               annotationsRectangular={this.props.annotationsRectangular}
                               annotationsChronothematique={this.props.annotationsChronothematique}

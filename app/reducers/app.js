@@ -118,6 +118,7 @@ import {
     CREATE_TAG_EXPRESSION,
     UPDATE_TAG_EXPRESSION_OPERATOR,
     STOP_ANNOTATION_RECORDING, UNSELECT_ALL_FOLDERS, DELETE_TAG_FILTER
+    SELECT_LIBRARY_TAB
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -2857,10 +2858,26 @@ export default (state = {}, action) => {
             break;
 
         case SELECT_MENU:
+
             return {
                 ...state,
                 selected_menu: action.menu
             };
+            break;
+        case SELECT_LIBRARY_TAB: {
+            const counter = state.counter + 1;
+            console.log("SELECT_LIBRARY_TAB", action.tab, action.libraryTab)
+            const tabs = {...state.open_tabs};
+            const tab = tabs[action.tab];
+            if(tab) {
+                tab.view = action.libraryTab
+            }
+            return {
+                ...state,
+                open_tabs: {...tabs},
+                counter
+            };
+        }
             break;
         case SELECT_FOLDER_GLOBALLY: {
             const counter = state.counter + 1;
@@ -3970,18 +3987,6 @@ export default (state = {}, action) => {
                 case ANNOTATION_POLYGON:
                     branch = 'annotations_polygon';
                     break;
-                case ANNOTATION_ANGLE:
-                    branch = 'annotations_angle';
-                    break;
-                case ANNOTATION_OCCURRENCE:
-                    branch = 'annotations_occurrence';
-                    break;
-                case ANNOTATION_COLORPICKER:
-                    branch = 'annotations_color_picker';
-                    break;
-                case ANNOTATION_RATIO:
-                    branch = 'annotations_ratio';
-                    break;
                 case ANNOTATION_TRANSCRIPTION:
                     branch = 'annotations_transcription';
                     break;
@@ -4000,10 +4005,19 @@ export default (state = {}, action) => {
             if (annotation === undefined) {
                 return state;
             }
-            if (action.endTime <= annotation.video.start)
-                return state;
 
-            annotation.video.end = action.endTime;
+            if (!lodash.isNil(annotation.video)) {
+                if (action.endTime <= annotation.video.start)
+                    return state;
+
+                annotation.video.end = action.endTime;
+                annotation.video.duration = action.endTime - annotation.video.start;
+            } else {
+                if (action.endTime <= annotation.start)
+                    return state;
+                annotation.end = action.endTime;
+                annotation.duration = action.endTime - annotation.start;
+            }
 
             const response = {
                 ...state,

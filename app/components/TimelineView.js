@@ -37,7 +37,8 @@ export default class TimelineView extends Component {
         super(props);
         this.state = {
             showThumbnailForResource: true,
-            filter: FILTER_VALUE_ALL
+            filter: FILTER_VALUE_ALL,
+            currentActiveItem:0
         }
     }
 
@@ -108,10 +109,18 @@ export default class TimelineView extends Component {
             }
         }
         let results = [];
+        let currentActiveItem=0;
         if(dataItems) {
             let sortedDataItems = dataItems.sort(
                 (objA, objB) => Number(objA.startDate) - Number(objB.startDate),
             );
+            if(this.props.currentPictureSelection) {
+                const currentActiveItemIndex = sortedDataItems.findIndex(dataItem => dataItem.resource === this.props.currentPictureSelection);
+                if(currentActiveItemIndex > 0) {
+                    currentActiveItem = currentActiveItemIndex;
+                }
+            }
+
             results = sortedDataItems.map(dataItem => {
                 const periodLabel = dataItem.period ? `${dataItem.period} : ` : '';
                 const endLabel = dataItem.endDateValue ? ` / ${dataItem.endDateValue}` : '';
@@ -135,7 +144,8 @@ export default class TimelineView extends Component {
             })
         }
         this.setState({
-            items: results
+            items: results,
+            currentActiveItem: currentActiveItem
         });
     }
 
@@ -232,6 +242,7 @@ export default class TimelineView extends Component {
                     <_TimelinePlaceholder>
                         <TimelineWidget
                             items={this.state.items}
+                            currentActiveItem={this.state.currentActiveItem}
                             onOpenResource={this._onOpenResource}
                         ></TimelineWidget>
                     </_TimelinePlaceholder>
