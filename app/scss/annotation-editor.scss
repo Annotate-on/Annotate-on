@@ -12,6 +12,18 @@
     //background: transparent;
   //}
 
+  .edit-annotate-actions {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    .btn {
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+  }
+
   .row:first-child {
     //margin-bottom: 30px;
   }

@@ -428,21 +428,23 @@ export default class extends Component {
                     <FormGroup row>
                         {
                             this.state.annotationType === ANNOTATION_EVENT_ANNOTATION ? <Label sm={12} className="rec_ann_text">Click "Annotate" button to save <b>{this.state.title}</b>.</Label> :
-                                <Row>
-                                    <Col sm={{ size: 3, offset: 5 }}>
-                                        <Button disabled={this.state.title.length < 3 || (this.state.end < this.state.start && this.state.end !== -1)} color="primary" onClick={ () => {
-                                            if(this.props.isAnnotationRecording)
-                                                ee.emit(STOP_ANNOTATION_RECORDING , this.props.annotation);
-                                            this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
-                                                this.state.targetColor, this.state.descriptor.value, this.state.value,
-                                                this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic, this.state.coverage);
-                                        }}>{t('global.save')}</Button>
-                                    </Col>
-                                    <Col sm={{ size: 3, offset: 1 }}>
-                                        <Button disabled={this.state.title.length < 3} color="primary"
-                                                onClick={this.cancel}>{t('global.cancel')}</Button>
-                                    </Col>
-                                </Row>
+                                <div className="edit-annotate-actions">
+                                    <Button disabled={this.state.title.length < 3 || (this.state.end < this.state.start && this.state.end !== -1)} color="primary" onClick={ () => {
+                                        if(this.props.isAnnotationRecording)
+                                            ee.emit(STOP_ANNOTATION_RECORDING , this.props.annotation);
+                                        this.props.save(this.state.title, this.state.descriptor.descriptorId || "-1", this.state.text,
+                                            this.state.targetColor, this.state.descriptor.value, this.state.value,
+                                            this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic, this.state.coverage);
+                                    }}>{t('global.save')}</Button>
+                                    <Button disabled={this.state.title.length < 3} color="primary"
+                                            onClick={this.cancel}>{t('global.cancel')}</Button>
+                                </div>
+                                // <Row>
+                                //     <Col sm={{ size: 3, offset: 5 }}>
+                                //     </Col>
+                                //     <Col sm={{ size: 3, offset: 1 }}>
+                                //     </Col>
+                                // </Row>
                         }
                     </FormGroup>
 
