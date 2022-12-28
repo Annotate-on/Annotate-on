@@ -86,7 +86,7 @@
 
     },
     "main_navbar": {
-      "library": "Library",
+      "library": "ES Library",
       "tooltip_library": "Library to keywords and select images for annotating",
       "projects": "Projects",
       "tooltip_projects": "Projects",

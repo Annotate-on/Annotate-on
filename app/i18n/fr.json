@@ -79,7 +79,9 @@
       },
       "languages": {
         "EN": "English",
-        "FR": "French"
+        "FR": "French",
+        "ES": "Spanish",
+        "PT": "Portuguese"
       }
 
     },

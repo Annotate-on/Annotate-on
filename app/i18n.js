@@ -1,18 +1,13 @@
-import i18n, {changeLanguage} from 'i18next';
+import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './i18n/en.json'
 import fr from './i18n/fr.json'
-import yaml from "write-yaml";
+import es from './i18n/es.json'
+import pt from './i18n/pt.json'
 import {remote} from "electron";
 
-// import Backend from 'i18next-http-backend';
-// import LanguageDetector from 'i18next-browser-languagedetector';
-// don't want to use this?
-// have a look at the Quick start guide
-// for passing in lng and translations on init
-
 export const SUPPORTED_LANGUAGES = [
-    'en', 'fr'
+    'en', 'fr', 'es', 'pt'
 ]
 
 /**
@@ -51,7 +46,7 @@ i18n
         fallbackLng: 'en',
         debug: true,
         resources: {
-            en, fr
+            en, fr, es, pt
         },
 
         interpolation: {
@@ -59,7 +54,4 @@ i18n
         }
     });
 
-
 export default i18n;
-
-

@@ -409,7 +409,6 @@ const checkOldConfig = () => {
 }
 
 const validateWorkspace = () => {
-    console.log('validateWorkspace workspace = [' + config.workspace +']')
     if(!config.workspace) return false;
     if(!fs.existsSync(config.workspace)) return false;
     for(let project of config.projects) {
@@ -508,13 +507,10 @@ export const doInitConfig = () => {
 
         // check if project is locked
         const path_to_project = path.join(config.workspace, PROJECT_INFO_DESCRIPTOR);
-        console.log('path_to_projec [' + path_to_project +"]")
         const loadedProject = JSON.parse(fs.readFileSync(path_to_project));
-        console.log(loadedProject)
 
         // if project is not locked then lock it
         if(probeLockedProject(loadedProject)) {
-            console.log(' project is not locked');
             lockProject(config.workspace);
             return;
         }
@@ -551,7 +547,6 @@ export const doInitConfig = () => {
                 }
             }
         })
-        console.log('workspace', workspacePath)
         if (workspacePath !== null) {
             config.workspace = workspacePath;
             yaml.sync(config_file_path, config);
