@@ -19,7 +19,7 @@ export default class FoldersFilter extends Component {
         const {t} = i18next;
         const numberOfFolders = this.props.selected + '/' + this.props.total;
         return (
-            (this.props.selected > 0) ?
+            (this.props.selected > 0 && this.props.selected != this.props.total) ?
                 <div className="folders-filter">
                     <div className="folders-filter-header">
                         <i className="fa fa-filter"></i>
