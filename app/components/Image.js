@@ -331,7 +331,7 @@ class Image extends PureComponent {
                                         />
                                         <span className="navigation-title">
                                             <span className="navigation-title-index">
-                                                {`${this.props.currentPictureIndexInSelection + 1} / ${this.props.picturesSelection.length}`}
+                                                {`${this.props.currentPictureIndexInSelection + 1}/${this.props.picturesSelection.length}`}
                                             </span>
                                             <div className="file-name-cat-number-container">
                                                 <div title={this.state.currentPicture.file_basename} className="file-name">

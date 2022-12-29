@@ -28,7 +28,7 @@
 
   .navigation-title {
     margin: 0 20px;
-    min-width: 500px;
+    width: 580px;
     display: inline-flex;
     align-items: center;
   }
@@ -78,10 +78,9 @@
     border-radius: 10px;
     background-color: #eee;
     color: black;
-    min-width: 25px;
+    min-width: 50px;
     margin-right: 5px;
     border: 1px solid #ccc;
-
   }
 
   .map-timeline-indicators-container {
