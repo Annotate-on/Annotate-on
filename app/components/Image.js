@@ -553,6 +553,7 @@ class Image extends PureComponent {
                     annotation.id,
                     annotation.title,
                     annotation.text,
+                    annotation.coverage,
                     {vertices: annotation.vertices, value_in_mm: totalLength, area: null, value_in_deg: null}
                 );
 
@@ -568,6 +569,7 @@ class Image extends PureComponent {
                                 annotationRatio.id,
                                 annotationRatio.title,
                                 annotationRatio.text,
+                                annotation.coverage,
                                 {value1: totalLength, value2: annotationRatio.value2}
                             );
                         } else if (annotationRatio.line2 === annotation.id) {
@@ -577,6 +579,7 @@ class Image extends PureComponent {
                                 annotationRatio.id,
                                 annotationRatio.title,
                                 annotationRatio.text,
+                                annotation.coverage,
                                 {value1: annotationRatio.value1, value2: totalLength}
                             );
                         }
@@ -595,6 +598,7 @@ class Image extends PureComponent {
                     annotation.id,
                     annotation.title,
                     annotation.text,
+                    annotation.coverage,
                     {vertices: annotation.vertices, value_in_mm: null, area: area, value_in_deg: null}
                 );
             });
@@ -610,6 +614,7 @@ class Image extends PureComponent {
                     annotation.id,
                     annotation.title,
                     annotation.text,
+                    annotation.coverage,
                     {vertices: annotation.vertices, value_in_mm: null, area: null, value_in_deg: angleVal}
                 );
             });

@@ -158,8 +158,8 @@ const mapDispatchToProps = dispatch => {
         nextTenPictureInSelection: (tabName) => dispatch(nextTenPictureInSelection(tabName)),
         previousPictureInSelection: (tabName) => dispatch(previousPictureInSelection(tabName)),
         previousTenPictureInSelection: (tabName) => dispatch(previousTenPictureInSelection(tabName)),
-        editAnnotation: (pictureId, annotationType, annotationId, title, text, annotation) => {
-            dispatch(editAnnotation(pictureId, annotationType, annotationId, title, text, annotation));
+        editAnnotation: (pictureId, annotationType, annotationId, title, text, coverage, annotation) => {
+            dispatch(editAnnotation(pictureId, annotationType, annotationId, title, text, coverage, annotation));
         },
         createCartel: (pictureId, id, value) => {
             dispatch(createCartel(pictureId, id, value));
