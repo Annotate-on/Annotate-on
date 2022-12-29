@@ -46,6 +46,10 @@
       "lbl_importing_resources_files_to_folders": "Importing resources files to folders",
       "lbl_resources_files_found": "Resources files found",
       "lbl_collecting_metadata_and_generating_thumbnails": "Collecting metadata and generating thumbnails",
+      "btn_import": "Import",
+      "dropdown_item_import_images": "Image(s)",
+      "dropdown_item_import_videos": "Videos(s)",
+      "dropdown_item_create_event": "Create event",
       "options": {
         "title": "Options",
         "lbl_select_language": "Select language",
@@ -58,7 +62,8 @@
       },
       "languages": {
         "EN": "English",
-        "FR": "French"
+        "FR": "French",
+        "PT": "Portuguese"
       },
       "continue": "Continue",
       "delete_this_file_for_me": "Delete this file for me",

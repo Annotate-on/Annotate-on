@@ -7,7 +7,10 @@ import pt from './i18n/pt.json'
 import {remote} from "electron";
 
 export const SUPPORTED_LANGUAGES = [
-    'en', 'fr', 'es', 'pt'
+    'en',
+    'fr',
+    'pt'
+    // 'es'
 ]
 
 /**
