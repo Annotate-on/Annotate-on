@@ -1054,6 +1054,7 @@ div.leaflet-marker-icon {
 
 .import-menu {
   margin-left: 10px;
+  z-index: 10000;
   span {
     font-size: 12px;
     font-weight: bold;
