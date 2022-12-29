@@ -21,6 +21,7 @@ const {ipcRenderer} = require('electron')
 let config;
 // path to global app config
 let config_file_path;
+let app_home_path;
 // Contains folders path and aliases for current ws.
 let ws_descriptor = [];
 
@@ -46,6 +47,7 @@ export const getTaxonomyDir = () => taxomony_dir;
 export const getMetadataDir = () => metadata_dir;
 export const getProjectInfoFile = () => project_info_file;
 export const getConfigFilePath = () => config_file_path;
+export const getAppHomePath = () => app_home_path;
 
 export const get = () => config;
 export const set = _ => (config = _);
@@ -341,7 +343,11 @@ export const setWorkspace = (_, label) => {
 };
 
 const setBackupProject = () => {
-    let demoProjectPath = path.join(installatio_root_dir, 'demo-workspace');
+    let demoProjectPathInst = path.join(installatio_root_dir, 'demo-workspace');
+    let demoProjectPath = path.join(app_home_path, 'demo-workspace');
+    if (!fs.existsSync(demoProjectPath)){
+        copyFolderSync(demoProjectPathInst, demoProjectPath)
+    }
     if(!config) {
         config = {}
     }
@@ -433,9 +439,6 @@ export const checkIfProjectsAreCorrupted = () => {
 export const doInitConfig = () => {
     const { t } = i18next;
     const defaultLanguage = getDefaultLanguage();
-    console.log(`default lang = [${defaultLanguage}]`)
-
-    // alert('i18n ' + t('global.save'));
 
     //init default
     config = {
@@ -449,8 +452,11 @@ export const doInitConfig = () => {
     // check old config
     checkOldConfig();
 
-    config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
-    console.log(config_file_path, fs.existsSync(config_file_path));
+    app_home_path = path.join(remote.app.getPath('home'), 'Annotate-on');
+    if (!fs.existsSync(app_home_path)){
+        fs.mkdirSync(app_home_path);
+    }
+    config_file_path = path.join(app_home_path, 'annotate-config.yml');
 
     // check if configuration exist
     if (!fs.existsSync(config_file_path)) {
@@ -1186,6 +1192,17 @@ export const getXperParams = () => {
         password: config.xper.password ? atob(config.xper.password):config.xper.password
     };
 };
+
+export const copyFolderSync = (from, to) => {
+    fs.mkdirSync(to);
+    fs.readdirSync(from).forEach(element => {
+        if (fs.lstatSync(path.join(from, element)).isFile()) {
+            fs.copyFileSync(path.join(from, element), path.join(to, element));
+        } else {
+            copyFolderSync(path.join(from, element), path.join(to, element));
+        }
+    });
+}
 
 
 
