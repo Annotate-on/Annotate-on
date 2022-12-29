@@ -125,23 +125,26 @@
 
 .tm-add-tag{
   cursor: pointer;
-  height: 26px;
+  height: 30px;
   margin: 5px;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 6px 12px 0px 7px;
+  border-radius: 3px;
   background-color: #ccc;
   display: flex;
+  font-size: 14px;
 }
 
 .add-category{
   cursor: pointer;
-  height: 26px;
+  height: 34px;
   margin: 5px;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 8px 12px 0px 7px;
+  border-radius: 22px;
   background-color: #ccc;
   display: flex;
+  font-size: 14px;
 }
+
 
 .tm-button {
   background-color: #007bff; /* Green */
