@@ -93,14 +93,7 @@ export default class extends PureComponent {
         return (
             <div className="bst rcn_tabsholder">
                 <Nav tabs className="scroll-tabs">
-                    <a onClick={e => {
-                        if (this.state.isAnnotationRecording || this.state.isEditModeOpen || this.state.isEventRecordingLive){
-                            e.preventDefault();
-                            ee.emit(SHOW_EDIT_MODE_VIOLATION_MODAL)
-                        }else{
-                            this.props.goToLibrary();
-                        }
-                    }}>
+                    <a>
                         <img alt="logo" height="18px" src={require('./pictures/home.svg')} className="logo" title={t('global.logo_tooltip_go_to_home_page')}/>
                     </a>
                     {this.state.tabs.map((name, index) => {
