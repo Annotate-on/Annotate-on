@@ -92,7 +92,7 @@ app.on('ready', async () => {
       mainWindow.minimize();
     } else {
       mainWindow.maximize();
-      // mainWindow.show();
+      mainWindow.show();
       mainWindow.focus();
     }
   });
