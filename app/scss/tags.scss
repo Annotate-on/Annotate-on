@@ -293,30 +293,33 @@
   .tags-filter {
     display: flex;
     flex-direction: column;
-    background-color: #9fc5f8;
+    background-color: #bfdeff;
     border-radius: 5px;
     padding: 5px;
+    border: 1px solid #a2bedb;
     .tags-filter-header {
       display: flex;
       flex-direction: row;
       align-items: center;
       span {
-        margin-left: 5px;
-        margin-right: 5px;
+        // margin-left: 5px;
+        // margin-right: 5px;
       }
       i {
-        font-size: 18px;
-        padding: 5px;
-        color: orange;
+        font-size: 14px;
+        padding: 0px 2px 0px 2px;
+        color: black;
       }
       .btn {
-        padding: 0px 5px 0px 0px;
-        font-size: 16px;
+        // padding: 0px 5px 0px 0px;
+        padding: 0px 5px;;
+        
+        // font-size: 16px;
         vertical-align: center;
         i {
-          color: white;
+          color: rgb(46, 6, 116);
           font-size: 16px;
-          margin-right: 3px;
+          // margin-right: 3px;
         }
       }
       .spacer {
@@ -362,23 +365,24 @@
           flex-wrap: wrap;
 
           .tags-filter-expression-brackets {
-            min-height: 30px;
-            min-width: 20px;
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            border-left: 2px solid;
-            border-right: 2px solid;
-            border-radius: 10px;
-            padding: 3px 5px;
-            align-items: center;
+                /* min-height: 27px; */
+              /* min-width: 20px; */
+              display: flex;
+              /* flex-direction: row; */
+              flex-wrap: wrap;
+              /* border-left: 2px solid; */
+              /* border-right: 2px solid; */
+              /* border-radius: 10px; */
+              padding: 0px 4px;
+              align-items: center;
 
             .tags-filter-expression-keyword {
               margin-top: 2px;
               background-color: orange;
-              border-radius: 3px;
+              border-radius: 5px;
               border: 1px solid darkorange;
               padding: 3px;
+              font-size: 12px;
             }
 
           }
