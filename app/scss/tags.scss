@@ -337,6 +337,8 @@
       flex-wrap: wrap;
       align-items: center;
       .tags-filter-expression-container {
+        min-height: 30px;
+        min-width: 20px;
         margin-top: 0px;
         margin-bottom: 6px;
         margin-right: 5px;
