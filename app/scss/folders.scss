@@ -186,9 +186,10 @@
   .folders-filter {
     display: flex;
     flex-direction: column;
-    background-color: #9fc5f8;
+    background-color: #bfdeff;
     border-radius: 5px;
     padding: 5px;
+    border: 1px solid #a2bedb;
 
     .folders-filter-header {
       display: flex;
@@ -200,9 +201,9 @@
         flex-grow: 1;
       }
       i {
-        font-size: 18px;
-        padding: 5px;
-        color: orange;
+        font-size: 14px;
+        padding: 0px 2px 0px 2px;
+        color: black;
       }
       i.btn-remove-filter {
         color: red;
@@ -214,8 +215,9 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      padding-left: 30px;
-      font-size: 16px;
+      padding-left: 18px;
+      font-size: 13px;
+      color: #060d2e;
     }
   }
 
