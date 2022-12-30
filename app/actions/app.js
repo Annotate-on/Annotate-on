@@ -127,6 +127,7 @@ export const DELETE_PICTURE = 'DELETE_PICTURE';
 export const SAVE_LEAFLET_SETTINGS = 'SAVE_LEAFLET_SETTINGS';
 export const SET_STATE = 'SET_STATE';
 export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
+export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
     return {
