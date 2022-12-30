@@ -1,0 +1,2155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Datasets xmlns="http://rs.tdwg.org/UBIF/2006/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://rs.tdwg.org/UBIF/2006/ http://rs.tdwg.org/UBIF/2006/Schema/1.1/SDD.xsd">
+  <TechnicalMetadata created="2019-10-02T14:21:05">
+    <Generator name="Xper3" notes="This software is developed by LIS - Laboratory of Informatics and Systematics (UniversitÃ© Pierre et Marie Curie, UMR 7205, France) - www.infosyslab.fr" version="1.5.0" />
+  </TechnicalMetadata>
+  <Dataset xml:lang="en">
+    <Representation>
+      <Label>Floral traits</Label>
+      <Detail>_</Detail>
+    </Representation>
+    <RevisionData>
+      <Creators>
+        <Agent ref="a1" role="aut" />
+      </Creators>
+      <DateCreated>2019-10-02T14:21:05</DateCreated>
+      <DateModified>2019-10-02T14:21:05</DateModified>
+    </RevisionData>
+    <TaxonNames />
+    <TaxonHierarchies>
+      <TaxonHierarchy id="th1">
+        <Representation>
+          <Label>_</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <TaxonHierarchyType>UnspecifiedTaxonomy</TaxonHierarchyType>
+        <Nodes />
+      </TaxonHierarchy>
+    </TaxonHierarchies>
+    <Characters>
+      <CategoricalCharacter uniqueid="Solitaryfl_1570018776499_727" id="c1">
+        <Representation>
+          <Label>Solitary flower</Label>
+          <Detail>It is a flower that is not part of an inflorescence.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absenceinf_1570018776394_146" id="s1">
+            <Representation>
+              <Label>Absence (inflorescence)</Label>
+              <Detail>Several flowers closely grouped together to form an efficient structured unit; the grouping or arrangement of flowers on a plant.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776394_325" id="s2">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Basetypeof_1570018776521_891" id="c2">
+        <Representation>
+          <Label>Base type of inflorescence (if present)</Label>
+          <Detail>_</Detail>
+          <MediaObject ref="m1" />
+          <MediaObject ref="m2" />
+          <MediaObject ref="m3" />
+          <MediaObject ref="m4" />
+          <MediaObject ref="m5" />
+          <MediaObject ref="m6" />
+          <MediaObject ref="m7" />
+          <MediaObject ref="m8" />
+          <MediaObject ref="m9" />
+          <MediaObject ref="m10" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Singleclus_1570018776395_468" id="s3">
+            <Representation>
+              <Label>Single cluster (or raceme)</Label>
+              <Detail>An inflorescence consisting of a main axis, bearing single flowers alternately or spirally on talks (pedicels) approximately equal length. The apical growing point continues to be active so there is usually no terminal flower and the youngest branches or flowers are nearest the apex. This mode of growth is known as monopodial.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Spike_1570018776395_947" id="s4">
+            <Representation>
+              <Label>Spike</Label>
+              <Detail>An inflorescence of simple racemose type in which the flowers are stalkless (sessile)</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Spadix_1570018776395_873" id="s5">
+            <Representation>
+              <Label>Spadix</Label>
+              <Detail>A spike of flowers on a swollen, fleshy axis.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Panicle_1570018776395_649" id="s6">
+            <Representation>
+              <Label>Panicle</Label>
+              <Detail>Strictly a branched raceme, with each branch bearing a further raceme of flowers. More loosely applies to any complex, branched inflorescence.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Spikelet_1570018776395_839" id="s7">
+            <Representation>
+              <Label>Spikelet</Label>
+              <Detail>A small spike, as in grasses.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Bilateralc_1570018776395_462" id="s8">
+            <Representation>
+              <Label>Bilateral cyme</Label>
+              <Detail>An inflorescence in which each terminal growing point produces a flower. Subsequent growth is therefore from a lateral growing point, the oldest being at the apex, or center, if flat.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Helicoidun_1570018776395_990" id="s9">
+            <Representation>
+              <Label>Helicoid unilateral cyme</Label>
+              <Detail>Coiled like a spring.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Scorpioidu_1570018776395_115" id="s10">
+            <Representation>
+              <Label>Scorpioid unilateral cyme</Label>
+              <Detail>Curved to one side like a scorpion's tail.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Thyrse_1570018776396_916" id="s11">
+            <Representation>
+              <Label>Thyrse</Label>
+              <Detail>Densely branched, broadest in the middle and which the mode of branching is cymose.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Umbel_1570018776396_523" id="s12">
+            <Representation>
+              <Label>Umbel</Label>
+              <Detail>An umbrella-shaped inflorescence with all the stalks (pedicels) arising from the top of the main stem. Umbels are sometimes compound, with all the stalks arising from the same point and giving rise to several terminal flower stalks.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Capitulum_1570018776396_50" id="s13">
+            <Representation>
+              <Label>Capitulum</Label>
+              <Detail>An inflorescence consisting of a head of closely packed stalkless flowers.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Corymb_1570018776396_107" id="s14">
+            <Representation>
+              <Label>Corymb</Label>
+              <Detail>A rounded or flat-topped inflorescence of racemose type, in which the lower (outer) flower stalks are longer than the upper (inner) ones, so that all the flowers are about the same level.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Cyathium_1570018776396_702" id="s15">
+            <Representation>
+              <Label>Cyathium</Label>
+              <Detail>A cyathium is a cup- or bowl-shaped structure formed from fused bracts, and enclosing the tiny flowers.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Typecatkin_1570018776396_641" id="s16">
+            <Representation>
+              <Label>Type catkin</Label>
+              <Detail>A pendulous inflorescence of simple, usually unisexual flower.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Typesyconi_1570018776396_180" id="s17">
+            <Representation>
+              <Label>Type syconium</Label>
+              <Detail>A syconium is the type of inflorescence borne by figs (genus Ficus), formed by an enlarged, fleshy, hollow receptacle with multiple ovaries on the inside surface.</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Infloresce_1570018776560_792" id="c3">
+        <Representation>
+          <Label>Inflorescence bract</Label>
+          <Detail>A bract is a leaf, often modified or reduced, which subtends a flower or inflorescence in its axil. A spathe is a large bract subtending and often ensheating an inflorescence. Applied only on the monocotyledons.</Detail>
+          <MediaObject ref="m11" />
+          <MediaObject ref="m12" />
+          <MediaObject ref="m13" />
+          <MediaObject ref="m14" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776396_692" id="s18">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presencean_1570018776396_550" id="s19">
+            <Representation>
+              <Label>Presence and not in spathe form</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Asinglewel_1570018776396_126" id="s20">
+            <Representation>
+              <Label>A single well developed spathe</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Morethanon_1570018776397_112" id="s21">
+            <Representation>
+              <Label>More than one well developed spathe</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Sexofflowe_1570018776578_24" id="c4">
+        <Representation>
+          <Label>Sex of flowers</Label>
+          <Detail>Unisexual: having either stamens or pistils but not both. Bisexual: denoting a single flower that contains functional staminate and pistillate structures</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Bisexual_1570018776397_580" id="s22">
+            <Representation>
+              <Label>Bisexual</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Unisexuala_1570018776397_262" id="s23">
+            <Representation>
+              <Label>Unisexual and dioecious</Label>
+              <Detail>Dioecious: having the male and female reproductive organs in separate individuals.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Unisexuala_1570018776397_511" id="s24">
+            <Representation>
+              <Label>Unisexual and plant monoecious</Label>
+              <Detail>Monoecious: having both the male and female reproductive organs separated in the same individual</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Symmetryof_1570018776591_743" id="c5">
+        <Representation>
+          <Label>Symmetry of the flower</Label>
+          <Detail>The symmetry is the quality of being made up of exactly similar parts facing each other or around an axis.</Detail>
+          <MediaObject ref="m15" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Irregularf_1570018776397_576" id="s25">
+            <Representation>
+              <Label>Irregular flower and without symmetry</Label>
+              <Detail>Irregular is not divisible into halves by an indefinite number of longitudinal planes.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Flowerwith_1570018776397_760" id="s26">
+            <Representation>
+              <Label>Flower with symmetry</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Typeofsymm_1570018776604_18" id="c6">
+        <Representation>
+          <Label>Type of symmetry (if present)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Radialacti_1570018776397_761" id="s27">
+            <Representation>
+              <Label>Radial (actinomorphic)</Label>
+              <Detail>Radially symmetrical, with more than one plane of symmetry. Also called regular flowers.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Bilateralz_1570018776397_390" id="s28">
+            <Representation>
+              <Label>Bilateral (zygomorphic)</Label>
+              <Detail>Not divisible into halves by an indefinite number of longitudinal planes. Also called irregular flowers.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Doublebila_1570018776397_175" id="s29">
+            <Representation>
+              <Label>Double bilateral symmetry</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Floralbrac_1570018776618_718" id="c7">
+        <Representation>
+          <Label>Floral bract</Label>
+          <Detail>A bract is a a leaf, often modified or reduced, which subtends a flower or inflorescence in its axil.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776398_680" id="s30">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="1_1570018776398_838" id="s31">
+            <Representation>
+              <Label>1</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="2ormore_1570018776398_122" id="s32">
+            <Representation>
+              <Label>2 or more</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Floralbrac_1570018776632_715" id="c8">
+        <Representation>
+          <Label>Floral bract color (if present)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="White_1570018776398_709" id="s33">
+            <Representation>
+              <Label>White</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Green_1570018776398_142" id="s34">
+            <Representation>
+              <Label>Green</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yellow_1570018776398_621" id="s35">
+            <Representation>
+              <Label>Yellow</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Purple_1570018776398_491" id="s36">
+            <Representation>
+              <Label>Purple</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Floralpedu_1570018776646_627" id="c9">
+        <Representation>
+          <Label>Floral peduncle</Label>
+          <Detail>It is a stem supporting an inflorescence, or after fecundation, an infructescence.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absenceses_1570018776398_314" id="s37">
+            <Representation>
+              <Label>Absence (sessile flower)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776398_139" id="s38">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Floralrece_1570018776659_188" id="c10">
+        <Representation>
+          <Label>Floral receptacle</Label>
+          <Detail>The receptacle is the thickened part of a stem (pedicel) from which the flower organs grow. In some accessory fruits, for example the pome and strawberry, the receptacle gives rise to the edible part of the fruit.</Detail>
+          <MediaObject ref="m16" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Notorsligh_1570018776398_729" id="s39">
+            <Representation>
+              <Label>Not or slightly developed</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Developed_1570018776399_399" id="s40">
+            <Representation>
+              <Label>Developed</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Formofrece_1570018776674_607" id="c11">
+        <Representation>
+          <Label>Form of receptacle (if developed)</Label>
+          <Detail>_</Detail>
+          <MediaObject ref="m17" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Moreorless_1570018776399_667" id="s41">
+            <Representation>
+              <Label>More or less flat (or slightly convex or concave)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Stronglyco_1570018776399_540" id="s42">
+            <Representation>
+              <Label>Strongly concave (hypanthium)</Label>
+              <Detail>The hypanthium is a cup-shaped enlargement of the floral receptacle or the base of the floral parts, which often enlarges and surrounds the fruits, e.g., the fleshy tissue in rose-hips.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Highlyconv_1570018776399_144" id="s43">
+            <Representation>
+              <Label>Highly convex (thalamus)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Nectarifer_1570018776690_927" id="c12">
+        <Representation>
+          <Label>Nectariferous spur</Label>
+          <Detail>The spur is a hollow, usually rather conical, projection from the base of a sepal, petal, or fused corolla. It can secrete nectar.</Detail>
+          <MediaObject ref="m18" />
+          <MediaObject ref="m19" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776399_939" id="s44">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presenceon_1570018776399_416" id="s45">
+            <Representation>
+              <Label>Presence, one per flower</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presencetw_1570018776399_342" id="s46">
+            <Representation>
+              <Label>Presence, two per flower</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presencemo_1570018776399_380" id="s47">
+            <Representation>
+              <Label>Presence, more than two per flower</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Resupinedf_1570018776707_329" id="c13">
+        <Representation>
+          <Label>Resupined flower</Label>
+          <Detail>Resupine is lying on the back.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776464_315" id="s48">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776464_222" id="s49">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Differenci_1570018776721_671" id="c14">
+        <Representation>
+          <Label>Differenciation calyx/corolla</Label>
+          <Detail>Calyx is a collective term for all a flower's sepals. Corolla is all all the petals of a flower. It is normally colored. A tepal is a perianth-segment that is not clearly distinguishable as either a sepal or a petal.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absencetep_1570018776465_344" id="s50">
+            <Representation>
+              <Label>Absence (tepals)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776465_726" id="s51">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Fusedtepal_1570018776736_304" id="c15">
+        <Representation>
+          <Label>Fused tepals</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776465_252" id="s52">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presencesy_1570018776466_677" id="s53">
+            <Representation>
+              <Label>Presence (syntepaly)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Colorunifo_1570018776750_344" id="c16">
+        <Representation>
+          <Label>Color uniformity of tepals (or if calyx and corolla concolors)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Tepalsallo_1570018776466_430" id="s54">
+            <Representation>
+              <Label>Tepals all of the same color</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Atleastone_1570018776466_437" id="s55">
+            <Representation>
+              <Label>At least one tepal of a different color</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Background_1570018776765_147" id="c17">
+        <Representation>
+          <Label>Background color of tepals (with or without patterns)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Blackorver_1570018776466_703" id="s56">
+            <Representation>
+              <Label>Black (or very dark purple)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Brown_1570018776466_920" id="s57">
+            <Representation>
+              <Label>Brown</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="White_1570018776466_121" id="s58">
+            <Representation>
+              <Label>White</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Blue_1570018776466_483" id="s59">
+            <Representation>
+              <Label>Blue</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yellow_1570018776466_575" id="s60">
+            <Representation>
+              <Label>Yellow</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Green_1570018776466_651" id="s61">
+            <Representation>
+              <Label>Green</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Red_1570018776466_505" id="s62">
+            <Representation>
+              <Label>Red</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Pink_1570018776467_659" id="s63">
+            <Representation>
+              <Label>Pink</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Purple_1570018776467_603" id="s64">
+            <Representation>
+              <Label>Purple</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Epicalyx_1570018776786_346" id="c18">
+        <Representation>
+          <Label>Epicalyx</Label>
+          <Detail>The epicalyx is a whorl of sepal-like appendages resembling the calyx but outside the true calyx.</Detail>
+          <MediaObject ref="m20" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776467_639" id="s65">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776467_826" id="s66">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Calyx_1570018776802_600" id="c19">
+        <Representation>
+          <Label>Calyx</Label>
+          <Detail>Collective term for all a flower's petal.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776467_78" id="s67">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Single_1570018776467_454" id="s68">
+            <Representation>
+              <Label>Single</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Double_1570018776467_844" id="s69">
+            <Representation>
+              <Label>Double</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Calyxreduc_1570018776819_687" id="c20">
+        <Representation>
+          <Label>Calyx reduced to scales, hairs or bristles</Label>
+          <Detail>A scale is a small, often membranous, reduced leaf frequently found covering buds and bulbs.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776467_868" id="s70">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776468_751" id="s71">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Homogeneou_1570018776834_286" id="c21">
+        <Representation>
+          <Label>Homogeneous calyx</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776468_62" id="s72">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776468_843" id="s73">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Fusedcalyx_1570018776850_913" id="c22">
+        <Representation>
+          <Label>Fused calyx</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Noaposepal_1570018776468_563" id="s74">
+            <Representation>
+              <Label>No (aposepalous flower)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yesgamosep_1570018776468_416" id="s75">
+            <Representation>
+              <Label>Yes (gamosepalous or synsepalous flower)</Label>
+              <Detail>With sepals fused, at least at the base.</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Petaloidca_1570018776866_227" id="c23">
+        <Representation>
+          <Label>Petaloid calyx (and apetalous flowers)</Label>
+          <Detail>_</Detail>
+          <MediaObject ref="m21" />
+          <MediaObject ref="m22" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776468_806" id="s76">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776468_84" id="s77">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Colorunifo_1570018776884_39" id="c24">
+        <Representation>
+          <Label>Color uniformity of the calyx if petaloid (and apetalous flowers)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Sepalsallo_1570018776468_641" id="s78">
+            <Representation>
+              <Label>Sepals all of the same color</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Atleastone_1570018776468_247" id="s79">
+            <Representation>
+              <Label>At least one sepal of a different color</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Background_1570018776901_390" id="c25">
+        <Representation>
+          <Label>Background color of sepals if petaloid (with or without patterns and apetal flowers)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Blackorver_1570018776469_176" id="s80">
+            <Representation>
+              <Label>Black (or very dark purple)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Brown_1570018776469_225" id="s81">
+            <Representation>
+              <Label>Brown</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="White_1570018776469_444" id="s82">
+            <Representation>
+              <Label>White</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Blue_1570018776469_491" id="s83">
+            <Representation>
+              <Label>Blue</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yellow_1570018776469_404" id="s84">
+            <Representation>
+              <Label>Yellow</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Green_1570018776469_429" id="s85">
+            <Representation>
+              <Label>Green</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Red_1570018776469_701" id="s86">
+            <Representation>
+              <Label>Red</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Pink_1570018776469_482" id="s87">
+            <Representation>
+              <Label>Pink</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Purple_1570018776469_438" id="s88">
+            <Representation>
+              <Label>Purple</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Colorofcal_1570018776924_34" id="c26">
+        <Representation>
+          <Label>Color of calyx if well developed and not petaloid</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Brown_1570018776469_935" id="s89">
+            <Representation>
+              <Label>Brown</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="White_1570018776469_3" id="s90">
+            <Representation>
+              <Label>White</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Green_1570018776470_144" id="s91">
+            <Representation>
+              <Label>Green</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Corolla_1570018776945_483" id="c27">
+        <Representation>
+          <Label>Corolla</Label>
+          <Detail>Corolla is all all the petals of a flower. It is normally colored.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absenceape_1570018776470_874" id="s92">
+            <Representation>
+              <Label>Absence (apetal flowers)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776470_547" id="s93">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Fusedcorol_1570018776962_475" id="c28">
+        <Representation>
+          <Label>Fused corolla</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Nodialy-or_1570018776470_368" id="s94">
+            <Representation>
+              <Label>No (dialy- or apopetal flower)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yesgamo-or_1570018776470_34" id="s95">
+            <Representation>
+              <Label>Yes (gamo- or sympetal flowers)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Papillonac_1570018776981_161" id="c29">
+        <Representation>
+          <Label>"Papillonaceous" corolla</Label>
+          <Detail>Having a corolla (as in the bean or pea) with usually five petals that include a large upper petal enclosing two lateral wings and a lower carina of two united petals. They are flowers with the characteristic irregular and butterfly-like corolla found in many, though not all, plants of the species-rich Faboideae subfamily of legumes.</Detail>
+          <MediaObject ref="m23" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776470_837" id="s96">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776470_604" id="s97">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Bilabiate2_1570018777000_868" id="c30">
+        <Representation>
+          <Label>Bilabiate 2/3 corolla</Label>
+          <Detail>Bilabiate is two-lipped</Detail>
+          <MediaObject ref="m24" />
+          <MediaObject ref="m25" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776471_467" id="s98">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776471_659" id="s99">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Colorunifo_1570018777020_690" id="c31">
+        <Representation>
+          <Label>Color uniformity of petals</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Petalsallo_1570018776471_287" id="s100">
+            <Representation>
+              <Label>Petals all of the same color</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Atleastone_1570018776471_150" id="s101">
+            <Representation>
+              <Label>At least one petal of a different colour</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Background_1570018777039_277" id="c32">
+        <Representation>
+          <Label>Background color of well-developed petals</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Blackorver_1570018776471_225" id="s102">
+            <Representation>
+              <Label>Black (or very dark purple)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Brown_1570018776471_863" id="s103">
+            <Representation>
+              <Label>Brown</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="White_1570018776471_711" id="s104">
+            <Representation>
+              <Label>White</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Blue_1570018776471_595" id="s105">
+            <Representation>
+              <Label>Blue</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yellow_1570018776471_815" id="s106">
+            <Representation>
+              <Label>Yellow</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Green_1570018776471_165" id="s107">
+            <Representation>
+              <Label>Green</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Red_1570018776472_206" id="s108">
+            <Representation>
+              <Label>Red</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Pink_1570018776472_777" id="s109">
+            <Representation>
+              <Label>Pink</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Purple_1570018776472_223" id="s110">
+            <Representation>
+              <Label>Purple</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Ventralpet_1570018777064_99" id="c33">
+        <Representation>
+          <Label>"Ventral" petal transformed into labellum</Label>
+          <Detail>A labellum is a central petal at the base of an orchid flower, typically larger than the other petals and of a different shape.</Detail>
+          <MediaObject ref="m26" />
+          <MediaObject ref="m27" />
+          <MediaObject ref="m28" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776472_498" id="s111">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776472_323" id="s112">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Totalnumbe_1570018777086_606" id="c34">
+        <Representation>
+          <Label>Total number of fertile stamens</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="1_1570018776472_741" id="s113">
+            <Representation>
+              <Label>1</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="2andmultip_1570018776472_237" id="s114">
+            <Representation>
+              <Label>2 and multiples of 2</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="3andmultip_1570018776472_14" id="s115">
+            <Representation>
+              <Label>3 and multiples of 3</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="4andmultip_1570018776472_25" id="s116">
+            <Representation>
+              <Label>4 and multiples of 4</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="5andmultip_1570018776472_975" id="s117">
+            <Representation>
+              <Label>5 and multiples of 5</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="n_1570018776472_786" id="s118">
+            <Representation>
+              <Label>n</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Didynamous_1570018777109_688" id="c35">
+        <Representation>
+          <Label>Didynamous androecium (if 4 stamen)</Label>
+          <Detail>Having two stamen longer than others.</Detail>
+          <MediaObject ref="m29" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776473_741" id="s119">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776473_163" id="s120">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Tetradynam_1570018777130_525" id="c36">
+        <Representation>
+          <Label>Tetradynamous androecium (if 6 stamen)</Label>
+          <Detail>Having four stamen longer than others.</Detail>
+          <MediaObject ref="m30" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776473_660" id="s121">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776473_490" id="s122">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Staminodes_1570018777151_59" id="c37">
+        <Representation>
+          <Label>Staminodes</Label>
+          <Detail>A staminode is a sterile, often reduced or modified stamen, and sometimes transformed in nectary.</Detail>
+          <MediaObject ref="m31" />
+          <MediaObject ref="m32" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776473_832" id="s123">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776473_348" id="s124">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Numberofst_1570018777173_10" id="c38">
+        <Representation>
+          <Label>Number of staminodes</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="1_1570018776473_396" id="s125">
+            <Representation>
+              <Label>1</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="2andmultip_1570018776473_679" id="s126">
+            <Representation>
+              <Label>2 and multiples of 2</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="3andmultip_1570018776474_934" id="s127">
+            <Representation>
+              <Label>3 and multiples of 3</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="4andmultip_1570018776474_137" id="s128">
+            <Representation>
+              <Label>4 and multiples of 4</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="5andmultip_1570018776474_765" id="s129">
+            <Representation>
+              <Label>5 and multiples of 5</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="n_1570018776474_552" id="s130">
+            <Representation>
+              <Label>n</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Stamensagg_1570018777198_862" id="c39">
+        <Representation>
+          <Label>Stamens aggregated in clusters</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776474_929" id="s131">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776474_302" id="s132">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Numberofst_1570018777219_945" id="c40">
+        <Representation>
+          <Label>Number of stamen clusters</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="2andmultip_1570018776474_1000" id="s133">
+            <Representation>
+              <Label>2 and multiples of 2</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="3andmultip_1570018776474_595" id="s134">
+            <Representation>
+              <Label>3 and multiples of 3</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="4andmultip_1570018776474_98" id="s135">
+            <Representation>
+              <Label>4 and multiples of 4</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="5andmultip_1570018776474_334" id="s136">
+            <Representation>
+              <Label>5 and multiples of 5</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="n_1570018776474_108" id="s137">
+            <Representation>
+              <Label>n</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Stamensfus_1570018777243_289" id="c41">
+        <Representation>
+          <Label>Stamens fused by anthers</Label>
+          <Detail>_</Detail>
+          <MediaObject ref="m33" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776475_202" id="s138">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yessynanth_1570018776475_61" id="s139">
+            <Representation>
+              <Label>Yes (synanthered androecium)</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Antherorie_1570018777265_485" id="c42">
+        <Representation>
+          <Label>Anther orientation</Label>
+          <Detail>_</Detail>
+          <MediaObject ref="m34" />
+          <MediaObject ref="m35" />
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Introrse_1570018776475_62" id="s140">
+            <Representation>
+              <Label>Introrse</Label>
+              <Detail>Directing and opening inward toward the center of the flower.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Extrorse_1570018776475_475" id="s141">
+            <Representation>
+              <Label>Extrorse</Label>
+              <Detail>Opening away from the axis of growth towards the corolla.</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Pollenaggr_1570018777289_236" id="c43">
+        <Representation>
+          <Label>Pollen aggregation into pollinia</Label>
+          <Detail>Pollinia are a mass of pollen grains produced by one anther-lobe, cohering together and transported as a single unit during pollination, as in the orchids.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776475_568" id="s142">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776475_725" id="s143">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Branchedst_1570018777311_22" id="c44">
+        <Representation>
+          <Label>Branched stigma (if fused styles)</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776475_870" id="s144">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776475_8" id="s145">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <QuantitativeCharacter id="c45">
+        <Representation>
+          <Label>Length of inflorescence</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <MeasurementUnit>
+          <Label>mm</Label>
+        </MeasurementUnit>
+      </QuantitativeCharacter>
+      <QuantitativeCharacter id="c46">
+        <Representation>
+          <Label>Diameter of flower</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <MeasurementUnit>
+          <Label>mm</Label>
+        </MeasurementUnit>
+      </QuantitativeCharacter>
+      <CategoricalCharacter uniqueid="Appearance_1570018777375_915" id="c47">
+        <Representation>
+          <Label>Appearance of calyx if well developed and not petaloid</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Welldevelo_1570018776476_774" id="s146">
+            <Representation>
+              <Label>Well developed</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Scarious_1570018776476_459" id="s147">
+            <Representation>
+              <Label>Scarious</Label>
+              <Detail>Scarious is dry and membranous, with a dried-up appearance.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Diaphanous_1570018776476_444" id="s148">
+            <Representation>
+              <Label>Diaphanous</Label>
+              <Detail>Diaphanous is light, delicate, and translucent.</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Appearance_1570018777398_331" id="c48">
+        <Representation>
+          <Label>Appearance of corolla</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Welldevelo_1570018776476_443" id="s149">
+            <Representation>
+              <Label>Well developed</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Scarious_1570018776476_536" id="s150">
+            <Representation>
+              <Label>Scarious</Label>
+              <Detail>Scarious is dry and membranous, with a dried-up appearance.</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Diaphanous_1570018776476_493" id="s151">
+            <Representation>
+              <Label>Diaphanous</Label>
+              <Detail>Diaphanous is light, delicate, and translucent.</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Gynophore_1570018777422_646" id="c49">
+        <Representation>
+          <Label>Gynophore</Label>
+          <Detail>Stalk of a carpel or gynoecium.</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="Absence_1570018776476_546" id="s152">
+            <Representation>
+              <Label>Absence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Presence_1570018776476_169" id="s153">
+            <Representation>
+              <Label>Presence</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+      <CategoricalCharacter uniqueid="Heterogene_1570018777445_3" id="c50">
+        <Representation>
+          <Label>Heterogeneous androecium in form</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <States>
+          <StateDefinition uniqueid="No_1570018776477_299" id="s154">
+            <Representation>
+              <Label>No</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+          <StateDefinition uniqueid="Yes_1570018776477_634" id="s155">
+            <Representation>
+              <Label>Yes</Label>
+              <Detail>_</Detail>
+            </Representation>
+          </StateDefinition>
+        </States>
+      </CategoricalCharacter>
+    </Characters>
+    <CharacterTrees>
+      <CharacterTree id="ct1">
+        <Representation>
+          <Label>_</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <ShouldContainAllCharacters>true</ShouldContainAllCharacters>
+        <Nodes>
+          <CharNode>
+            <Character ref="c1" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s2" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c2" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s2" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c3" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s2" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c45" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c4" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c5" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s25" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c6" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c7" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s30" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c8" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c9" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c10" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s39" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c11" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c12" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c13" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c14" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s51" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c15" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s51" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c16" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s51" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c17" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c18" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c19" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s68" />
+                <State ref="s69" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c20" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s67" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c21" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s67" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c22" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s67" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c23" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s76" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c24" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s76" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c25" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s77" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c26" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s67" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c47" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c27" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s92" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c28" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s94" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c29" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s94" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c30" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s92" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c31" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s92" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c32" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s92" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c33" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s92" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c48" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c34" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s113" />
+                <State ref="s115" />
+                <State ref="s117" />
+                <State ref="s118" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c35" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s113" />
+                <State ref="s116" />
+                <State ref="s117" />
+                <State ref="s118" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c36" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c37" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s123" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c38" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c39" />
+          </CharNode>
+          <CharNode>
+            <DependencyRules>
+              <InapplicableIf>
+                <State ref="s131" />
+              </InapplicableIf>
+            </DependencyRules>
+            <Character ref="c40" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c41" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c42" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c43" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c44" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c46" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c49" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c50" />
+          </CharNode>
+        </Nodes>
+      </CharacterTree>
+      <CharacterTree id="ct2">
+        <Representation>
+          <Label>_</Label>
+          <Detail>_</Detail>
+        </Representation>
+        <Nodes>
+          <CharNode>
+            <Character ref="c1" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c2" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c3" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c4" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c5" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c6" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c7" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c8" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c9" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c10" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c11" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c12" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c13" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c14" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c15" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c16" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c17" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c18" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c19" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c20" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c21" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c22" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c23" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c24" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c25" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c26" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c27" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c28" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c29" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c30" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c31" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c32" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c33" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c34" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c35" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c36" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c37" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c38" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c39" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c40" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c41" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c42" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c43" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c44" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c45" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c46" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c47" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c48" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c49" />
+          </CharNode>
+          <CharNode>
+            <Character ref="c50" />
+          </CharNode>
+        </Nodes>
+      </CharacterTree>
+    </CharacterTrees>
+    <CodedDescriptions />
+    <Agents>
+      <Agent id="a1">
+        <Representation>
+          <Label>Unknown</Label>
+        </Representation>
+      </Agent>
+    </Agents>
+    <MediaObjects>
+      <MediaObject id="m1">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m1</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/exrol1x8d7kfjry/Photo 16-05-2017 11 13 28.jpg" />
+      </MediaObject>
+      <MediaObject id="m2">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m2</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/rkqklvfst4d9w0z/Photo 16-05-2017 11 09 32.jpg" />
+      </MediaObject>
+      <MediaObject id="m3">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m3</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/xp0ta7hgtrz3h5f/Photo 16-05-2017 10 52 57.jpg" />
+      </MediaObject>
+      <MediaObject id="m4">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m4</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/arf4724g7337pd1/Photo 16-05-2017 10 51 01.jpg" />
+      </MediaObject>
+      <MediaObject id="m5">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m5</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/byk9bexq54g2884/Photo 16-05-2017 10 47 53.jpg" />
+      </MediaObject>
+      <MediaObject id="m6">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m6</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/uuiw7ah0uxan246/Photo 16-05-2017 10 45 20.jpg" />
+      </MediaObject>
+      <MediaObject id="m7">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m7</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/rgw8tb2pp3mh907/Photo 16-05-2017 10 43 26.jpg" />
+      </MediaObject>
+      <MediaObject id="m8">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m8</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/uwiitbwc9tmpibm/Photo 16-05-2017 10 40 22.jpg" />
+      </MediaObject>
+      <MediaObject id="m9">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m9</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/ga7ndm3ufjr4tla/Photo 16-05-2017 10 38 26.jpg" />
+      </MediaObject>
+      <MediaObject id="m10">
+        <Representation>
+          <Label>Base type of inflorescence (if present) - m10</Label>
+          <Detail role="Caption">Base type of inflorescence (if present)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/atbk3dwftfvwk24/Photo 16-05-2017 11 29 01.jpg" />
+      </MediaObject>
+      <MediaObject id="m11">
+        <Representation>
+          <Label>Inflorescence bract - m11</Label>
+          <Detail role="Caption">Inflorescence bract</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/8tfhu6io14gs253/Bract.jpeg" />
+      </MediaObject>
+      <MediaObject id="m12">
+        <Representation>
+          <Label>Inflorescence bract - m12</Label>
+          <Detail role="Caption">Inflorescence bract</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/a48oz1gy4jr8g6j/Photo 17-05-2017 16 46 19 (1).jpg" />
+      </MediaObject>
+      <MediaObject id="m13">
+        <Representation>
+          <Label>Inflorescence bract - m13</Label>
+          <Detail role="Caption">Inflorescence bract</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/k53ju57tnytt02e/Photo 17-05-2017 16 46 15.jpg" />
+      </MediaObject>
+      <MediaObject id="m14">
+        <Representation>
+          <Label>Inflorescence bract - m14</Label>
+          <Detail role="Caption">Inflorescence bract</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/tcdg6vsu8hswibx/Photo 17-05-2017 16 45 35.jpg" />
+      </MediaObject>
+      <MediaObject id="m15">
+        <Representation>
+          <Label>Symmetry of the flower - m15</Label>
+          <Detail role="Caption">Symmetry of the flower</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/dawyekg84viptfz/Photo 16-05-2017 16 07 16.jpg" />
+      </MediaObject>
+      <MediaObject id="m16">
+        <Representation>
+          <Label>R: Receptacle - m16</Label>
+          <Detail role="Caption">R: Receptacle</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/bsyflqtyirgau2b/Floral receptacle.jpg" />
+      </MediaObject>
+      <MediaObject id="m17">
+        <Representation>
+          <Label>Form of receptacle (if developed) - m17</Label>
+          <Detail role="Caption">Form of receptacle (if developed)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/39c90djdvwc4d52/Hypanthiul.jpg" />
+      </MediaObject>
+      <MediaObject id="m18">
+        <Representation>
+          <Label>Nectariferous spur - m18</Label>
+          <Detail role="Caption">Nectariferous spur</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/tkyvct28shs79h0/Photo 17-05-2017 15 22 26.jpg" />
+      </MediaObject>
+      <MediaObject id="m19">
+        <Representation>
+          <Label>Nectariferous spur - m19</Label>
+          <Detail role="Caption">Nectariferous spur</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/uk6um94biidrmx7/Photo 17-05-2017 16 18 29.jpg" />
+      </MediaObject>
+      <MediaObject id="m20">
+        <Representation>
+          <Label>Ep: Epicalyx - m20</Label>
+          <Detail role="Caption">Ep: Epicalyx</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/xnm0f9ng9ldtbqs/Epicalyx.jpeg" />
+      </MediaObject>
+      <MediaObject id="m21">
+        <Representation>
+          <Label>Petaloid calyx (and apetalous flowers) - m21</Label>
+          <Detail role="Caption">Petaloid calyx (and apetalous flowers)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/l37ru5wqen6dn1b/120px-Haplochlamyde.png" />
+      </MediaObject>
+      <MediaObject id="m22">
+        <Representation>
+          <Label>Petaloid calyx (and apetalous flowers) - m22</Label>
+          <Detail role="Caption">Petaloid calyx (and apetalous flowers)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/ty7l1blgx3f0so7/Photo 18-05-2017 11 41 26.jpg" />
+      </MediaObject>
+      <MediaObject id="m23">
+        <Representation>
+          <Label>"Papillonaceous" corolla - m23</Label>
+          <Detail role="Caption">"Papillonaceous" corolla</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/xk5dwiaiuv3a03a/Cytisus_scoparius_jfg.jpg" />
+      </MediaObject>
+      <MediaObject id="m24">
+        <Representation>
+          <Label>3 corolla - m24</Label>
+          <Detail role="Caption">Bilabiate 2/3 corolla</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/g47dzfw2tseamsa/Photo 17-05-2017 15 24 32.jpg" />
+      </MediaObject>
+      <MediaObject id="m25">
+        <Representation>
+          <Label>3 corolla - m25</Label>
+          <Detail role="Caption">Bilabiate 2/3 corolla</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/y67fssw5mzavnzv/Photo 17-05-2017 15 23 33.jpg" />
+      </MediaObject>
+      <MediaObject id="m26">
+        <Representation>
+          <Label>"Ventral" petal transformed into labellum - m26</Label>
+          <Detail role="Caption">"Ventral" petal transformed into labellum</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/nnqhvgi0rpehda0/Photo 17-05-2017 15 28 14.jpg" />
+      </MediaObject>
+      <MediaObject id="m27">
+        <Representation>
+          <Label>"Ventral" petal transformed into labellum - m27</Label>
+          <Detail role="Caption">"Ventral" petal transformed into labellum</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/zvbl2ydm7tuawnx/Photo 17-05-2017 15 28 11.jpg" />
+      </MediaObject>
+      <MediaObject id="m28">
+        <Representation>
+          <Label>"Ventral" petal transformed into labellum - m28</Label>
+          <Detail role="Caption">"Ventral" petal transformed into labellum</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/d09aw9ytmjqd8uo/Labellum.jpg" />
+      </MediaObject>
+      <MediaObject id="m29">
+        <Representation>
+          <Label>Didynamous androecium (if 4 stamen) - m29</Label>
+          <Detail role="Caption">Didynamous androecium (if 4 stamen)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/x29d7yy3euqv2o2/Photo 17-05-2017 15 13 17.jpg" />
+      </MediaObject>
+      <MediaObject id="m30">
+        <Representation>
+          <Label>Tetradynamous androecium (if 6 stamen) - m30</Label>
+          <Detail role="Caption">Tetradynamous androecium (if 6 stamen)</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/s11k8j85odho5xl/Photo 17-05-2017 15 13 41.jpg" />
+      </MediaObject>
+      <MediaObject id="m31">
+        <Representation>
+          <Label>Staminodes - m31</Label>
+          <Detail role="Caption">Staminodes</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/o4yp739n6rdg4ym/Photo 17-05-2017 15 14 01.jpg" />
+      </MediaObject>
+      <MediaObject id="m32">
+        <Representation>
+          <Label>Staminodes - m32</Label>
+          <Detail role="Caption">Staminodes</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/rl1v5ywmc5v5vqz/Photo 18-05-2017 11 50 59.jpg" />
+      </MediaObject>
+      <MediaObject id="m33">
+        <Representation>
+          <Label>Stamens fused by anthers - m33</Label>
+          <Detail role="Caption">Stamens fused by anthers</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/duf3gvvswe65pug/Photo 18-05-2017 10 00 51.jpg" />
+      </MediaObject>
+      <MediaObject id="m34">
+        <Representation>
+          <Label>Anther orientation - m34</Label>
+          <Detail role="Caption">Anther orientation</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/xhsmmfw30xv61zx/Photo 17-05-2017 17 34 30.jpg" />
+      </MediaObject>
+      <MediaObject id="m35">
+        <Representation>
+          <Label>Anther orientation - m35</Label>
+          <Detail role="Caption">Anther orientation</Detail>
+        </Representation>
+        <Type>Image</Type>
+        <Source href="https://dl.dropbox.com/s/fyauomdmfs6l3z1/Photo 17-05-2017 17 35 16.jpg" />
+      </MediaObject>
+    </MediaObjects>
+  </Dataset>
+</Datasets>

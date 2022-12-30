@@ -266,7 +266,6 @@ export default class LeafletMap extends Component {
                                                     <div>
                                                         <div className="metadata-title">
                                                             {t('library.map-view.popup_lbl_catalog_n_1')}
-                                                            Catalog N1
                                                         </div>
                                                         <div className="metadata-value">
                                                             {location.resource.erecolnatMetadata.catalognumber}
