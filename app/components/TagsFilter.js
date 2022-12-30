@@ -92,13 +92,18 @@ export default class TagsFilter extends Component {
                 <div className="tags-filter">
                     <div className="tags-filter-header">
                         <i className="fa fa-filter"></i>
-                        <span>{t('tags.lbl_filter')}</span>
-                        <Button size="sm" color="primary" onClick={
+                        {/* <span>{t('tags.lbl_filter')}</span> */}
+                        <span></span>
+                        <Button size="sm" color="link"  className="" onClick={
                             (e) => {
                                 this.props.onCreateExpression();
                             }
                         }>
-                            <i className="fa fa-plus-circle"/>( )
+                            {/* <i className="fa fa-plus-circle"/> */}
+                            
+                            <span  className="add-icon" />
+
+                            
                         </Button>
                         <span className="spacer"/>
                         <i className="fa fa-times btn-remove-filter" title={t('tags.btn_tooltip_cancel_tags_filter')} onClick={
