@@ -23,7 +23,8 @@ export default class FoldersFilter extends Component {
                 <div className="folders-filter">
                     <div className="folders-filter-header">
                         <i className="fa fa-filter"></i>
-                        <span className="folders-filter-label">{t('folders.lbl_filter')}</span>
+                        {/* <span className="folders-filter-label">{t('folders.lbl_filter')}</span> */}
+                        <span className="folders-filter-label"></span>
                         <i className="fa fa-times btn-remove-filter" title={t('folders.btn_tooltip_cancel_folders_filter')} onClick={
                             (e) => {
                                 this.props.onCancelFilter()
