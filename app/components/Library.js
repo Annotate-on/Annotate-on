@@ -656,63 +656,11 @@ export default class extends Component {
                                     ></TimelineView>
                                 }
                             </_Pictures>
-                            : ((this.props.selectedTags && this.props.selectedTags.length > 0) ?
-                                    <Nothing message={t('library.lbl_no_pictures_for_selected_tags')}/>
-                                    :
-                                    <div>
-                                        <div className="center-button">{t('library.lbl_select_resources_to_import')}</div>
-                                        <div className="center-button">
-                                            <Button className="btn btn-primary" color="primary"
-                                                    onClick={() => {
-                                                        const folders = getAllPicturesDirectories();
-                                                        if (this.props.tabData[this.props.tabName] !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders.length > 0) {
-                                                            const selectedFolders = this.props.tabData[this.props.tabName].selected_folders;
-                                                            this.props.goToImportWizard(folders.length ? selectedFolders[0] : null);
-                                                        } else {
-                                                            this.props.goToImportWizard(folders.length ? folders[0].path : null);
-                                                        }
-                                                    }}
-                                            >{t('library.btn_import_images')}</Button><br />
-                                        </div>
-                                        <div className="center-button">
-                                            <Button className="btn btn-primary" color="primary"
-                                                    onClick={() => {
-                                                        const folders = getAllPicturesDirectories();
-                                                        if (this.props.tabData[this.props.tabName] !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders.length > 0) {
-                                                            const selectedFolders = this.props.tabData[this.props.tabName].selected_folders;
-                                                            this.props.goToImportVideoWizard(folders.length ? selectedFolders[0] : null);
-                                                        } else {
-                                                            this.props.goToImportVideoWizard(folders.length ? folders[0].path : null);
-                                                        }
-                                                    }}
-                                            >{t('library.btn_import_videos')}</Button>
-                                        </div>
-                                        <br/>
-                                        <hr/>
-                                        <br/>
-                                        <div className="center-button-events">
-                                            {t('library.lbl_events')}
-                                        </div>
-                                        <div className="center-button">
-                                            <Button className="btn btn-primary" color="danger"
-                                                    onClick={() => {
-                                                        const folders = getAllPicturesDirectories();
-                                                        if (this.props.tabData[this.props.tabName] !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders !== undefined &&
-                                                            this.props.tabData[this.props.tabName].selected_folders.length > 0) {
-                                                            const selectedFolders = this.props.tabData[this.props.tabName].selected_folders;
-                                                            this.props.goToImportEventWizard(folders.length ? selectedFolders[0] : null , this.props.tabName);
-                                                        } else {
-                                                            this.props.goToImportEventWizard(folders.length ? folders[0].path : null , this.props.tabName);
-                                                        }
-                                                    }}
-                                            >{t('library.btn_create_new_event')}</Button>
-                                        </div>
-                                    </div>
+                            :
+                            ((this.props.selectedTags && this.props.selectedTags.length > 0) ?
+                                <Nothing message={t('library.lbl_no_pictures_for_selected_tags')}/>
+                                :
+                                <Nothing message={t('library.lbl_select_resources_to_import')}/>
                             )
                         }
                     </_PicturesPanel>
