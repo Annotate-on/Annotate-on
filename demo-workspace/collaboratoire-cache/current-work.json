@@ -1,1 +1,1510 @@
-{"selected_menu":"HOME","annotations_eventAnnotations":{},"annotations_chronothematique":{},"annotations_measures_linear":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":[{"pictureId":"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","value_in_mm":244.2823181242956,"vertices":[{"x":1410.6873222967808,"y":145.67389255419414},{"x":1688.0998804060334,"y":3017.5306314797353}],"id":"c38a672c-e115-55f2-91ad-e0badb443c8d","annotationType":"simple-line","creationDate":"2022-12-30T13:36:24.534Z","creationTimestamp":1672407384534,"title":"LIN-1","measure":"mm","color":"#ff0000"}]},"annotations_points_of_interest":{"55508bc98a00f615dbe9bd4c84a253ba4238b021":[{"pictureId":"55508bc98a00f615dbe9bd4c84a253ba4238b021","x":244.16313922315612,"y":60.5,"id":"6d5f95f5-8ed1-553a-bbcf-438684da68a2","video":{"start":5.072449,"end":10.947964,"duration":5.875515000000001},"annotationType":"marker","creationDate":"2022-12-30T13:37:18.268Z","creationTimestamp":1672407438268,"title":"POI-2"},{"pictureId":"55508bc98a00f615dbe9bd4c84a253ba4238b021","x":159.18198584991234,"y":77.5,"id":"ca421b2a-d997-5502-a250-505250bb68ac","video":{"start":0,"end":10.019896,"duration":10.019896},"annotationType":"marker","creationDate":"2022-12-30T13:37:13.085Z","creationTimestamp":1672407433085,"title":"POI-1","coverage":{"spatial":{"placeName":"Paris, Île-de-France, France métropolitaine, France","location":{"latitude":"48.8588897","longitude":"2.3200410217200766"}}}}]},"annotations_rectangular":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":[{"pictureId":"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","vertices":[{"x":3532.8933918325656,"y":3891.5739868049004},{"x":3532.8933918325656,"y":3142.3939679547593},{"x":4198.683531294773,"y":3142.3939679547593},{"x":4198.683531294773,"y":3891.5739868049004}],"id":"d89f5844-2b52-582c-ba05-a7b28de68a05","annotationType":"rectangle","creationDate":"2022-12-30T13:36:36.771Z","creationTimestamp":1672407396771,"title":"REC-1","color":"#ff0000"}]},"annotations_polygon":{},"annotations_angle":{},"annotations_occurrence":{},"annotations_color_picker":{},"annotations_ratio":{},"annotations_transcription":{},"annotations_categorical":{},"annotations_richtext":{},"cartel_by_picture":{},"counter":1078,"focused_annotation":null,"pictures":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":{"file":"/Images/NOU052268.jpeg","file_basename":"NOU052268.jpeg","exifDate":"12/12/2016","exifPlace":"","title":"","creator":"","rights":"","subject":"","description":"","type":"image","format":"jpg","orientation":"","yearCreated":"2016","model":"NIKON D800","make":"NIKON CORPORATION","height":7360,"width":4912,"sha1":"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","dpix":300,"dpiy":300,"thumbnail":"/5979ea2566bc8eb4b40511a8152aea9d8f2d3c83.jpg","resourceType":"RESOURCE_TYPE_PICTURE","erecolnatMetadata":{"determinations":[{"identificationid":"8b4d30f4-b96f-4428-8863-ca5d7a9f079c","identificationverificationstatus":0,"taxonid":"43746c34-6f79-431b-b62c-b93dead783fa","scientificname":"Ficus","scientificnameauthorship":"L.","taxonrank":"Genus","family":"Moraceae","genus":"Ficus","created":"2019-09-20T17:06:54.000+02:00","modified":"Sep 20, 2019 5:06:54 PM"}],"basisofrecord":"PreservedSpecimen","catalognumber":"NOU052268","collectioncode":"NOU","collectionid":229,"collectionname":"Herbier de Nouvelle-Cal?donie","dwcaid":"IRD-NOU-NOU052268","family":"Moraceae","genus":"Ficus","institutioncode":"IRD","institutionid":133,"institutionname":"Institut de recherche pour le d?veloppement","modified":"2019-09-20T17:06:54.000+02:00","scientificname":"Ficus","recordedby":"Munzinger, J.; Pignal, M.","fieldnumber":"2300","decimallatitude":"-22.07","decimallongitude":"166.34"},"sort_catalognumber":"NOU052268","sort_family":"Moraceae","sort_modified":1568992014000,"sort_tags":4,"sort_type":"Image"},"55508bc98a00f615dbe9bd4c84a253ba4238b021":{"file":"/Videos/61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4","file_basename":"61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4","height":270,"width":480,"sha1":"55508bc98a00f615dbe9bd4c84a253ba4238b021","dpix":0,"dpiy":0,"duration":"30.0","fps":30,"thumbnail":"/55508bc98a00f615dbe9bd4c84a253ba4238b021_1.jpg","resourceType":"RESOURCE_TYPE_VIDEO","sort_catalognumber":"61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4","sort_family":"","sort_modified":0,"sort_tags":4}},"pictures_by_tag":{"NIKON CORPORATION / NIKON D800":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"],"created: 2016":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"],"DPI ≈ 300":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"],"GPS: no":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"],"duration: 30.0":["55508bc98a00f615dbe9bd4c84a253ba4238b021"],"fps: 30":["55508bc98a00f615dbe9bd4c84a253ba4238b021"],"width: 480":["55508bc98a00f615dbe9bd4c84a253ba4238b021"],"height: 270":["55508bc98a00f615dbe9bd4c84a253ba4238b021"]},"selected_tags":[],"standard_deviation":null,"tags_by_annotation":{},"tags_by_picture":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":["NIKON CORPORATION / NIKON D800","created: 2016","DPI ≈ 300","GPS: no"],"55508bc98a00f615dbe9bd4c84a253ba4238b021":["duration: 30.0","fps: 30","width: 480","height: 270"]},"tags":[{"type":"category","id":"ac71767f-2437-59ea-be04-31291df713b1","name":"Map selection","children":[],"creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185019},{"type":"category","id":"2779945b-9ddb-5ff8-8472-d63e4eca0395","name":"Automatic keywords","children":[{"name":"created: 2016","creationDate":"2022-12-30T13:34:39.123Z","creationTimestamp":1672407279123},{"type":"tag","id":"b82c4d23-7c14-5802-b0c2-e5731a9a3f4d","name":"DPI ≈ 1200","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185019},{"type":"tag","id":"2120212b-d41f-5dbd-91d9-b854021507a5","name":"DPI ≈ 150","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185019},{"type":"tag","id":"6e56eb75-1072-5ce9-9c81-af97194ad7c5","name":"DPI ≈ 300","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185019},{"type":"tag","id":"9e22d0ad-1dc4-5e79-893d-279c0007b5fb","name":"DPI ≈ 600","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185019},{"type":"tag","id":"6ba1303b-f9f7-53ab-9245-97743a16deff","name":"DPI ≈ 75","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185018},{"type":"tag","id":"809928bb-959a-53e3-a6d7-f5d26dc00484","name":"DPI: no","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185015},{"name":"duration: 30.0","creationDate":"2022-12-30T13:37:08.132Z","creationTimestamp":1672407428132},{"name":"fps: 30","creationDate":"2022-12-30T13:37:08.167Z","creationTimestamp":1672407428167},{"type":"tag","id":"6dbce392-bf5c-5d4f-9c32-ec5fe3877324","name":"GPS: no","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185017},{"type":"tag","id":"5363d6b7-9d1b-5296-bce2-a552d55f684c","name":"GPS: with","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185016},{"name":"height: 270","creationDate":"2022-12-30T13:37:08.238Z","creationTimestamp":1672407428238},{"type":"tag","id":"26a00fea-f451-5bd5-ba5b-2d431f782c39","name":"Mode: landscape","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185015},{"type":"tag","id":"8956289b-0de3-500f-97f0-a384064108f2","name":"Mode: portrait","creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185016},{"name":"NIKON CORPORATION / NIKON D800","creationDate":"2022-12-30T13:34:39.083Z","creationTimestamp":1672407279083},{"name":"width: 480","creationDate":"2022-12-30T13:37:08.201Z","creationTimestamp":1672407428201}],"creationDate":"Fri Dec 30 2022","creationTimestamp":1672407185015}],"calibrations":[],"pictures_by_calibration":{},"leaflet_position_by_picture":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":{"bounds":{"_southWest":{"lat":-1.0361328125,"lng":-0.4111328125},"_northEast":{"lat":-0.0009765625,"lng":1.1015625}}}},"selected_tab":null,"annotations_by_tag":{},"taxonomyInstance":{"19ab60e7-621c-52af-bdb4-a8f14ad0d033":{"taxonomyByAnnotation":{"c38a672c-e115-55f2-91ad-e0badb443c8d":{"descriptorId":"c46","value":244.2823181242956,"sha1":"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","type":"NUMERICAL"},"d89f5844-2b52-582c-ba05-a7b28de68a05":{"descriptorId":"c4","value":["s22"],"sha1":"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","type":"CATEGORICAL"}},"taxonomyByDescriptor":{"c46":{"min":244.2823181242956,"max":244.2823181242956,"sd":0,"avg":244.2823181242956,"count":1}},"taxonomyByPicture":{"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83":{"c46":{"min":244.2823181242956,"max":244.2823181242956,"sd":0,"avg":244.2823181242956,"count":1},"c4":{"value":["s22"]}}}}},"open_tabs":{"Selection 1":{"view":"library","subview":"MOZAIC_VIEW","selected_folders":["Events","Images","Videos"],"selected_filter":null,"pictures_selection":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","55508bc98a00f615dbe9bd4c84a253ba4238b021"],"folder_pictures_selection":["5979ea2566bc8eb4b40511a8152aea9d8f2d3c83","55508bc98a00f615dbe9bd4c84a253ba4238b021"],"sortDirection":"sort_alphabetic_desc","sortDirectionAnnotation":"sort_date_desc","current_picture_index_in_selection":1,"selected_sha1":"55508bc98a00f615dbe9bd4c84a253ba4238b021","manualOrderLock":false,"showMozaicDetails":false,"showMozaicCollection":false,"activeTab":"1","sort_table_by":{"field":"","direction":""},"lastScrollPositionInMozaic":0}},"taxonomies":[{"id":"19ab60e7-621c-52af-bdb4-a8f14ad0d033","name":"Fleurs","importDate":"2022-12-30T13:33:10.785Z","isActive":true,"sddPath":"19ab60e7-621c-52af-bdb4-a8f14ad0d033-sdd.xml","model":"MODEL_XPER","version":2019100201},{"id":"12198b52-e639-5473-9ee4-4728ad8be23f","name":"Feuilles","importDate":"2022-12-30T13:33:10.835Z","isActive":false,"sddPath":"12198b52-e639-5473-9ee4-4728ad8be23f-sdd.xml","model":"MODEL_XPER","version":2019100301},{"id":"405aec3b-8d3e-539a-86f9-e358f058747b","name":"Fougères","importDate":"2022-12-30T13:33:10.900Z","isActive":false,"sddPath":"405aec3b-8d3e-539a-86f9-e358f058747b-sdd.xml","model":"MODEL_XPER","version":2019100201}],"selectedTaxonomy":{"descriptors":[{"targetName":"Solitary flower","annotationType":"CATEGORICAL","id":"c1","targetColor":"#ff0000","states":[{"id":"s1","name":"Absence (inflorescence)"},{"id":"s2","name":"Presence"}]},{"targetName":"Base type of inflorescence (if present)","annotationType":"CATEGORICAL","id":"c2","targetColor":"#ff0000","states":[{"id":"s3","name":"Single cluster (or raceme)"},{"id":"s4","name":"Spike"},{"id":"s5","name":"Spadix"},{"id":"s6","name":"Panicle"},{"id":"s7","name":"Spikelet"},{"id":"s8","name":"Bilateral cyme"},{"id":"s9","name":"Helicoid unilateral cyme"},{"id":"s10","name":"Scorpioid unilateral cyme"},{"id":"s11","name":"Thyrse"},{"id":"s12","name":"Umbel"},{"id":"s13","name":"Capitulum"},{"id":"s14","name":"Corymb"},{"id":"s15","name":"Cyathium"},{"id":"s16","name":"Type catkin"},{"id":"s17","name":"Type syconium"}]},{"targetName":"Inflorescence bract","annotationType":"CATEGORICAL","id":"c3","targetColor":"#ff0000","states":[{"id":"s18","name":"Absence"},{"id":"s19","name":"Presence and not in spathe form"},{"id":"s20","name":"A single well developed spathe"},{"id":"s21","name":"More than one well developed spathe"}]},{"targetName":"Sex of flowers","annotationType":"CATEGORICAL","id":"c4","targetColor":"#ff0000","states":[{"id":"s22","name":"Bisexual"},{"id":"s23","name":"Unisexual and dioecious"},{"id":"s24","name":"Unisexual and plant monoecious"}]},{"targetName":"Symmetry of the flower","annotationType":"CATEGORICAL","id":"c5","targetColor":"#ff0000","states":[{"id":"s25","name":"Irregular flower and without symmetry"},{"id":"s26","name":"Flower with symmetry"}]},{"targetName":"Type of symmetry (if present)","annotationType":"CATEGORICAL","id":"c6","targetColor":"#ff0000","states":[{"id":"s27","name":"Radial (actinomorphic)"},{"id":"s28","name":"Bilateral (zygomorphic)"},{"id":"s29","name":"Double bilateral symmetry"}]},{"targetName":"Floral bract","annotationType":"CATEGORICAL","id":"c7","targetColor":"#ff0000","states":[{"id":"s30","name":"Absence"},{"id":"s31","name":1},{"id":"s32","name":"2 or more"}]},{"targetName":"Floral bract color (if present)","annotationType":"CATEGORICAL","id":"c8","targetColor":"#ff0000","states":[{"id":"s33","name":"White"},{"id":"s34","name":"Green"},{"id":"s35","name":"Yellow"},{"id":"s36","name":"Purple"}]},{"targetName":"Floral peduncle","annotationType":"CATEGORICAL","id":"c9","targetColor":"#ff0000","states":[{"id":"s37","name":"Absence (sessile flower)"},{"id":"s38","name":"Presence"}]},{"targetName":"Floral receptacle","annotationType":"CATEGORICAL","id":"c10","targetColor":"#ff0000","states":[{"id":"s39","name":"Not or slightly developed"},{"id":"s40","name":"Developed"}]},{"targetName":"Form of receptacle (if developed)","annotationType":"CATEGORICAL","id":"c11","targetColor":"#ff0000","states":[{"id":"s41","name":"More or less flat (or slightly convex or concave)"},{"id":"s42","name":"Strongly concave (hypanthium)"},{"id":"s43","name":"Highly convex (thalamus)"}]},{"targetName":"Nectariferous spur","annotationType":"CATEGORICAL","id":"c12","targetColor":"#ff0000","states":[{"id":"s44","name":"Absence"},{"id":"s45","name":"Presence, one per flower"},{"id":"s46","name":"Presence, two per flower"},{"id":"s47","name":"Presence, more than two per flower"}]},{"targetName":"Resupined flower","annotationType":"CATEGORICAL","id":"c13","targetColor":"#ff0000","states":[{"id":"s48","name":"No"},{"id":"s49","name":"Yes"}]},{"targetName":"Differenciation calyx/corolla","annotationType":"CATEGORICAL","id":"c14","targetColor":"#ff0000","states":[{"id":"s50","name":"Absence (tepals)"},{"id":"s51","name":"Presence"}]},{"targetName":"Fused tepals","annotationType":"CATEGORICAL","id":"c15","targetColor":"#ff0000","states":[{"id":"s52","name":"Absence"},{"id":"s53","name":"Presence (syntepaly)"}]},{"targetName":"Color uniformity of tepals (or if calyx and corolla concolors)","annotationType":"CATEGORICAL","id":"c16","targetColor":"#ff0000","states":[{"id":"s54","name":"Tepals all of the same color"},{"id":"s55","name":"At least one tepal of a different color"}]},{"targetName":"Background color of tepals (with or without patterns)","annotationType":"CATEGORICAL","id":"c17","targetColor":"#ff0000","states":[{"id":"s56","name":"Black (or very dark purple)"},{"id":"s57","name":"Brown"},{"id":"s58","name":"White"},{"id":"s59","name":"Blue"},{"id":"s60","name":"Yellow"},{"id":"s61","name":"Green"},{"id":"s62","name":"Red"},{"id":"s63","name":"Pink"},{"id":"s64","name":"Purple"}]},{"targetName":"Epicalyx","annotationType":"CATEGORICAL","id":"c18","targetColor":"#ff0000","states":[{"id":"s65","name":"Absence"},{"id":"s66","name":"Presence"}]},{"targetName":"Calyx","annotationType":"CATEGORICAL","id":"c19","targetColor":"#ff0000","states":[{"id":"s67","name":"Absence"},{"id":"s68","name":"Single"},{"id":"s69","name":"Double"}]},{"targetName":"Calyx reduced to scales, hairs or bristles","annotationType":"CATEGORICAL","id":"c20","targetColor":"#ff0000","states":[{"id":"s70","name":"No"},{"id":"s71","name":"Yes"}]},{"targetName":"Homogeneous calyx","annotationType":"CATEGORICAL","id":"c21","targetColor":"#ff0000","states":[{"id":"s72","name":"No"},{"id":"s73","name":"Yes"}]},{"targetName":"Fused calyx","annotationType":"CATEGORICAL","id":"c22","targetColor":"#ff0000","states":[{"id":"s74","name":"No (aposepalous flower)"},{"id":"s75","name":"Yes (gamosepalous or synsepalous flower)"}]},{"targetName":"Petaloid calyx (and apetalous flowers)","annotationType":"CATEGORICAL","id":"c23","targetColor":"#ff0000","states":[{"id":"s76","name":"Absence"},{"id":"s77","name":"Presence"}]},{"targetName":"Color uniformity of the calyx if petaloid (and apetalous flowers)","annotationType":"CATEGORICAL","id":"c24","targetColor":"#ff0000","states":[{"id":"s78","name":"Sepals all of the same color"},{"id":"s79","name":"At least one sepal of a different color"}]},{"targetName":"Background color of sepals if petaloid (with or without patterns and apetal flowers)","annotationType":"CATEGORICAL","id":"c25","targetColor":"#ff0000","states":[{"id":"s80","name":"Black (or very dark purple)"},{"id":"s81","name":"Brown"},{"id":"s82","name":"White"},{"id":"s83","name":"Blue"},{"id":"s84","name":"Yellow"},{"id":"s85","name":"Green"},{"id":"s86","name":"Red"},{"id":"s87","name":"Pink"},{"id":"s88","name":"Purple"}]},{"targetName":"Color of calyx if well developed and not petaloid","annotationType":"CATEGORICAL","id":"c26","targetColor":"#ff0000","states":[{"id":"s89","name":"Brown"},{"id":"s90","name":"White"},{"id":"s91","name":"Green"}]},{"targetName":"Corolla","annotationType":"CATEGORICAL","id":"c27","targetColor":"#ff0000","states":[{"id":"s92","name":"Absence (apetal flowers)"},{"id":"s93","name":"Presence"}]},{"targetName":"Fused corolla","annotationType":"CATEGORICAL","id":"c28","targetColor":"#ff0000","states":[{"id":"s94","name":"No (dialy- or apopetal flower)"},{"id":"s95","name":"Yes (gamo- or sympetal flowers)"}]},{"targetName":"\"Papillonaceous\" corolla","annotationType":"CATEGORICAL","id":"c29","targetColor":"#ff0000","states":[{"id":"s96","name":"No"},{"id":"s97","name":"Yes"}]},{"targetName":"Bilabiate 2/3 corolla","annotationType":"CATEGORICAL","id":"c30","targetColor":"#ff0000","states":[{"id":"s98","name":"No"},{"id":"s99","name":"Yes"}]},{"targetName":"Color uniformity of petals","annotationType":"CATEGORICAL","id":"c31","targetColor":"#ff0000","states":[{"id":"s100","name":"Petals all of the same color"},{"id":"s101","name":"At least one petal of a different colour"}]},{"targetName":"Background color of well-developed petals","annotationType":"CATEGORICAL","id":"c32","targetColor":"#ff0000","states":[{"id":"s102","name":"Black (or very dark purple)"},{"id":"s103","name":"Brown"},{"id":"s104","name":"White"},{"id":"s105","name":"Blue"},{"id":"s106","name":"Yellow"},{"id":"s107","name":"Green"},{"id":"s108","name":"Red"},{"id":"s109","name":"Pink"},{"id":"s110","name":"Purple"}]},{"targetName":"\"Ventral\" petal transformed into labellum","annotationType":"CATEGORICAL","id":"c33","targetColor":"#ff0000","states":[{"id":"s111","name":"No"},{"id":"s112","name":"Yes"}]},{"targetName":"Total number of fertile stamens","annotationType":"CATEGORICAL","id":"c34","targetColor":"#ff0000","states":[{"id":"s113","name":1},{"id":"s114","name":"2 and multiples of 2"},{"id":"s115","name":"3 and multiples of 3"},{"id":"s116","name":"4 and multiples of 4"},{"id":"s117","name":"5 and multiples of 5"},{"id":"s118","name":"n"}]},{"targetName":"Didynamous androecium (if 4 stamen)","annotationType":"CATEGORICAL","id":"c35","targetColor":"#ff0000","states":[{"id":"s119","name":"No"},{"id":"s120","name":"Yes"}]},{"targetName":"Tetradynamous androecium (if 6 stamen)","annotationType":"CATEGORICAL","id":"c36","targetColor":"#ff0000","states":[{"id":"s121","name":"No"},{"id":"s122","name":"Yes"}]},{"targetName":"Staminodes","annotationType":"CATEGORICAL","id":"c37","targetColor":"#ff0000","states":[{"id":"s123","name":"Absence"},{"id":"s124","name":"Presence"}]},{"targetName":"Number of staminodes","annotationType":"CATEGORICAL","id":"c38","targetColor":"#ff0000","states":[{"id":"s125","name":1},{"id":"s126","name":"2 and multiples of 2"},{"id":"s127","name":"3 and multiples of 3"},{"id":"s128","name":"4 and multiples of 4"},{"id":"s129","name":"5 and multiples of 5"},{"id":"s130","name":"n"}]},{"targetName":"Stamens aggregated in clusters","annotationType":"CATEGORICAL","id":"c39","targetColor":"#ff0000","states":[{"id":"s131","name":"No"},{"id":"s132","name":"Yes"}]},{"targetName":"Number of stamen clusters","annotationType":"CATEGORICAL","id":"c40","targetColor":"#ff0000","states":[{"id":"s133","name":"2 and multiples of 2"},{"id":"s134","name":"3 and multiples of 3"},{"id":"s135","name":"4 and multiples of 4"},{"id":"s136","name":"5 and multiples of 5"},{"id":"s137","name":"n"}]},{"targetName":"Stamens fused by anthers","annotationType":"CATEGORICAL","id":"c41","targetColor":"#ff0000","states":[{"id":"s138","name":"No"},{"id":"s139","name":"Yes (synanthered androecium)"}]},{"targetName":"Anther orientation","annotationType":"CATEGORICAL","id":"c42","targetColor":"#ff0000","states":[{"id":"s140","name":"Introrse"},{"id":"s141","name":"Extrorse"}]},{"targetName":"Pollen aggregation into pollinia","annotationType":"CATEGORICAL","id":"c43","targetColor":"#ff0000","states":[{"id":"s142","name":"No"},{"id":"s143","name":"Yes"}]},{"targetName":"Branched stigma (if fused styles)","annotationType":"CATEGORICAL","id":"c44","targetColor":"#ff0000","states":[{"id":"s144","name":"No"},{"id":"s145","name":"Yes"}]},{"targetName":"Length of inflorescence","unit":"mm","annotationType":"NUMERICAL","id":"c45","targetColor":"#ff0000"},{"targetName":"Diameter of flower","unit":"mm","annotationType":"NUMERICAL","id":"c46","targetColor":"#ff0000"},{"targetName":"Appearance of calyx if well developed and not petaloid","annotationType":"CATEGORICAL","id":"c47","targetColor":"#ff0000","states":[{"id":"s146","name":"Well developed"},{"id":"s147","name":"Scarious"},{"id":"s148","name":"Diaphanous"}]},{"targetName":"Appearance of corolla","annotationType":"CATEGORICAL","id":"c48","targetColor":"#ff0000","states":[{"id":"s149","name":"Well developed"},{"id":"s150","name":"Scarious"},{"id":"s151","name":"Diaphanous"}]},{"targetName":"Gynophore","annotationType":"CATEGORICAL","id":"c49","targetColor":"#ff0000","states":[{"id":"s152","name":"Absence"},{"id":"s153","name":"Presence"}]},{"targetName":"Heterogeneous androecium in form","annotationType":"CATEGORICAL","id":"c50","targetColor":"#ff0000","states":[{"id":"s154","name":"No"},{"id":"s155","name":"Yes"}]}],"id":"19ab60e7-621c-52af-bdb4-a8f14ad0d033","name":"Fleurs","model":"MODEL_XPER"},"leafletSettings":{},"selectedProjectName":"Demo Annotate-on v2 milestone1"}
+{
+	"selected_menu": "HOME",
+	"annotations_eventAnnotations": {},
+	"annotations_chronothematique": {},
+	"annotations_measures_linear": {
+		"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": [
+			{
+				"pictureId": "5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+				"value_in_mm": 244.2823181242956,
+				"vertices": [
+					{
+						"x": 1410.6873222967809,
+						"y": 145.67389255419415
+					},
+					{
+						"x": 1688.0998804060335,
+						"y": 3017.5306314797355
+					}
+				],
+				"id": "c38a672c-e115-55f2-91ad-e0badb443c8d",
+				"annotationType": "simple-line",
+				"creationDate": "2022-12-30T13:36:24.534Z",
+				"creationTimestamp": 1672407384534,
+				"title": "LIN-1",
+				"measure": "mm",
+				"color": "#ff0000"
+			}
+		]
+	},
+	"annotations_points_of_interest": {
+		"55508bc98a00f615dbe9bd4c84a253ba4238b021": [
+			{
+				"pictureId": "55508bc98a00f615dbe9bd4c84a253ba4238b021",
+				"x": 244.16313922315613,
+				"y": 60.5,
+				"id": "6d5f95f5-8ed1-553a-bbcf-438684da68a2",
+				"video": {
+					"start": 5.072449,
+					"end": 10.947964,
+					"duration": 5.875515000000001
+				},
+				"annotationType": "marker",
+				"creationDate": "2022-12-30T13:37:18.268Z",
+				"creationTimestamp": 1672407438268,
+				"title": "POI-2"
+			},
+			{
+				"pictureId": "55508bc98a00f615dbe9bd4c84a253ba4238b021",
+				"x": 159.18198584991235,
+				"y": 77.5,
+				"id": "ca421b2a-d997-5502-a250-505250bb68ac",
+				"video": {
+					"start": 0,
+					"end": 10.019896,
+					"duration": 10.019896
+				},
+				"annotationType": "marker",
+				"creationDate": "2022-12-30T13:37:13.085Z",
+				"creationTimestamp": 1672407433085,
+				"title": "POI-1",
+				"coverage": {
+					"spatial": {
+						"placeName": "Paris, Île-de-France, France métropolitaine, France",
+						"location": {
+							"latitude": "48.8588897",
+							"longitude": "2.3200410217200766"
+						}
+					}
+				}
+			}
+		]
+	},
+	"annotations_rectangular": {
+		"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": [
+			{
+				"pictureId": "5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+				"vertices": [
+					{
+						"x": 3532.8933918325658,
+						"y": 3891.5739868049006
+					},
+					{
+						"x": 3532.8933918325658,
+						"y": 3142.3939679547595
+					},
+					{
+						"x": 4198.683531294773,
+						"y": 3142.3939679547595
+					},
+					{
+						"x": 4198.683531294773,
+						"y": 3891.5739868049006
+					}
+				],
+				"id": "d89f5844-2b52-582c-ba05-a7b28de68a05",
+				"annotationType": "rectangle",
+				"creationDate": "2022-12-30T13:36:36.771Z",
+				"creationTimestamp": 1672407396771,
+				"title": "REC-1",
+				"color": "#ff0000"
+			}
+		]
+	},
+	"annotations_polygon": {},
+	"annotations_angle": {},
+	"annotations_occurrence": {},
+	"annotations_color_picker": {},
+	"annotations_ratio": {},
+	"annotations_transcription": {},
+	"annotations_categorical": {},
+	"annotations_richtext": {},
+	"cartel_by_picture": {},
+	"counter": 1078,
+	"focused_annotation": null,
+	"pictures": {
+		"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": {
+			"file": "/Images/NOU052268.jpeg",
+			"file_basename": "NOU052268.jpeg",
+			"exifDate": "12/12/2016",
+			"exifPlace": "",
+			"title": "",
+			"creator": "",
+			"rights": "",
+			"subject": "",
+			"description": "",
+			"type": "image",
+			"format": "jpg",
+			"orientation": "",
+			"yearCreated": "2016",
+			"model": "NIKON D800",
+			"make": "NIKON CORPORATION",
+			"height": 7360,
+			"width": 4912,
+			"sha1": "5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+			"dpix": 300,
+			"dpiy": 300,
+			"thumbnail": "/5979ea2566bc8eb4b40511a8152aea9d8f2d3c83.jpg",
+			"resourceType": "RESOURCE_TYPE_PICTURE",
+			"erecolnatMetadata": {
+				"determinations": [
+					{
+						"identificationid": "8b4d30f4-b96f-4428-8863-ca5d7a9f079c",
+						"identificationverificationstatus": 0,
+						"taxonid": "43746c34-6f79-431b-b62c-b93dead783fa",
+						"scientificname": "Ficus",
+						"scientificnameauthorship": "L.",
+						"taxonrank": "Genus",
+						"family": "Moraceae",
+						"genus": "Ficus",
+						"created": "2019-09-20T17:06:54.000+02:00",
+						"modified": "Sep 20, 2019 5:06:54 PM"
+					}
+				],
+				"basisofrecord": "PreservedSpecimen",
+				"catalognumber": "NOU052268",
+				"collectioncode": "NOU",
+				"collectionid": 229,
+				"collectionname": "Herbier de Nouvelle-Cal?donie",
+				"dwcaid": "IRD-NOU-NOU052268",
+				"family": "Moraceae",
+				"genus": "Ficus",
+				"institutioncode": "IRD",
+				"institutionid": 133,
+				"institutionname": "Institut de recherche pour le d?veloppement",
+				"modified": "2019-09-20T17:06:54.000+02:00",
+				"scientificname": "Ficus",
+				"recordedby": "Munzinger, J.; Pignal, M.",
+				"fieldnumber": "2300",
+				"decimallatitude": "-22.07",
+				"decimallongitude": "166.34"
+			},
+			"sort_catalognumber": "NOU052268",
+			"sort_family": "Moraceae",
+			"sort_modified": 1568992014000,
+			"sort_tags": 4,
+			"sort_type": "Image"
+		},
+		"55508bc98a00f615dbe9bd4c84a253ba4238b021": {
+			"file": "/Videos/61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4",
+			"file_basename": "61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4",
+			"height": 270,
+			"width": 480,
+			"sha1": "55508bc98a00f615dbe9bd4c84a253ba4238b021",
+			"dpix": 0,
+			"dpiy": 0,
+			"duration": "30.0",
+			"fps": 30,
+			"thumbnail": "/55508bc98a00f615dbe9bd4c84a253ba4238b021_1.jpg",
+			"resourceType": "RESOURCE_TYPE_VIDEO",
+			"sort_catalognumber": "61bf8531-d2e8-5301-a4e9-452fc087ea0f.mp4",
+			"sort_family": "",
+			"sort_modified": 0,
+			"sort_tags": 4
+		}
+	},
+	"pictures_by_tag": {
+		"NIKON CORPORATION / NIKON D800": [
+			"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"
+		],
+		"created: 2016": [
+			"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"
+		],
+		"DPI ≈ 300": [
+			"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"
+		],
+		"GPS: no": [
+			"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83"
+		],
+		"duration: 30.0": [
+			"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+		],
+		"fps: 30": [
+			"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+		],
+		"width: 480": [
+			"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+		],
+		"height: 270": [
+			"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+		]
+	},
+	"selected_tags": [],
+	"standard_deviation": null,
+	"tags_by_annotation": {},
+	"tags_by_picture": {
+		"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": [
+			"NIKON CORPORATION / NIKON D800",
+			"created: 2016",
+			"DPI ≈ 300",
+			"GPS: no"
+		],
+		"55508bc98a00f615dbe9bd4c84a253ba4238b021": [
+			"duration: 30.0",
+			"fps: 30",
+			"width: 480",
+			"height: 270"
+		]
+	},
+	"tags": [
+		{
+			"type": "category",
+			"id": "ac71767f-2437-59ea-be04-31291df713b1",
+			"name": "Map selection",
+			"children": [],
+			"creationDate": "Fri Dec 30 2022",
+			"creationTimestamp": 1672407185019
+		},
+		{
+			"type": "category",
+			"id": "2779945b-9ddb-5ff8-8472-d63e4eca0395",
+			"name": "Automatic keywords",
+			"children": [
+				{
+					"name": "created: 2016",
+					"creationDate": "2022-12-30T13:34:39.123Z",
+					"creationTimestamp": 1672407279123
+				},
+				{
+					"type": "tag",
+					"id": "b82c4d23-7c14-5802-b0c2-e5731a9a3f4d",
+					"name": "DPI ≈ 1200",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185019
+				},
+				{
+					"type": "tag",
+					"id": "2120212b-d41f-5dbd-91d9-b854021507a5",
+					"name": "DPI ≈ 150",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185019
+				},
+				{
+					"type": "tag",
+					"id": "6e56eb75-1072-5ce9-9c81-af97194ad7c5",
+					"name": "DPI ≈ 300",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185019
+				},
+				{
+					"type": "tag",
+					"id": "9e22d0ad-1dc4-5e79-893d-279c0007b5fb",
+					"name": "DPI ≈ 600",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185019
+				},
+				{
+					"type": "tag",
+					"id": "6ba1303b-f9f7-53ab-9245-97743a16deff",
+					"name": "DPI ≈ 75",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185018
+				},
+				{
+					"type": "tag",
+					"id": "809928bb-959a-53e3-a6d7-f5d26dc00484",
+					"name": "DPI: no",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185015
+				},
+				{
+					"name": "duration: 30.0",
+					"creationDate": "2022-12-30T13:37:08.132Z",
+					"creationTimestamp": 1672407428132
+				},
+				{
+					"name": "fps: 30",
+					"creationDate": "2022-12-30T13:37:08.167Z",
+					"creationTimestamp": 1672407428167
+				},
+				{
+					"type": "tag",
+					"id": "6dbce392-bf5c-5d4f-9c32-ec5fe3877324",
+					"name": "GPS: no",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185017
+				},
+				{
+					"type": "tag",
+					"id": "5363d6b7-9d1b-5296-bce2-a552d55f684c",
+					"name": "GPS: with",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185016
+				},
+				{
+					"name": "height: 270",
+					"creationDate": "2022-12-30T13:37:08.238Z",
+					"creationTimestamp": 1672407428238
+				},
+				{
+					"type": "tag",
+					"id": "26a00fea-f451-5bd5-ba5b-2d431f782c39",
+					"name": "Mode: landscape",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185015
+				},
+				{
+					"type": "tag",
+					"id": "8956289b-0de3-500f-97f0-a384064108f2",
+					"name": "Mode: portrait",
+					"creationDate": "Fri Dec 30 2022",
+					"creationTimestamp": 1672407185016
+				},
+				{
+					"name": "NIKON CORPORATION / NIKON D800",
+					"creationDate": "2022-12-30T13:34:39.083Z",
+					"creationTimestamp": 1672407279083
+				},
+				{
+					"name": "width: 480",
+					"creationDate": "2022-12-30T13:37:08.201Z",
+					"creationTimestamp": 1672407428201
+				}
+			],
+			"creationDate": "Fri Dec 30 2022",
+			"creationTimestamp": 1672407185015
+		}
+	],
+	"calibrations": [],
+	"pictures_by_calibration": {},
+	"leaflet_position_by_picture": {
+		"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": {
+			"bounds": {
+				"_southWest": {
+					"lat": -1.0361328125,
+					"lng": -0.4111328125
+				},
+				"_northEast": {
+					"lat": -0.0009765625,
+					"lng": 1.1015625
+				}
+			}
+		}
+	},
+	"selected_tab": null,
+	"annotations_by_tag": {},
+	"taxonomyInstance": {
+		"19ab60e7-621c-52af-bdb4-a8f14ad0d033": {
+			"taxonomyByAnnotation": {
+				"c38a672c-e115-55f2-91ad-e0badb443c8d": {
+					"descriptorId": "c46",
+					"value": 244.2823181242956,
+					"sha1": "5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+					"type": "NUMERICAL"
+				},
+				"d89f5844-2b52-582c-ba05-a7b28de68a05": {
+					"descriptorId": "c4",
+					"value": [
+						"s22"
+					],
+					"sha1": "5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+					"type": "CATEGORICAL"
+				}
+			},
+			"taxonomyByDescriptor": {
+				"c46": {
+					"min": 244.2823181242956,
+					"max": 244.2823181242956,
+					"sd": 0,
+					"avg": 244.2823181242956,
+					"count": 1
+				}
+			},
+			"taxonomyByPicture": {
+				"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83": {
+					"c46": {
+						"min": 244.2823181242956,
+						"max": 244.2823181242956,
+						"sd": 0,
+						"avg": 244.2823181242956,
+						"count": 1
+					},
+					"c4": {
+						"value": [
+							"s22"
+						]
+					}
+				}
+			}
+		}
+	},
+	"open_tabs": {
+		"Selection 1": {
+			"view": "library",
+			"subview": "MOZAIC_VIEW",
+			"selected_folders": [
+				"Events",
+				"Images",
+				"Videos"
+			],
+			"selected_filter": null,
+			"pictures_selection": [
+				"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+				"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+			],
+			"folder_pictures_selection": [
+				"5979ea2566bc8eb4b40511a8152aea9d8f2d3c83",
+				"55508bc98a00f615dbe9bd4c84a253ba4238b021"
+			],
+			"sortDirection": "sort_alphabetic_desc",
+			"sortDirectionAnnotation": "sort_date_desc",
+			"current_picture_index_in_selection": 1,
+			"selected_sha1": "55508bc98a00f615dbe9bd4c84a253ba4238b021",
+			"manualOrderLock": false,
+			"showMozaicDetails": false,
+			"showMozaicCollection": false,
+			"activeTab": "1",
+			"sort_table_by": {
+				"field": "",
+				"direction": ""
+			},
+			"lastScrollPositionInMozaic": 0
+		}
+	},
+	"taxonomies": [
+		{
+			"id": "19ab60e7-621c-52af-bdb4-a8f14ad0d033",
+			"name": "Fleurs",
+			"importDate": "2022-12-30T13:33:10.785Z",
+			"isActive": true,
+			"sddPath": "19ab60e7-621c-52af-bdb4-a8f14ad0d033-sdd.xml",
+			"model": "MODEL_XPER",
+			"version": 2019100201
+		},
+		{
+			"id": "12198b52-e639-5473-9ee4-4728ad8be23f",
+			"name": "Feuilles",
+			"importDate": "2022-12-30T13:33:10.835Z",
+			"isActive": false,
+			"sddPath": "12198b52-e639-5473-9ee4-4728ad8be23f-sdd.xml",
+			"model": "MODEL_XPER",
+			"version": 2019100301
+		},
+		{
+			"id": "405aec3b-8d3e-539a-86f9-e358f058747b",
+			"name": "Fougères",
+			"importDate": "2022-12-30T13:33:10.900Z",
+			"isActive": false,
+			"sddPath": "405aec3b-8d3e-539a-86f9-e358f058747b-sdd.xml",
+			"model": "MODEL_XPER",
+			"version": 2019100201
+		}
+	],
+	"selectedTaxonomy": {
+		"descriptors": [
+			{
+				"targetName": "Solitary flower",
+				"annotationType": "CATEGORICAL",
+				"id": "c1",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s1",
+						"name": "Absence (inflorescence)"
+					},
+					{
+						"id": "s2",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Base type of inflorescence (if present)",
+				"annotationType": "CATEGORICAL",
+				"id": "c2",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s3",
+						"name": "Single cluster (or raceme)"
+					},
+					{
+						"id": "s4",
+						"name": "Spike"
+					},
+					{
+						"id": "s5",
+						"name": "Spadix"
+					},
+					{
+						"id": "s6",
+						"name": "Panicle"
+					},
+					{
+						"id": "s7",
+						"name": "Spikelet"
+					},
+					{
+						"id": "s8",
+						"name": "Bilateral cyme"
+					},
+					{
+						"id": "s9",
+						"name": "Helicoid unilateral cyme"
+					},
+					{
+						"id": "s10",
+						"name": "Scorpioid unilateral cyme"
+					},
+					{
+						"id": "s11",
+						"name": "Thyrse"
+					},
+					{
+						"id": "s12",
+						"name": "Umbel"
+					},
+					{
+						"id": "s13",
+						"name": "Capitulum"
+					},
+					{
+						"id": "s14",
+						"name": "Corymb"
+					},
+					{
+						"id": "s15",
+						"name": "Cyathium"
+					},
+					{
+						"id": "s16",
+						"name": "Type catkin"
+					},
+					{
+						"id": "s17",
+						"name": "Type syconium"
+					}
+				]
+			},
+			{
+				"targetName": "Inflorescence bract",
+				"annotationType": "CATEGORICAL",
+				"id": "c3",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s18",
+						"name": "Absence"
+					},
+					{
+						"id": "s19",
+						"name": "Presence and not in spathe form"
+					},
+					{
+						"id": "s20",
+						"name": "A single well developed spathe"
+					},
+					{
+						"id": "s21",
+						"name": "More than one well developed spathe"
+					}
+				]
+			},
+			{
+				"targetName": "Sex of flowers",
+				"annotationType": "CATEGORICAL",
+				"id": "c4",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s22",
+						"name": "Bisexual"
+					},
+					{
+						"id": "s23",
+						"name": "Unisexual and dioecious"
+					},
+					{
+						"id": "s24",
+						"name": "Unisexual and plant monoecious"
+					}
+				]
+			},
+			{
+				"targetName": "Symmetry of the flower",
+				"annotationType": "CATEGORICAL",
+				"id": "c5",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s25",
+						"name": "Irregular flower and without symmetry"
+					},
+					{
+						"id": "s26",
+						"name": "Flower with symmetry"
+					}
+				]
+			},
+			{
+				"targetName": "Type of symmetry (if present)",
+				"annotationType": "CATEGORICAL",
+				"id": "c6",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s27",
+						"name": "Radial (actinomorphic)"
+					},
+					{
+						"id": "s28",
+						"name": "Bilateral (zygomorphic)"
+					},
+					{
+						"id": "s29",
+						"name": "Double bilateral symmetry"
+					}
+				]
+			},
+			{
+				"targetName": "Floral bract",
+				"annotationType": "CATEGORICAL",
+				"id": "c7",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s30",
+						"name": "Absence"
+					},
+					{
+						"id": "s31",
+						"name": 1
+					},
+					{
+						"id": "s32",
+						"name": "2 or more"
+					}
+				]
+			},
+			{
+				"targetName": "Floral bract color (if present)",
+				"annotationType": "CATEGORICAL",
+				"id": "c8",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s33",
+						"name": "White"
+					},
+					{
+						"id": "s34",
+						"name": "Green"
+					},
+					{
+						"id": "s35",
+						"name": "Yellow"
+					},
+					{
+						"id": "s36",
+						"name": "Purple"
+					}
+				]
+			},
+			{
+				"targetName": "Floral peduncle",
+				"annotationType": "CATEGORICAL",
+				"id": "c9",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s37",
+						"name": "Absence (sessile flower)"
+					},
+					{
+						"id": "s38",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Floral receptacle",
+				"annotationType": "CATEGORICAL",
+				"id": "c10",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s39",
+						"name": "Not or slightly developed"
+					},
+					{
+						"id": "s40",
+						"name": "Developed"
+					}
+				]
+			},
+			{
+				"targetName": "Form of receptacle (if developed)",
+				"annotationType": "CATEGORICAL",
+				"id": "c11",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s41",
+						"name": "More or less flat (or slightly convex or concave)"
+					},
+					{
+						"id": "s42",
+						"name": "Strongly concave (hypanthium)"
+					},
+					{
+						"id": "s43",
+						"name": "Highly convex (thalamus)"
+					}
+				]
+			},
+			{
+				"targetName": "Nectariferous spur",
+				"annotationType": "CATEGORICAL",
+				"id": "c12",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s44",
+						"name": "Absence"
+					},
+					{
+						"id": "s45",
+						"name": "Presence, one per flower"
+					},
+					{
+						"id": "s46",
+						"name": "Presence, two per flower"
+					},
+					{
+						"id": "s47",
+						"name": "Presence, more than two per flower"
+					}
+				]
+			},
+			{
+				"targetName": "Resupined flower",
+				"annotationType": "CATEGORICAL",
+				"id": "c13",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s48",
+						"name": "No"
+					},
+					{
+						"id": "s49",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Differenciation calyx/corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c14",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s50",
+						"name": "Absence (tepals)"
+					},
+					{
+						"id": "s51",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Fused tepals",
+				"annotationType": "CATEGORICAL",
+				"id": "c15",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s52",
+						"name": "Absence"
+					},
+					{
+						"id": "s53",
+						"name": "Presence (syntepaly)"
+					}
+				]
+			},
+			{
+				"targetName": "Color uniformity of tepals (or if calyx and corolla concolors)",
+				"annotationType": "CATEGORICAL",
+				"id": "c16",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s54",
+						"name": "Tepals all of the same color"
+					},
+					{
+						"id": "s55",
+						"name": "At least one tepal of a different color"
+					}
+				]
+			},
+			{
+				"targetName": "Background color of tepals (with or without patterns)",
+				"annotationType": "CATEGORICAL",
+				"id": "c17",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s56",
+						"name": "Black (or very dark purple)"
+					},
+					{
+						"id": "s57",
+						"name": "Brown"
+					},
+					{
+						"id": "s58",
+						"name": "White"
+					},
+					{
+						"id": "s59",
+						"name": "Blue"
+					},
+					{
+						"id": "s60",
+						"name": "Yellow"
+					},
+					{
+						"id": "s61",
+						"name": "Green"
+					},
+					{
+						"id": "s62",
+						"name": "Red"
+					},
+					{
+						"id": "s63",
+						"name": "Pink"
+					},
+					{
+						"id": "s64",
+						"name": "Purple"
+					}
+				]
+			},
+			{
+				"targetName": "Epicalyx",
+				"annotationType": "CATEGORICAL",
+				"id": "c18",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s65",
+						"name": "Absence"
+					},
+					{
+						"id": "s66",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Calyx",
+				"annotationType": "CATEGORICAL",
+				"id": "c19",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s67",
+						"name": "Absence"
+					},
+					{
+						"id": "s68",
+						"name": "Single"
+					},
+					{
+						"id": "s69",
+						"name": "Double"
+					}
+				]
+			},
+			{
+				"targetName": "Calyx reduced to scales, hairs or bristles",
+				"annotationType": "CATEGORICAL",
+				"id": "c20",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s70",
+						"name": "No"
+					},
+					{
+						"id": "s71",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Homogeneous calyx",
+				"annotationType": "CATEGORICAL",
+				"id": "c21",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s72",
+						"name": "No"
+					},
+					{
+						"id": "s73",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Fused calyx",
+				"annotationType": "CATEGORICAL",
+				"id": "c22",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s74",
+						"name": "No (aposepalous flower)"
+					},
+					{
+						"id": "s75",
+						"name": "Yes (gamosepalous or synsepalous flower)"
+					}
+				]
+			},
+			{
+				"targetName": "Petaloid calyx (and apetalous flowers)",
+				"annotationType": "CATEGORICAL",
+				"id": "c23",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s76",
+						"name": "Absence"
+					},
+					{
+						"id": "s77",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Color uniformity of the calyx if petaloid (and apetalous flowers)",
+				"annotationType": "CATEGORICAL",
+				"id": "c24",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s78",
+						"name": "Sepals all of the same color"
+					},
+					{
+						"id": "s79",
+						"name": "At least one sepal of a different color"
+					}
+				]
+			},
+			{
+				"targetName": "Background color of sepals if petaloid (with or without patterns and apetal flowers)",
+				"annotationType": "CATEGORICAL",
+				"id": "c25",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s80",
+						"name": "Black (or very dark purple)"
+					},
+					{
+						"id": "s81",
+						"name": "Brown"
+					},
+					{
+						"id": "s82",
+						"name": "White"
+					},
+					{
+						"id": "s83",
+						"name": "Blue"
+					},
+					{
+						"id": "s84",
+						"name": "Yellow"
+					},
+					{
+						"id": "s85",
+						"name": "Green"
+					},
+					{
+						"id": "s86",
+						"name": "Red"
+					},
+					{
+						"id": "s87",
+						"name": "Pink"
+					},
+					{
+						"id": "s88",
+						"name": "Purple"
+					}
+				]
+			},
+			{
+				"targetName": "Color of calyx if well developed and not petaloid",
+				"annotationType": "CATEGORICAL",
+				"id": "c26",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s89",
+						"name": "Brown"
+					},
+					{
+						"id": "s90",
+						"name": "White"
+					},
+					{
+						"id": "s91",
+						"name": "Green"
+					}
+				]
+			},
+			{
+				"targetName": "Corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c27",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s92",
+						"name": "Absence (apetal flowers)"
+					},
+					{
+						"id": "s93",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Fused corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c28",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s94",
+						"name": "No (dialy- or apopetal flower)"
+					},
+					{
+						"id": "s95",
+						"name": "Yes (gamo- or sympetal flowers)"
+					}
+				]
+			},
+			{
+				"targetName": "\"Papillonaceous\" corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c29",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s96",
+						"name": "No"
+					},
+					{
+						"id": "s97",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Bilabiate 2/3 corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c30",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s98",
+						"name": "No"
+					},
+					{
+						"id": "s99",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Color uniformity of petals",
+				"annotationType": "CATEGORICAL",
+				"id": "c31",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s100",
+						"name": "Petals all of the same color"
+					},
+					{
+						"id": "s101",
+						"name": "At least one petal of a different colour"
+					}
+				]
+			},
+			{
+				"targetName": "Background color of well-developed petals",
+				"annotationType": "CATEGORICAL",
+				"id": "c32",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s102",
+						"name": "Black (or very dark purple)"
+					},
+					{
+						"id": "s103",
+						"name": "Brown"
+					},
+					{
+						"id": "s104",
+						"name": "White"
+					},
+					{
+						"id": "s105",
+						"name": "Blue"
+					},
+					{
+						"id": "s106",
+						"name": "Yellow"
+					},
+					{
+						"id": "s107",
+						"name": "Green"
+					},
+					{
+						"id": "s108",
+						"name": "Red"
+					},
+					{
+						"id": "s109",
+						"name": "Pink"
+					},
+					{
+						"id": "s110",
+						"name": "Purple"
+					}
+				]
+			},
+			{
+				"targetName": "\"Ventral\" petal transformed into labellum",
+				"annotationType": "CATEGORICAL",
+				"id": "c33",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s111",
+						"name": "No"
+					},
+					{
+						"id": "s112",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Total number of fertile stamens",
+				"annotationType": "CATEGORICAL",
+				"id": "c34",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s113",
+						"name": 1
+					},
+					{
+						"id": "s114",
+						"name": "2 and multiples of 2"
+					},
+					{
+						"id": "s115",
+						"name": "3 and multiples of 3"
+					},
+					{
+						"id": "s116",
+						"name": "4 and multiples of 4"
+					},
+					{
+						"id": "s117",
+						"name": "5 and multiples of 5"
+					},
+					{
+						"id": "s118",
+						"name": "n"
+					}
+				]
+			},
+			{
+				"targetName": "Didynamous androecium (if 4 stamen)",
+				"annotationType": "CATEGORICAL",
+				"id": "c35",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s119",
+						"name": "No"
+					},
+					{
+						"id": "s120",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Tetradynamous androecium (if 6 stamen)",
+				"annotationType": "CATEGORICAL",
+				"id": "c36",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s121",
+						"name": "No"
+					},
+					{
+						"id": "s122",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Staminodes",
+				"annotationType": "CATEGORICAL",
+				"id": "c37",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s123",
+						"name": "Absence"
+					},
+					{
+						"id": "s124",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Number of staminodes",
+				"annotationType": "CATEGORICAL",
+				"id": "c38",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s125",
+						"name": 1
+					},
+					{
+						"id": "s126",
+						"name": "2 and multiples of 2"
+					},
+					{
+						"id": "s127",
+						"name": "3 and multiples of 3"
+					},
+					{
+						"id": "s128",
+						"name": "4 and multiples of 4"
+					},
+					{
+						"id": "s129",
+						"name": "5 and multiples of 5"
+					},
+					{
+						"id": "s130",
+						"name": "n"
+					}
+				]
+			},
+			{
+				"targetName": "Stamens aggregated in clusters",
+				"annotationType": "CATEGORICAL",
+				"id": "c39",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s131",
+						"name": "No"
+					},
+					{
+						"id": "s132",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Number of stamen clusters",
+				"annotationType": "CATEGORICAL",
+				"id": "c40",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s133",
+						"name": "2 and multiples of 2"
+					},
+					{
+						"id": "s134",
+						"name": "3 and multiples of 3"
+					},
+					{
+						"id": "s135",
+						"name": "4 and multiples of 4"
+					},
+					{
+						"id": "s136",
+						"name": "5 and multiples of 5"
+					},
+					{
+						"id": "s137",
+						"name": "n"
+					}
+				]
+			},
+			{
+				"targetName": "Stamens fused by anthers",
+				"annotationType": "CATEGORICAL",
+				"id": "c41",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s138",
+						"name": "No"
+					},
+					{
+						"id": "s139",
+						"name": "Yes (synanthered androecium)"
+					}
+				]
+			},
+			{
+				"targetName": "Anther orientation",
+				"annotationType": "CATEGORICAL",
+				"id": "c42",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s140",
+						"name": "Introrse"
+					},
+					{
+						"id": "s141",
+						"name": "Extrorse"
+					}
+				]
+			},
+			{
+				"targetName": "Pollen aggregation into pollinia",
+				"annotationType": "CATEGORICAL",
+				"id": "c43",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s142",
+						"name": "No"
+					},
+					{
+						"id": "s143",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Branched stigma (if fused styles)",
+				"annotationType": "CATEGORICAL",
+				"id": "c44",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s144",
+						"name": "No"
+					},
+					{
+						"id": "s145",
+						"name": "Yes"
+					}
+				]
+			},
+			{
+				"targetName": "Length of inflorescence",
+				"unit": "mm",
+				"annotationType": "NUMERICAL",
+				"id": "c45",
+				"targetColor": "#ff0000"
+			},
+			{
+				"targetName": "Diameter of flower",
+				"unit": "mm",
+				"annotationType": "NUMERICAL",
+				"id": "c46",
+				"targetColor": "#ff0000"
+			},
+			{
+				"targetName": "Appearance of calyx if well developed and not petaloid",
+				"annotationType": "CATEGORICAL",
+				"id": "c47",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s146",
+						"name": "Well developed"
+					},
+					{
+						"id": "s147",
+						"name": "Scarious"
+					},
+					{
+						"id": "s148",
+						"name": "Diaphanous"
+					}
+				]
+			},
+			{
+				"targetName": "Appearance of corolla",
+				"annotationType": "CATEGORICAL",
+				"id": "c48",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s149",
+						"name": "Well developed"
+					},
+					{
+						"id": "s150",
+						"name": "Scarious"
+					},
+					{
+						"id": "s151",
+						"name": "Diaphanous"
+					}
+				]
+			},
+			{
+				"targetName": "Gynophore",
+				"annotationType": "CATEGORICAL",
+				"id": "c49",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s152",
+						"name": "Absence"
+					},
+					{
+						"id": "s153",
+						"name": "Presence"
+					}
+				]
+			},
+			{
+				"targetName": "Heterogeneous androecium in form",
+				"annotationType": "CATEGORICAL",
+				"id": "c50",
+				"targetColor": "#ff0000",
+				"states": [
+					{
+						"id": "s154",
+						"name": "No"
+					},
+					{
+						"id": "s155",
+						"name": "Yes"
+					}
+				]
+			}
+		],
+		"id": "19ab60e7-621c-52af-bdb4-a8f14ad0d033",
+		"name": "Fleurs",
+		"model": "MODEL_XPER"
+	},
+	"leafletSettings": {},
+	"selectedProjectName": "Demo Annotate-on v2 milestone1"
+}
