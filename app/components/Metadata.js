@@ -53,6 +53,7 @@ export default class extends Component {
                 'placeName': props.picture.placeName || '',
                 'rights':  props.picture.rights || '',
                 'contact': props.picture.contact || '',
+                'coverage': props.picture.coverage || {temporal: {}}
             },
             'exif': {
                 'dimensionsX': props.picture.width,
@@ -108,6 +109,7 @@ export default class extends Component {
                 'placeName': metadata.iptc.placeName ? metadata.iptc.placeName : this.props.picture.placeName || '',
                 'rights': metadata.iptc.rights ? metadata.iptc.rights : this.props.picture.rights || '',
                 'contact':  metadata.iptc.contact ? metadata.iptc.contact : this.props.picture.contact || '',
+                'coverage': metadata.iptc.coverage || {temporal: {}}
             };
 
             metadata.exif = {
@@ -133,7 +135,7 @@ export default class extends Component {
     }
 
     _formChangeHandler = ( event ) => {
-        // console.log("_formChangeHandler", event);
+        console.log("_formChangeHandler", event);
         const { name, value } = event.target;
         const { t } = this.props;
         let errors = this.state.errors;
@@ -146,6 +148,20 @@ export default class extends Component {
                 metadata.iptc.placeName = value.place ? value.place : '';
                 metadata.iptc.location = location;
             }
+            this.setState({
+                metadata,
+                formSaved: false,
+                errors: errors
+            });
+        } else if(name === 'coverage.temporal') {
+            const coverage = metadata.iptc.coverage ?  {...metadata.iptc.coverage} : {};
+            const temporal = coverage.temporal ? coverage.temporal: {};
+            temporal.start = value.start ? value.start : '';
+            temporal.end = value.end ? value.end : '';
+            temporal.period = value.period ? value.period : '';
+            metadata.iptc.coverage = {temporal: temporal};
+            let errors = this.state.errors;
+            console.log("metadata", metadata);
             this.setState({
                 metadata,
                 formSaved: false,
@@ -170,7 +186,7 @@ export default class extends Component {
             saveMetadata(this.props.picture.sha1, this.state.metadata);
 
             console.log(this.state.metadata);
-            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName);
+            this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName, this.state.metadata.iptc.coverage);
 
             let naturalScienceMetadata2 = '';
             let  iptcMetadata ='';
@@ -196,7 +212,7 @@ export default class extends Component {
             }
             console.log("iptc", iptc)
             for (let prop in iptc) {
-                if (iptc[prop] !== ''){
+                if (iptc[prop] !== '' && prop !== 'coverage'){
                     let xmp_tag = `\t\t <dc:${prop}>${iptc[prop]}</dc:${prop}> \n`;
                     console.log("prop", prop)
                     if (iptc[prop].includes(separator)) {
@@ -264,6 +280,7 @@ export default class extends Component {
     render() {
         const {errors} = this.state;
         const { t } = this.props;
+        console.log("render", this.state)
         return <Container className="metadata-pane">
             <Row>
                 <Col className="local-title">{t('inspector.metadata.title_keywords')}</Col>
@@ -465,13 +482,7 @@ export default class extends Component {
                                    value={this.state.metadata.iptc.created || ''}
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
-                        {/*<DatingWidget value={"2022/12/12"}*/}
-                        {/*              openEdit={this.props.openEditDating}*/}
-                        {/*              start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}*/}
-                        {/*              end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}*/}
-                        {/*              period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}*/}
-                        {/*              onValueChange={this.handleTemporalCoverageChange}*/}
-                        {/*/>*/}
+
                         <FormGroup>
                             <Input type="text" name="iptc.type" id="type"
                                    placeholder={t('inspector.metadata.textbox_placeholder_type')}
@@ -540,6 +551,15 @@ export default class extends Component {
                         {/*            <span className='error'>{errors.location}</span>}*/}
                         {/*    </InputGroup>*/}
                         {/*</FormGroup>*/}
+
+                        <DatingWidget
+                            name="coverage.temporal"
+                            openEdit={false}
+                            start ={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.start : ''}
+                            end={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.end : ''}
+                            period={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.period : ''}
+                            onValueChange={this._formChangeHandler}
+                        />
 
                         <GeolocationWidget name="geolocation"
                                            place={this.state.metadata.iptc.placeName}
