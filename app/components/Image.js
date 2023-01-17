@@ -310,7 +310,6 @@ class Image extends PureComponent {
                                     updateAnnotation={this._updateAnnotation}
                                     navigationHandler={this._navigationHandler}
                                     leafletImage={this.leafletImage}
-                                    currentPicture={this.state.currentPicture}
                                     isFromLibraryView={false}
                                 />
                             </div>
