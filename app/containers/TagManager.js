@@ -6,7 +6,7 @@ import {
     flatOldTags,
     createCategory,
     addSubCategory,
-    importTagModel, editTagById, editCategoryById, mergeTMTags, addTagsId
+    importTagModel, editTagById, editCategoryById, mergeTMTags, addTagsId, saveSelectedCategory
 } from '../actions/app';
 import Component from '../components/TagManager';
 import {withTranslation} from "react-i18next";
@@ -19,7 +19,9 @@ const mapStateToProps = (state, ownProps) => {
         annotationsByTag: state.app.annotations_by_tag,
         tagsByAnnotation: state.app.tags_by_annotation,
         selectedTaxonomy: state.app.selectedTaxonomy,
-        projectName: state.app.selectedProjectName
+        projectName: state.app.selectedProjectName,
+        selectedCategory: state.app.selectedCategory,
+        selectedCategories: state.app.selectedCategories,
     };
 };
 
@@ -54,7 +56,10 @@ const mapDispatchToProps = dispatch => {
         },
         addTagsId: () => {
             dispatch(addTagsId());
-        }
+        },
+        saveSelectedCategory: (selectedCategory, selectedCategories) => {
+            dispatch(saveSelectedCategory(selectedCategory, selectedCategories));
+        },
     };
 };
 

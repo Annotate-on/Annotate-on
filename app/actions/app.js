@@ -128,6 +128,7 @@ export const SAVE_LEAFLET_SETTINGS = 'SAVE_LEAFLET_SETTINGS';
 export const SET_STATE = 'SET_STATE';
 export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
+export const SAVE_SELECTED_CATEGORY = 'SAVE_SELECTED_CATEGORY';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
     return {
@@ -862,3 +863,9 @@ export const saveAnnotationEndTime = (annType, annId, endTime, pictureId) => ({
     type: STOP_ANNOTATION_RECORDING,
     annType, annId, endTime, pictureId
 });
+
+export const saveSelectedCategory = (selectedCategory, selectedCategories) => ({
+    type: SAVE_SELECTED_CATEGORY,
+    selectedCategory, selectedCategories
+});
+
