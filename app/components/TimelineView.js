@@ -62,31 +62,20 @@ export default class TimelineView extends Component {
                 // console.log("processing resource", resource)
                 annotations.filter(annotation => {
                     if(annotation.coverage && annotation.coverage.temporal) {
-                        if(annotation.coverage.temporal.start) {
-                            let startMomentDateTimeSec = moment(annotation.coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false);
-                            let startDate = startMomentDateTimeSec.toDate();
-                            let endDate = annotation.coverage.temporal.end ? moment(annotation.coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false) : null;
-                            const startDateValue = annotation.coverage.temporal.start.replace("T", " ");
-                            const endDateValue = annotation.coverage.temporal.end.replace("T", " ");
-                            const dataItem = {
-                                type: MARKER_TYPE_ANNOTATION,
-                                startDate: startDate,
-                                startDateValue: startDateValue,
-                                endDate: endDate,
-                                endDateValue:endDateValue,
-                                period: annotation.coverage.temporal.period,
-                                annotation: annotation,
-                                resource: resource
-                            }
+                        let dataItem = this.extractDataItemFromTemporalCoverage(annotation.coverage, resource, annotation);
+                        if(dataItem){
                             dataItems.push(dataItem);
                         }
                     }
                 });
             }
             if(this.state.filter === FILTER_VALUE_ALL || this.state.filter === FILTER_VALUE_METADATA) {
-                console.log("processing resource", resource)
-                if(resource.exifDate) {
-                    // TODO for metadata
+                // console.log("processing resource", resource)
+                if(resource.coverage && resource.coverage.temporal) {
+                    let dataItem = this.extractDataItemFromTemporalCoverage(resource.coverage, resource, null);
+                    if(dataItem){
+                        dataItems.push(dataItem);
+                    }
                 } else if(resource.erecolnatMetadata && resource.erecolnatMetadata.eventdate) {
                     const eventDateValue = resource.erecolnatMetadata.eventdate.split("/");
                     let startMomentDateTimeSec = moment(eventDateValue[0], 'YYYY-MM-DD', false);
@@ -147,6 +136,28 @@ export default class TimelineView extends Component {
             items: results,
             currentActiveItem: currentActiveItem
         });
+    }
+
+    extractDataItemFromTemporalCoverage(coverage, resource, annotation) {
+        if (coverage.temporal.start) {
+            let startMomentDateTimeSec = moment(coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false);
+            let startDate = startMomentDateTimeSec.toDate();
+            let endDate = coverage.temporal.end ? moment(coverage.temporal.start, 'YYYY-MM-DDTHH:mm:ss', false) : null;
+            const startDateValue = coverage.temporal.start.replace("T", " ");
+            const endDateValue = coverage.temporal.end.replace("T", " ");
+            const dataItem = {
+                type: MARKER_TYPE_ANNOTATION,
+                startDate: startDate,
+                startDateValue: startDateValue,
+                endDate: endDate,
+                endDateValue: endDateValue,
+                period: coverage.temporal.period,
+                annotation: annotation,
+                resource: resource
+            }
+            return dataItem;
+        }
+        return null;
     }
 
     _mergeAnnotations = (props, resourceId) => {
