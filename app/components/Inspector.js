@@ -259,7 +259,7 @@ export default class extends Component {
 
         // Open edit of event annotation on annotation record start.
         if (acceptedTypes.includes(nextProps.picture.resourceType) && this.state.annotations.length < nextState.annotations.length
-            && this.props.currentPicture && this.props.currentPicture.sha1 === nextProps.currentPicture.sha1) {
+            && this.props.picture && this.props.picture.sha1 === nextProps.picture.sha1) {
             const annotation = this._sortAnnotations(nextState.annotations, SORT_DATE_DESC)[0];
             this.setState({editedAnnotation: annotation});
         }
@@ -835,22 +835,26 @@ export default class extends Component {
             defaultValue = options[0]
         }
 
+        console.log("props", this.props)
         return (
-            <div ref={el => {
-                if (el && this.state.highlightAnn === annotation.id && this.state.isFromLeaflet === true) {
-                    setTimeout(_ => {
-                        this.annotationListRef.scrollTo({
-                            top: el.offsetTop - TOP_OFFSET,
-                            left: 0,
-                            behavior: 'smooth'
-                        });
-                    }, 300);
+            <div
+                ref={el => {
+                    if (el && this.state.highlightAnn === annotation.id && this.state.isFromLeaflet === true) {
+                        setTimeout(_ => {
+                            this.annotationListRef.scrollTo({
+                                top: el.offsetTop - TOP_OFFSET,
+                                left: 0,
+                                behavior: 'smooth'
+                            });
+                        }, 300);
+                    }
+                }}
+                className={
+                    classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
+                    {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
+                    'react-contextmenu-wrapper row')
                 }
-            }}
-                 className={classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
-                     {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
-                     'react-contextmenu-wrapper row')}
-                 onClick={(this.props.currentPicture.resourceType === RESOURCE_TYPE_EVENT || this.props.currentPicture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
+                 onClick={(this.props.picture.resourceType === RESOURCE_TYPE_EVENT || this.props.picture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
                      if (this.state.isAnnotateEventRecording) {
                          return false;
                      }
@@ -862,7 +866,7 @@ export default class extends Component {
                      });
 
                  } : undefined}
-                 onMouseOver={this.props.currentPicture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                 onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
                      if (this.state.isAnnotateEventRecording) {
                          return false;
                      }
