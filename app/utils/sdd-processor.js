@@ -227,19 +227,18 @@ export const convertJsonToSDD = (sourceSdd, destinationSdd, taxonomyInstance, se
             }
         }
 
-        const getDescriptions = xmlDoc.getElementsByTagName("CodedDescriptions")[0];
-            if (getDescriptions.childElementCount > 1) {
-
-            const descToDelete = getDescriptions.getElementsByTagName("CodedDescription")[0];
-            getDescriptions.removeChild(descToDelete);
-        }
-
-        const getTaxonNames = xmlDoc.getElementsByTagName("TaxonNames")[0];
-        if (getTaxonNames.childElementCount > 1) {
-
-            const taxonToDelete = getTaxonNames.getElementsByTagName("TaxonName")[0];
-            getTaxonNames.removeChild(taxonToDelete);
-        }
+        // https://recolnat.atlassian.net/jira/software/c/projects/AO/issues/AO-35
+        // const getDescriptions = xmlDoc.getElementsByTagName("CodedDescriptions")[0];
+        //     if (getDescriptions.childElementCount > 1) {
+        //     const descToDelete = getDescriptions.getElementsByTagName("CodedDescription")[0];
+        //     getDescriptions.removeChild(descToDelete);
+        // }
+        //
+        // const getTaxonNames = xmlDoc.getElementsByTagName("TaxonNames")[0];
+        // if (getTaxonNames.childElementCount > 1) {
+        //     const taxonToDelete = getTaxonNames.getElementsByTagName("TaxonName")[0];
+        //     getTaxonNames.removeChild(taxonToDelete);
+        // }
 
         fs.writeFileSync(destinationSdd, (new XMLSerializer()).serializeToString(xmlDoc));
     } else {
