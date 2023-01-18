@@ -9,16 +9,13 @@ import LeafletMap from "./LeafletMap";
 import {
     ee,
     EVENT_SELECT_TAB,
-    EVENT_OPEN_TAB,
     EVENT_HIGHLIGHT_ANNOTATION,
     EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET
 } from "../utils/library";
 import _ from "lodash";
-import {createNewCategory, createNewTag, getMapSelectionCategory, getRootCategoriesNames} from "./tags/tagUtils";
+import {createNewTag, getMapSelectionCategory} from "./tags/tagUtils";
 import {
     TAG_MAP_SELECTION,
-    TAG_AUTO,
-    TAG_DPI_NO,
     MARKER_TYPE_METADATA,
     MARKER_TYPE_ANNOTATION
 } from "../constants/constants";
@@ -84,15 +81,18 @@ export default class MapView extends Component {
             let locationsFromAnnotations = [];
             if(annotations) {
                 annotations.filter(annotation => {
-                    if(annotation.coverage && annotation.coverage.spatial) {
-                        const location = {
-                            type: MARKER_TYPE_ANNOTATION,
-                            latLng : getDecimalLocation(`${annotation.coverage.spatial.location.latitude},${annotation.coverage.spatial.location.longitude}`),
-                            resource : resource,
-                            annotation: annotation,
-                            current: resource.sha1 === this.props.currentPictureSelection.sha1
-                        };
-                        locationsFromAnnotations.push(location);
+                    if(annotation.coverage && annotation.coverage.spatial ) {
+                        let latLng = getDecimalLocation(`${annotation.coverage.spatial.location.latitude},${annotation.coverage.spatial.location.longitude}`)
+                        if(latLng) {
+                            const location = {
+                                type: MARKER_TYPE_ANNOTATION,
+                                latLng : latLng,
+                                resource : resource,
+                                annotation: annotation,
+                                current: resource.sha1 === this.props.currentPictureSelection.sha1
+                            };
+                            locationsFromAnnotations.push(location);
+                        }
                     }
                 });
             }
