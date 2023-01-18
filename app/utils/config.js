@@ -1204,5 +1204,43 @@ export const copyFolderSync = (from, to) => {
     });
 }
 
+export const existConfigFrom1xVersion = () => {
+    let old_config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
+    // console.log(old_config_file_path, fs.existsSync(old_config_file_path));
+    return fs.existsSync(old_config_file_path);
+}
+
+export const importProjectsFrom1xVersionConfig = () => {
+    if(!existConfigFrom1xVersion()) return;
+    let old_config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
+    const oldYml = configYaml(old_config_file_path);
+    let numberOfImportedProjects = 0;
+    if(oldYml.projects) {
+        for (const project of oldYml.projects) {
+            if(!checkIfExistProjectWithPath(project.path)) {
+                project.active = false;
+                config.projects.push(project);
+                ++numberOfImportedProjects;
+            } else {
+                console.log("already have project with path ", path);
+            };
+        }
+    }
+    if(numberOfImportedProjects > 0) {
+        yaml.sync(config_file_path, config);
+    }
+    return numberOfImportedProjects;
+}
+
+export const checkIfExistProjectWithPath = (path) => {
+    if(config.projects) {
+        let found = config.projects.find(it => {return it.path === path})
+        if (found)
+            return true
+        else
+            return false;
+    } else
+        return false;
+}
 
 
