@@ -6,9 +6,6 @@ import {
     Form,
     FormGroup,
     Input,
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
     Row
 } from "reactstrap";
 import PickTag from "../containers/PickTag";
@@ -18,7 +15,6 @@ import {loadMetadata, saveMetadata} from "../utils/config";
 import fs from "fs-extra";
 import path from "path";
 import GeolocationWidget from "./GeolocationWidget";
-import {validateLocationInput} from "./event/utils";
 import DatingWidget from "./DatingWidget";
 
 const REMOVE_TAG = require('./pictures/delete_tag.svg');
@@ -134,8 +130,13 @@ export default class extends Component {
         }))
     }
 
+    _handleChangeAndSaveForm = ( event ) => {
+        this._formChangeHandler(event);
+        this._saveForm();
+    }
+
     _formChangeHandler = ( event ) => {
-        console.log("_formChangeHandler", event);
+        // console.log("_formChangeHandler", event);
         const { name, value } = event.target;
         const { t } = this.props;
         let errors = this.state.errors;
@@ -161,7 +162,6 @@ export default class extends Component {
             temporal.period = value.period ? value.period : '';
             metadata.iptc.coverage = {temporal: temporal};
             let errors = this.state.errors;
-            console.log("metadata", metadata);
             this.setState({
                 metadata,
                 formSaved: false,
@@ -179,13 +179,13 @@ export default class extends Component {
     };
 
     _saveForm = (_) => {
+        // console.log('_saveForm', this.state.metadata);
         if(this._validateForm(this.state.errors)) {
-            if ((_.key !== 'Enter' && _.key !== 'Tab') && _.type === 'keydown') {
+            if (_ && _.key !== 'Enter' && _.key !== 'Tab' && _.type === 'keydown') {
                 return;
             }
             saveMetadata(this.props.picture.sha1, this.state.metadata);
 
-            console.log(this.state.metadata);
             this.props.updatePictureDate(this.props.picture.sha1, this.state.metadata.iptc.created, this.state.metadata.iptc.location, this.state.metadata.iptc.placeName, this.state.metadata.iptc.coverage);
 
             let naturalScienceMetadata2 = '';
@@ -210,11 +210,9 @@ export default class extends Component {
                     }
                 }
             }
-            console.log("iptc", iptc)
             for (let prop in iptc) {
                 if (iptc[prop] !== '' && prop !== 'coverage'){
                     let xmp_tag = `\t\t <dc:${prop}>${iptc[prop]}</dc:${prop}> \n`;
-                    console.log("prop", prop)
                     if (iptc[prop].includes(separator)) {
                         const _array = iptc[prop].split(separator);
                         _array.forEach( ( a ) => {
@@ -264,7 +262,7 @@ export default class extends Component {
             console.log("Files saved", `${fileName}.xmp ,  ${fileName}.xml` );
             this.setState({formSaved: true});
             console.info('Valid Form')
-        }else{
+        } else {
             console.error('Invalid Form')
         }
     };
@@ -280,7 +278,6 @@ export default class extends Component {
     render() {
         const {errors} = this.state;
         const { t } = this.props;
-        console.log("render", this.state)
         return <Container className="metadata-pane">
             <Row>
                 <Col className="local-title">{t('inspector.metadata.title_keywords')}</Col>
@@ -532,39 +529,19 @@ export default class extends Component {
                                    onChange={this._formChangeHandler}/>
                         </FormGroup>
 
-                        {/*<FormGroup>*/}
-                        {/*    <InputGroup>*/}
-                        {/*        <Input type="text" name="iptc.location" id="location"*/}
-                        {/*               placeholder={t('inspector.metadata.textbox_placeholder_coverage_place')}*/}
-                        {/*               title = {t('inspector.metadata.textbox_tooltip_coverage_place')}*/}
-                        {/*               onKeyDown={this._saveForm}*/}
-                        {/*               value={this.state.metadata.iptc.location}*/}
-                        {/*               onChange={this._formChangeHandler}/>*/}
-                        {/*        <InputGroupAddon addonType="append">*/}
-                        {/*            <InputGroupText>*/}
-                        {/*                <i className="fa fa-external-link" aria-hidden="true"*/}
-                        {/*                   onClick={() => this._openInGoogleMaps(this.state.metadata.iptc.location)}*/}
-                        {/*                />*/}
-                        {/*            </InputGroupText>*/}
-                        {/*        </InputGroupAddon>*/}
-                        {/*        {errors.location.length > 0 &&*/}
-                        {/*            <span className='error'>{errors.location}</span>}*/}
-                        {/*    </InputGroup>*/}
-                        {/*</FormGroup>*/}
-
                         <DatingWidget
                             name="coverage.temporal"
                             openEdit={false}
                             start ={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.start : ''}
                             end={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.end : ''}
                             period={(this.state.metadata.iptc.coverage && this.state.metadata.iptc.coverage.temporal) ? this.state.metadata.iptc.coverage.temporal.period : ''}
-                            onValueChange={this._formChangeHandler}
+                            onValueChange={this._handleChangeAndSaveForm}
                         />
 
                         <GeolocationWidget name="geolocation"
                                            place={this.state.metadata.iptc.placeName}
                                            location={this.state.metadata.iptc.location}
-                                           onValueChange={this._formChangeHandler}/>
+                                           onValueChange={this._handleChangeAndSaveForm}/>
                         <FormGroup>
                             <Input type="text" name="iptc.rights" id="rights"
                                    placeholder={t('inspector.metadata.textbox_placeholder_rights_usage_terms')}
