@@ -15,7 +15,6 @@ import {
     Table
 } from 'reactstrap';
 import {
-    updateSelectedLanguage,
     deleteWorkspace,
     editProject,
     getProjectInfo,
@@ -25,7 +24,12 @@ import {
     lockUnlockProject,
     probeLockedProject,
     PROJECT_INFO_DESCRIPTOR,
-    setWorkspace, forceUnlockProject, lockProject, checkIfProjectsAreCorrupted
+    setWorkspace,
+    forceUnlockProject,
+    lockProject,
+    checkIfProjectsAreCorrupted,
+    existConfigFrom1xVersion,
+    importProjectsFrom1xVersionConfig
 } from "../utils/config";
 import fs from 'fs-extra';
 import archiver from 'archiver';
@@ -33,12 +37,8 @@ import TableHeader from "./TableHeader";
 import {remote, shell} from "electron";
 import path from "path";
 import {
-    APP_NAME,
     COMMON_TAGS,
     IMAGE_STORAGE_DIR,
-    MODEL_XPER, SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC,
-    SORT_DATE_ASC,
-    SORT_DATE_DESC, SORT_TYPE_ASC, SORT_TYPE_DESC,
     TAG_AUTO
 } from "../constants/constants";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
@@ -57,11 +57,7 @@ import configYaml from 'config-yaml';
 import lodash from "lodash";
 import packageJson from "../../package.json";
 import {getValidTags, lvlAutomaticTags, lvlTags} from "./tags/tagUtils";
-import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
-import i18next from "i18next";
-import DocLink from "../widget/DocLink";
-
 
 const EDIT = require('./pictures/edit_tag.svg');
 const COPY_PATH_IMAGE_CONTEXT = require('./pictures/copy-link.png');
@@ -326,10 +322,28 @@ export default class extends PureComponent {
         }
     }
 
+    _importProjectsFrom1xVersion = () => {
+        const { t } = this.props;
+        let numberOfImportedProjects = importProjectsFrom1xVersionConfig();
+        if(numberOfImportedProjects > 0) {
+            const projectsWithInfo = this._makeProjects();
+            const sortedProjects = this._sortList(this.state.sortBy, this.state.sortDirection, projectsWithInfo);
+            this.setState({
+                projects: sortedProjects
+            });
+        }
+        remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+            type: 'info',
+            detail: t('projects.alert_import_projects_from_1x_version_message', {numberOfImportedProjects: numberOfImportedProjects}),
+            message: t('projects.alert_import_projects_from_1x_version_is_finished'),
+            buttons: ['OK'],
+            cancelId: 1
+        });
+    };
+
     render() {
         const { t } = this.props;
         let status = '';
-
 
         return (<Container className="bst rcn_xper">
                 <PageTitle
@@ -368,6 +382,14 @@ export default class extends PureComponent {
                                     this.props.goToImportExistingProject();
                                 }}
                         >{t('projects.btn_open_project')}</Button>
+                        {existConfigFrom1xVersion() &&
+                            <Button className="btn btn-primary mr-md-3" color="primary"
+                                    title={t('projects.btn_tooltip_import_projects_from_1x_version')}
+                                    onClick={() => {
+                                        this._importProjectsFrom1xVersion();
+                                    }}
+                            >{t('projects.btn_import_projects_from_1x_version')}</Button>
+                        }
                     </Col>
                 </Row>
                 <br/>

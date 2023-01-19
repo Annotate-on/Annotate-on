@@ -817,12 +817,13 @@ export const deleteCartel = (pictureId, id) => ({
     id
 });
 
-export const updatePictureDate = (sha1, date, exifPlace, placeName) => ({
+export const updatePictureDate = (sha1, date, exifPlace, placeName, coverage) => ({
     type: UPDATE_PICTURE_DATE,
     sha1,
     date,
     exifPlace,
-    placeName
+    placeName,
+    coverage
 });
 
 export const updateMozaicToggle = (tabName, showMozaicCollection, showMozaicDetails) => ({

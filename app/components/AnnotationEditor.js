@@ -883,12 +883,12 @@ export default class extends Component {
                     <FormGroup row>
                         {/*<Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>*/}
                         <Col sm={12} className="coverage-editor-holder">
-                            <DatingWidget value={"2022/12/12"}
-                                          openEdit={this.props.openEditDating}
-                                          start={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.start : ''}
-                                          end={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.end : ''}
-                                          period={(this.state.coverage && this.state.coverage.temporal) ?  this.state.coverage.temporal.period : ''}
-                                          onValueChange={this.handleTemporalCoverageChange}
+                            <DatingWidget
+                                openEdit={this.props.openEditDating}
+                                start={(this.state.coverage && this.state.coverage.temporal) ? this.state.coverage.temporal.start : ''}
+                                end={(this.state.coverage && this.state.coverage.temporal) ? this.state.coverage.temporal.end : ''}
+                                period={(this.state.coverage && this.state.coverage.temporal) ? this.state.coverage.temporal.period : ''}
+                                onValueChange={this.handleTemporalCoverageChange}
                             />
                         </Col>
                         {/*<Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_spatial')}</Label>*/}

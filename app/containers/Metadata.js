@@ -18,8 +18,8 @@ const mapDispatchToProps = dispatch => {
         untagPicture: (pictureId, tagName) => {
             dispatch(untagPicture(pictureId, tagName));
         },
-        updatePictureDate: (sha1, date, exifPlace, placeName) => {
-            dispatch(updatePictureDate(sha1, date, exifPlace, placeName));
+        updatePictureDate: (sha1, date, exifPlace, placeName, coverage) => {
+            dispatch(updatePictureDate(sha1, date, exifPlace, placeName, coverage));
         },
         goToLibrary: () => {
             dispatch(push('/selection'));

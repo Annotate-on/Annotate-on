@@ -5,8 +5,9 @@ import {createAutomaticTags, createCommonTags, ee, EVENT_SHOW_ALERT} from "../ut
 
 import {
     ADD_SUB_CATEGORY,
-    MERGE_TM_TAGS,
     ADD_SUB_TAG,
+    ADD_TAG_IN_FILTER,
+    ADD_TAGS_ID,
     CHANGE_TAXONOMY_STATUS,
     CLOSE_TAB,
     CREATE_ANNOTATE_EVENT,
@@ -29,7 +30,7 @@ import {
     CREATE_EVENT_ANNOTATION,
     CREATE_TAB,
     CREATE_TAG,
-    ADD_TAGS_ID,
+    CREATE_TAG_EXPRESSION,
     CREATE_TARGET_DESCRIPTOR,
     CREATE_TARGET_INSTANCE,
     DELETE_ANNOTATE_EVENT,
@@ -50,12 +51,14 @@ import {
     DELETE_PICTURE,
     DELETE_TAB,
     DELETE_TAG,
+    DELETE_TAG_EXPRESSION,
+    DELETE_TAG_FILTER,
     DELETE_TARGET_DESCRIPTOR,
     DELETE_TARGET_TYPE,
     EDIT_ANNOTATE_EVENT,
-    FINISH_CORRUPTED_EVENT,
     EDIT_ANNOTATION,
     EDIT_CARTEL,
+    EDIT_CATEGORY_BY_ID,
     EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME,
     EDIT_EVENT_ANNOTATION_ENDTIME,
     EDIT_TAG,
@@ -64,6 +67,7 @@ import {
     EDIT_TARGET_TYPE,
     EMPTY_TAGS,
     EXTEND_EVENT_DURATION,
+    FINISH_CORRUPTED_EVENT,
     FIRST_PICTURE_IN_SELECTION,
     FLAT_OLD_TAGS,
     FOCUS_ANNOTATION,
@@ -72,6 +76,7 @@ import {
     LAST_PICTURE_IN_SELECTION,
     LOCK_SELECTION,
     MERGE_TAGS,
+    MERGE_TM_TAGS,
     MOVE_FOLDER,
     MOVE_PICTURE_IN_PICTURES_SELECTION,
     NEXT_PICTURE_IN_SELECTION,
@@ -93,15 +98,18 @@ import {
     SAVE_TAXONOMY,
     SELECT_FOLDER,
     SELECT_FOLDER_GLOBALLY,
+    SELECT_LIBRARY_TAB,
     SELECT_MENU,
     SELECT_TAG,
     SET_PICTURE_IN_SELECTION,
     SET_SELECTED_TAXONOMY,
     SET_STATE,
+    STOP_ANNOTATION_RECORDING,
     TAG_ANNOTATION,
     TAG_EVENT_ANNOTATION,
     TAG_PICTURE,
     UNFOCUS_ANNOTATION,
+    UNSELECT_ALL_FOLDERS,
     UNSELECT_FOLDER,
     UNSELECT_TAG,
     UNTAG_ANNOTATION,
@@ -111,15 +119,11 @@ import {
     UPDATE_MOZAIC_TOGGLE,
     UPDATE_PICTURE_DATE,
     UPDATE_TABULAR_VIEW,
-    UPDATE_TAXONOMY_VALUES,
-    EDIT_CATEGORY_BY_ID,
-    ADD_TAG_IN_FILTER,
-    DELETE_TAG_EXPRESSION,
-    CREATE_TAG_EXPRESSION,
     UPDATE_TAG_EXPRESSION_OPERATOR,
     STOP_ANNOTATION_RECORDING, UNSELECT_ALL_FOLDERS, DELETE_TAG_FILTER,
     SELECT_LIBRARY_TAB,
-    SAVE_SELECTED_CATEGORY
+    SAVE_SELECTED_CATEGORY,
+    UPDATE_TAXONOMY_VALUES
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -137,23 +141,26 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
     CARTEL,
-    CATEGORICAL, COMMON_TAGS,
+    CATEGORICAL,
+    COMMON_TAGS,
     IMAGE_STORAGE_DIR,
     INTEREST,
     LIST_VIEW,
-    MANUAL_ORDER, TAG_MAP_SELECTION,
+    MANUAL_ORDER,
     MODEL_ANNOTATE,
     MODEL_XPER,
     NUMERICAL,
     RESOURCE_TYPE_EVENT,
     SORT_ALPHABETIC_DESC,
-    SORT_DATE_DESC, TAG_AUTO,
+    SORT_DATE_DESC,
+    TAG_AUTO,
+    TAG_MAP_SELECTION,
 } from '../constants/constants';
 import {
-    AND,
     changeOperatorValueInFilter,
     convertSelectedTagsToFilter,
-    EXP_ITEM_TYPE_CONDITION, EXP_ITEM_TYPE_EXPRESSION,
+    EXP_ITEM_TYPE_CONDITION,
+    EXP_ITEM_TYPE_EXPRESSION,
     EXP_ITEM_TYPE_OPERATOR,
     findPicturesByTagFilter,
     findTag,
@@ -178,9 +185,7 @@ import {
 } from "../utils/config";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import {standardDeviation} from "../utils/maths";
-import {
-    getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,
-} from "../components/tags/tagUtils";
+import {getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,} from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
 import {
     _addTagIdIfMissing,
@@ -3556,10 +3561,12 @@ export default (state = {}, action) => {
                     }
                 }
                 if (shouldDeleteTaxonomyByPic || action.ofType === CATEGORICAL) {
-                    if (taxInst.taxonomyByPicture[tab.selected_sha1] !== undefined && taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId])
+                    if (taxInst.taxonomyByPicture[tab.selected_sha1] !== undefined && taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId]) {
                         delete taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId];
-                } else
+                    }
+                } else {
                     taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId].value = remainingValues;
+                }
             };
 
             if (action.oldDescriptorId) {
@@ -3583,31 +3590,49 @@ export default (state = {}, action) => {
                         }
                     }
                     if (shouldDeleteTaxonomyByPic) {
-                        if (taxInst.taxonomyByPicture[tab.selected_sha1] !== undefined && taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId])
+                        if (taxInst.taxonomyByPicture[tab.selected_sha1] !== undefined && taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId]) {
                             delete taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId];
-                    } else
+                        }
+                    } else {
                         taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId].value = remainingValues;
+                    }
                 }
             } else {
-                if (annotationId in taxInst.taxonomyByAnnotation)
+                if (annotationId in taxInst.taxonomyByAnnotation) {
                     oldDescriptorId = taxInst.taxonomyByAnnotation[annotationId].descriptorId;
+                }
                 taxInst.taxonomyByAnnotation[annotationId] = {
                     descriptorId,
                     value: value||[0],
                     sha1: tab.selected_sha1,
                     type: action.ofType
                 };
-
                 if (taxInst.taxonomyByPicture[tab.selected_sha1]) {
                     if (descriptorId in taxInst.taxonomyByPicture[tab.selected_sha1]) {
                         taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId].value = [];
+                        let allAnnotationsForSelectedResource = [
+                            ...(state.annotations_chronothematique && state.annotations_chronothematique[tab.selected_sha1] || []),
+                            ...(state.annotations_eventAnnotations && state.annotations_eventAnnotations[tab.selected_sha1] || []),
+                            ...(state.annotations_points_of_interest && state.annotations_points_of_interest[tab.selected_sha1] || []),
+                            ...(state.annotations_measures_linear && state.annotations_measures_linear[tab.selected_sha1] || []),
+                            ...(state.annotations_rectangular && state.annotations_rectangular[tab.selected_sha1] || []),
+                            ...(state.annotations_polygon && state.annotations_polygon[tab.selected_sha1] || []),
+                            ...(state.annotations_angle && state.annotations_angle[tab.selected_sha1] || []),
+                            ...(state.annotations_occurrence && state.annotations_occurrence[tab.selected_sha1] || []),
+                            ...(state.annotations_color_picker && state.annotations_color_picker[tab.selected_sha1] || []),
+                            ...(state.annotations_ratio && state.annotations_ratio[tab.selected_sha1] || []),
+                            ...(state.annotations_transcription && state.annotations_transcription[tab.selected_sha1] || []),
+                            ...(state.annotations_categorical && state.annotations_categorical[tab.selected_sha1] || []),
+                            ...(state.annotations_richtext && state.annotations_richtext[tab.selected_sha1] || [])
+                        ].map((it) => it.id);
                         for (const annId in taxInst.taxonomyByAnnotation) {
                             const annotation = taxInst.taxonomyByAnnotation[annId];
-                            if (annotation.descriptorId === descriptorId) {
-                                if (annotation.value)
+                            if (allAnnotationsForSelectedResource.includes(annId) && annotation.descriptorId === descriptorId) {
+                                if (annotation.value) {
                                     taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId].value.push(...annotation.value)
-                                else
+                                } else {
                                     taxInst.taxonomyByPicture[tab.selected_sha1][descriptorId].value.push(0)
+                                }
                             }
                         }
                     } else if (value) {
@@ -3859,6 +3884,7 @@ export default (state = {}, action) => {
             pictures[action.sha1].exifDate = action.date;
             pictures[action.sha1].exifPlace = action.exifPlace;
             pictures[action.sha1].placeName = action.placeName;
+            pictures[action.sha1].coverage = action.coverage;
             return {
                 ...state, counter, pictures
             }
