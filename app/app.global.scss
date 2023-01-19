@@ -1056,7 +1056,7 @@ div.leaflet-marker-icon {
 
 .import-menu {
     margin-left: 0px;
-    z-index: 10000;
+    //z-index: 10000;
     border: 1px solid #cbcaca;
     padding: 0px 5px 0px 10px;
     margin: 0px 0px 0px 10px;
@@ -1078,9 +1078,10 @@ div.leaflet-marker-icon {
   .dropdown-menu {
     top: 2px !important;
     left: -10px !important;
+    z-index: 1030;
   }
   .dropdown-item {
-    padding: 0px;
+    padding: 0px 0px 5px;
     .import-menu-item {
       margin-left: 5px;
       margin-right: 5px;
