@@ -308,6 +308,14 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , annotations_eventAnnotations')
                 tmpState["annotations_eventAnnotations"] = {};
             }
+            if (!tmpState.hasOwnProperty("selectedCategory")){
+                console.log('project from previous version , adding selectedCategory');
+                tmpState["selectedCategory"] = null;
+            }
+            if (!tmpState.hasOwnProperty("selectedCategories")){
+                console.log('project from previous version , adding selectedCategories');
+                tmpState["selectedCategories"] = [];
+            }
             // Check if object structure match to expected one.
             for (const prop in initialState) {
                 if (!(prop in tmpState)) {

@@ -54,17 +54,17 @@ const SORT_SEARCH_RESULTS_DIALOG = 'SORT_SEARCH_RESULTS_DIALOG';
 class TagManager extends Component {
 
     constructor(props) {
-        console.log("nextProps tags ", props.tags)
         super(props);
         this.state = {
             rootCategories: sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , SORT_ALPHABETIC_DESC),
-            selectedCategory: null,
-            selectedCategories: [],
+            selectedCategory: this.props.selectedCategory,
+            selectedCategories: this.props.selectedCategories,
             sortUp: true,
             showModal: false,
             type: TYPE_CATEGORY,
             name: "",
-            tags: [],
+            tags: this.props.selectedCategory ? sortTagsAlphabeticallyOrByDate(getTagsOnly(this.props.selectedCategory.children), SORT_ALPHABETIC_DESC)
+                : [],
             editedItemName: null,
             editedItem: null,
             justDeleted: null,
@@ -138,7 +138,7 @@ class TagManager extends Component {
         if (!this.props.isModalOrTab){
             this._calculateTagsContentHeight()
         }
-        if (this.state.tagsIdChecked === false){
+        if (this.state.tagsIdChecked === false) {
             this.props.addTagsId();
             this.setState({
                 tagsIdChecked: true
@@ -147,6 +147,7 @@ class TagManager extends Component {
     }
 
     componentWillUnmount() {
+        this.props.saveSelectedCategory(this.state.selectedCategory, this.state.selectedCategories);
         window.removeEventListener('resize', this.handleResize)
     }
 
@@ -586,7 +587,7 @@ class TagManager extends Component {
                             selectedCategory && selectedCategory.children && selectedCategory.children.length > 0 ?
                                 selectedCategory.children.map( cat => {
                                     if (cat.type && cat.type === TYPE_CATEGORY){
-                                        return   <ContextMenuTrigger id="tag-list-context-menu"
+                                        return <ContextMenuTrigger id="tag-list-context-menu"
                                                                      key={cat.id}
                                                                      collect={() => {
                                                                          return {
@@ -597,7 +598,7 @@ class TagManager extends Component {
                                                                      }}>
                                             <Category
                                                 _onDrop={this._onDrop}
-                                                isInPath={this.state.selectedCategories.indexOf(cat) >= 0}
+                                                isInPath={this.state.selectedCategories.map(c => c.id).indexOf(cat.id) >= 0}
                                                 selectCategory={this._selectCategory}
                                                 category={cat}/>
                                         </ContextMenuTrigger>
@@ -1108,7 +1109,7 @@ class TagManager extends Component {
                                             }}>
                                             <Category
                                                 _onDrop={this._onDrop}
-                                                isInPath={this.state.selectedCategories.indexOf(cat) >= 0}
+                                                isInPath={this.state.selectedCategories.map(c => c.id).indexOf(cat.id) >= 0}
                                                 selectCategory={this._selectCategory} key={`category-${index}`}
                                                 category={cat}
                                             />

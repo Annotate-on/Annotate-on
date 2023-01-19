@@ -111,9 +111,18 @@ const go = () => {
                     console.log('project from previous version , adding annotations_eventAnnotations');
                     tmpState.app["annotations_eventAnnotations"] = {};
                 }
+                if (!tmpState.app.hasOwnProperty("selectedCategory")){
+                    console.log('project from previous version , adding selectedCategory');
+                    tmpState.app["selectedCategory"] = null;
+                }
+                if (!tmpState.app.hasOwnProperty("selectedCategories")){
+                    console.log('project from previous version , adding selectedCategories');
+                    tmpState.app["selectedCategories"] = [];
+                }
                 // Check if object structure match to expected one.
                 for (const prop in initialState.app) {
                     if(!(prop in tmpState.app)) {
+                        console.log("there is not prop", prop);
                         correctStructure = false;
                     }
                 }

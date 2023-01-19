@@ -120,6 +120,9 @@ import {
     UPDATE_PICTURE_DATE,
     UPDATE_TABULAR_VIEW,
     UPDATE_TAG_EXPRESSION_OPERATOR,
+    STOP_ANNOTATION_RECORDING, UNSELECT_ALL_FOLDERS, DELETE_TAG_FILTER,
+    SELECT_LIBRARY_TAB,
+    SAVE_SELECTED_CATEGORY,
     UPDATE_TAXONOMY_VALUES
 } from '../actions/app';
 import {
@@ -248,7 +251,9 @@ export const createInitialState = () => ({
         taxonomies: [],
         selectedTaxonomy: null,
         leafletSettings: {},
-        selectedProjectName: null
+        selectedProjectName: null,
+        selectedCategory: null,
+        selectedCategories: []
     }
 });
 
@@ -281,7 +286,10 @@ export const userDataBranches = () => ({
     selectedTaxonomy: null,
     leafletSettings: null,
     selectedProjectName: null,
-    taxonomyInstance: null
+    taxonomyInstance: null,
+    selectedCategory: null,
+    selectedCategories: []
+
 });
 
 export default (state = {}, action) => {
@@ -4062,6 +4070,17 @@ export default (state = {}, action) => {
             return response;
         }
         break;
+        case SAVE_SELECTED_CATEGORY: {
+            const counter = state.counter + 1;
+
+            return {
+                ...state,
+                selectedCategory: action.selectedCategory,
+                selectedCategories: action.selectedCategories,
+                counter
+            };
+        }
+            break;
         default:
             return state;
     }
