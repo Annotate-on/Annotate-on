@@ -63,7 +63,8 @@
       "languages": {
         "EN": "English",
         "FR": "French",
-        "PT": "Portuguese"
+        "PT": "Portuguese",
+        "ES": "Spanish"
       },
       "continue": "Continue",
       "delete_this_file_for_me": "Delete this file for me",

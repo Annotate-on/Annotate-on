@@ -58,7 +58,9 @@
       },
       "languages": {
         "EN": "Anglais",
-        "FR": "Français"
+        "FR": "Français",
+        "PT": "Portugais",
+        "ES": "Espagnol"
       },
       "continue": "Continuer",
       "delete_this_file_for_me": "Supprimer ce fichier pour moi",
@@ -68,7 +70,6 @@
       "offline": "Hors ligne",
       "connection_status_tooltip": "État de la connexion internet",
       "confirmation": "Confirmation",
-      "doc_link_title": "Lien vers la documentation {{section}}",
       "xper_params_are_required": "Les paramètres du serveur Xper3 sont nécessaires. Merci de les renseigner dans \"Options\".",
       "alert_please_check_your_xper_parameters": "Vérifiez les paramètres Xper dans \"Options\".",
       "alert_an_error_occurred_in_communication_with_xper_server": "Erreur dans la communication avec le serveur Xper.",
@@ -76,7 +77,12 @@
       "alert_bad_format_for_xper_3_file": "Mauvais format du fichier Xper3 !",
       "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "Toutes les données de la base Xper3 sélectionnée vont être remplacées (opération suppression suivie d'une insertion). Voulez-vous procéder à cela ?",
       "alert_an_error_occurred_during_export_to_xper_database": "Erreur durant l'export de la base Xper !",
-      "alert_cannot_start_download": "Lancement de l'import impossible. Votre connexion internet est-elle active ?"
+      "alert_cannot_start_download": "Lancement de l'import impossible. Votre connexion internet est-elle active ?",
+      "btn_import": "Import",
+      "dropdown_item_import_images": "Image(s)",
+      "dropdown_item_import_videos": "Vidéo(s)",
+      "dropdown_item_create_event": "Créer un évènement",
+      "doc_link_title": "Lien vers la documentation {{section}}"
     },
     "main_navbar": {
       "library": "Librairie",
@@ -123,7 +129,10 @@
       "context_menu_delete_folder": "Supprimer le dossier",
       "alert_delete_folder_message": "Dossier : '{{folder}}'",
       "alert_folder_contains_special_characters": "le dossier contient des caractères spéciaux < , > , : , \" , /, \\ , | , ? *",
-      "alert_cannot_change_selection_when_manual_order": "En ordre manuel, il n'est pas possible de faire une sélection."
+      "alert_cannot_change_selection_when_manual_order": "En ordre manuel, il n'est pas possible de faire une sélection.",
+      "lbl_filter": "Filtre",
+      "lbl_filters_selected": "\n{{numberOfFolders}} dossiers sélectionnés",
+      "btn_tooltip_cancel_folders_filter": "Annuler le filtre sur les dossiers"
     },
     "tags": {
       "title": "Mots clés",
@@ -133,10 +142,12 @@
       "textbox_placeholder_tag_name": "Saisir le mot-clé et valider",
       "checkbox_show_resources_with_all_selected_keywords": "Montrer les ressources avec les mots-clés sélectionnés",
       "context_menu_open_selection_in_new_tab": "Ouvrir la sélection dans un nouvel onglet",
-      "alert_delete_tag_message": "Mot-clé : '{{tag}}'\n",
+      "alert_delete_tag_message": "Mot-clé : '{{tag}}'",
       "alert_must_be_added_to_category": "Les catégories et les mots-clés peuvent seulement être ajoutés à une autre catégorie.",
       "alert_cannot_change_selection_when_manual_order": "En ordre manuel, il n'est pas possible de changer la sélection. ",
-      "alert_name_is_whitespace": "le nom doit contenir seulement des espaces (par exemple : espaces, tab ou retour à la ligne)"
+      "alert_name_is_whitespace": "le nom doit contenir seulement des espaces (par exemple : espaces, tab ou retour à la ligne)",
+      "lbl_filter": "Filtre",
+      "btn_tooltip_cancel_tags_filter": "Annuler le filtre sur les tags"
     },
     "inspector": {
       "tab_metadata": "Métadonnées",
@@ -300,7 +311,7 @@
       "lbl_without_model": "Sans modèle",
       "title": "Librairie",
       "switch_to_mozaic_view_tooltip": "Basculer en vue mosaïque",
-      "table_column_catalog_n1": "Catalogue n°",
+      "table_column_catalog_n1": "Catalogue n°1",
       "table_column_family": "Famille",
       "table_column_date": "Date",
       "table_column_type": "Type",
@@ -318,7 +329,7 @@
       "alert_delete_event_message": "Effacer l'événement",
       "alert_delete_event_confirmation": "Êtes-vous sûr.e d'effacer cet événement ?",
       "alert_delete_image_message": "Effacer l'image",
-      "alert_delete_image_confirmation_one": "Êtes-vous sûr.e d'effacer ces {{count}} image ?",
+      "alert_delete_image_confirmation_one": "Êtes-vous sûr.e d'effacer ces {{count}} image?",
       "alert_delete_image_confirmation_other": "Êtes-vous sûr.e d'effacer ces {{count}} image(s) ?",
       "alert_delete_resource_confirmation_one": "Êtes-vous sûr.e d'effacer ces {{count}} ressources ?",
       "alert_delete_resource_confirmation_other": "Êtes-vous sûr.e d'effacer ces {{count}} ressources(s) ?",
@@ -421,7 +432,7 @@
         "switch_to_map_view_tooltip": "Passer en vue carte géographique",
         "popup_open_in_annotation_editor": "Ouvrir dans l'éditeur d'annotation",
         "popup_lbl_file_name": "Nom de fichier",
-        "popup_lbl_catalog_n_1": "Catalogue n°",
+        "popup_lbl_catalog_n_1": "Catalogue N1°",
         "popup_lbl_scientific_name": "Nom scientifique",
         "popup_lbl_collector_name": "Nom de collection",
         "popup_lbl_date": "Date",
@@ -499,7 +510,11 @@
       "alert_projects_created_with_old_version_of_can_not_be_loaded": "Les projets créés avec une version d'Annotate-on <1.7.0 ne peuvent pas être ouverts.\nChemins des projets:\n\n\n",
       "alert_title_projects_created_with_old_version_of_can_not_be_loaded": "Ancienne configuration trouvée ici : '{{file_path}}'",
       "alert_there_is_no_project_on_path": "Il n'y a pas de projet dans le répertoire '{{file_path}}'",
-      "lbl_corrupted_project": "projet corrompu"
+      "lbl_corrupted_project": "projet corrompu",
+      "btn_tooltip_import_projects_from_1x_version": "Importer des projets depuis les versions Annotate 1.x",
+      "btn_import_projects_from_1x_version": "Importer des projets depuis les versions Annotate 1.x",
+      "alert_import_projects_from_1x_version_message": "{{numberOfImportedProjects}} projet(s) ont été importés",
+      "alert_import_projects_from_1x_version_is_finished": "Import des projets terminé."
     },
     "credits": {
       "lbl_citation": "Citation",
@@ -579,7 +594,13 @@
         "dialog_start_event_confirmation_message": "Voulez-vous démarrer l'événement ?",
         "btn_start_event": "Démarrer l'événement",
         "btn_stop_event": "Arrêter l'événement"
-      }
+      },
+      "btn_tooltip_go_to_first_resource": "Aller à la première ressource",
+      "btn_tooltip_go_backward_ten_resources": "Reculer de 10 ressources",
+      "btn_tooltip_go_to_previous_resource": "Ressource précédente",
+      "btn_tooltip_go_to_next_resource": "Ressource suivante",
+      "btn_tooltip_go_forward_ten_resources": "Avancer de 10 ressources",
+      "btn_tooltip_go_to_last_resource": "Aller à la dernière ressource"
     },
     "event": {
       "title": "Import",

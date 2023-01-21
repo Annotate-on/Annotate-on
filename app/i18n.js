@@ -9,8 +9,8 @@ import {remote} from "electron";
 export const SUPPORTED_LANGUAGES = [
     'en',
     'fr',
-    'pt'
-    // 'es'
+    'pt',
+    'es'
 ]
 
 /**

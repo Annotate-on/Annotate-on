@@ -58,7 +58,9 @@
       },
       "languages": {
         "EN": "Inglês",
-        "FR": "Francês"
+        "FR": "Francês",
+        "PT": "Português",
+        "ES": "Espanhol"
       },
       "continue": "Continuar",
       "delete_this_file_for_me": "Apague este arquivo para mim",
@@ -68,7 +70,6 @@
       "offline": "Offline",
       "connection_status_tooltip": "Status da conexão com a Internet",
       "confirmation": "Confirmação",
-      "doc_link_title": "Link da documentação para os {{section}}",
       "xper_params_are_required": "Os parâmetros do servidor Xper3 são necessários! Por favor, atualize seus parâmetros Xper na página Opções!",
       "alert_please_check_your_xper_parameters": "Por favor, verifique seus parâmetros xper na página Opções!",
       "alert_an_error_occurred_in_communication_with_xper_server": "Ocorreu um erro na comunicação com o servidor Xper!",
@@ -76,7 +77,12 @@
       "alert_bad_format_for_xper_3_file": "Formato ruim para o arquivo xper3!",
       "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "Todos os dados na base de conhecimento Xper3 selecionada serão substituídos (operação de exclusão e inserção). Você deseja prosseguir?",
       "alert_an_error_occurred_during_export_to_xper_database": "Ocorreu um erro durante a exportação para o banco de dados xper!",
-      "alert_cannot_start_download": "Não é possível iniciar o download. Verifique sua conexão de internet!"
+      "alert_cannot_start_download": "Não é possível iniciar o download. Verifique sua conexão de internet!",
+      "btn_import": "Importar",
+      "dropdown_item_import_images": "Imagem (imagens)",
+      "dropdown_item_import_videos": "Vídeo(s)",
+      "dropdown_item_create_event": "Criar evento",
+      "doc_link_title": "Link da documentação para os {{section}}"
     },
     "main_navbar": {
       "library": "Biblioteca",
@@ -123,7 +129,10 @@
       "context_menu_delete_folder": "Excluir pasta",
       "alert_delete_folder_message": "Pasta: '{{folder}}'",
       "alert_folder_contains_special_characters": "pasta contém caracteres especiais < , > , : , \" , /, \\ , | , ? *",
-      "alert_cannot_change_selection_when_manual_order": "Você não pode mudar a seleção quando o pedido manual está ativo!"
+      "alert_cannot_change_selection_when_manual_order": "Você não pode mudar a seleção quando o pedido manual está ativo!",
+      "lbl_filter": "Filtro",
+      "lbl_filters_selected": "{{numberOfFolders}} pastas selecionadas",
+      "btn_tooltip_cancel_folders_filter": "Cancelar filtro de pastas"
     },
     "tags": {
       "title": "Palavras-chave",
@@ -136,7 +145,9 @@
       "alert_delete_tag_message": "Palavra-chave: '{{tag}}'",
       "alert_must_be_added_to_category": "categorias e palavras-chave só podem ser adicionadas a outra categoria",
       "alert_cannot_change_selection_when_manual_order": "Você não pode mudar a seleção quando o pedido manual está ativo!",
-      "alert_name_is_whitespace": "O nome contém apenas espaços em branco (ou seja, espaços, abas ou quebras de linha)"
+      "alert_name_is_whitespace": "O nome contém apenas espaços em branco (ou seja, espaços, abas ou quebras de linha)",
+      "lbl_filter": "Filtro ",
+      "btn_tooltip_cancel_tags_filter": "Cancelar filtro de tags"
     },
     "inspector": {
       "tab_metadata": "Metadados",
@@ -300,7 +311,7 @@
       "lbl_without_model": "Sem modelo",
       "title": "Biblioteca",
       "switch_to_mozaic_view_tooltip": "Mudar para a visão mozaic",
-      "table_column_catalog_n1": "Catálogo n°",
+      "table_column_catalog_n1": "Catálogo N1°",
       "table_column_family": "Família",
       "table_column_date": "Data",
       "table_column_type": "Tipo",
@@ -318,7 +329,7 @@
       "alert_delete_event_message": "Excluir evento",
       "alert_delete_event_confirmation": "Você tem certeza de que quer apagar este evento?",
       "alert_delete_image_message": "Excluir imagem",
-      "alert_delete_image_confirmation_one": "Você tem certeza de querer apagar {{count}} imagem?",
+      "alert_delete_image_confirmation_one": "Você tem certeza de querer apagar  {{count}} imagem?",
       "alert_delete_image_confirmation_other": "Você tem certeza de querer apagar {{count}} imagem?",
       "alert_delete_resource_confirmation_one": "Você tem certeza de que quer excluir {{count}} recurso?",
       "alert_delete_resource_confirmation_other": "Você tem certeza de que quer excluir {{count}} recursos?",
@@ -421,7 +432,7 @@
         "switch_to_map_view_tooltip": "Mudar para a visualização do mapa",
         "popup_open_in_annotation_editor": "Aberto em editor de anotações",
         "popup_lbl_file_name": "Nome do arquivo",
-        "popup_lbl_catalog_n_1": "Catálogo n°",
+        "popup_lbl_catalog_n_1": "Catálogo N1°",
         "popup_lbl_scientific_name": "Nome científico",
         "popup_lbl_collector_name": "Nome do coletor",
         "popup_lbl_date": "Data",
@@ -499,7 +510,11 @@
       "alert_projects_created_with_old_version_of_can_not_be_loaded": "Projetos criados com versão de Annotate <1.7.0> não podem ser carregados.\nCaminhos para projetos:",
       "alert_title_projects_created_with_old_version_of_can_not_be_loaded": "Encontrado o antigo arquivo de configuração '{{file_path}}'.",
       "alert_there_is_no_project_on_path": "Não há nenhum projeto no caminho '{{file_path}}'.",
-      "lbl_corrupted_project": "projeto corrompido"
+      "lbl_corrupted_project": "projeto corrompido",
+      "btn_tooltip_import_projects_from_1x_version": "Para importar projetos da versão Annotate-On 1.x",
+      "btn_import_projects_from_1x_version": "Para importar projetos da versão 1.x",
+      "alert_import_projects_from_1x_version_message": "{{numberOfImportedProjects}} projeto(s) foi(foram) importado(s)!",
+      "alert_import_projects_from_1x_version_is_finished": "importar projetos está terminado"
     },
     "credits": {
       "lbl_citation": "Citação",
@@ -515,7 +530,7 @@
       "lbl_no_picture": "Nenhuma imagem",
       "lbl_without_model": "Sem modelo",
       "title": "Visualizar e anotar",
-      "lbl_picture_in_current_selection": "Imagem {{index_in_selection}}/{{pictures_length}} na seleção atual - Catálogo n° {{catalog_number}} -",
+      "lbl_picture_in_current_selection": "Imagem {{index_in_selection}}/{{pictures_length}} na seleção atual - Catálogo n° {{catalog_number}} - ",
       "lbl_filename": "Nome do arquivo",
       "timeline_alert_error_message": "Alguma coisa deu errado!",
       "tab_event": "Evento",
@@ -579,7 +594,13 @@
         "dialog_start_event_confirmation_message": "Você quer começar o evento?",
         "btn_start_event": "Para iniciar o evento",
         "btn_stop_event": "Para parar o evento"
-      }
+      },
+      "btn_tooltip_go_to_first_resource": "Ir ao primeiro recurso",
+      "btn_tooltip_go_backward_ten_resources": "Retroceder dez recursos",
+      "btn_tooltip_go_to_previous_resource": "Ir para o recurso anterior",
+      "btn_tooltip_go_to_next_resource": "Ir para o próximo recurso",
+      "btn_tooltip_go_forward_ten_resources": "Avançar dez recursos",
+      "btn_tooltip_go_to_last_resource": "Ir ao último recurso"
     },
     "event": {
       "title": "Importar",
