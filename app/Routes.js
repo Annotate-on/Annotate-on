@@ -19,6 +19,7 @@ import ImportEventWizard from "./containers/ImportEventWizard";
 import TagManager from "./containers/TagManager";
 import IIIF from "./containers/IIIF";
 import Options from "./containers/Options";
+import Search from "./containers/Search";
 
 export default () => (
     <App>
@@ -40,6 +41,7 @@ export default () => (
             <Route path={routes.TAG_MANAGER} component={TagManager}/>
             <Route path={routes.IIIF} component={IIIF}/>
             <Route path={routes.OPTIONS} component={Options}/>
+            <Route path={routes.SEARCH} component={Search}/>
             <Redirect
             to={{
                 pathname: "/selection",

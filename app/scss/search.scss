@@ -1,0 +1,18 @@
+.search-page {
+  .search-form {
+    width: 100%;
+    margin-top: 15px;
+    margin-left: 50px;
+    line-height: 35px;
+    .form-check-input {
+      margin-top: 0.9em;
+    }
+    .form-check {
+      margin-top: -10px;
+    }
+  }
+  .search-results {
+    border-top: 1px solid #ddd;
+  }
+}
+

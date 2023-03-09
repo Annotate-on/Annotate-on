@@ -18,5 +18,6 @@
   "TAG_MANAGER": "/tagManager",
   "IIIF": "/iiif",
   "EVENT_HOME": "/eventHome",
-  "OPTIONS": "/options"
+  "OPTIONS": "/options",
+  "SEARCH": "/search"
 }

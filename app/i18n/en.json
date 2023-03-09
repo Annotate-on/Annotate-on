@@ -105,6 +105,8 @@
       "tooltip_keywords": "Tag manager",
       "options": "Options",
       "tooltip_options": "Global application options",
+      "search": "Search",
+      "tooltip_search": "Global application search",
       "resources": "Resources",
       "tooltip_resources": "Selected resources"
     },
@@ -899,6 +901,12 @@
       "title": "Options",
       "lbl_select_language": "Select language",
       "select_language.tooltip": "Change application language"
+    },
+    "search": {
+      "title": "Search",
+      "textbox_placeholder_search_text": "Search",
+      "lbl_search_in_selection": "Current selection (selected)",
+      "lbl_search_in_project": "Project"
     }
   }
 }
