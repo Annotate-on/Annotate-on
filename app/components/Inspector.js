@@ -217,6 +217,7 @@ export default class extends Component {
     }
 
     _mergeAnnotations = (props) => {
+
         return [
             ...(props.annotationsChronothematique && props.annotationsChronothematique[props.picture.sha1] || []),
             ...(props.eventAnnotations && props.eventAnnotations[props.picture.sha1] || []),
