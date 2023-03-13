@@ -894,7 +894,7 @@ export default (state = {}, action) => {
             break;
 // ---------------------------------------------------------------------------------------------------------------------
         case CREATE_TAB: {
-            const name =  getNewTabName(state.open_tabs);
+            const name =  action.name ? action.name : getNewTabName(state.open_tabs);
             const counter = state.counter + 1;
             const allFolders = getAllDirectoriesNameFlatten();
             const tab = {

@@ -13,7 +13,7 @@ import {
 import {
     ee,
     EVENT_HIGHLIGHT_ANNOTATION,
-    EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET,
+    EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, EVENT_SELECT_SELECTION_TAB,
     EVENT_SELECT_TAB
 } from "../utils/library";
 
@@ -34,6 +34,7 @@ export default class Search extends Component {
     }
 
     componentDidMount() {
+
     }
 
     _searchFormChangeHandler = (event) => {
@@ -48,20 +49,24 @@ export default class Search extends Component {
 
     _handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            console.log("enter pressed!")
             this._doSearch();
         }
     };
 
     _onOpenAnnotation = (picId, annotationId, type) => {
-        this.props.setPictureInSelection(picId, this.props.tabName);
+        if (!this.props.openTabs["Search"]) {
+            this.props.createTab("Search")
+        }
+        this.props.setPictureInSelection(picId, 'Search');
+        this.props.setSelectedLibraryTab('Search', 'image');
+        this.props.goToLibrary();
         setTimeout(() => {
-            ee.emit(EVENT_SELECT_TAB, 'image');
-        }, 100)
+            ee.emit(EVENT_SELECT_SELECTION_TAB, undefined, 'Search');
+        }, 100);
         setTimeout(() => {
             ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotationId , true);
             ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, annotationId , type);
-        }, 100)
+        }, 500);
     }
 
     _doSearch() {
@@ -116,15 +121,19 @@ export default class Search extends Component {
                     console.log(err);
                 }
                 allAnnotations.push({
+                    id: annotation.id,
                     title: annotation.title,
                     type: annotation.annotationType,
                     value: value,
                     target: target,
+                    resourceId: annotation.pictureId,
+                    fileBasename: this.props.pictures[annotation.pictureId].file_basename
                 });
 
                 let result = allAnnotations.filter(ann => {
                     return ann.title.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
-                        ann.target.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase())
+                        ann.target.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
+                        ann.value.toString().toLowerCase().includes(this.state.searchForm.searchText.toLowerCase())
                 });
                 console.log("result", result);
                 this.setState({
@@ -165,28 +174,29 @@ export default class Search extends Component {
                                                value={this.state.searchForm.searchText}
                                                onChange={this._searchFormChangeHandler}
                                                onKeyDown={this._handleKeyDown}
+                                               autoFocus={true}
                                         >
                                         </Input>
                                     </Col>
                                     <Col sm={9} md={9} lg={9}>
-                                        <FormGroup check>
-                                            <Label check>
-                                                <Input type="radio" name="scope"
-                                                       value={IN_SELECTION}
-                                                       checked={IN_SELECTION === this.state.searchForm.scope}
-                                                       onChange={this._searchFormChangeHandler}
-                                                />{' '}{t('search.lbl_search_in_selection')}
-                                            </Label>
-                                        </FormGroup>
-                                        <FormGroup check>
-                                            <Label check>
-                                                <Input type="radio" name="scope"
-                                                       value={IN_PROJECT}
-                                                       checked={IN_PROJECT === this.state.searchForm.scope}
-                                                       onChange={this._searchFormChangeHandler}
-                                                />{' '}{t('search.lbl_search_in_project')}
-                                            </Label>
-                                        </FormGroup>
+                                        {/*<FormGroup check>*/}
+                                        {/*    <Label check>*/}
+                                        {/*        <Input type="radio" name="scope"*/}
+                                        {/*               value={IN_SELECTION}*/}
+                                        {/*               checked={IN_SELECTION === this.state.searchForm.scope}*/}
+                                        {/*               onChange={this._searchFormChangeHandler}*/}
+                                        {/*        />{' '}{t('search.lbl_search_in_selection')}*/}
+                                        {/*    </Label>*/}
+                                        {/*</FormGroup>*/}
+                                        {/*<FormGroup check>*/}
+                                        {/*    <Label check>*/}
+                                        {/*        <Input type="radio" name="scope"*/}
+                                        {/*               value={IN_PROJECT}*/}
+                                        {/*               checked={IN_PROJECT === this.state.searchForm.scope}*/}
+                                        {/*               onChange={this._searchFormChangeHandler}*/}
+                                        {/*        />{' '}{t('search.lbl_search_in_project')}*/}
+                                        {/*    </Label>*/}
+                                        {/*</FormGroup>*/}
                                     </Col>
                                 </Row>
                             </div>
@@ -195,39 +205,65 @@ export default class Search extends Component {
                     <Row>
                         <Col sm={12} md={12} lg={12}>
                             <div className="search-results">
+                                <div className="search-results-section-title">
+                                    <span className="search-results-title-main"> {t('search.title_results_section_annotations')}</span>
+                                    <span className="search-results-title-details">{t('search.title_results_section_found_annotations', {found: this.state.foundAnnotations.length})}</span>
+                                </div>
                                 <Row className="no-margin">
                                 <Col className="no-padding">
                                     {this.state.foundAnnotations &&
-                                        <div className="scrollable-table-wrapper" style={{height: 250}}>
+                                        <div className="scrollable-table-wrapper" style={{height: 500}}>
                                             <Table hover size="sm" className="targets-table">
                                                 <thead
-                                                    title={t('results.table_header_tooltip_ascendant_or_descendant_order')}>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <TableHeader title={t('results.annotations.table_column_name')}
-                                                                 sortKey="title"
-                                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title={t('results.annotations.table_column_type')}
-                                                                 sortKey="type"
-                                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader title={t('results.annotations.table_column_value')}
-                                                                 sortKey="value"
-                                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                    <TableHeader
-                                                        title={t('results.annotations.table_column_character')}
-                                                        sortKey="targets"
-                                                        sortedBy={this.state.sortBy} sort={this._sort}/>
-                                                </tr>
+                                                    title={t('results.table_header_tooltip_ascendant_or_descendant_order')} style={{width: 50}}>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th></th>
+                                                        <TableHeader title={t('results.annotations.table_column_file')}
+                                                                     sortKey="fileBasename"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}
+                                                                     style={{width: 200 +'px'}}/>
+                                                        <TableHeader title={t('results.annotations.table_column_name')}
+                                                                     sortKey="title"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}
+                                                                     style={{width: 200 +'px'}}/>
+                                                        <TableHeader title={t('results.annotations.table_column_type')}
+                                                                     sortKey="type"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}
+                                                                     style={{width: 100 +'px'}}/>
+                                                        <TableHeader title={t('results.annotations.table_column_value')}
+                                                                     sortKey="value"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}/>
+                                                        <TableHeader
+                                                            title={t('results.annotations.table_column_character')}
+                                                            sortKey="targets"
+                                                            sortedBy={this.state.sortBy} sort={this._sort}
+                                                            style={{width: 200 +'px'}}/>
+                                                    </tr>
                                                 </thead>
                                                 <tbody>
                                                 {this.state.foundAnnotations.map((annotation, index) => {
                                                     return (
                                                         <tr key={key++}>
-                                                            <th scope="row">{index + 1}</th>
-                                                            <td>{annotation.title}</td>
-                                                            <td>{annotation.type}</td>
-                                                            <td>{annotation.value}</td>
-                                                            <td>{annotation.target}</td>
+                                                            <td scope="row" style={{width: 50}}>{index + 1}</td>
+                                                            <td scope="row" style={{width: 50}}>
+                                                                <img
+                                                                    className='open-resource-btn'
+                                                                    alt="external link"
+                                                                    src={require('./pictures/external-link.svg')}
+                                                                    onClick={ e => {
+                                                                        this._onOpenAnnotation(annotation.resourceId, annotation.id, annotation.type);
+                                                                    }}
+                                                                />
+                                                            </td>
+                                                            <td style={{width: 200 +'px'}}>{annotation.fileBasename}</td>
+                                                            <td style={{width: 200 +'px'}}>{annotation.title}</td>
+                                                            <td style={{width: 100 +'px'}}>{annotation.type}</td>
+                                                            <td title={annotation.value}> {annotation.value.length < 200
+                                                                ? annotation.value :
+                                                                annotation.value.substring(0, 200) + ' ...'}
+                                                            </td>
+                                                            <td style={{width: 200 +'px'}}>{annotation.target}</td>
                                                         </tr>
                                                     )
                                                 })}

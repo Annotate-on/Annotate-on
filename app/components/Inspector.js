@@ -836,7 +836,7 @@ export default class extends Component {
             defaultValue = options[0]
         }
 
-        console.log("props", this.props)
+        // console.log("props", this.props)
         return (
             <div
                 ref={el => {

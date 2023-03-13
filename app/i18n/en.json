@@ -906,7 +906,9 @@
       "title": "Search",
       "textbox_placeholder_search_text": "Search",
       "lbl_search_in_selection": "Current selection (selected)",
-      "lbl_search_in_project": "Project"
+      "lbl_search_in_project": "Project",
+      "title_results_section_annotations": "Annotations",
+      "title_results_section_found_annotations": "( {{found}} annotations found )"
     }
   }
 }

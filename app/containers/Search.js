@@ -1,9 +1,10 @@
 import {push} from "connected-react-router";
-import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import {EVENT_SELECT_SELECTION_TAB, ee, EVENT_SELECT_TAB} from "../utils/library";
 import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import Search from "../components/Search";
 import lodash from "lodash";
+import {createTab, selectLibraryTab, setPictureInSelection} from "../actions/app";
 
 const mapStateToProps = state => {
     return {
@@ -25,6 +26,8 @@ const mapStateToProps = state => {
         ]),
         selectedTaxonomy: state.app.selectedTaxonomy,
         taxonomyInstance: state.app.taxonomyInstance,
+        pictures: state.app.pictures,
+        openTabs: state.app.open_tabs
     };
 };
 
@@ -35,7 +38,16 @@ const mapDispatchToProps = dispatch => {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, 'library')
             }, 100)
-        }
+        },
+        setPictureInSelection: (pictureId, tabName) => {
+            dispatch(setPictureInSelection(pictureId, tabName));
+        },
+        createTab: (name) => {
+            dispatch(createTab('library', name));
+        },
+        setSelectedLibraryTab: (tab, libraryTab) => {
+            dispatch(selectLibraryTab(tab, libraryTab))
+        },
     };
 };
 

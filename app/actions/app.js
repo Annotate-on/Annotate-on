@@ -279,10 +279,12 @@ export const createAnnotationRichtext = (pictureId, vertices, id, value) => {
     };
 };
 
-export const createTab = (view) => ({
+export const createTab = (view, name) => ({
     type: CREATE_TAB,
-    view
+    view,
+    name
 });
+
 export const closeTab = (name) => ({
     type: CLOSE_TAB,
     name

@@ -13,6 +13,24 @@
   }
   .search-results {
     margin: 10px;
-    border-top: 1px solid #ddd;
+    //border-top: 1px solid #ddd;
+    .search-results-section-title {
+      margin-top: 15px;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ccc;
+      .search-results-title-main {
+        font-weight: bold;
+        font-size: 16px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .search-results-title-details {
+        font-size: 14px;
+      }
+    }
+    .open-resource-btn {
+      cursor: pointer;
+    }
   }
 }
