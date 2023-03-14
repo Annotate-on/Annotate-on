@@ -420,7 +420,7 @@ export default class LeafletMap extends Component {
                                                     <span title={location.annotation.title}>{location.annotation.title}</span>
                                                 </div>
                                             }
-                                            <a href={"#"} className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
+                                            <a className="action">{t('library.map-view.popup_open_in_annotation_editor')}</a>
                                         </div>
                                     </Popup>
                                 </Marker>

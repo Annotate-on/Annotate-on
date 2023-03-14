@@ -907,8 +907,23 @@
       "textbox_placeholder_search_text": "Search",
       "lbl_search_in_selection": "Current selection (selected)",
       "lbl_search_in_project": "Project",
+      "title_results_section_library": "Library",
+      "title_results_section_found_resources": "( {{found}} resources found )",
       "title_results_section_annotations": "Annotations",
-      "title_results_section_found_annotations": "( {{found}} annotations found )"
+      "title_results_section_found_annotations": "( {{found}} annotations found )",
+      "library_table_column_name": "Name",
+      "library_table_column_type": "Type",
+      "library_table_column_family": "Family",
+      "library_table_column_collection": "Collection",
+      "library_table_column_genus": "Genus",
+      "library_table_column_institution_code": "Institution code",
+      "library_table_column_institution_name": "Institution name",
+      "library_table_column_collector_name": "Collector name",
+      "annotations_table_column_file": "File",
+      "annotations_table_column_name": "Name",
+      "annotations_table_column_type": "Type",
+      "annotations_table_column_value": "Value",
+      "annotations_table_column_character": "Character name"
     }
   }
 }
