@@ -4,7 +4,7 @@ import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import Search from "../components/Search";
 import lodash from "lodash";
-import {createTab, selectLibraryTab, setPictureInSelection} from "../actions/app";
+import {createTab, saveSearch, selectLibraryTab, setPictureInSelection} from "../actions/app";
 
 const mapStateToProps = state => {
     return {
@@ -27,7 +27,9 @@ const mapStateToProps = state => {
         selectedTaxonomy: state.app.selectedTaxonomy,
         taxonomyInstance: state.app.taxonomyInstance,
         pictures: state.app.pictures,
-        openTabs: state.app.open_tabs
+        openTabs: state.app.open_tabs,
+        searchText: state.app.searchText,
+        searchResults: state.app.searchResults
     };
 };
 
@@ -47,6 +49,9 @@ const mapDispatchToProps = dispatch => {
         },
         setSelectedLibraryTab: (tab, libraryTab) => {
             dispatch(selectLibraryTab(tab, libraryTab))
+        },
+        saveSearch: (searchText, searchResults) => {
+            dispatch(saveSearch(searchText, searchResults))
         },
     };
 };

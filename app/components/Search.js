@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Col, Container, FormGroup, Input, Label, Row, Table} from "reactstrap";
+import {Button, Col, Container, FormGroup, Input, Label, Row, Table} from "reactstrap";
 import PageTitle from "./PageTitle";
 import SEARCH_IMAGE_CONTEXT from "./pictures/search_icon.svg";
 import TableHeader from "./TableHeader";
@@ -8,7 +8,7 @@ import {
     ANNOTATION_OCCURRENCE,
     ANNOTATION_POLYGON,
     ANNOTATION_POLYLINE, ANNOTATION_RECTANGLE,
-    ANNOTATION_SIMPLELINE, ANNOTATION_TRANSCRIPTION
+    ANNOTATION_SIMPLELINE, ANNOTATION_TRANSCRIPTION, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_PICTURE, RESOURCE_TYPE_VIDEO
 } from "../constants/constants";
 import {
     ee,
@@ -22,20 +22,28 @@ export const IN_SELECTION = 'IN_SELECTION';
 export const IN_PROJECT = 'IN_PROJECT';
 
 export default class Search extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
             searchForm: {
-                searchText: '',
+                searchText: this.props.searchText ? this.props.searchText : '',
                 scope: IN_SELECTION
             },
-            foundAnnotations: [],
-            foundResources: []
+            foundAnnotations: this.props.searchResults && this.props.searchResults.foundAnnotations ?
+                this.props.searchResults.foundAnnotations : [],
+            foundResources: this.props.searchResults && this.props.searchResults.foundResources ?
+                this.props.searchResults.foundResources : []
         }
     }
 
     componentDidMount() {
+    }
+
+    componentWillUnmount() {
+        this.props.saveSearch(this.state.searchForm.searchText, {
+            foundAnnotations: this.state.foundAnnotations,
+            foundResources: this.state.foundResources
+        });
     }
 
     _searchFormChangeHandler = (event) => {
@@ -52,6 +60,30 @@ export default class Search extends Component {
         if (event.key === 'Enter') {
             this._doSearch();
         }
+    };
+
+    _formatResourceType = (type) => {
+        if (type === RESOURCE_TYPE_PICTURE) {
+            return "Image"
+        } else if (type === RESOURCE_TYPE_VIDEO) {
+            return "Video"
+        } else if (type === RESOURCE_TYPE_EVENT) {
+            return "Event"
+        } else {
+            return "Image"
+        }
+    }
+
+    _onResetSearch = (event) => {
+        console.log("_onResetSearch");
+        this.setState({
+            searchForm: {
+                searchText: '',
+                scope: IN_SELECTION
+            },
+            foundAnnotations: [],
+            foundResources: []
+        });
     };
 
     _onOpenAnnotation = (picId, annotationId, type) => {
@@ -92,28 +124,28 @@ export default class Search extends Component {
         }
         // search resources
         console.log("all pictures in project", this.props.pictures);
-        let foundPictures = []
+        let foundResources = []
         if (this.props.pictures) {
-            let allPictures = []
-            for (const pictureId in this.props.pictures) {
-                let picture = this.props.pictures[pictureId];
-                console.log('processing picture', picture);
+            let allResources = []
+            for (const resourceId in this.props.pictures) {
+                let resource = this.props.pictures[resourceId];
+                console.log('processing resource', resource);
                 let familyValue = '';
                 let collectionNameValue = '';
                 let institutionCodeValue = '';
                 let institutionNameValue = '';
                 let collectorNameValue = '';
                 let genusValue = '';
-                if (picture.erecolnatMetadata) {
-                    console.log("loaded metadata erecolnat", picture.erecolnatMetadata);
-                    familyValue = picture.erecolnatMetadata.family ? picture.erecolnatMetadata.family : '';
-                    collectionNameValue = picture.erecolnatMetadata.collectionname ? picture.erecolnatMetadata.collectionname : '';
-                    institutionNameValue = picture.erecolnatMetadata.institutionname ? picture.erecolnatMetadata.institutionname : '';
-                    institutionCodeValue = picture.erecolnatMetadata.institutioncode ? picture.erecolnatMetadata.institutioncode : '';
-                    collectorNameValue = picture.erecolnatMetadata.recordedby ? picture.erecolnatMetadata.recordedby : '';
-                    genusValue = picture.erecolnatMetadata.genus ? picture.erecolnatMetadata.genus : '';
+                if (resource.erecolnatMetadata) {
+                    console.log("loaded metadata erecolnat", resource.erecolnatMetadata);
+                    familyValue = resource.erecolnatMetadata.family ? resource.erecolnatMetadata.family : '';
+                    collectionNameValue = resource.erecolnatMetadata.collectionname ? resource.erecolnatMetadata.collectionname : '';
+                    institutionNameValue = resource.erecolnatMetadata.institutionname ? resource.erecolnatMetadata.institutionname : '';
+                    institutionCodeValue = resource.erecolnatMetadata.institutioncode ? resource.erecolnatMetadata.institutioncode : '';
+                    collectorNameValue = resource.erecolnatMetadata.recordedby ? resource.erecolnatMetadata.recordedby : '';
+                    genusValue = resource.erecolnatMetadata.genus ? resource.erecolnatMetadata.genus : '';
                 } else {
-                    let metadata = loadMetadata(pictureId);
+                    let metadata = loadMetadata(resourceId);
                     console.log("loaded metadata", metadata);
                     if(metadata) {
                         familyValue = metadata.naturalScienceMetadata && metadata.naturalScienceMetadata.family ? metadata.naturalScienceMetadata.family : '';
@@ -124,10 +156,10 @@ export default class Search extends Component {
                         genusValue = metadata.naturalScienceMetadata && metadata.naturalScienceMetadata.genre ? metadata.naturalScienceMetadata.genre : '';
                     }
                 }
-                allPictures.push({
-                    sha1: picture.sha1,
-                    fileBasename: picture.file_basename,
-                    type: picture.type,
+                allResources.push({
+                    sha1: resource.sha1,
+                    fileBasename: resource.file_basename,
+                    type: this._formatResourceType(resource.resourceType),
                     family: familyValue,
                     genus: genusValue,
                     collection: collectionNameValue,
@@ -135,8 +167,8 @@ export default class Search extends Component {
                     institutionName: institutionNameValue,
                     collectorName: collectorNameValue
                 });
-                console.log("all pictures", allPictures);
-                foundPictures = allPictures.filter(pic => {
+                console.log("all resources", allResources);
+                foundResources = allResources.filter(pic => {
                     return pic.fileBasename.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
                         pic.family.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
                         pic.genus.toString().toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
@@ -194,6 +226,8 @@ export default class Search extends Component {
                     console.log(err);
                 }
 
+                let fileBasenameValue = this.props.pictures[annotation.pictureId] ?
+                    this.props.pictures[annotation.pictureId].file_basename : '';
                 allAnnotations.push({
                     id: annotation.id,
                     title: annotation.title,
@@ -201,7 +235,7 @@ export default class Search extends Component {
                     value: value,
                     target: target,
                     resourceId: annotation.pictureId,
-                    fileBasename: this.props.pictures[annotation.pictureId].file_basename
+                    fileBasename: fileBasenameValue
                 });
                 foundAnnotations = allAnnotations.filter(ann => {
                     return ann.title.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
@@ -210,10 +244,10 @@ export default class Search extends Component {
                 });
             });
         }
-        console.log("foundPictures", foundPictures);
+        console.log("foundResources", foundResources);
         console.log("foundAnnotations", foundAnnotations);
         this.setState({
-            foundResources: foundPictures,
+            foundResources: foundResources,
             foundAnnotations: foundAnnotations,
         })
     }
@@ -234,20 +268,27 @@ export default class Search extends Component {
                     >
                     </PageTitle>
 
-                    <Row>
+                    <Row className="search-form-container">
                         <div className="search-form">
                             <div className="search-form-item">
                                 <Row>
-                                    <Col sm={3} md={3} lg={3}>
-                                        <Input name="searchText" type="text" bsSize="md"
-                                               placeholder={t('search.textbox_placeholder_search_text')}
-                                               title={t('search.title')}
-                                               value={this.state.searchForm.searchText}
-                                               onChange={this._searchFormChangeHandler}
-                                               onKeyDown={this._handleKeyDown}
-                                               autoFocus={true}
-                                        >
-                                        </Input>
+                                    <Col sm={4} md={4} lg={4}>
+                                        <div className="search-input-container">
+                                            <div className="search-icon">
+                                                <i className="fa fa-search margin-auto"/>
+                                            </div>
+                                            <Input className="search-input" name="searchText" type="text" bsSize="md"
+                                                   placeholder={t('search.textbox_placeholder_search_text')}
+                                                   title={t('search.title')}
+                                                   value={this.state.searchForm.searchText}
+                                                   onChange={this._searchFormChangeHandler}
+                                                   onKeyDown={this._handleKeyDown}
+                                                   autoFocus={true}>
+                                            </Input>
+                                            <Button className="reset-search-button" color="link" onClick={this._onResetSearch}>
+                                                <i title={t('search.btn_reset_search_tooltip')} className="fa fa-times pointer" aria-hidden="true"/>
+                                            </Button>
+                                        </div>
                                     </Col>
                                     <Col sm={9} md={9} lg={9}>
                                         {/*<FormGroup check>*/}
@@ -280,16 +321,17 @@ export default class Search extends Component {
                                     <span className="search-results-title-main"> {t('search.title_results_section_library')}</span>
                                     <span className="search-results-title-details">{t('search.title_results_section_found_resources', {found: this.state.foundResources.length})}</span>
                                 </div>
+
                                 <Row className="no-margin">
                                     <Col className="no-padding">
                                         {this.state.foundResources &&
-                                            <div className="scrollable-table-wrapper" style={{height: 300}}>
+                                            <div className="scrollable-table-wrapper1" >
                                                 <Table hover size="sm" className="targets-table">
                                                     <thead
                                                         title={t('results.table_header_tooltip_ascendant_or_descendant_order')} style={{width: 50}}>
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th></th>
+                                                        <th style={{width: 40 +'px'}}>#</th>
+                                                        <th style={{width: 40 +'px'}}></th>
                                                         <TableHeader title={t('search.library_table_column_name')}
                                                                      sortKey="fileBasename"
                                                                      sortedBy={this.state.sortBy} sort={this._sort}
@@ -314,12 +356,13 @@ export default class Search extends Component {
                                                             title={t('search.library_table_column_institution_code')}
                                                             sortKey="institutionCode"
                                                             sortedBy={this.state.sortBy} sort={this._sort}
-                                                            style={{width: 50 +'px'}}/>
+                                                            style={{width: 10 +'px'}}/>
                                                         <TableHeader
                                                             title={t('search.library_table_column_institution_name')}
                                                             sortKey="institutionName"
                                                             sortedBy={this.state.sortBy} sort={this._sort}
-                                                            style={{width: 100 +'px'}}/>
+                                                            // style={{width: 100 +'px'}}
+                                                        />
                                                         <TableHeader
                                                             title={t('search.library_table_column_collector_name')}
                                                             sortKey="collectorName"
@@ -331,8 +374,8 @@ export default class Search extends Component {
                                                     {this.state.foundResources.map((resource, index) => {
                                                         return (
                                                             <tr key={key++}>
-                                                                <td scope="row" style={{width: 50}}>{index + 1}</td>
-                                                                <td scope="row" style={{width: 50}}>
+                                                                <td scope="row" style={{width: 40+'px'}}>{index + 1}</td>
+                                                                <td scope="row" style={{width: 40+'px'}}>
                                                                     <img
                                                                         className='open-resource-btn'
                                                                         alt="external link"
@@ -345,11 +388,11 @@ export default class Search extends Component {
                                                                 <td style={{width: 200 +'px'}}>{resource.fileBasename}</td>
                                                                 <td style={{width: 100 +'px'}}>{resource.type}</td>
                                                                 <td style={{width: 100 +'px'}}>{resource.family}</td>
-                                                                <td style={{width: 100 +'px'}}>{resource.collection}</td>
+                                                                <td>{resource.collection}</td>
                                                                 <td style={{width: 100 +'px'}}>{resource.genus}</td>
-                                                                <td style={{width: 50 +'px'}}>{resource.institutionCode}</td>
-                                                                <td style={{width: 100 +'px'}}>{resource.institutionName}</td>
-                                                                <td style={{width: 100 +'px'}}>{resource.collectorName}</td>
+                                                                <td style={{width: 10 +'px'}}>{resource.institutionCode}</td>
+                                                                <td>{resource.institutionName}</td>
+                                                                <td>{resource.collectorName}</td>
                                                             </tr>
                                                         )
                                                     })}
@@ -357,7 +400,9 @@ export default class Search extends Component {
                                                 </Table>
                                             </div>
                                         }
+
                                     </Col>
+
                                 </Row>
 
 
@@ -368,13 +413,13 @@ export default class Search extends Component {
                                 <Row className="no-margin">
                                 <Col className="no-padding">
                                     {this.state.foundAnnotations &&
-                                        <div className="scrollable-table-wrapper" style={{height: 300}}>
+                                        <div className="scrollable-table-wrapper1">
                                             <Table hover size="sm" className="targets-table">
                                                 <thead
                                                     title={t('results.table_header_tooltip_ascendant_or_descendant_order')} style={{width: 50}}>
                                                     <tr>
-                                                        <th>#</th>
-                                                        <th></th>
+                                                        <th style={{width: 40 +'px'}}>#</th>
+                                                        <th style={{width: 40 +'px'}}></th>
                                                         <TableHeader title={t('search.annotations_table_column_file')}
                                                                      sortKey="fileBasename"
                                                                      sortedBy={this.state.sortBy} sort={this._sort}
@@ -401,8 +446,8 @@ export default class Search extends Component {
                                                 {this.state.foundAnnotations.map((annotation, index) => {
                                                     return (
                                                         <tr key={key++}>
-                                                            <td scope="row" style={{width: 50}}>{index + 1}</td>
-                                                            <td scope="row" style={{width: 50}}>
+                                                            <td scope="row" style={{width: 40 +'px'}}>{index + 1}</td>
+                                                            <td scope="row" style={{width: 40 +'px'}}>
                                                                 <img
                                                                     className='open-resource-btn'
                                                                     alt="external link"

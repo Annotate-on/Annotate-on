@@ -1,19 +1,54 @@
 .search-page {
+  .search-form-container {
+    border-bottom: 1px solid #ccc;
+  }
+
   .search-form {
     width: 100%;
     margin-top: 15px;
+    padding-bottom: 15px;
     margin-left: 50px;
     line-height: 35px;
+
     .form-check-input {
       margin-top: 0.9em;
     }
     .form-check {
       margin-top: -10px;
     }
+
+    .search-input-container {
+      display: flex;
+      width: 100%;
+    }
+
+    .search-input {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 25px;
+      top: -2px;
+      border: 0px;
+      background: transparent;
+      font-size:18px;
+      color: #ccc;
+    }
+
+    .reset-search-button {
+      position: absolute;
+      top: -3px;
+      right: 20px;
+      font-size:16px;
+    }
   }
+
   .search-results {
     margin: 10px;
-    //border-top: 1px solid #ddd;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
     .search-results-section-title {
       margin-top: 15px;
       margin-bottom: 10px;

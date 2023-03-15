@@ -119,6 +119,14 @@ const go = () => {
                     console.log('project from previous version , adding selectedCategories');
                     tmpState.app["selectedCategories"] = [];
                 }
+                if (!tmpState.app.hasOwnProperty("searchText")){
+                    console.log('project from previous version , adding searchText');
+                    tmpState.app["searchText"] = null;
+                }
+                if (!tmpState.app.hasOwnProperty("searchResults")){
+                    console.log('project from previous version , adding searchResults');
+                    tmpState.app["searchResults"] = [];
+                }
                 // Check if object structure match to expected one.
                 for (const prop in initialState.app) {
                     if(!(prop in tmpState.app)) {

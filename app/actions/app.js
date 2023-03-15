@@ -129,6 +129,7 @@ export const SET_STATE = 'SET_STATE';
 export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
 export const SAVE_SELECTED_CATEGORY = 'SAVE_SELECTED_CATEGORY';
+export const SAVE_SEARCH = 'SAVE_SEARCH';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
     return {
@@ -870,5 +871,10 @@ export const saveAnnotationEndTime = (annType, annId, endTime, pictureId) => ({
 export const saveSelectedCategory = (selectedCategory, selectedCategories) => ({
     type: SAVE_SELECTED_CATEGORY,
     selectedCategory, selectedCategories
+});
+
+export const saveSearch = (searchText, searchResults) => ({
+    type: SAVE_SEARCH,
+    searchText, searchResults
 });
 

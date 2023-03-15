@@ -905,6 +905,7 @@
     "search": {
       "title": "Search",
       "textbox_placeholder_search_text": "Search",
+      "btn_reset_search_tooltip": "Reset search",
       "lbl_search_in_selection": "Current selection (selected)",
       "lbl_search_in_project": "Project",
       "title_results_section_library": "Library",
