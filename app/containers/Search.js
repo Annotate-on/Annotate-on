@@ -4,7 +4,14 @@ import {withTranslation} from "react-i18next";
 import {connect} from "react-redux";
 import Search from "../components/Search";
 import lodash from "lodash";
-import {createTab, saveSearch, selectLibraryTab, setPictureInSelection} from "../actions/app";
+import {
+    createTab,
+    openInNewTab,
+    saveSearch,
+    saveSelectedCategory,
+    selectLibraryTab,
+    setPictureInSelection
+} from "../actions/app";
 
 const mapStateToProps = state => {
     return {
@@ -29,7 +36,10 @@ const mapStateToProps = state => {
         pictures: state.app.pictures,
         openTabs: state.app.open_tabs,
         searchText: state.app.searchText,
-        searchResults: state.app.searchResults
+        searchResults: state.app.searchResults,
+        tags: state.app.tags,
+        annotationsByTag: state.app.annotations_by_tag,
+        picturesByTag: state.app.pictures_by_tag,
     };
 };
 
@@ -52,6 +62,19 @@ const mapDispatchToProps = dispatch => {
         },
         saveSearch: (searchText, searchResults) => {
             dispatch(saveSearch(searchText, searchResults))
+        },
+        openInNewTab: (tag) => {
+            dispatch(openInNewTab(tag));
+        },
+        saveSelectedCategory: (selectedCategory, selectedCategories) => {
+            dispatch(saveSelectedCategory(selectedCategory, selectedCategories));
+        },
+        goToKeywords: () => {
+            dispatch(push('/tagManager'));
+            setTimeout(() => {
+                ee.emit(EVENT_SELECT_TAB, 'tagManager')
+            }, 100)
+
         },
     };
 };

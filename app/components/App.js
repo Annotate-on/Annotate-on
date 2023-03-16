@@ -349,7 +349,11 @@ export default class AppMenu extends Component {
             this.setState({
                 selectedMenu: selection
             })
-        }else{
+        } else if(selection === 'tagManager') {
+            this.setState({
+                selectedMenu: TAG_MANAGER
+            });
+        } else{
             this.setState({
                 selectedMenu: SELECTION
             });

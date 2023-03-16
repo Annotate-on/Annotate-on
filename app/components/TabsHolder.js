@@ -217,6 +217,19 @@ export default class extends PureComponent {
 
     _selectTab = (index, name) => {
         console.log("_selectTab", name, index)
+
+        // select last tab
+        if(name === undefined && index == -1) {
+            setTimeout(() => {
+                const keys = Object.keys(this.props.openTabs);
+                this.setState({
+                    selectedTab: keys.length - 1
+                });
+                ee.emit(EVENT_SELECT_TAB, this.props.openTabs[keys[keys.length - 1]].view);
+            }, 100);
+        }
+
+        // find tab by tab name
         if(name && index === undefined) {
             let foundIndex = this._findTabIndexByName(name);
             this.setState({
