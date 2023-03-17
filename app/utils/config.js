@@ -316,13 +316,13 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding selectedCategories');
                 tmpState["selectedCategories"] = [];
             }
-            if (!tmpState.app.hasOwnProperty("searchText")){
+            if (!tmpState.hasOwnProperty("searchText")){
                 console.log('project from previous version , adding searchText');
-                tmpState.app["searchText"] = null;
+                tmpState["searchText"] = null;
             }
-            if (!tmpState.app.hasOwnProperty("searchResults")){
+            if (!tmpState.hasOwnProperty("searchResults")){
                 console.log('project from previous version , adding searchResults');
-                tmpState.app["searchResults"] = [];
+                tmpState["searchResults"] = [];
             }
             // Check if object structure match to expected one.
             for (const prop in initialState) {
