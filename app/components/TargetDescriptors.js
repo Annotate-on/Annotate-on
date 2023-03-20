@@ -80,10 +80,6 @@ class TargetDescriptors extends PureComponent {
 
     componentWillReceiveProps(nextProps) {
         console.log('next props from target descriptor...' , nextProps)
-        if (nextProps.taxonomy == null && nextProps.taxonomyModel && nextProps.taxonomyModel.id !== ''){
-            console.log('setting new taxonomy -> ' ,nextProps.taxonomyModel.id )
-            this.props.setSelectedTaxonomy(nextProps.taxonomyModel.id);
-        }
         this._resortTable();
     }
 
