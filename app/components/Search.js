@@ -96,7 +96,7 @@ export default class Search extends Component {
     };
     _searchFilterChangeHandler = (event) => {
         this._searchFormChangeHandler(event);
-        setTimeout(event => {this._doSearch()}, 50)
+        // setTimeout(event => {this._doSearch()}, 50)
     };
 
     _handleKeyDown = (event) => {
