@@ -31,6 +31,8 @@ export default () => (
             <Route path={routes.IMPORTWIZARD} component={ImportWizard}/>
             <Route path={routes.IMPORTVIDEOWIZARD} component={ImportVideoWizard}/>
             <Route path={routes.IMPORTEVENTWIZARD} component={ImportEventWizard}/>
+            <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID_AND_CHARACTER_ID} component={Taxonomies}/>
+            <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID} component={Taxonomies}/>
             <Route path={routes.TAXONOMIES} component={Taxonomies}/>
             <Route path={routes.COLLECTIONEXPORT} component={CollectionExport}/>
             <Route path={routes.COLLECTIONS} component={Collections}/>

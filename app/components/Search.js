@@ -13,7 +13,7 @@ import {
     ANNOTATION_POLYLINE,
     ANNOTATION_RECTANGLE,
     ANNOTATION_SIMPLELINE,
-    ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_TRANSCRIPTION, MODEL_ANNOTATE, MODEL_XPER, NUMERICAL,
     RESOURCE_TYPE_EVENT,
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
@@ -23,11 +23,14 @@ import {
     ee,
     EVENT_HIGHLIGHT_ANNOTATION,
     EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, EVENT_SELECT_SELECTION_TAB,
-    EVENT_SELECT_TAB
+    EVENT_SELECT_TAB, EVENT_SHOW_ALERT
 } from "../utils/library";
-import {loadMetadata} from "../utils/config";
+import {getTaxonomyDir, loadMetadata, loadTaxonomy} from "../utils/config";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
 import {getCategoriesOnly, getRootCategories, getTagsOnly} from "./tags/tagUtils";
+import {convertSDDtoJson} from "../utils/sdd-processor";
+import path from "path";
+import lodash from "lodash";
 
 export const IN_SELECTION = 'IN_SELECTION';
 export const IN_PROJECT = 'IN_PROJECT';
@@ -37,15 +40,21 @@ export default class Search extends Component {
         super(props);
         this.state = {
             searchForm: {
-                searchText: this.props.searchText ? this.props.searchText : '',
-                scope: IN_SELECTION
+                scope: IN_PROJECT,
+                searchText: this.props.search ? this.props.search.searchText : '',
+                searchInLibrary: this.props.search  && this.props.search.searchInLibrary !== undefined ? this.props.search.searchInLibrary : '',
+                searchInAnnotations: this.props.search  && this.props.search.searchInAnnotations !== undefined ? this.props.search.searchInAnnotations : '',
+                searchInKeywords: this.props.search  && this.props.search.searchInKeywords !== undefined ? this.props.search.searchInKeywords : '',
+                searchInModels: this.props.search  && this.props.search.searchInModels !== undefined ? this.props.search.searchInModels : ''
             },
             foundAnnotations: this.props.searchResults && this.props.searchResults.foundAnnotations ?
                 this.props.searchResults.foundAnnotations : [],
             foundResources: this.props.searchResults && this.props.searchResults.foundResources ?
                 this.props.searchResults.foundResources : [],
             foundKeywords: this.props.searchResults && this.props.searchResults.foundKeywords ?
-                this.props.searchResults.foundKeywords : []
+                this.props.searchResults.foundKeywords : [],
+            foundCharacters: this.props.searchResults && this.props.searchResults.foundCharacters ?
+                this.props.searchResults.foundCharacters : [],
         }
     }
 
@@ -53,21 +62,41 @@ export default class Search extends Component {
     }
 
     componentWillUnmount() {
-        this.props.saveSearch(this.state.searchForm.searchText, {
-            foundAnnotations: this.state.foundAnnotations,
-            foundResources: this.state.foundResources,
-            foundKeywords: this.state.foundKeywords
-        });
+        this.props.saveSearch(
+            {
+                searchText: this.state.searchForm.searchText,
+                searchInLibrary: this.state.searchForm.searchInLibrary,
+                searchInAnnotations: this.state.searchForm.searchInAnnotations,
+                searchInKeywords: this.state.searchForm.searchInKeywords,
+                searchInModels: this.state.searchForm.searchInModels
+            },
+            {
+                searchInLibrary: this.state.searchForm.searchInLibrary,
+                foundAnnotations: this.state.foundAnnotations,
+                foundResources: this.state.foundResources,
+                foundKeywords: this.state.foundKeywords,
+                foundCharacters: this.state.foundCharacters
+            }
+        );
     }
 
     _searchFormChangeHandler = (event) => {
-        const {name, value} = event.target;
+        const {name, value, type} = event.target;
+        console.log("_searchFormChangeHandler", event.target)
         const {t} = this.props;
         const searchForm = {...this.state.searchForm};
-        searchForm[name] = value ? value : '';
+        if(type === 'checkbox') {
+            searchForm[name] = event.target.checked ? true : false;
+        } else {
+            searchForm[name] = value ? value : '';
+        }
         this.setState({
             searchForm: searchForm
         });
+    };
+    _searchFilterChangeHandler = (event) => {
+        this._searchFormChangeHandler(event);
+        setTimeout(event => {this._doSearch()}, 50)
     };
 
     _handleKeyDown = (event) => {
@@ -151,19 +180,24 @@ export default class Search extends Component {
         this.props.goToKeywords();
     }
 
+    _onOpenTaxonomy(taxonomyId, characterId) {
+        console.log("on open taxonomy ", taxonomyId, characterId);
+        this.props.goToTaxonomies(taxonomyId, characterId);
+    }
 
     _doSearch() {
+        const { t } = this.props;
         console.log("search by", this.state.searchForm);
         console.log("all annotations in project", this.props.annotations);
         if (!this.state.searchForm.searchText) {
-            alert('Please enter some text to search by!');
+            ee.emit(EVENT_SHOW_ALERT , t('search.alert_please_enter_some_text_to_search_by'));
             return;
         }
 
         // search resources
         console.log("all pictures in project", this.props.pictures);
         let foundResources = []
-        if (this.props.pictures) {
+        if (this.state.searchForm.searchInLibrary && this.props.pictures) {
             let allResources = []
             for (const resourceId in this.props.pictures) {
                 let resource = this.props.pictures[resourceId];
@@ -220,7 +254,7 @@ export default class Search extends Component {
 
         // search annotations
         let foundAnnotations = []
-        if (this.props.annotations) {
+        if (this.state.searchForm.searchInAnnotations && this.props.annotations) {
             let allAnnotations = []
             this.props.annotations.map(annotation => {
                 let target = '';
@@ -282,51 +316,107 @@ export default class Search extends Component {
                 });
             });
         }
+
         // search keywords
         let foundKeywords = []
-        let tagsInUse = [];
-        if(this.props.annotationsByTag) {
-            tagsInUse.push(...Object.keys(this.props.annotationsByTag));
-        }
-        if(this.props.picturesByTag) {
-            tagsInUse.push(...Object.keys(this.props.picturesByTag));
-        }
-        tagsInUse = [...new Set(tagsInUse)];
-        let rootCategories = sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags) , SORT_ALPHABETIC_DESC);
-        if(rootCategories) {
-            for (const rootCategory of rootCategories) {
-                this._doProcessCategory([], rootCategory, this.state.searchForm.searchText, tagsInUse, foundKeywords);
+        if(this.state.searchForm.searchInKeywords) {
+            let tagsInUse = [];
+            if (this.props.annotationsByTag) {
+                tagsInUse.push(...Object.keys(this.props.annotationsByTag));
+            }
+            if (this.props.picturesByTag) {
+                tagsInUse.push(...Object.keys(this.props.picturesByTag));
+            }
+            tagsInUse = [...new Set(tagsInUse)];
+            let rootCategories = sortTagsAlphabeticallyOrByDate(getRootCategories(this.props.tags), SORT_ALPHABETIC_DESC);
+            if (rootCategories) {
+                for (const rootCategory of rootCategories) {
+                    this._doProcessCategory([], rootCategory, this.state.searchForm.searchText, tagsInUse, foundKeywords);
+                }
             }
         }
+
+        // search characters
+        let foundCharacters = []
+        console.log("props.taxonomies", this.props.taxonomies);
+        if (this.state.searchForm.searchInModels && this.props.taxonomies) {
+            const sortedTaxonomies = this._sortList('name', 'ASC', this.props.taxonomies || []);
+            for (const taxonomy of sortedTaxonomies) {
+                this._doProcessTaxonomy(taxonomy, this.state.searchForm.searchText, foundCharacters);
+            }
+        }
+
         console.log("foundResources", foundResources);
         console.log("foundAnnotations", foundAnnotations);
         console.log("foundKeywords", foundKeywords);
+        console.log("foundCharacters", foundCharacters);
+
         this.setState({
-            foundResources: foundResources,
-            foundAnnotations: foundAnnotations,
-            foundKeywords: foundKeywords,
+            foundResources,
+            foundAnnotations,
+            foundKeywords,
+            foundCharacters
         })
     }
 
     _doProcessCategory(path, category, searchText, tagsInUse, foundKeywords) {
-        if(!category) return;
+        if (!category) return;
         let childrenTags = sortTagsAlphabeticallyOrByDate(getTagsOnly(category.children), SORT_ALPHABETIC_DESC)
             .filter(tag => {
                 return tagsInUse.includes(tag.name) && tag.name.toLowerCase().includes(searchText.toLowerCase())
             });
-        if(childrenTags && childrenTags.length > 0) {
+        if (childrenTags && childrenTags.length > 0) {
             foundKeywords.push({
                 path: [...path, category],
                 tags: childrenTags
             });
         }
         let childrenCategories = sortTagsAlphabeticallyOrByDate(getCategoriesOnly(category.children), SORT_ALPHABETIC_DESC);
-        if(childrenCategories) {
+        if (childrenCategories) {
             childrenCategories.forEach(subcategory => {
                 this._doProcessCategory([...path, category], subcategory, searchText, tagsInUse, foundKeywords);
             })
         }
     }
+
+    _doProcessTaxonomy(taxonomy, searchText, foundCharacters) {
+        if (!taxonomy) return;
+
+        let descriptors = [];
+        if (taxonomy.model === MODEL_XPER) {
+            descriptors = convertSDDtoJson(path.join(getTaxonomyDir(), taxonomy.sddPath)).items
+        } else if (taxonomy.model === MODEL_ANNOTATE) {
+            descriptors = loadTaxonomy(taxonomy.id);
+        }
+        const unsortedCharacters = descriptors ?
+            descriptors.filter(value => {
+                return value.targetName.toLowerCase().includes(searchText.toLowerCase());
+            })
+                .map(target => {
+                    return {
+                        id: target.id,
+                        name: target.targetName,
+                        targetType: target.targetType,
+                        color: target.targetColor,
+                        annotationType: target.annotationType
+                    }
+                })
+            : [];
+        if (unsortedCharacters.length > 0) {
+            let sortedCharacters = this._sortList('name', 'ASC', unsortedCharacters);
+            foundCharacters.push({
+                taxonomy: taxonomy,
+                characters: sortedCharacters
+            });
+        }
+    }
+
+    _sortList(sortBy, sortDirection, initList) {
+        const list = initList || [];
+        const sorted = lodash.sortBy(list, _ => (typeof _[sortBy] === 'string' ? _[sortBy].toLowerCase() : _[sortBy]));
+        return sortDirection === 'DESC' ? lodash.reverse(sorted) : sorted;
+    }
+
     render() {
         const {t} = this.props;
         let key = 0;
@@ -356,7 +446,7 @@ export default class Search extends Component {
                                                    placeholder={t('search.textbox_placeholder_search_text')}
                                                    title={t('search.title')}
                                                    value={this.state.searchForm.searchText}
-                                                   onChange={this._searchFormChangeHandler}
+                                                   onChange={(e) => { this._searchFilterChangeHandler(e)}}
                                                    onKeyDown={this._handleKeyDown}
                                                    autoFocus={true}>
                                             </Input>
@@ -367,25 +457,48 @@ export default class Search extends Component {
                                             </Button>
                                         </div>
                                     </Col>
-                                    <Col sm={9} md={9} lg={9}>
-                                        {/*<FormGroup check>*/}
-                                        {/*    <Label check>*/}
-                                        {/*        <Input type="radio" name="scope"*/}
-                                        {/*               value={IN_SELECTION}*/}
-                                        {/*               checked={IN_SELECTION === this.state.searchForm.scope}*/}
-                                        {/*               onChange={this._searchFormChangeHandler}*/}
-                                        {/*        />{' '}{t('search.lbl_search_in_selection')}*/}
-                                        {/*    </Label>*/}
-                                        {/*</FormGroup>*/}
-                                        {/*<FormGroup check>*/}
-                                        {/*    <Label check>*/}
-                                        {/*        <Input type="radio" name="scope"*/}
-                                        {/*               value={IN_PROJECT}*/}
-                                        {/*               checked={IN_PROJECT === this.state.searchForm.scope}*/}
-                                        {/*               onChange={this._searchFormChangeHandler}*/}
-                                        {/*        />{' '}{t('search.lbl_search_in_project')}*/}
-                                        {/*    </Label>*/}
-                                        {/*</FormGroup>*/}
+                                    <Col sm={8} md={8} lg={8}>
+                                        <FormGroup check>
+                                            <Label check>
+                                                <Input type="checkbox" name="searchInLibrary" id="searchInLibrary"
+                                                       checked={this.state.searchForm.searchInLibrary}
+                                                       onChange={(e) => {this._searchFilterChangeHandler(e)}}>
+                                                </Input>
+                                                {t('search.search_form_lbl_library')}
+                                            </Label>
+                                        </FormGroup>
+                                        <FormGroup check>
+                                            <Label check>
+                                                <Input type="checkbox" name="searchInAnnotations"
+                                                       id="searchInAnnotations"
+                                                       checked={this.state.searchForm.searchInAnnotations}
+                                                       onChange={(e) => {this._searchFilterChangeHandler(e)}}>
+                                                </Input>
+                                                {t('search.search_form_lbl_annotations')}
+                                            </Label>
+                                        </FormGroup>
+                                        <FormGroup check>
+                                            <Label check>
+                                                <Input type="checkbox" name="searchInKeywords"
+                                                       id="searchInKeywords"
+                                                       checked={this.state.searchForm.searchInKeywords}
+                                                       onChange={(e) => {this._searchFilterChangeHandler(e)}}>
+                                                </Input>
+                                                {t('search.search_form_lbl_keywords')}
+                                            </Label>
+                                        </FormGroup>
+                                        <FormGroup check>
+                                            <Label check>
+                                                <Input type="checkbox" name="searchInModels"
+                                                       id="searchInModels"
+                                                       checked={this.state.searchForm.searchInModels}
+                                                       onChange={(e) => {this._searchFilterChangeHandler(e)}}>
+                                                </Input>
+
+                                                {t('search.search_form_lbl_models')}
+                                                {/*{t('models.target_descriptors.dialog_edit.lbl_checkbox_include_in_calculation')}*/}
+                                            </Label>
+                                        </FormGroup>
                                     </Col>
                                 </Row>
                             </div>
@@ -394,16 +507,19 @@ export default class Search extends Component {
                     <Row>
                         <Col sm={12} md={12} lg={12}>
                             <div className="search-results">
-                                <div className="search-results-section-title">
+
+                                { this.state.searchForm.searchInLibrary &&
+                                    <div className="search-results-section-title">
                                     <span
                                         className="search-results-title-main"> {t('search.title_results_section_library')}</span>
                                     <span
                                         className="search-results-title-details">{t('search.title_results_section_found_resources', {found: this.state.foundResources.length})}</span>
                                 </div>
+                                }
 
                                 <Row className="no-margin">
                                     <Col className="no-padding">
-                                        {this.state.foundResources &&
+                                        {this.state.foundResources.length > 0 &&
                                             <div className="table-wrapper">
                                                 <Table hover size="sm" className="targets-table">
                                                     <thead
@@ -484,15 +600,17 @@ export default class Search extends Component {
                                     </Col>
                                 </Row>
 
-                                <div className="search-results-section-title">
+                                { this.state.searchForm.searchInAnnotations &&
+                                    <div className="search-results-section-title">
                                     <span
                                         className="search-results-title-main"> {t('search.title_results_section_annotations')}</span>
                                     <span
                                         className="search-results-title-details">{t('search.title_results_section_found_annotations', {found: this.state.foundAnnotations.length})}</span>
                                 </div>
+                                }
                                 <Row className="no-margin">
                                     <Col className="no-padding">
-                                        {this.state.foundAnnotations &&
+                                        {this.state.foundAnnotations.length > 0 &&
                                             <div className="table-wrapper">
                                                 <Table hover size="sm" className="targets-table">
                                                     <thead
@@ -557,15 +675,20 @@ export default class Search extends Component {
                                     </Col>
                                 </Row>
 
-                                <div className="search-results-section-title">
+                                { this.state.searchForm.searchInKeywords &&
+                                    <div className="search-results-section-title">
                                     <span
                                         className="search-results-title-main"> {t('search.title_results_section_keywords')}</span>
                                     <span
-                                        className="search-results-title-details">{t('search.title_results_section_found_keywords', {found: this.state.foundKeywords.length})}</span>
+                                        className="search-results-title-details">
+                                        {t('search.title_results_section_found_keywords',
+                                            {found: this.state.foundKeywords.reduce((count, item) => count + item.tags.length, 0)})}
+                                    </span>
                                 </div>
+                                }
                                 <Row className="no-margin">
                                     <Col className="no-padding">
-                                        {this.state.foundAnnotations &&
+                                        {this.state.foundKeywords.length > 0 &&
                                             <div className="table-wrapper">
                                                 <Table hover size="sm" className="targets-table">
                                                     <thead
@@ -600,18 +723,22 @@ export default class Search extends Component {
                                                                     />
                                                                 </td>
                                                                 <td style={{width: 400 + 'px'}}>{
-                                                                        keyword.path.map(item => {return item.name}).join(' > ')}
+                                                                    keyword.path.map(item => {
+                                                                        return item.name
+                                                                    }).join(' > ')}
                                                                 </td>
                                                                 <td>
-                                                                    { keyword.tags.map((tag, index) => {
-                                                                        return (
-                                                                            <span key={`tg-d-${index}-${tag.name}`}
-                                                                                  className="tag-item"
-                                                                                    onClick={(event) => this._onOpenTag(tag.name)}>
-                                                                                {tag.name}
-                                                                            </span>
-                                                                        );
-                                                                    })}
+                                                                    <div className="tag-items-container">
+                                                                        {keyword.tags.map((tag, index) => {
+                                                                            return (
+                                                                                <span key={`tg-d-${index}-${tag.name}`}
+                                                                                      className="tag-item"
+                                                                                      onClick={(event) => this._onOpenTag(tag.name)}>
+                                                                                    {tag.name}
+                                                                                </span>
+                                                                            );
+                                                                        })}
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         )
@@ -623,6 +750,83 @@ export default class Search extends Component {
                                     </Col>
                                 </Row>
 
+                                { this.state.searchForm.searchInModels &&
+                                    <div className="search-results-section-title">
+                                    <span
+                                        className="search-results-title-main"> {t('search.title_results_section_models')}</span>
+                                    <span
+                                        className="search-results-title-details">
+                                        {t('search.title_results_section_found_characters',
+                                            {found: this.state.foundCharacters.reduce((count, item) => count + item.characters.length, 0)})}
+                                    </span>
+                                </div>
+                                }
+                                <Row className="no-margin">
+                                    <Col className="no-padding">
+                                        {this.state.foundCharacters.length > 0 &&
+                                            <div className="table-wrapper">
+                                                <Table hover size="sm" className="targets-table">
+                                                    <thead
+                                                        title={t('results.table_header_tooltip_ascendant_or_descendant_order')}
+                                                        style={{width: 50}}>
+                                                    <tr>
+                                                        <th style={{width: 40 + 'px'}}>#</th>
+                                                        <th style={{width: 40 + 'px'}}></th>
+                                                        <TableHeader title={t('search.models_table_column_model_name')}
+                                                                     sortKey="taxonomy.name"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}
+                                                                     style={{width: 200 + 'px'}}/>
+                                                        <TableHeader title={t('search.models_table_column_characters')}
+                                                                     sortKey="characters"
+                                                                     sortedBy={this.state.sortBy} sort={this._sort}/>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {this.state.foundCharacters.map((foundCharacter, index) => {
+                                                        return (
+                                                            <tr key={key++}>
+                                                                <td scope="row"
+                                                                    style={{width: 40 + 'px'}}>{index + 1}</td>
+                                                                <td scope="row" style={{width: 40 + 'px'}}>
+                                                                    <img
+                                                                        className='open-resource-btn'
+                                                                        alt="external link"
+                                                                        src={require('./pictures/external-link.svg')}
+                                                                        onClick={e => {
+                                                                            this._onOpenTaxonomy(foundCharacter.taxonomy.id);
+                                                                        }}
+                                                                    />
+                                                                </td>
+                                                                <td style={{width: 500 + 'px'}}>
+                                                                    <span
+                                                                        className="model-name">{foundCharacter.taxonomy.name}</span>
+                                                                    <i className="model-type-icon">{foundCharacter.taxonomy.model === MODEL_XPER ? "Xper" : "Ann"}</i>
+
+                                                                </td>
+                                                                <td>
+                                                                    <div className="character-items-container">
+                                                                        {foundCharacter.characters.map((character, index) => {
+                                                                            return (
+                                                                                <span
+                                                                                    key={`tg-d-${index}-${character.name}`}
+                                                                                    className="character-item"
+                                                                                    style={{borderColor: character.color ? character.color : '#ccc'}}
+                                                                                    onClick={(event) => this._onOpenTaxonomy(foundCharacter.taxonomy.id, character.id)}>
+                                                                                {character.name}{character.targetType ? ' : ' + character.targetType : ''}
+                                                                            </span>
+                                                                            );
+                                                                        })}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                    </tbody>
+                                                </Table>
+                                            </div>
+                                        }
+                                    </Col>
+                                </Row>
                             </div>
                         </Col>
                         <Col sm={9} md={9} lg={9}/>

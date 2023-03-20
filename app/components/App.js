@@ -345,7 +345,7 @@ export default class AppMenu extends Component {
         this.setState({
             selectedMenu: selection
         })
-        if (selection === 'eventHome'){
+        if (selection === 'eventHome') {
             this.setState({
                 selectedMenu: selection
             })
@@ -353,7 +353,11 @@ export default class AppMenu extends Component {
             this.setState({
                 selectedMenu: TAG_MANAGER
             });
-        } else{
+        } else if(selection === 'taxonomies') {
+            this.setState({
+                selectedMenu: TAXONOMIES
+            });
+        } else {
             this.setState({
                 selectedMenu: SELECTION
             });

@@ -35,11 +35,12 @@ const mapStateToProps = state => {
         taxonomyInstance: state.app.taxonomyInstance,
         pictures: state.app.pictures,
         openTabs: state.app.open_tabs,
-        searchText: state.app.searchText,
+        search: state.app.search,
         searchResults: state.app.searchResults,
         tags: state.app.tags,
         annotationsByTag: state.app.annotations_by_tag,
         picturesByTag: state.app.pictures_by_tag,
+        taxonomies: state.app.taxonomies,
     };
 };
 
@@ -76,6 +77,13 @@ const mapDispatchToProps = dispatch => {
             }, 100)
 
         },
+        goToTaxonomies: (taxonomyId, characterId) => {
+            dispatch(push('/taxonomies' + (taxonomyId ? '/' + taxonomyId : '') + (characterId ? '/' + characterId : '')));
+            setTimeout(() => {
+                ee.emit(EVENT_SELECT_TAB, 'taxonomies')
+            }, 100)
+
+        }
     };
 };
 

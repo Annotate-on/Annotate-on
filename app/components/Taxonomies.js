@@ -45,20 +45,27 @@ const chance = new Chance();
 export default class extends Component {
     constructor(props) {
         super(props);
+        const taxonomyId = this.props.match  ? this.props.match.params.taxonomyId : "";
+        const characterId = this.props.match  ? this.props.match.params.characterId : "";
+        console.log("taxonomyId", taxonomyId);
+        console.log("characterId", characterId);
         const sortBy = 'name';
         const sortDirection = 'ASC';
         let selectedModel = null;
         const sortedTaxonomies = this._sortList(sortBy, sortDirection, props.taxonomies || []);
-        if (this.props.selectedTaxonomy && this.props.taxonomies) {
+        if(taxonomyId) {
+            selectedModel = this.props.taxonomies.find(taxonomy => taxonomy.id === taxonomyId);
+        } else if (this.props.selectedTaxonomy && this.props.taxonomies) {
             selectedModel = this.props.taxonomies.find(taxonomy => taxonomy.id === this.props.selectedTaxonomy.id);
         }
         this.state = {
             sortBy,
             sortDirection,
             taxonomies: sortedTaxonomies,
-            showView: LIST,
+            showView: taxonomyId ? ADD_VIEW_DESCRIPTORS : LIST,
             modal: false,
-            selectedModel: selectedModel
+            selectedModel: selectedModel,
+            selectedCharacterId: characterId
         };
     }
 
@@ -428,6 +435,7 @@ export default class extends Component {
             case ADD_VIEW_DESCRIPTORS:
                 return <TargetDescriptors
                     taxonomyModel={this.state.selectedModel}
+                    selectedId={this.state.selectedCharacterId}
                     goBack={() => this.setState({showView: LIST})}/>;
         }
     }

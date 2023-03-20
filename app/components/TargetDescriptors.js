@@ -396,8 +396,8 @@ class TargetDescriptors extends PureComponent {
                                 <tbody>
                                 {this.state.sortedTargets.map(target => {
                                     return (
-                                        <tr key={key++}>
-                                            <th scope="row">&nbsp;</th>
+                                        <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
+                                            <th scope="row" >&nbsp;</th>
                                             <td>
                                                 <ContextMenuTrigger id="target_context_menu"
                                                                     disable={this.state.model === MODEL_XPER}

@@ -119,7 +119,7 @@ const go = () => {
                     console.log('project from previous version , adding selectedCategories');
                     tmpState.app["selectedCategories"] = [];
                 }
-                if (!tmpState.app.hasOwnProperty("searchText")){
+                if (!tmpState.app.hasOwnProperty("search")){
                     console.log('project from previous version , adding searchText');
                     tmpState.app["searchText"] = null;
                 }

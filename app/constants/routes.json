@@ -9,6 +9,8 @@
   "IMPORTEVENTWIZARD": "/importEventWizard/:folderName/:tabName?",
   "XPER": "/xper",
   "TAXONOMIES": "/taxonomies",
+  "TAXONOMIES_WITH_TAXONOMY_ID": "/taxonomies/:taxonomyId",
+  "TAXONOMIES_WITH_TAXONOMY_ID_AND_CHARACTER_ID": "/taxonomies/:taxonomyId/:characterId",
   "COLLECTIONEXPORT": "/collection-export/:tabName?",
   "COLLECTIONS": "/collections",
   "XMPMETADATA": "/xmpmetadata",

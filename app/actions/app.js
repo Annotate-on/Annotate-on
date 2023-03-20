@@ -873,8 +873,8 @@ export const saveSelectedCategory = (selectedCategory, selectedCategories) => ({
     selectedCategory, selectedCategories
 });
 
-export const saveSearch = (searchText, searchResults) => ({
+export const saveSearch = (search, searchResults) => ({
     type: SAVE_SEARCH,
-    searchText, searchResults
+    search, searchResults
 });
 

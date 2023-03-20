@@ -43,6 +43,10 @@
       right: 20px;
       font-size:16px;
     }
+    .form-check {
+      display: inline-block;
+      margin-right: 10px;
+    }
   }
 
   .search-results {
@@ -67,6 +71,12 @@
     .open-resource-btn {
       cursor: pointer;
     }
+
+    .tag-items-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
     .tag-item {
       margin: 3px;
       height: 16px;
@@ -75,6 +85,31 @@
       background-color: #ff9800;
       cursor: pointer;
       color: black;
+    }
+
+    .character-items-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .character-item {
+      margin: 3px;
+      height: 20px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid ;
+      cursor: pointer;
+      color: black;
+    }
+
+    .model-type-icon {
+      padding-left: 10px;
+      font-size: 10px;
+      font-style: normal;
+      height: 16px;
+      line-height: 0px;
+      color: #007bff;
+      margin-left: -2px;
     }
 
   }

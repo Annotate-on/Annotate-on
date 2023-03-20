@@ -928,7 +928,16 @@
       "title_results_section_keywords": "Keywords",
       "title_results_section_found_keywords": "( {{found}} keywords found )",
       "keywords_table_column_group": "Group",
-      "keywords_table_column_tags": "Tags"
+      "keywords_table_column_tags": "Tags",
+      "title_results_section_models": "Models",
+      "title_results_section_found_characters": "( {{found}} characters found )",
+      "models_table_column_model_name": "Model",
+      "models_table_column_characters": "Characters",
+      "search_form_lbl_library": "Library",
+      "search_form_lbl_annotations": "Annotations",
+      "search_form_lbl_keywords": "Keywords",
+      "search_form_lbl_models": "Models",
+      "alert_please_enter_some_text_to_search_by": "Please enter some text to search by!"
     }
   }
 }

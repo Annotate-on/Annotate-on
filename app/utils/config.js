@@ -316,7 +316,7 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding selectedCategories');
                 tmpState["selectedCategories"] = [];
             }
-            if (!tmpState.hasOwnProperty("searchText")){
+            if (!tmpState.hasOwnProperty("search")){
                 console.log('project from previous version , adding searchText');
                 tmpState["searchText"] = null;
             }

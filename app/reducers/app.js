@@ -4087,7 +4087,7 @@ export default (state = {}, action) => {
 
             return {
                 ...state,
-                searchText: action.searchText,
+                search: action.search,
                 searchResults: action.searchResults,
                 counter
             };
