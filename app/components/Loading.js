@@ -3,7 +3,12 @@ import styled from 'styled-components';
 import {Col, Container, Row} from 'reactstrap';
 import {BarLoader} from 'react-spinners';
 
-import {ee, EVENT_DIRECTORIES_ANALYSES_COMPLETE, EVENT_PROCESS_IMAGE_COMPLETE} from '../utils/library';
+import {
+    ee,
+    EVENT_DIRECTORIES_ANALYSES_COMPLETE,
+    EVENT_PROCESS_IMAGE_COMPLETE,
+    EVENT_PROCESS_IMAGE_ROTATION_COMPLETE
+} from '../utils/library';
 
 const _WaitIconDir = styled.i`
   @keyframes hop {
@@ -30,7 +35,8 @@ export default class extends PureComponent {
             picturesFound: props.files ? props.files : 0,
             picturesMetadataCollectedProgress: 0,
             thumbnailsCreationProgress: 0,
-            directories: []
+            directories: [],
+            picturesRotated: 0
         };
 
         ee.on(EVENT_DIRECTORIES_ANALYSES_COMPLETE, _ => {
@@ -46,6 +52,11 @@ export default class extends PureComponent {
                 picturesMetadataCollectedProgress: Math.round(
                     100 * (this.picturesMetadataCollected / this.state.picturesFound).toFixed(2)
                 )
+            });
+        });
+        ee.on(EVENT_PROCESS_IMAGE_ROTATION_COMPLETE, _ => {
+            this.setState({
+                picturesRotated: ++this.state.picturesRotated
             });
         });
     }
@@ -98,6 +109,13 @@ export default class extends PureComponent {
                               ) : (
                                   <_WaitIconDir className="fa fa-hourglass-o" aria-hidden="true"/>
                               )}
+                        </span>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col sm={{size: 12}} md={{size: 12}} lg={{size: 12}}>
+                        <span className="inline-label">{t('global.lbl_pictures_rotated')}:  </span><span className="inline-value">
+                        {this.state.picturesRotated}
                         </span>
                     </Col>
                 </Row>

@@ -9,7 +9,7 @@ import {getUserWorkspace, saveMetadata} from "../utils/config";
 import path from "path";
 import {IMAGE_STORAGE_DIR, URL_REGEXP} from "../constants/constants";
 import {
-    authorized_pictures_extensions,
+    AUTHORIZED_PICTURES_EXTENSIONS,
     ee,
     EVENT_HIDE_LOADING,
     EVENT_SHOW_LOADING,
@@ -170,7 +170,7 @@ export default class extends PureComponent {
 
                             const buffer = readChunck.sync(targetPictureFile, 0, 4100);
                             fileType.fromBuffer(buffer).then(type => {
-                                if (type !== undefined && authorized_pictures_extensions.indexOf(`.${type.ext}`) !== -1) {
+                                if (type !== undefined && AUTHORIZED_PICTURES_EXTENSIONS.indexOf(`.${type.ext}`) !== -1) {
                                     resolve({id, pictureUrl, targetPictureFile, destDir});
                                 } else {
                                     fs.remove(targetPictureFile).then(_ => {
@@ -236,7 +236,8 @@ export default class extends PureComponent {
 
                     // Display loading overlay.
                     ee.emit(EVENT_SHOW_LOADING, successfullyDownload.length);
-                    initPicturesLibrary(successfullyDownload, [this.props.parentFolder], this.props.pictures).then(pictureObjects => {
+                    initPicturesLibrary(successfullyDownload, [this.props.parentFolder],
+                        this.props.pictures, this.props.applyExifMetadataForRotation).then(pictureObjects => {
                         //save url as reference (sf metadata field) create both xmp and xml file
                         if (Object.keys(pictureObjects).length !== 0) {
                             Object.keys(pictureObjects).forEach(e => {

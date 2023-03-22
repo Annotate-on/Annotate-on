@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Tags from '../containers/Tags';
 import {DOC_FG, DOC_ICON, DOC_ICON_HOVER} from '../constants/constants';
 import {importClipboardResource, importFolder, importResources} from '../utils/config'
-import {Button, Col, Container, Row} from 'reactstrap';
+import {Button, Col, Container, Input, Label, Row} from 'reactstrap';
 import path from "path";
 import Folders from "../containers/Folders";
 import UrlImageImport from "../containers/UrlImageImport";
@@ -12,6 +12,7 @@ import DragAndDropImport from "../containers/DragAndDropImport";
 import {ee, EVENT_HIDE_LOADING, EVENT_SELECT_TAB, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
 import {attachDefaultTags, findTag, loadTags} from "../utils/tags";
 import PasteImageImport from "../containers/PasteImageImport";
+import {Column} from "react-virtualized";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 
@@ -54,7 +55,10 @@ const _RightColumn = styled.div`
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.state = {parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName)};
+        this.state = {
+            parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName),
+            applyExifMetadataForRotation: false
+        };
     }
 
     _saveFolder = (folder) => {
@@ -89,12 +93,19 @@ export default class extends Component {
         });
     };
 
+    _onRotatePictureChange = (event) => {
+        const {checked} = event.target;
+        this.setState({
+            applyExifMetadataForRotation: checked
+        });
+    }
+
     /**
      * Add pictures to app config.
      * @private
      */
     _loadImages = (images, folders) => {
-        initPicturesLibrary(images, folders, this.props.pictures).then(pictureObjects => {
+        initPicturesLibrary(images, folders, this.props.pictures, this.state.applyExifMetadataForRotation).then(pictureObjects => {
             // Add new pictures to lib.
             this.props.refreshState(pictureObjects);
             // Select parent folder.
@@ -217,7 +228,7 @@ export default class extends Component {
                                                     className="btn btn-secondary btn_import"
                                                     title={t('library.import_images.btn_tooltip_import_from_recolnat')}
                                                     onClick={ () => {
-                                                        this.props.goToImport(encodeURIComponent(this.state.parentFolder));
+                                                        this.props.goToImport(encodeURIComponent(this.state.parentFolder), this.state.applyExifMetadataForRotation);
                                                     }}
                                             >{t('library.import_images.btn_import_from_recolnat')}</Button>
                                         </div>
@@ -226,6 +237,7 @@ export default class extends Component {
                                 <Col sm={9} md={9} lg={9}>
                                     {this.state.showImportRemoteUrl ?
                                         <UrlImageImport parentFolder={this.state.parentFolder}
+                                                        applyExifMetadataForRotation = {this.state.applyExifMetadataForRotation}
                                                         onClose={() => {
                                                             this.setState({showImportRemoteUrl: false});
                                                         }}/> :
@@ -239,6 +251,20 @@ export default class extends Component {
                                                       saveImage={this._saveImageFromClipboard} />
 
                                     </fieldset>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col sm={12} md={12} lg={12}>
+                                    <div className="form-check">
+                                        <Input name="applyExifMetadataForRotation"
+                                               id="apply-exif-metadata-for-rotation"
+                                               type="checkbox"
+                                               checked={this.state.applyExifMetadataForRotation}
+                                               onChange={this._onRotatePictureChange}> </Input>
+                                        <Label for="apply-exif-metadata-for-rotation" className="form-check-label pointer">
+                                            {t('library.import_images.lbl_apply_exif_metadata_for_rotation')}
+                                        </Label>
+                                    </div>
                                 </Col>
                             </Row>
                         </Container>

@@ -45,6 +45,7 @@
       "alert_annotation_recording_message": "Please finish annotation creation/edit to continue.",
       "lbl_importing_resources_files_to_folders": "Importing resources files to folders",
       "lbl_resources_files_found": "Resources files found",
+      "lbl_pictures_rotated": "Pictures are rotated",
       "lbl_collecting_metadata_and_generating_thumbnails": "Collecting metadata and generating thumbnails",
       "btn_import": "Import",
       "dropdown_item_import_images": "Image(s)",
@@ -414,7 +415,8 @@
         "btn_search_in_paleontology_database": "Search in paleontology database",
         "btn_open_json_with_search_results": "Open json with search results",
         "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!",
-        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image."
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image.",
+        "lbl_apply_exif_metadata_for_rotation": "Apply exif metadata for picture rotation"
       },
       "import_video": {
         "title": "Import",

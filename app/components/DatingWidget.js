@@ -31,8 +31,6 @@ export default class DatingWidget extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        console.log("props", props);
-        console.log("state", state);
         if(state.inEdit) return null;
         const {start, end, period} = props;
 
