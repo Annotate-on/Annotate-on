@@ -1,6 +1,7 @@
 {
   "ROOT": "/",
   "IMPORT": "/import/:folderName",
+  "IMPORT_WITH_ROTATION": "/import/:folderName/:applyRotationFromMetadata",
   "SETTINGS": "/settings",
   "CREDITS": "/credits",
   "SELECTION": "/selection",
