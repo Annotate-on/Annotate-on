@@ -57,7 +57,7 @@ export default class extends Component {
         super(props);
         this.state = {
             parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName),
-            applyExifMetadataForRotation: false
+            applyExifMetadataForRotation: true
         };
     }
 
