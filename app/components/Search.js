@@ -258,7 +258,7 @@ export default class Search extends Component {
                 });
                 foundResources = allResources.filter(pic => {
                     return pic.fileBasename.toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
-                        this._doSearchInFamilyCategory(pic.family.toLowerCase(), this.state.searchForm.searchText.toLowerCase()) ||
+                        this._doSearchInFamilyCategory(pic.family, this.state.searchForm.searchText.toLowerCase()) ||
                         pic.genus.toString().toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
                         pic.collection.toString().toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
                         pic.institutionCode.toString().toLowerCase().includes(this.state.searchForm.searchText.toLowerCase()) ||
