@@ -414,7 +414,8 @@
         "btn_search_in_paleontology_database": "Chercher dans la base paléontologique",
         "btn_open_json_with_search_results": "Ouvrir json à partir des résultats de recherche",
         "alert_cannot_reach_mediaphoto": "Impossible d'accéder à http://mediaphoto.mnhn.fr\nVérifiez votre connexion à internet.",
-        "alert_following_urls_are_invalid": "Les URLs suivantes sont invalides et ne contiennent pas d'images correctes."
+        "alert_following_urls_are_invalid": "Les URLs suivantes sont invalides et ne contiennent pas d'images correctes.",
+        "lbl_apply_exif_metadata_for_rotation": "Redresser les images pivotées (provenant des appareils mobiles)"
       },
       "import_video": {
         "title": "Import",

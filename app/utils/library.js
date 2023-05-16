@@ -8,7 +8,7 @@ import imagesize from 'image-size';
 import klaw from 'klaw';
 import path from 'path';
 import {
-    getAllDirectoriesNameFlatten,
+    getAllDirectoriesNameFlatten, getAppHomePath,
     getCacheDir,
     getProjectInfoFile,
     getThumbNailsDir,
@@ -33,13 +33,15 @@ import ffmpeg from 'ffmpeg-static-electron';
 import ffprobe from 'ffprobe-static-electron';
 import ffprobeClient from 'ffprobe-client';
 import {TYPE_CATEGORY} from "../components/event/Constants";
+import * as sharp from "sharp";
 
 export const PATH_TO_EVENT_THUMBNAIL = './components/pictures/event/event-logo.png';
-export const authorized_pictures_extensions = ['.jpg', '.jpeg', '.png'];
+export const AUTHORIZED_PICTURES_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
 export const AUTHORIZED_VIDEOS_EXTENSIONS = ['.mp4', '.mov', '.3gp', '.mkv', '.ogv', '.webm'];
 export const ee = new EventEmitter();
 export const EVENT_DIRECTORIES_ANALYSES_COMPLETE = 'EVENT_DIRECTORIES_ANALYSES_COMPLETE';
 export const EVENT_PROCESS_IMAGE_COMPLETE = 'EVENT_PROCESS_IMAGE_COMPLETE';
+export const EVENT_PROCESS_IMAGE_ROTATION_COMPLETE = 'EVENT_PROCESS_IMAGE_ROTATION_COMPLETE';
 export const EVENT_THUMBNAIL_CREATION_COMPLETE = 'EVENT_THUMBNAIL_CREATION_COMPLETE';
 export const EVENT_SELECT_TAB = 'EVENT_SELECT_TAB';
 export const EVENT_SELECT_LIBRARY_TAB = 'EVENT_SELECT_LIBRARY_TAB';
@@ -76,8 +78,7 @@ export const EVENT_UNFOCUS_ANNOTATION = 'EVENT_UNFOCUS_ANNOTATION';
 export const SHOW_EDIT_MODE_VIOLATION_MODAL = 'SHOW_EDIT_MODE_VIOLATION_MODAL';
 export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 
-
-const authorized_pictures_extensions_for_xmp = ['.jpg', '.jpeg'];
+const AUTHORIZED_PICTURES_EXTENSIONS_FOR_XMP = ['.jpg', '.jpeg'];
 
 process.env.FFMPEG_PATH = ffmpeg.path.replace('app.asar', 'app.asar.unpacked');
 process.env.FFPROBE_PATH = ffprobe.path.replace('app.asar', 'app.asar.unpacked');
@@ -85,7 +86,7 @@ process.env.FFPROBE_PATH = ffprobe.path.replace('app.asar', 'app.asar.unpacked')
 //
 // LIBRARY
 //
-export const initPicturesLibrary = async (files, folders, picturesInStore) => {
+export const initPicturesLibrary = async (files, folders, picturesInStore, applyExifMetadataForRotation) => {
     let pictures = {};
     const duplicates = [];
     let addedPicturesCount = 0;
@@ -93,7 +94,7 @@ export const initPicturesLibrary = async (files, folders, picturesInStore) => {
     ee.emit(EVENT_DIRECTORIES_ANALYSES_COMPLETE, {files: files.length, folders});
     for (const f of files) {
         try {
-            const result = await makePictureObjectFromFile(f, pictures, picturesInStore);
+            const result = await makePictureObjectFromFile(f, pictures, picturesInStore, applyExifMetadataForRotation);
             if (result === true) {
                 addedPicturesCount++;
             } else {
@@ -101,7 +102,6 @@ export const initPicturesLibrary = async (files, folders, picturesInStore) => {
                 duplicates.push(f);
                 if (result.file !== f) {
                     fs.unlinkSync(f);
-
                     // delete metadata json file
                     const basename = path.basename(f);
                     const fileName = `${basename.substring(0, basename.lastIndexOf('.'))}.json`;
@@ -161,9 +161,42 @@ export const initVideosLibrary = async (files, folders, resourcesInStore) => {
     return pictures;
 };
 
-const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) => {
+const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore, applyExifMetadataForRotation) => {
 
     ee.emit(EVENT_PROCESSING_IMAGE, file);
+
+    const pictureFormat = await getPictureFormat(file);
+    console.log('file format: ' + pictureFormat);
+    console.log('apply rotation: ' + applyExifMetadataForRotation);
+
+    if (pictureFormat === undefined) {
+        console.log('unsupported file type for file: ' + file);
+        return false;
+    }
+
+    let exif;
+
+    // try to rotate picture from exif metadata, only for jpg/jpeg format..
+    if(applyExifMetadataForRotation && isJPG(pictureFormat)) {
+        exif = await readExifMetadata(file);
+        // console.log("exif before rotations", exif);
+        let homeDir = getAppHomePath();
+        let base = path.parse(file).base;
+        if(exif && exif.hasOwnProperty('Orientation') && exif.Orientation.value > 1) {
+            const tempFilename = path.join(homeDir, base);
+            // console.log('rotated image file name', tempFilename);
+            await sharp(file)
+                .withMetadata()
+                .rotate()
+                .toFile(tempFilename);
+            fs.copySync(tempFilename, file)
+            fs.unlinkSync(tempFilename);
+            exif = await readExifMetadata(file);
+            ee.emit(EVENT_PROCESS_IMAGE_ROTATION_COMPLETE, file);
+            // console.log('exif after rotations', exif);
+        }
+    }
+
     // We always need to compute the picture file SHA1, since it unique ID for pictures.
     const sha1 = await getSHA1(file);
 
@@ -172,15 +205,7 @@ const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) 
         if (sha1 in picturesInStore)
             return picturesInStore[sha1];
     }
-
-    const isJpeg = await validatePictureFormat(file);
-
     ee.emit(EVENT_SEARCH_FOR_DUPLICATES);
-
-    if (isJpeg === false) {
-        console.log('unsupported file type for file: ' + file);
-        return false;
-    }
 
     ///////////////////////////////////////////READ ERECOLNAT METADATA//////////////////////////////////////////////
     const erecolnatMetadata = getMetadata(file);
@@ -197,13 +222,11 @@ const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) 
         fs.writeFileSync(thumbnail_path, resizedImage.toJPEG(100));
     }
 
-    // ee.emit(EVENT_THUMBNAIL_CREATION_COMPLETE);
+    if (isJPG(pictureFormat)) {
 
-    if (isJpeg === true) {
-
-        /////////////////////////////////////////////// READ EXIF //////////////////////////////////////////////////////
-        // We compute all the "technical" metadata if the image is jpeg or jpg.
-        let exif = await readExifMetadata(file);
+        if(!exif) {
+            exif = await readExifMetadata(file);
+        }
 
         ///////////////////////////////////////////READ XMP METADATA//////////////////////////////////////////////
         const exifMetadata = getXmpMetadata(exif);
@@ -250,7 +273,6 @@ const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) 
         let make = exifMetadata.make;
         let yearCreated = exifMetadata.yearCreated;
 
-
         pictures_cache[sha1] = lodash.omitBy({
             file: file, // For now, we alse store the first encountered file for the current SHA1
             file_basename: path.basename(file),
@@ -291,14 +313,12 @@ const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) 
         }, v => lodash.isUndefined(v) || lodash.isNull(v));
     }
 
-    if (isJpeg === 'png') {
-
+    if (isPNG(pictureFormat)) {
         const type = 'image';
         const format = 'png';
         const dimensions = await sizeOf(file);
         const width = dimensions.width;
         const height = dimensions.height;
-
 
         let dpix, dpiy;
         dpix = dpiy = null;
@@ -318,6 +338,7 @@ const makePictureObjectFromFile = async (file, pictures_cache, picturesInStore) 
             erecolnatMetadata
         }, v => lodash.isUndefined(v) || lodash.isNull(v));
     }
+
     ee.emit(EVENT_PROCESS_IMAGE_COMPLETE, file);
     return true;
 };
@@ -445,7 +466,7 @@ export const validatePictureFormat = (file) => {
                 if (type.ext === 'png') {
                     resolve('png');
                 }
-                if (authorized_pictures_extensions_for_xmp.indexOf(`.${type.ext}`) !== -1) {
+                if (AUTHORIZED_PICTURES_EXTENSIONS_FOR_XMP.indexOf(`.${type.ext}`) !== -1) {
                     resolve(true);
                 } else {
                     resolve(false);
@@ -457,6 +478,34 @@ export const validatePictureFormat = (file) => {
         }
     })
 };
+
+export const getPictureFormat = (file) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const buffer = readChunck.sync(file, 0, 4100);
+            fileType.fromBuffer(buffer).then(type => {
+                if (AUTHORIZED_PICTURES_EXTENSIONS.indexOf(`.${type.ext.toLowerCase()}`) !== -1) {
+                    resolve(type.ext.toLowerCase());
+                } else {
+                    resolve(undefined);
+                }
+            });
+        } catch (e) {
+            console.error(e);
+            resolve(undefined);
+        }
+    })
+};
+
+export const isJPG = (fileFormat) => {
+    if(!fileFormat) return false;
+    return fileFormat.toLowerCase() === 'jpg' || fileFormat.toLowerCase() === 'jpeg';
+}
+
+export const isPNG = (fileFormat) => {
+    if(!fileFormat) return false;
+    return fileFormat.toLowerCase() === 'png';
+}
 
 export const getProjectVersion = () => {
     try {

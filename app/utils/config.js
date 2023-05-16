@@ -3,7 +3,7 @@ import configYaml from 'config-yaml';
 import yaml from 'write-yaml';
 import fs from 'fs-extra';
 import path from 'path';
-import {authorized_pictures_extensions} from "./library";
+import {AUTHORIZED_PICTURES_EXTENSIONS} from "./library";
 import {escapePathString, formatDate, formatDateForFileName} from "./js";
 import lodash from 'lodash';
 import {DEFAULT_XPER_CONNECTION_URL, IMAGE_STORAGE_DIR} from "../constants/constants";
@@ -880,7 +880,7 @@ export const importFolder = (src, alias, parent) => {
                 })
                     .on('data', _ => {
                         const stats = fs.statSync(_.path);
-                        if (!stats.isDirectory() && authorized_pictures_extensions.includes(path.extname(_.path).toLowerCase())) {
+                        if (!stats.isDirectory() && AUTHORIZED_PICTURES_EXTENSIONS.includes(path.extname(_.path).toLowerCase())) {
                             console.log(_.path)
                             files.push(_.path.replace(src, fullPath));
                         }
@@ -1081,7 +1081,7 @@ export const toConfigFileWithoutRefresh = () => {
         })
     }
     processFolders(ws_descriptor, descriptor)
-    console.log('Save folders configuration %o', descriptor)
+    // console.log('Save folders configuration %o', descriptor)
     fs.writeFileSync(wsDescriptorPath, JSON.stringify(descriptor));
 };
 

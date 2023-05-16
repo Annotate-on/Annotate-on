@@ -4102,7 +4102,6 @@ const filterPicturesByFolder = (tab, allPictures) => {
     const pictures = [];
     tab.selected_folders.map(folderName => {
         const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
-        console.log('Folder: ' + folder)
         for (const sha1 in allPictures) {
             if (path.dirname(allPictures[sha1].file) === folder) {
                 pictures.push(sha1);

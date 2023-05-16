@@ -31,8 +31,8 @@ const mapDispatchToProps = dispatch => {
         emptyTagsList: () => {
             dispatch(emptyTagsList());
         },
-        goToImport: (selectedFolder) => {
-            dispatch(push('/import/' + selectedFolder));
+        goToImport: (selectedFolder, applyExifMetadataForRotation) => {
+            dispatch(push('/import/' + selectedFolder + (applyExifMetadataForRotation ? '/' + applyExifMetadataForRotation : '')));
         },
         tagPicture: (pictureId, tagName) => {
             dispatch(tagPicture(pictureId, tagName));

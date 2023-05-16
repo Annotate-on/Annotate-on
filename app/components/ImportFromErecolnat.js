@@ -78,7 +78,8 @@ export default class extends Component {
             disableButtons: false,
             isEnabled: true,
             zipDownloaded: false,
-            parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName)
+            parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName),
+            applyExifMetadataForRotation: props.match.params.applyRotationFromMetadata === 'null' ? false : props.match.params.applyRotationFromMetadata
         };
         this.downloadFromExplore = this.downloadFromExplore.bind(this);
     }
@@ -314,7 +315,9 @@ export default class extends Component {
                     // Display loading overlay.
                     ee.emit(EVENT_SHOW_LOADING, successfullyDownload.length);
 
-                    initPicturesLibrary(successfullyDownload, [this.state.parentFolder], this.props.pictures).then(pictureObjects => {
+                    // console.log("applyRotationFromMetadata", this.state.applyExifMetadataForRotation);
+                    initPicturesLibrary(successfullyDownload, [this.state.parentFolder],
+                        this.props.pictures, this.state.applyExifMetadataForRotation).then(pictureObjects => {
                         // Add new pictures to lib.
                         this.props.refreshState(pictureObjects);
                         // Select parent folder.

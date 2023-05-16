@@ -25,6 +25,7 @@ export default () => (
     <App>
         <Switch>
             <Route exact path={routes.IMPORT} component={ImportFromErecolnat}/>
+            <Route path={routes.IMPORT_WITH_ROTATION} component={ImportFromErecolnat}/>
             <Route path={routes.SETTINGS} component={Settings}/>
             <Route path={routes.CREDITS} component={Credits}/>
             <Route path={routes.SELECTION} component={TabsHolder}/>
