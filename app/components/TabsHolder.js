@@ -3,6 +3,7 @@ import classnames from "classnames";
 import {Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
 import Tab from '../containers/Tab'
 import {
+    EVENT_SELECT_SELECTION_TAB,
     ee,
     EVENT_OPEN_TAB,
     EVENT_SELECT_TAB, EVENT_UPDATE_EVENT_RECORDING_STATUS,
@@ -37,6 +38,7 @@ export default class extends PureComponent {
         ee.on(EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION, this.updateIsRecordingStatus);
         ee.on(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this.updateIsEditModeOpen);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsEventRecordingLive);
+        ee.on(EVENT_SELECT_SELECTION_TAB , this._handleSelectSelectionEvent);
 
         if (this.props.location.state && this.props.location.state.firstInit) {
             this._selectTab(0);
@@ -48,6 +50,7 @@ export default class extends PureComponent {
         ee.removeListener(EVENT_OPEN_TAB, this._handleOpenTabEvent)
         ee.removeListener(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this.updateIsEditModeOpen);
         ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsEventRecordingLive);
+        ee.removeListener(EVENT_SELECT_SELECTION_TAB , this._handleSelectSelectionEvent);
     }
 
     updateIsEventRecordingLive = (isRecording) => {
@@ -71,6 +74,10 @@ export default class extends PureComponent {
     _handleOpenTabEvent = (tab) => {
         this.props.createTab(tab);
         this._selectTab();
+    };
+
+    _handleSelectSelectionEvent = (name, index) => {
+        this._selectTab(name, index);
     };
 
     _closeTab = (e, index, name) => {
@@ -203,7 +210,37 @@ export default class extends PureComponent {
         }
     };
 
+    _findTabIndexByName = (name) => {
+        const keys = Object.keys(this.props.openTabs);
+        return keys.indexOf(name);
+    }
+
     _selectTab = (index, name) => {
+        console.log("_selectTab", name, index)
+
+        // select last tab
+        if(name === undefined && index == -1) {
+            setTimeout(() => {
+                const keys = Object.keys(this.props.openTabs);
+                this.setState({
+                    selectedTab: keys.length - 1
+                });
+                ee.emit(EVENT_SELECT_TAB, this.props.openTabs[keys[keys.length - 1]].view);
+            }, 100);
+        }
+
+        // find tab by tab name
+        if(name && index === undefined) {
+            let foundIndex = this._findTabIndexByName(name);
+            this.setState({
+                selectedTab: foundIndex
+            });
+            setTimeout(() => {
+                ee.emit(EVENT_SELECT_TAB, this.props.openTabs[name].view);
+            }, 100)
+            return;
+        }
+
         if (name in this.props.openTabs) {
             this.setState({
                 selectedTab: index

@@ -19,6 +19,7 @@ import ImportEventWizard from "./containers/ImportEventWizard";
 import TagManager from "./containers/TagManager";
 import IIIF from "./containers/IIIF";
 import Options from "./containers/Options";
+import Search from "./containers/Search";
 
 export default () => (
     <App>
@@ -31,6 +32,8 @@ export default () => (
             <Route path={routes.IMPORTWIZARD} component={ImportWizard}/>
             <Route path={routes.IMPORTVIDEOWIZARD} component={ImportVideoWizard}/>
             <Route path={routes.IMPORTEVENTWIZARD} component={ImportEventWizard}/>
+            <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID_AND_CHARACTER_ID} component={Taxonomies}/>
+            <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID} component={Taxonomies}/>
             <Route path={routes.TAXONOMIES} component={Taxonomies}/>
             <Route path={routes.COLLECTIONEXPORT} component={CollectionExport}/>
             <Route path={routes.COLLECTIONS} component={Collections}/>
@@ -41,6 +44,7 @@ export default () => (
             <Route path={routes.TAG_MANAGER} component={TagManager}/>
             <Route path={routes.IIIF} component={IIIF}/>
             <Route path={routes.OPTIONS} component={Options}/>
+            <Route path={routes.SEARCH} component={Search}/>
             <Redirect
             to={{
                 pathname: "/selection",

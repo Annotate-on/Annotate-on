@@ -247,6 +247,7 @@
 @import 'scss/video-player';
 @import "scss/tagManager";
 @import "scss/options";
+@import "scss/search";
 
 .annotation-tag {
   margin-right: 3px;
@@ -392,6 +393,18 @@
 
   .active-menu-item & {
     background: url(./components/pictures/options-white.svg) no-repeat center;
+  }
+}
+
+.search-menu {
+  width: 24px;
+  height: 24px;
+  margin: auto;
+  background: url(./components/pictures/search_icon.svg) no-repeat center;
+  cursor: pointer;
+
+  .active-menu-item & {
+    background: url(./components/pictures/search_icon.svg) no-repeat center;
   }
 }
 

@@ -121,7 +121,7 @@ import {
     UPDATE_TABULAR_VIEW,
     UPDATE_TAG_EXPRESSION_OPERATOR,
     SAVE_SELECTED_CATEGORY,
-    UPDATE_TAXONOMY_VALUES
+    UPDATE_TAXONOMY_VALUES, SAVE_SEARCH
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -251,7 +251,9 @@ export const createInitialState = () => ({
         leafletSettings: {},
         selectedProjectName: null,
         selectedCategory: null,
-        selectedCategories: []
+        selectedCategories: [],
+        searchText: null,
+        searchResults: null
     }
 });
 
@@ -286,8 +288,9 @@ export const userDataBranches = () => ({
     selectedProjectName: null,
     taxonomyInstance: null,
     selectedCategory: null,
-    selectedCategories: []
-
+    selectedCategories: [],
+    searchText: null,
+    searchResults: null
 });
 
 export default (state = {}, action) => {
@@ -894,7 +897,7 @@ export default (state = {}, action) => {
             break;
 // ---------------------------------------------------------------------------------------------------------------------
         case CREATE_TAB: {
-            const name =  getNewTabName(state.open_tabs);
+            const name =  action.name ? action.name : getNewTabName(state.open_tabs);
             const counter = state.counter + 1;
             const allFolders = getAllDirectoriesNameFlatten();
             const tab = {
@@ -4075,6 +4078,17 @@ export default (state = {}, action) => {
                 ...state,
                 selectedCategory: action.selectedCategory,
                 selectedCategories: action.selectedCategories,
+                counter
+            };
+        }
+            break;
+        case SAVE_SEARCH: {
+            const counter = state.counter + 1;
+
+            return {
+                ...state,
+                search: action.search,
+                searchResults: action.searchResults,
                 counter
             };
         }

@@ -1,0 +1,126 @@
+.search-page {
+  .search-form-container {
+    border-bottom: 1px solid #ccc;
+  }
+
+  .search-form {
+    width: 100%;
+    margin-top: 15px;
+    padding-bottom: 15px;
+    margin-left: 50px;
+    line-height: 35px;
+
+    .form-check-input {
+      margin-top: 0.9em;
+    }
+    .form-check {
+      margin-top: -10px;
+    }
+
+    .search-input-container {
+      display: flex;
+      width: 100%;
+    }
+
+    .search-input {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 25px;
+      top: -2px;
+      border: 0px;
+      background: transparent;
+      font-size:18px;
+      color: #ccc;
+    }
+
+    .reset-search-button {
+      position: absolute;
+      top: -4px;
+      right: 20px;
+      font-size:18px;
+      color: red;
+    }
+    .form-check {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .search_button {
+      margin-left: 20px;
+    }
+
+    .import-loading-spinner {
+      height: 20px;
+      padding-top: 3px;
+    }
+
+  }
+
+  .search-results {
+    margin: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+    .search-results-section-title {
+      margin-top: 15px;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #ccc;
+      .search-results-title-main {
+        font-weight: bold;
+        font-size: 16px;
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+      .search-results-title-details {
+        font-size: 14px;
+      }
+    }
+    .open-resource-btn {
+      cursor: pointer;
+    }
+
+    .tag-items-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .tag-item {
+      margin: 3px;
+      height: 16px;
+      padding: 1px 6px;
+      border-radius: 13px;
+      background-color: #ff9800;
+      cursor: pointer;
+      color: black;
+    }
+
+    .character-items-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .character-item {
+      margin: 3px;
+      height: 20px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid ;
+      cursor: pointer;
+      color: black;
+    }
+
+    .model-type-icon {
+      padding-left: 10px;
+      font-size: 10px;
+      font-style: normal;
+      height: 16px;
+      line-height: 0px;
+      color: #007bff;
+      margin-left: -2px;
+    }
+
+  }
+}

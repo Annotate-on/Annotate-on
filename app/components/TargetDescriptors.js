@@ -80,10 +80,6 @@ class TargetDescriptors extends PureComponent {
 
     componentWillReceiveProps(nextProps) {
         console.log('next props from target descriptor...' , nextProps)
-        if (nextProps.taxonomy == null && nextProps.taxonomyModel && nextProps.taxonomyModel.id !== ''){
-            console.log('setting new taxonomy -> ' ,nextProps.taxonomyModel.id )
-            this.props.setSelectedTaxonomy(nextProps.taxonomyModel.id);
-        }
         this._resortTable();
     }
 
@@ -396,8 +392,8 @@ class TargetDescriptors extends PureComponent {
                                 <tbody>
                                 {this.state.sortedTargets.map(target => {
                                     return (
-                                        <tr key={key++}>
-                                            <th scope="row">&nbsp;</th>
+                                        <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
+                                            <th scope="row" >&nbsp;</th>
                                             <td>
                                                 <ContextMenuTrigger id="target_context_menu"
                                                                     disable={this.state.model === MODEL_XPER}

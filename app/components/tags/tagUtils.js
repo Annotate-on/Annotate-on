@@ -190,6 +190,13 @@ export const getTagsOnly = ( list ) => {
     return list.filter( tag => tag.type !== TYPE_CATEGORY);
 }
 
+export const getCategoriesOnly = ( list ) => {
+    if (list === undefined || list === null || list === 'undefined'){
+        return [];
+    }
+    return list.filter( tag => tag.type === TYPE_CATEGORY);
+}
+
 export const sortTagList = (tags , direction) => {
     return tags.filter( tag => tag.type !== TYPE_CATEGORY).
     sort((a, b) =>{

@@ -29,6 +29,7 @@ export default class extends PureComponent {
         // this.props.openTabs[this.props.tabName].view = path.tab;
       }
     } else {
+      if(path === 'taxonomies' || path === 'tagManager') return;
       this.props.goTo(`/selection/${this.props.tabName}/${path}`);
       this.props.setSelectedLibraryTab(this.props.tabName, path);
       // this.props.openTabs[this.props.tabName].view = path;
