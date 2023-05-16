@@ -50,13 +50,13 @@ export default class Search extends Component {
                 searchInModels: this.props.search && this.props.search.searchInModels !== undefined ? this.props.search.searchInModels : true
             },
             foundAnnotations: this.props.searchResults && this.props.searchResults.foundAnnotations ?
-                this.props.searchResults.foundAnnotations : [],
+                this.props.searchResults.foundAnnotations : null,
             foundResources: this.props.searchResults && this.props.searchResults.foundResources ?
-                this.props.searchResults.foundResources : [],
+                this.props.searchResults.foundResources : null,
             foundKeywords: this.props.searchResults && this.props.searchResults.foundKeywords ?
-                this.props.searchResults.foundKeywords : [],
+                this.props.searchResults.foundKeywords : null,
             foundCharacters: this.props.searchResults && this.props.searchResults.foundCharacters ?
-                this.props.searchResults.foundCharacters : [],
+                this.props.searchResults.foundCharacters : null,
         }
     }
 
@@ -141,10 +141,10 @@ export default class Search extends Component {
                 searchInKeywords: this.state.searchForm.searchInKeywords,
                 searchInModels: this.state.searchForm.searchInModels
             },
-            foundAnnotations: [],
-            foundResources: [],
-            foundKeywords: [],
-            foundCharacters: []
+            foundAnnotations: null,
+            foundResources: null,
+            foundKeywords: null,
+            foundCharacters: null
         });
     };
 
