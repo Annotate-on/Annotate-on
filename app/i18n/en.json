@@ -150,8 +150,9 @@
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
       "alert_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)",
       "lbl_filter": "Filter",
-      "btn_tooltip_cancel_tags_filter": "Cancel tags filter",
-      "btn_tooltip_add_new_group": "Add new group (parentheses)"
+      "btn_tooltip_cancel_tags_filter": "Cancel keywords filter",
+      "btn_tooltip_add_new_group": "Add new group (parentheses)",
+      "btn_tooltip_cancel_tags_filter_group": "Delete group"
     },
     "inspector": {
       "tab_metadata": "Metadata",
