@@ -582,7 +582,8 @@ class TagManager extends Component {
                 this._selectCategory(data.item);
                 this.setState({
                     showModal: true,
-                    type: TYPE_CATEGORY
+                    type: TYPE_CATEGORY,
+                    parentCategory: data.item
                 })
                 break;
         }
