@@ -138,7 +138,7 @@
   cursor: pointer;
   height: 30px;
   margin: 5px;
-  padding: 6px 12px 0px 7px;
+  padding: 6px 7px 0px 7px;
   border-radius: 3px;
   background-color: #ccc;
   display: flex;
@@ -505,6 +505,18 @@
   font-size: 20px;
   border-right: 0px;
   border-radius: 5px 0px 0px 5px;
+}
+
+.searchOptions{
+  display: flex;
+  margin-left: 15px;
+  margin-top: 5px;
+  .form-check-label {
+    padding-top: 2px;
+    input{
+      margin-top: 2px;
+    }
+  }
 }
 
 .alphb-tags-main-div{
