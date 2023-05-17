@@ -91,20 +91,10 @@ export default class TagsFilter extends Component {
             (this.props.filter && this.props.filter.value && this.props.filter.value.length > 0) ?
                 <div className="tags-filter">
                     <div className="tags-filter-header">
-                        <i className="fa fa-filter"></i>
+                        <i className="fa fa-filter filter-icon"></i>
                         {/* <span>{t('tags.lbl_filter')}</span> */}
-                        <span></span>
-                        <Button size="sm" color="link"  className="" onClick={
-                            (e) => {
-                                this.props.onCreateExpression();
-                            }
-                        }>
-                            {/* <i className="fa fa-plus-circle"/> */}
-                            
-                            <span  className="add-icon" />
-
-                            
-                        </Button>
+                        {/* <span></span> */}
+                       
                         <span className="spacer"/>
                         <i className="fa fa-times btn-remove-filter" title={t('tags.btn_tooltip_cancel_tags_filter')} onClick={
                             (e) => {
@@ -120,6 +110,18 @@ export default class TagsFilter extends Component {
                                 return this.renderOperator(item);
                             }
                         })}
+                         <Button size="sm" color="link"  className="" onClick={
+                            (e) => {
+                                this.props.onCreateExpression();
+                            }
+                        }>
+                            {/* <i className="fa fa-plus-circle"/> */}
+                            
+                            <span  className="add-icon" title={t('tags.btn_tooltip_add_new_group')}/>
+                            
+
+                            
+                        </Button>
                     </div>
                 </div>
                 :
