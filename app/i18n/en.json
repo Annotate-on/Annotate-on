@@ -898,7 +898,10 @@
       },
       "btn_tooltip_add_new_keyword": "Add new keyword",
       "alert_to_add_a_new_keyword_you_need_to_select_category": "To add a new keyword you need to select category first...",
-      "btn_back_to_keywords": "Back to keywords"
+      "btn_back_to_keywords": "Back to keywords",
+      "lbl_show_system_categories": "Show system categories",
+      "btn_add_subcategory": "Add new subcategory",
+      "alert_delete_confirmation": "All tags and subcategories will be deleted, are you sure you want to delete it?"
     },
     "options": {
       "title": "Options",
