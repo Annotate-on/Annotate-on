@@ -155,6 +155,7 @@ import {
     TAG_MAP_SELECTION,
 } from '../constants/constants';
 import {
+    AND,
     changeOperatorValueInFilter,
     convertSelectedTagsToFilter,
     EXP_ITEM_TYPE_CONDITION,
@@ -162,7 +163,6 @@ import {
     EXP_ITEM_TYPE_OPERATOR,
     findPicturesByTagFilter,
     findTag,
-    OR,
     tagExist
 } from '../utils/tags';
 import {
@@ -2513,7 +2513,7 @@ export default (state = {}, action) => {
                 tab.selected_filter.value.push({
                     id: genId(),
                     type: EXP_ITEM_TYPE_OPERATOR,
-                    value:OR
+                    value:AND
                 });
             }
             const newExpression = {
@@ -2700,7 +2700,7 @@ export default (state = {}, action) => {
                         currentExpression.value.push({
                             id: genId(),
                             type:EXP_ITEM_TYPE_OPERATOR,
-                            value: OR
+                            value: AND
                         })
                     }
                     currentExpression.value.push(condition);
