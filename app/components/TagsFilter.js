@@ -22,7 +22,7 @@ export default class TagsFilter extends Component {
     renderExpression = (item) => {
         if(item && item.value) return (
             <div className="tags-filter-expression-container" key={item.id}>
-                <i className="fa fa-times" onClick={
+                <i className="fa fa-times" title={t('tags.btn_tooltip_cancel_tags_filter_group')} onClick={
                     (e) => {
                         this.props.onDeleteExpression(item.id)
                     }
