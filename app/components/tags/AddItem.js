@@ -10,7 +10,7 @@ class AddItem extends Component {
     }
 
     showModal = () => {
-        this.props.showSaveModal(this.props.type);
+        this.props.showSaveModal(this.props.type, this.props.parentCategory);
     }
 
     render() {
@@ -30,7 +30,7 @@ class AddItem extends Component {
                      }
                  }}>
                 <span title={title} className= "new-category-tag-icon"/>
-                <span className="cursor-pointer">{title}</span>
+                <span className="cursor-pointer">{this.props.type === TYPE_TAG ? title : ''}</span>
             </div>
         );
     }

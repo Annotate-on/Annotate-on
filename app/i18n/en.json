@@ -103,7 +103,7 @@
       "models": "Models",
       "tooltip_models": "Annotations models",
       "keywords": "Keywords",
-      "tooltip_keywords": "Tag manager",
+      "tooltip_keywords": "Keywords manager",
       "options": "Options",
       "tooltip_options": "Global application options",
       "search": "Search",
@@ -150,7 +150,9 @@
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
       "alert_name_is_whitespace": "name only contains whitespace (ie. spaces, tabs or line breaks)",
       "lbl_filter": "Filter",
-      "btn_tooltip_cancel_tags_filter": "Cancel tags filter"
+      "btn_tooltip_cancel_tags_filter": "Cancel keywords filter",
+      "btn_tooltip_add_new_group": "Add new group (parentheses)",
+      "btn_tooltip_cancel_tags_filter_group": "Delete group"
     },
     "inspector": {
       "tab_metadata": "Metadata",
@@ -663,7 +665,7 @@
         "alert_message_data_exported_successfully_to_xper_database": "Data exported successfully to xper database!"
       },
       "annotations": {
-        "lbl_filter_by_tags": "Filter by tags",
+        "lbl_filter_by_tags": "Filter by annotations tags",
         "lbl_filter_by_characters": "Filter by characters",
         "table_column_name": "Name",
         "table_column_type": "Type",
@@ -856,7 +858,7 @@
       }
     },
     "keywords": {
-      "title": "Manage keywords and categories",
+      "title": "Keywords manager",
       "btn_import_keywords": "Import keywords",
       "btn_export_keywords": "Export keywords",
       "btn_import_csv": "Import CSV",
@@ -897,7 +899,10 @@
       },
       "btn_tooltip_add_new_keyword": "Add new keyword",
       "alert_to_add_a_new_keyword_you_need_to_select_category": "To add a new keyword you need to select category first...",
-      "btn_back_to_keywords": "Back to keywords"
+      "btn_back_to_keywords": "Back to keywords",
+      "lbl_show_system_categories": "Show system categories",
+      "btn_add_subcategory": "Add new subcategory",
+      "alert_delete_confirmation": "All tags and subcategories will be deleted, are you sure you want to delete it?"
     },
     "options": {
       "title": "Options",

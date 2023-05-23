@@ -3,10 +3,10 @@ import {
     Button,
     Col,
     Container,
-    Form,
+    Form, FormGroup,
     Input,
     InputGroup,
-    InputGroupAddon,
+    InputGroupAddon, Label,
     Modal,
     ModalBody,
     ModalFooter,
@@ -38,7 +38,13 @@ import CategoryTagInfo from "./tags/CategoryTagInfo";
 import {ee, EVENT_ON_TAG_DROP, EVENT_SHOW_ALERT} from "../utils/library";
 import {checkItemInParentCategory, genId} from "./event/utils";
 import classnames from "classnames";
-import {SORT_ALPHABETIC_ASC, SORT_ALPHABETIC_DESC, SORT_DATE_ASC, SORT_DATE_DESC} from "../constants/constants";
+import {
+    SORT_ALPHABETIC_ASC,
+    SORT_ALPHABETIC_DESC,
+    SORT_DATE_ASC,
+    SORT_DATE_DESC,
+    SYSTEM_CATEGORIES
+} from "../constants/constants";
 import SELECTED_ICON from "./pictures/selected_icon.svg";
 import {sortTagsAlphabeticallyOrByDate} from "../utils/common";
 import PageTitle from "./PageTitle";
@@ -81,7 +87,9 @@ class TagManager extends Component {
             searchResultsSortDirection: SORT_ALPHABETIC_DESC,
             searchResult: null,
             showInCategorySearch: false,
-            inCategorySearchTerm: ''
+            inCategorySearchTerm: '',
+            showSystemCategories: false,
+            forceCreateSiblingCategory: false
         }
 
         this.handleEditTagOrCategory = this.handleEditTagOrCategory.bind(this);
@@ -105,6 +113,8 @@ class TagManager extends Component {
             editedItem: null,
             justDeleted: null,
             isNavigationView: this.props.isNavView ? this.props.isNavView : true,
+            showSystemCategories: false,
+            forceCreateSiblingCategory: false
         })
     }
 
@@ -272,6 +282,7 @@ class TagManager extends Component {
     }
 
     _selectCategory = (category) => {
+        console.log("_selectCategory", category)
         let categories = this.state.selectedCategories;
         let indexOfCategory = this.findElementIndex(category.name);
 
@@ -377,10 +388,18 @@ class TagManager extends Component {
         })
     }
 
-    showSaveModal = (type) => {
+    // showSaveModal = (type) => {
+    //     this.setState({
+    //         showModal: true,
+    //         type: type
+    //     })
+    // }
+    showSaveModal = (type, parentCategory) => {
+        console.log("showSaveModal", type, parentCategory);
         this.setState({
             showModal: true,
-            type: type
+            type: type,
+            parentCategory
         })
     }
 
@@ -404,32 +423,40 @@ class TagManager extends Component {
             return false;
         }
 
-        if (this.state.type === TYPE_TAG && this.state.selectedCategory !== null){
+        if (this.state.type === TYPE_TAG && this.state.selectedCategory !== null) {
             const newTag = createNewTag(id , this.state.name);
             if(getTagsOnly(this.state.selectedCategory.children).some( child => child.name.toUpperCase() === newTag.name.toUpperCase())){
                 ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_tag_already_exit_in_selected_category', { name: newTag.name}));
-            }else{
+            } else {
                 this.props.addSubCategory(this.state.selectedCategory.name, newTag, false , this.state.selectedCategory.id)
                 this.refreshState()
             }
         }
-        if (this.state.type === TYPE_CATEGORY){
+
+        if (this.state.type === TYPE_CATEGORY) {
             const newCategory = createNewCategory(id , this.state.name);
-            if (this.state.selectedCategory === null){
+            if (this.state.selectedCategory === null || (this.state.parentCategory == null && this._isRootCategory(this.state.selectedCategory.name))) {
                 if (!checkItemInParentCategory(this.props.tags , newCategory.name)){
                     this.props.createCategory(newCategory)
-                }else{
+                } else {
                     ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newCategory.name}));
                 }
-            }else{
-                if (this.state.selectedCategory.type !== TYPE_CATEGORY){
+            } else {
+                if (this.state.selectedCategory.type !== TYPE_CATEGORY) {
                     ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_cannot_add_category_to_non_category'));
                     return false;
-                }else{
-                    if(this.state.selectedCategory.children.filter(cat => cat.type === TYPE_CATEGORY).some( child => child.name.toUpperCase() === newCategory.name.toUpperCase())){
+                } else {
+                    if(this.state.selectedCategory.children
+                        .filter(cat => cat.type === TYPE_CATEGORY)
+                        .some( child => child.name.toUpperCase() === newCategory.name.toUpperCase())){
                         ee.emit(EVENT_SHOW_ALERT , t('keywords.dialog_modify_category.alert_category_already_exit_selected_category', { name: newCategory.name}));
-                    }else{
-                        this.props.addSubCategory(this.state.selectedCategory.name , newCategory , true , this.state.selectedCategory.id)
+                    } else {
+                        console.log("parent cat ", this.state.parentCategory);
+                        if(this.state.parentCategory) {
+                            this.props.addSubCategory(this.state.parentCategory.name , newCategory , true , this.state.parentCategory.id)
+                        } else {
+                            this.props.addSubCategory(this.state.selectedCategory.name , newCategory , true , this.state.selectedCategory.id)
+                        }
                     }
                 }
             }
@@ -440,7 +467,8 @@ class TagManager extends Component {
     refreshState = () => {
         this.setState({
             name: '',
-            showModal: false
+            showModal: false,
+            parentCategory: null
         })
     }
 
@@ -544,11 +572,19 @@ class TagManager extends Component {
                     buttons: ['Yes', 'No'],
                     message: `${data.type}: "${data.tagName}"`,
                     cancelId: 1,
-                    detail: t('global.delete_confirmation')
+                    detail: t('keywords.alert_delete_confirmation')
                 });
                 if (result === 0) {
                     this.deleteTagOrCategory(data)
                 }
+                break;
+            case 'add_subcategory':
+                this._selectCategory(data.item);
+                this.setState({
+                    showModal: true,
+                    type: TYPE_CATEGORY,
+                    parentCategory: data.item
+                })
                 break;
         }
     }
@@ -578,6 +614,7 @@ class TagManager extends Component {
     }
 
     renderCategories = () => {
+
         const selectedCategoryIndex = this.state.selectedCategory ? this.state.selectedCategories.indexOf(this.state.selectedCategory) : null;
         if (this.state.selectedCategories && this.state.selectedCategories.length > 0){
             return this.state.selectedCategories.map( (selectedCategory, index) =>
@@ -586,7 +623,7 @@ class TagManager extends Component {
                         {
                             selectedCategory && selectedCategory.children && selectedCategory.children.length > 0 ?
                                 selectedCategory.children.map( cat => {
-                                    if (cat.type && cat.type === TYPE_CATEGORY){
+                                    if (cat.type && cat.type === TYPE_CATEGORY) {
                                         return <ContextMenuTrigger id="tag-list-context-menu"
                                                                      key={cat.id}
                                                                      collect={() => {
@@ -605,10 +642,7 @@ class TagManager extends Component {
                                     }
                                 }) : null
                         }
-                        {
-                            this.state.selectedCategories.length - 1 === index ?
-                                <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal} type={TYPE_CATEGORY}/> : null
-                        }
+                        <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal} type={TYPE_CATEGORY} parentCategory={selectedCategory}/>
                     </div>
                 </Row>
             )
@@ -1095,7 +1129,9 @@ class TagManager extends Component {
                     <Row>
                         <div className={`category-list ${this._isRootCategory(this.state.selectedCategory?.name) ? "category-list_selected" : ""}`}>
                             {
-                                this.state.rootCategories.map((cat, index) => {
+                                this.state.rootCategories.filter(c =>
+                                    this.state.showSystemCategories ? true : !SYSTEM_CATEGORIES.includes(c.name)
+                                ).map((cat, index) => {
                                     return (
                                         <ContextMenuTrigger
                                             key={`cm-${index}`}
@@ -1117,12 +1153,8 @@ class TagManager extends Component {
                                     )
                                 })
                             }
-                            {
-                                !this.state.selectedCategory ?
-                                    <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal}
-                                             type={TYPE_CATEGORY}/> : null
-
-                            }
+                            <AddItem isCategorySelected={true} showSaveModal={this.showSaveModal} type={TYPE_CATEGORY}
+                                     forceCreateSiblingCategory={true}/>
 
                         </div>
                     </Row>
@@ -1285,6 +1317,10 @@ class TagManager extends Component {
                         <MenuItem data={{action: 'delete'}} onClick={this.handleContextMenu}>
                             {t('global.delete')}
                         </MenuItem>
+                        <MenuItem divider />
+                        <MenuItem data={{action: 'add_subcategory'}} onClick={this.handleContextMenu}>
+                            {t('keywords.btn_add_subcategory')}
+                        </MenuItem>
                     </ContextMenu>
                 </div>
             </div>
@@ -1347,6 +1383,13 @@ class TagManager extends Component {
         this.setState({
             showDialog: '',
             searchResultsSortDirection: sortBy
+        });
+    };
+
+    _handleShowSystemCategoriesChange = (event) => {
+        console.log("_handleShowSystemCategoriesChange", event.target)
+        this.setState({
+            showSystemCategories: event.target.checked ? true : false
         });
     };
 
@@ -1500,7 +1543,7 @@ class TagManager extends Component {
                         </Col>
                         <Col sm={6} md={6} lg={6}>
                             <div className="category-tag-info-list">
-                                <CategoryTagInfo text={t('keywords.lbl_category')} color="#2f78ce"/>
+                                <CategoryTagInfo text={t('keywords.lbl_category')} color="#eee"/>
                                 <CategoryTagInfo text={t('keywords.lbl_selected_category')} color="#333333"/>
                                 <CategoryTagInfo text={t('keywords.lbl_keyword')} color="#ff9800"/>
                             </div>
@@ -1513,7 +1556,24 @@ class TagManager extends Component {
                         <div className="searchButton">
                             <i className="fa fa-search margin-auto"/>
                         </div>
-                        <input type="text" className="searchTerm" placeholder= {t('keywords.textbox_placeholder_search_keywords')} onChange={ (e) => this._searchTags(e.target.value)} value={this.state.searchTerm}/>
+                        <input type="text" className="searchTerm"
+                               placeholder= {t('keywords.textbox_placeholder_search_keywords')}
+                               onChange={ (e) => this._searchTags(e.target.value)}
+                               value={this.state.searchTerm}/>
+                        <div className="searchOptions">
+                            <FormGroup check>
+                                <Label check>
+                                    <Input type="checkbox" name="showSystemCategories" id="showSystemCategories"
+                                           checked={this.state.showSystemCategories}
+                                           onChange={(e) => {
+                                               this._handleShowSystemCategoriesChange(e)
+                                           }}>
+                                    </Input>
+                                    {t('keywords.lbl_show_system_categories')}
+                                </Label>
+                            </FormGroup>
+                        </div>
+
                     </div>
                     { this.state.showSearchResults ? this.renderSearchResults() : this.renderTagManager()}
                 </div>

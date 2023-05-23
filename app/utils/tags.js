@@ -146,12 +146,14 @@ const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
             currentOperator = item.value;
             continue;
         }
-        let set = [];
+        let set = null;
         if (item.type === EXP_ITEM_TYPE_EXPRESSION) {
             // console.log("inner expression")
-            let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
-            if(innerSet) {
-                set = [...innerSet];
+            if(item.value && item.value.length > 0) {
+                let innerSet = evaluateTagsExpression(item, allPictures, picturesByTag);
+                if(innerSet) {
+                    set = [...innerSet];
+                }
             }
         } else if (item.type === EXP_ITEM_TYPE_CONDITION) {
             // console.log("condition", item)
@@ -170,12 +172,14 @@ const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
         // console.log("currentResult", currentResult)
         // console.log("currentOperator", currentOperator)
         // console.log("set", set)
-        if(currentOperator === AND || currentOperator === NOT) {
-            // console.log("intersection")
-            currentResult = lodash.intersection(currentResult, set);
-        } else {
-            // console.log("union")
-            currentResult = lodash.union(currentResult, set);
+        if(set !== null) {
+            if(currentOperator === AND || currentOperator === NOT) {
+                // console.log("intersection", currentResult, set)
+                currentResult = lodash.intersection(currentResult, set);
+            } else {
+                // console.log("union")
+                currentResult = lodash.union(currentResult, set);
+            }
         }
         // console.log("currentResult after operation", currentResult)
 
