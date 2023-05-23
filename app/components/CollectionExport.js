@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
-import {Button, Col, Container, Form, FormGroup, Input, Label, Row} from 'reactstrap';
-import JSZip from 'jszip';
+import { remote, shell } from "electron";
 import fs from 'fs';
-import {getCacheDir, loadMetadata} from "../utils/config";
+import JSZip from 'jszip';
 import path from 'path';
-import {remote, shell} from "electron";
+import React, { Component } from 'react';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import { getCacheDir, loadMetadata } from "../utils/config";
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 
 export default class extends Component {
@@ -23,18 +23,23 @@ export default class extends Component {
         const recolnatLicense = 'https://creativecommons.org/licenses/by-nc/4.0/';
         const logo = 'https://www.recolnat.org/menu/cfb9d3804c5430a57847fed2e6617794.png';
 
-        if (this.state.selectedThumbnailImage) {
-            const thumbnailImage = this.state.selectedThumbnailImage;
-            thumbnailName = thumbnailImage.name;
-            thumbnailFolder.file(thumbnailName , fs.readFileSync(thumbnailImage.path));
-        }else {
-            const thumbnailImage = this.state.initPicturesList[0];
-            thumbnailName = thumbnailImage.file_basename;
-            thumbnailFolder.file(thumbnailImage.file_basename , fs.readFileSync(thumbnailImage.file));
-        }
+        
 
         if (this.state.initPicturesList) {
-            this.state.initPicturesList.map(_ => {
+            debugger
+            const filteredPictures = Object.values(this.state.initPicturesList).filter(picture => picture.resourceType === this.state.collectionType);
+
+            if (this.state.selectedThumbnailImage) {
+                const thumbnailImage = this.state.selectedThumbnailImage;
+                thumbnailName = thumbnailImage.name;
+                thumbnailFolder.file(thumbnailName , fs.readFileSync(thumbnailImage.path));
+            }else {
+                const thumbnailImage = filteredPictures[0];
+                thumbnailName = thumbnailImage.file_basename;
+                thumbnailFolder.file(thumbnailImage.file_basename + (this.state.collectionType=='RESOURCE_TYPE_VIDEO' ? '.jpg' : '') , fs.readFileSync(thumbnailImage.thumbnail));
+            }
+
+            filteredPictures.map(_ => {
                 const image = {..._};
                 // Remove filed that don't have purpose on server side.
                 delete image.thumbnail;
@@ -126,7 +131,7 @@ export default class extends Component {
                     </Row>
                     <Row>
                         <Col sm={12} md={12} lg={12}>
-                            <h2 className="title_section">Export selected images to new collection.</h2>
+                            <h2 className="title_section">Create new collection</h2>
                         </Col>
                     </Row>
 
@@ -137,10 +142,27 @@ export default class extends Component {
                                 e.preventDefault();
                             }}>
                                 <FormGroup row>
+                                    <Label for="collection_type" sm={5}>Type of resources</Label>
+                                    <Col sm={7}>
+                                    <Input type="select" name="collection_type" id="collection_type"
+                                                    autoFocus={true}
+                                                    onChange={(e) => {
+                                                        this.setState({
+                                                            collectionType: e.target.value,
+                                                            
+                                                        })
+                                                    }}
+                                                    >
+                                                    <option key="Image" value="RESOURCE_TYPE_PICTURE">Image</option>
+                                                    <option key="Video" value="RESOURCE_TYPE_VIDEO">Video</option>
+                                    </Input>
+                                    </Col>
+                                </FormGroup>
+                                <FormGroup row>
                                     <Label for="collection_name" sm={5}>Collection name</Label>
                                     <Col sm={7}>
                                         <Input type="text" name="collection_name" id="collection_name"
-                                               autoFocus={true}
+                                               autoFocus={false}
                                                onChange={(e) => {
                                                    this.setState({
                                                        collectionName: e.target.value,
