@@ -1,9 +1,9 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import {push} from 'connected-react-router';
-import Component from '../components/CollectionExport';
-import {ee, EVENT_SELECT_TAB} from "../utils/library";
+import { push } from 'connected-react-router';
 import lodash from "lodash";
+import { withTranslation } from "react-i18next";
+import { connect } from 'react-redux';
+import Component from '../components/CollectionExport';
+import { ee, EVENT_SELECT_TAB } from "../utils/library";
 
 const mapStateToProps = state => {
     return {
@@ -35,4 +35,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps, null, {pure: false})(Component));

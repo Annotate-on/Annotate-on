@@ -707,7 +707,20 @@
         "table_column_path": "Path",
         "table_column_longitude_dd": "LongitudeDD",
         "table_column_latitude_dd": "LatitudeDD",
-        "dialog_title_save": "Save collection to"
+        "dialog_title_save": "Save collection to",
+        "export":{
+          "title":"Collections IIIF",
+          "subtitle":"Create new IIIF collection",
+          "form_lbl_type":"Type of resources",
+          "dropdown_lbl_image":"Image",
+          "dropdown_lbl_video":"Video",
+          "form_lbl_name":"Collection name",
+          "form_lbl_description":"Collection description",
+          "form_lbl_licence":"Licence",
+          "form_lbl_logo":"Logo url",
+          "form_lbl_thumbnail":"Select thumbnail image",
+          "btn_export":"Upload collection to server"
+        }
       },
       "metadata": {
         "dropdown_export_xmp_metadata": "Export Xmp metadata",
