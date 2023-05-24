@@ -15,6 +15,7 @@ export default class extends Component {
     }
 
     exportCollection = () => {
+        const { t } = this.props;
         let zip = new JSZip();
         let imgFolder = zip.folder("images");
         let thumbnailFolder = imgFolder.folder("thumbnail");
@@ -109,6 +110,7 @@ export default class extends Component {
     };
 
     render() {
+        const { t } = this.props;
         return (
             <div className="bst rcn_collection">
                 <div className="bg">
@@ -119,7 +121,7 @@ export default class extends Component {
                              className="logo"
                              title={"Go back to home page"}/>
                     </a>
-                    <span className="title">Collection</span>
+                    <span className="title">{t('results.collections.export.title')}</span>
                 </div>
                 <Container className="cnt">
                     <Row className="first-row">
@@ -131,7 +133,7 @@ export default class extends Component {
                     </Row>
                     <Row>
                         <Col sm={12} md={12} lg={12}>
-                            <h2 className="title_section">Create new collection</h2>
+                            <h2 className="title_section">{t('results.collections.export.subtitle')}</h2>
                         </Col>
                     </Row>
 
@@ -142,7 +144,7 @@ export default class extends Component {
                                 e.preventDefault();
                             }}>
                                 <FormGroup row>
-                                    <Label for="collection_type" sm={5}>Type of resources</Label>
+                                    <Label for="collection_type" sm={5}>{t('results.collections.export.form_lbl_type')}</Label>
                                     <Col sm={7}>
                                     <Input type="select" name="collection_type" id="collection_type"
                                                     autoFocus={true}
@@ -153,13 +155,13 @@ export default class extends Component {
                                                         })
                                                     }}
                                                     >
-                                                    <option key="Image" value="RESOURCE_TYPE_PICTURE">Image</option>
-                                                    <option key="Video" value="RESOURCE_TYPE_VIDEO">Video</option>
+                                                    <option key="Image" value="RESOURCE_TYPE_PICTURE">{t('results.collections.export.dropdown_lbl_image')}</option>
+                                                    <option key="Video" value="RESOURCE_TYPE_VIDEO">{t('results.collections.export.dropdown_lbl_video')}</option>
                                     </Input>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label for="collection_name" sm={5}>Collection name</Label>
+                                    <Label for="collection_name" sm={5}>{t('results.collections.export.form_lbl_name')}</Label>
                                     <Col sm={7}>
                                         <Input type="text" name="collection_name" id="collection_name"
                                                autoFocus={false}
@@ -173,7 +175,7 @@ export default class extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label for="collection_description" sm={5}>Collection description</Label>
+                                    <Label for="collection_description" sm={5}>{t('results.collections.export.form_lbl_description')}</Label>
                                     <Col sm={7}>
                                         <Input type="textarea" name="collection_description" id="collection_description"
                                                onChange={(e) => {
@@ -185,7 +187,7 @@ export default class extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label for="collection_description" sm={5}>License</Label>
+                                    <Label for="collection_description" sm={5}>{t('results.collections.export.form_lbl_licence')}</Label>
                                     <Col sm={7}>
                                         <Input type="text" name="collection_license" id="collection_license"
                                                value="https://creativecommons.org/licenses/by-nc/4.0/"
@@ -194,7 +196,7 @@ export default class extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label for="collection_logo" sm={5}>Logo url</Label>
+                                    <Label for="collection_logo" sm={5}>{t('results.collections.export.form_lbl_logo')}</Label>
                                     <Col sm={7}>
                                         <Input type="text" name="collection_logo" id="collection_logo"
                                                value="https://www.recolnat.org/menu/cfb9d3804c5430a57847fed2e6617794.png"
@@ -203,7 +205,7 @@ export default class extends Component {
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
-                                    <Label for="collection_thumbnail" sm={5}>Select thumbnail image</Label>
+                                    <Label for="collection_thumbnail" sm={5}>{t('results.collections.export.form_lbl_thumbnail')}</Label>
                                     <Col sm={7}>
                                         <input type="file" name="file"  color="red"
                                                onChange={(e) => {
@@ -223,7 +225,7 @@ export default class extends Component {
                             <Button disabled={!this.state.isEnabled} className="btn btn-primary" color="primary"
                                     title="Create zip package"
                                     onClick={this.exportCollection}
-                            >Create zip package</Button>
+                            >{t('results.collections.export.btn_export')}</Button>
                         </Col>
                     </Row>
                 </Container>
