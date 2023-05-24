@@ -1,20 +1,20 @@
-import {remote} from "electron";
 import configYaml from 'config-yaml';
-import yaml from 'write-yaml';
-import fs from 'fs-extra';
-import path from 'path';
-import {AUTHORIZED_PICTURES_EXTENSIONS} from "./library";
-import {escapePathString, formatDate, formatDateForFileName} from "./js";
-import lodash from 'lodash';
-import {DEFAULT_XPER_CONNECTION_URL, IMAGE_STORAGE_DIR} from "../constants/constants";
-import klaw from "klaw";
-import os from 'os';
 import crypto from "crypto";
-import {createInitialState} from "../reducers/app";
+import { remote } from "electron";
+import fs from 'fs-extra';
+import i18next, { changeLanguage } from "i18next";
+import klaw from "klaw";
+import lodash from 'lodash';
+import os from 'os';
+import path from 'path';
+import yaml from 'write-yaml';
 import packageJson from '../../package.json';
-import i18next, {changeLanguage} from "i18next";
-import {getDefaultLanguage} from "../i18n";
-import {convertSelectedTagsToFilter} from "./tags";
+import { DEFAULT_IIIF_CONNECTION_URL, DEFAULT_XPER_CONNECTION_URL, IMAGE_STORAGE_DIR } from "../constants/constants";
+import { getDefaultLanguage } from "../i18n";
+import { createInitialState } from "../reducers/app";
+import { escapePathString, formatDate, formatDateForFileName } from "./js";
+import { AUTHORIZED_PICTURES_EXTENSIONS } from "./library";
+import { convertSelectedTagsToFilter } from "./tags";
 
 const {ipcRenderer} = require('electron')
 
@@ -1206,6 +1206,29 @@ export const getXperParams = () => {
         url: config.xper.url,
         email: config.xper.email,
         password: config.xper.password ? atob(config.xper.password):config.xper.password
+    };
+};
+
+export const updateIIIFParams = (url, username, password) => {
+    console.log("updateIIIFParams ", url, username, password)
+    const encryptedPassword = password ? btoa(password) : password;
+    config.IIIF = {
+        url,
+        username,
+        password: encryptedPassword
+    };
+    yaml.sync(config_file_path, config);
+};
+
+export const getIIIFParams = () => {
+    // console.log("getXperParams")
+    if(!config.IIIF) {
+        updateIIIFParams(DEFAULT_IIIF_CONNECTION_URL, null, null)
+    }
+    return {
+        url: config.IIIF.url,
+        username: config.IIIF.username,
+        password: config.IIIF.password ? atob(config.IIIF.password):config.IIIF.password
     };
 };
 
