@@ -84,9 +84,10 @@ export default class extends Component {
                 description: this.state.collectionDescription,
                 license: recolnatLicense,
                 logo: logo,
-                thumbnail: thumbnailName
+                thumbnail: thumbnailName,
+                resourceType: this.state.collectionType
             }));
-
+debugger
             zip.generateAsync({ type: 'blob' }).then(content => {
                 
                 let IIIFParams = getIIIFParams();
