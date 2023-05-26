@@ -87,7 +87,6 @@ export default class extends Component {
                 thumbnail: thumbnailName,
                 resourceType: this.state.collectionType
             }));
-debugger
             zip.generateAsync({ type: 'blob' }).then(content => {
                 
                 let IIIFParams = getIIIFParams();
