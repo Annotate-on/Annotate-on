@@ -123,6 +123,7 @@ export default class extends Component {
                     });
                 })
                 .catch(error => {
+                    ee.emit(EVENT_HIDE_WAITING);
                     if(IIIFParams.username == null || IIIFParams.password == null ||IIIFParams.url == null)
                     {
                         remote.dialog.showErrorBox(t('global.error'), t('global.alert_please_check_your_IIIF_parameters'));    
