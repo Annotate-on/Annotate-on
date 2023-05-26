@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {Button, Col, Container, Label, Row} from 'reactstrap';
-import {remote, shell} from "electron";
-import path from 'path';
-import {convertSDDtoJson} from "../utils/sdd-processor";
-import {CATEGORICAL, NUMERICAL} from "../constants/constants";
 import Chance from 'chance';
-import {getTaxonomyDir} from "../utils/config";
-import PickXperDatabase from "./PickXperDatabase";
-import {getSddForDatabase} from "../utils/xper";
+import { remote } from "electron";
 import fs from "fs";
+import path from 'path';
+import React, { Component } from 'react';
+import { Button, Col, Container, Label, Row } from 'reactstrap';
+import { CATEGORICAL, NUMERICAL } from "../constants/constants";
+import { getTaxonomyDir } from "../utils/config";
+import { convertSDDtoJson } from "../utils/sdd-processor";
+import { getSddForDatabase } from "../utils/xper";
+import PickXperDatabase from "./PickXperDatabase";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 const chance = new Chance();

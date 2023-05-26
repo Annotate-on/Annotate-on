@@ -1,20 +1,24 @@
-import { remote, shell } from "electron";
+import { remote } from "electron";
 import fs from 'fs';
 import JSZip from 'jszip';
-import path from 'path';
 import React, { Component } from 'react';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
-import { getCacheDir, loadMetadata } from "../utils/config";
+import { getIIIFParams, loadMetadata } from "../utils/config";
+import { EVENT_HIDE_WAITING, EVENT_SHOW_WAITING, ee } from "../utils/library";
+
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
+const { dialog, shell } = remote;
+
 
 export default class extends Component {
     constructor(props) {
         super(props);
         const initPicturesList = this.props.tabData[this.props.match.params.tabName].pictures_selection.map(_ => this.props.allPictures[_])
-        this.state = {showLoadingModal: false, initPicturesList , selectedThumbnailImage: null};
+        this.state = {showLoadingModal: false, initPicturesList , selectedThumbnailImage: null, collectionType: "RESOURCE_TYPE_PICTURE"};
     }
 
     exportCollection = () => {
+        ee.emit(EVENT_SHOW_WAITING);
         const { t } = this.props;
         let zip = new JSZip();
         let imgFolder = zip.folder("images");
@@ -23,11 +27,8 @@ export default class extends Component {
         const selectedPictures = [];
         const recolnatLicense = 'https://creativecommons.org/licenses/by-nc/4.0/';
         const logo = 'https://www.recolnat.org/menu/cfb9d3804c5430a57847fed2e6617794.png';
-
-        
-
+       
         if (this.state.initPicturesList) {
-            debugger
             const filteredPictures = Object.values(this.state.initPicturesList).filter(picture => picture.resourceType === this.state.collectionType);
 
             if (this.state.selectedThumbnailImage) {
@@ -86,31 +87,68 @@ export default class extends Component {
                 thumbnail: thumbnailName
             }));
 
-            const saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
-                title: 'Save collection to',
-                defaultPath: path.join(getCacheDir(), `${this.state.collectionName}.zip`)
+            zip.generateAsync({ type: 'blob' }).then(content => {
+                
+                let IIIFParams = getIIIFParams();
+            
+                const formData = new FormData();
+                
+                formData.append('file', content, this.state.collectionName +'.zip'); // Set the desired name for the zip file
+        
+                const headers = new Headers();
+                headers.append('Authorization', 'Basic ' + btoa(IIIFParams.username + ":" + IIIFParams.password)); 
+        
+                fetch(IIIFParams.url, {
+                method: 'POST',
+                headers: headers,
+                body: formData,
+                })
+                .then(response => {
+                    ee.emit(EVENT_HIDE_WAITING);
+                    if (response.ok) {
+                    return response.json(); 
+                    throw new Error('Error uploading file: ' + response.status);
+                    }
+                })
+                .then(data => {
+                    console.log('Server response:', data);
+                    document.getElementById('collection_form').reset();
+                    this.setState({
+                        serverResponseUrl: data.data.url,
+                        selectedThumbnailImage: null,
+                        collectionType: 'RESOURCE_TYPE_PICTURE',
+                        collectionName: '',
+                        collectionDescription: '',
+                        isEnabled: false,
+                    });
+                })
+                .catch(error => {
+                    if(IIIFParams.username == null || IIIFParams.password == null ||IIIFParams.url == null)
+                    {
+                        remote.dialog.showErrorBox(t('global.error'), t('global.alert_please_check_your_IIIF_parameters'));    
+                    }else{
+                        remote.dialog.showErrorBox(t('global.error'), error.message);
+                    }
+                    console.log('Error uploading file:', error);
+                    
+                });
+            })
+            .catch(error => {
+                console.log('Error generating zip file:', error);
             });
-            if (!saverPath || saverPath.length < 1) return;
 
-            zip.generateNodeStream({type: 'nodebuffer', streamFiles: true})
-                .pipe(fs.createWriteStream(saverPath));
-
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
-                type: 'info',
-                detail: saverPath,
-                message: `Export finished`,
-                buttons: ['OK', 'Open folder'],
-                cancelId: 1
-            });
-            if (result === 1) {
-                shell.showItemInFolder(saverPath);
-            }
-
+                }
+            };
+      openLink = () => {
+        const { serverResponseUrl } = this.state;
+        if (serverResponseUrl) {
+          shell.openExternal(serverResponseUrl);
         }
-    };
+      };
 
     render() {
         const { t } = this.props;
+        const { serverResponseUrl } = this.state;
         return (
             <div className="bst rcn_collection">
                 <div className="bg">
@@ -140,7 +178,7 @@ export default class extends Component {
                     <Row>
                         <Col sm={6} md={6} lg={6}>
                             <br/>
-                            <Form onSubmit={(e) => {
+                            <Form id="collection_form" onSubmit={(e) => {
                                 e.preventDefault();
                             }}>
                                 <FormGroup row>
@@ -226,6 +264,15 @@ export default class extends Component {
                                     title="Create zip package"
                                     onClick={this.exportCollection}
                             >{t('results.collections.export.btn_export')}</Button>
+                             <br/><br/><br/>
+                             {serverResponseUrl && (
+                               <div><span>Your collection is successfuly uploaded to server </span><br/><br/> 
+                               <button onClick={this.openLink} className="btn btn-primary" color="primary">
+                              {t('results.collections.export.btn_open_iiif_link')}
+                             </button>
+                             </div>
+                            )}
+
                         </Col>
                     </Row>
                 </Container>

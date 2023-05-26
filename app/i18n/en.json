@@ -88,7 +88,8 @@
       "alert_bad_format_for_xper_3_file": "Bad format for xper3 file!",
       "alert_all_data_in_selected_xper_3_knowledge_base_will_be_replaced": "All data in selected Xper3 knowledge base will be replaced (delete and insert operation). Do you want to proceed?",
       "alert_an_error_occurred_during_export_to_xper_database": "An error occurred during export to xper database!",
-      "alert_cannot_start_download": "Cannot start download. Check your internet connection!"
+      "alert_cannot_start_download": "Cannot start download. Check your internet connection!",
+      "alert_please_check_your_IIIF_parameters": "Please check your IIIF parameters on Options page!"
     },
     "main_navbar": {
       "library": "Library",
@@ -724,7 +725,8 @@
           "form_lbl_licence":"Licence",
           "form_lbl_logo":"Logo url",
           "form_lbl_thumbnail":"Select thumbnail image",
-          "btn_export":"Upload collection to server"
+          "btn_export":"Upload collection to server",
+          "btn_open_iiif_link":"Goto IIIF collections server"
         }
       },
       "metadata": {

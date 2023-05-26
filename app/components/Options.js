@@ -93,7 +93,6 @@ export default class Options extends Component {
         const valid = this._validateIIIFForm()
         if(valid) {
             try {
-                debugger
                 updateIIIFParams(this.state.IIIF.url, this.state.IIIF.username, this.state.IIIF.password);
                 this.setState({
                         IIIF: {
