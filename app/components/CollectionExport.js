@@ -22,6 +22,7 @@ export default class extends Component {
         const { t } = this.props;
         let zip = new JSZip();
         let imgFolder = zip.folder("images");
+        let imgThumbnailFolder = imgFolder.folder("img_thumb");
         let thumbnailFolder = imgFolder.folder("thumbnail");
         let thumbnailName;
         const selectedPictures = [];
@@ -46,6 +47,8 @@ export default class extends Component {
                 // Remove filed that don't have purpose on server side.
                 delete image.thumbnail;
                 imgFolder.file(image.file_basename, fs.readFileSync(image.file));
+                imgThumbnailFolder.file(image.file_basename + (this.state.collectionType=='RESOURCE_TYPE_VIDEO' ? '.jpg' : ''),fs.readFileSync(image.thumbnail) );
+                delete image.thumbnail;
                 delete image.file;
                 image.xmp_metadata = {};
 
