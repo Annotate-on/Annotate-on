@@ -145,11 +145,6 @@ export default class extends Component {
 
     _onDrop = (e, tagName , type) => {
         const { t } = this.props;
-        if (type !== TYPE_CATEGORY){
-            alert(t('tags.alert_must_be_added_to_category'));
-            return  false;
-        }
-
         if ((e.dataTransfer.getData('draggableImages') === '' &&
             e.dataTransfer.getData('sha1') === '') && (e.dataTransfer.getData('draggableTags') === '' &&
             e.dataTransfer.getData('tagName') === ''))
@@ -167,7 +162,6 @@ export default class extends Component {
                 this.props.addSubTag(tagName, e.dataTransfer.getData('tagName'));
             }
         }
-
         this.setState({draggableTags: []})
     };
 
