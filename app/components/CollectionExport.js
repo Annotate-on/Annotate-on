@@ -45,13 +45,13 @@ export default class extends Component {
             filteredPictures.map(_ => {
                 const image = {..._};
                 // Remove filed that don't have purpose on server side.
-                delete image.thumbnail;
                 imgFolder.file(image.file_basename, fs.readFileSync(image.file));
                 imgThumbnailFolder.file(image.file_basename + (this.state.collectionType=='RESOURCE_TYPE_VIDEO' ? '.jpg' : ''),fs.readFileSync(image.thumbnail) );
                 delete image.thumbnail;
                 delete image.file;
                 image.xmp_metadata = {};
-
+                image.vtt = [];
+              
                 if(image.sha1 in this.props.cartels)
                     image.cartel = this.props.cartels[image.sha1];
 
@@ -66,17 +66,75 @@ export default class extends Component {
 
                 if (this.props.annotations) {
                     this.props.annotations.map(annotation => {
-
                         if (annotation.id in this.props.appState.tags_by_annotation) {
                             annotation.tags = this.props.appState.tags_by_annotation[annotation.id];
                         }
 
                         if (annotation.pictureId === image.sha1) {
+                            
                             if (!image.annotations)
                                 image.annotations = [];
+                                
+                            if(annotation.video){
+                            let vtt_rec = {'text': annotation.title + ' ' +annotation.value, 'start':annotation.video.start, 'end':annotation.video.end, };
+                            image.vtt.push(vtt_rec);
+                            }
                             image.annotations.push(annotation);
                         }
                     });
+                
+                    if(image.vtt != ''){
+                        let orderedVtt = image.vtt.sort((a, b) => a.start - b.start);
+                        let ranges= [];
+                        let onlyRanges= [];
+                        let realRanges= [];
+                        let realRangesTitles= [];
+                        let vttTitle = '';
+                        let finalVTTRange;
+
+
+                        for (let i = 0; i < orderedVtt.length; i++) {
+                            const ann = orderedVtt[i];
+                            let rangeStart = {'range':ann.start}
+                            onlyRanges.push(rangeStart);
+                            let rangeEnd = {'range':ann.end}
+                            onlyRanges.push(rangeEnd);
+                            onlyRanges.sort((a, b) => a.range - b.range);
+                        }
+
+                        for (let j = 0; j < onlyRanges.length-1; j++) {
+                            let realRange = {'start': onlyRanges[j].range, 'end': onlyRanges[j+1].range}
+                            realRanges.push(realRange);
+                        }
+                        
+                        for (let l = 0; l < realRanges.length; l++){
+                            vttTitle = '';
+                            for (let k = 0; k < orderedVtt.length; k++) {
+                                if(realRanges[l].start >= orderedVtt[k].start && realRanges[l].end <= orderedVtt[k].end ){
+                                    vttTitle += orderedVtt[k].text + '\n';
+                                }
+                            }
+                            finalVTTRange = {'title':vttTitle , 'start': realRanges[l].start , 'end':realRanges[l].end }
+                            if(vttTitle!=''){
+                                realRangesTitles.push(finalVTTRange);
+                            }
+                        }
+                            const vttRecords = Object.values(realRangesTitles).map((record, index) => {
+                            const { title, start, end } = record;
+                            const vttText = `${formatTime(start)} --> ${formatTime(end)}\n${title}`;
+                            return vttText;
+                            });
+
+                            function formatTime(time) {
+                                const hours = Math.floor(time / 3600);
+                                const minutes = Math.floor((time % 3600) / 60);
+                                const seconds = (time % 60).toFixed(3).padStart(6, '0');
+                                return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds}`;
+                            }
+                            const vttString ={'value':`WEBVTT\n\n${vttRecords.join('\n\n')}`};
+                            // console.log(vttString);
+                            image.vtt = vttString;
+                    }
                 }
                 selectedPictures.push(image);
             });
