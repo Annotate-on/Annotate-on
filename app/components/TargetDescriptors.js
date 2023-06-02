@@ -45,6 +45,9 @@ class TargetDescriptors extends PureComponent {
             targetTypeModalEdit: false,
             modalTitle: 'New character',
             modalTitleEdit: 'Edit character group',
+            categoricalStateItemModal: false,
+            categoricalStateItemModalInEdit: false,
+            categoricalStateItemInput: '',
             form: {
                 id: '',
                 targetName: '',
@@ -52,7 +55,9 @@ class TargetDescriptors extends PureComponent {
                 targetColor: '#f44336',
                 unit: '',
                 annotationType: '',
-                includeInCalculation: true
+                includeInCalculation: true,
+                categoricalStateItem: '',
+                categoryStates: []
             },
             descriptors: sorted.descriptors,
             sortBy,
@@ -69,7 +74,7 @@ class TargetDescriptors extends PureComponent {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleTargetTypeInputChange = this.handleTargetTypeInputChange.bind(this);
         this.handleTargetTypeInputChangeForEdit = this.handleTargetTypeInputChangeForEdit.bind(this);
-
+        this.handleCategoricalStateInputChangeForEdit = this.handleCategoricalStateInputChangeForEdit.bind(this);
     }
 
     componentDidMount() {
@@ -79,7 +84,6 @@ class TargetDescriptors extends PureComponent {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log('next props from target descriptor...' , nextProps)
         this._resortTable();
     }
 
@@ -148,7 +152,6 @@ class TargetDescriptors extends PureComponent {
         });
     };
 
-
     toggleTargetType = () => {
         const targetTypeInput = !this.state.targetTypeModal ? '' : this.state.targetTypeInput;
         this.setState({
@@ -174,7 +177,7 @@ class TargetDescriptors extends PureComponent {
         const { t } = this.props;
         if (!this.state.form.targetType){
             alert(t('models.target_descriptors.dialog_edit.alert_select_target_group_to_delete'));
-        }else{
+        } else{
             this.props.deleteTargetType(this.props.taxonomyModel.id, this.state.form.targetType);
             this.setState(prevState => ({
                 form: {
@@ -185,19 +188,76 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
-    _editTargetType = () => {
+    toggleCategoricalStateItemModal = () => {
+        this.setState({
+            categoricalStateItemModal: !this.state.categoricalStateItemModal,
+            categoricalStateItemModalInEdit: false,
+        });
+    };
+
+    toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
-        if (!this.state.form.targetType){
-            alert(t('models.target_descriptors.dialog_edit.alert_select_target_group_to_edit'));
-        }else{
-            this.props.editTargetType(this.props.taxonomyModel.id, this.state.form.targetType , this.state.targetTypeInputEdit);
+        if (!this.state.form.categoricalStateItem){
+            alert(t('models.target_descriptors.dialog_edit.alert_select_categorical_state_item_to_edit'));
+            return;
+        }
+        const stateItem = this.state.form.categoryStates.find(value => value.id === this.state.form.categoricalStateItem);
+        this.setState(prevState => ({
+            categoricalStateItemModal: !this.state.categoricalStateItemModal,
+            categoricalStateItemInput: stateItem.name,
+            categoricalStateItemModalInEdit: true,
+        }));
+    };
+
+    _saveCategoricalStateItem = () => {
+        const { t } = this.props;
+        if(!this.state.categoricalStateItemInput) {
+            alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_is_empty'));
+            return;
+        }
+        if (this.state.form.categoryStates.some(value => value.name === this.state.categoricalStateItemInput)) {
+            alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_already_exist'));
+            return;
+        }
+        if (this.state.categoricalStateItemModalInEdit) {
+            const stateItem = this.state.form.categoryStates.find(value => value.id === this.state.form.categoricalStateItem);
+            stateItem.name = this.state.categoricalStateItemInput;
             this.setState(prevState => ({
                 form: {
                     ...prevState.form,
-                    targetType: this.state.targetTypeInputEdit
+                    categoryStates: [...prevState.form.categoryStates]
+                },
+                categoricalStateItemInput: ''
+            }));
+        } else {
+            this.setState(prevState => ({
+                form: {
+                    ...prevState.form,
+                    categoryStates: [...prevState.form.categoryStates,
+                        {
+                            id: chance.guid(),
+                            name: prevState.categoricalStateItemInput
+                        }
+                    ]
+                },
+                categoricalStateItemInput: ''
+            }));
+        }
+        this.toggleCategoricalStateItemModal();
+    };
+
+    _deleteCategoricalStateItem = () => {
+        const { t } = this.props;
+        if (!this.state.form.categoricalStateItem){
+            alert(t('models.target_descriptors.dialog_edit.alert_select_categorical_state_item_to_delete'));
+        } else {
+            this.setState(prevState => ({
+                form: {
+                    ...prevState.form,
+                    categoryStates: prevState.form.categoryStates.filter(value => value.id !== this.state.form.categoricalStateItem),
+                    categoricalStateItem: ''
                 }
             }));
-            this.toggleTargetTypeEdit();
         }
     };
 
@@ -212,7 +272,8 @@ class TargetDescriptors extends PureComponent {
                     this.state.form.targetColor,
                     this.state.form.unit,
                     this.state.form.annotationType,
-                    this.state.form.includeInCalculation);
+                    this.state.form.includeInCalculation,
+                    this.state.form.categoryStates);
 
                 const descriptors = [...this.state.descriptors];
                 const desc = descriptors.find(target => target.id === this.state.form.id);
@@ -222,14 +283,15 @@ class TargetDescriptors extends PureComponent {
                 desc.unit = this.state.form.unit
                 desc.annotationType = this.state.form.annotationType;
                 desc.includeInCalculation = this.state.form.includeInCalculation;
+                desc.states = this.state.form.categoryStates;
                 this.setState({descriptors})
-
                 this.toggle();
                 this._cancel();
             } else {
                 if (this.state.form.targetName !== '' &&
                     (this.state.form.unit !== '' || this.state.form.annotationType !== NUMERICAL) &&
-                    this.state.form.annotationType !== '') {
+                    this.state.form.annotationType !== '' &&
+                    (this.state.form.annotationType === CATEGORICAL && this.state.form.categoryStates.length > 0)) {
                     const id = chance.guid();
                     this.props.createTargetDescriptor(
                         this.props.taxonomyModel.id,
@@ -239,7 +301,9 @@ class TargetDescriptors extends PureComponent {
                         this.state.form.targetColor,
                         this.state.form.unit,
                         this.state.form.annotationType,
-                        this.state.form.includeInCalculation);
+                        this.state.form.includeInCalculation,
+                        this.state.form.categoryStates
+                    );
                     this.state.descriptors.push({
                         id: id,
                         targetName: this.state.form.targetName,
@@ -247,7 +311,8 @@ class TargetDescriptors extends PureComponent {
                         targetColor: this.state.form.targetColor,
                         unit: this.state.form.unit,
                         annotationType: this.state.form.annotationType,
-                        includeInCalculation: this.state.form.includeInCalculation
+                        includeInCalculation: this.state.form.includeInCalculation,
+                        states: this.state.form.categoryStates
                     });
                     this.toggle();
                     this._cancel();
@@ -267,7 +332,9 @@ class TargetDescriptors extends PureComponent {
                 targetColor: '#f44336',
                 unit: '',
                 annotationType: '',
-                includeInCalculation: true
+                includeInCalculation: true,
+                categoricalStateItem:'',
+                categoryStates: []
             }
         });
     };
@@ -284,17 +351,24 @@ class TargetDescriptors extends PureComponent {
         });
     }
 
+    handleCategoricalStateInputChangeForEdit(event) {
+        this.setState({
+            categoricalStateItemInput: event.target.value
+        });
+    }
+
     handleInputChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         let form = this.state.form;
-
         if (target.type === 'select-one') {
             form[name] = target.selectedOptions[0].dataset[name];
         } else {
             form[name] = value;
-
+        }
+        if(form.annotationType !== CATEGORICAL) {
+            form.categoryStates = []
         }
         this.setState({
             form
@@ -316,7 +390,8 @@ class TargetDescriptors extends PureComponent {
                         targetColor: target.targetColor,
                         unit: target.unit,
                         annotationType: target.annotationType,
-                        includeInCalculation: target.includeInCalculation
+                        includeInCalculation: target.includeInCalculation,
+                        categoryStates: target.states
                     }
                 });
                 this.toggle();
@@ -486,11 +561,35 @@ class TargetDescriptors extends PureComponent {
                                            onChange={this.handleInputChange} disabled={this.state.form.id}>
                                         <option data-annotation-type="" value=""/>
                                         <option data-annotation-type={NUMERICAL} value={NUMERICAL}>physic</option>
-                                        <option disabled data-annotation-type={CATEGORICAL} value={CATEGORICAL}>enumeration</option>
+                                        <option data-annotation-type={CATEGORICAL} value={CATEGORICAL}>enumeration</option>
                                         <option data-annotation-type={INTEREST} value={INTEREST}>interest</option>
                                         <option disabled data-annotation-type={TEXTUAL} value={TEXTUAL}>text</option>
                                     </Input>
                                 </FormGroup>
+                                {this.state.form.annotationType === CATEGORICAL &&
+                                    <FormGroup className="category-states-container">
+                                        <Label for="categoricalStateItem">{t('models.target_descriptors.dialog_edit.lbl_enum_states')}</Label>
+                                        <Row>
+                                            <Col md={8}>
+                                                <Input type="select" name="categoricalStateItem" id="categoricalStateItem"
+                                                       defaultValue={this.state.form.targetType}
+                                                       onChange={this.handleInputChange}>
+                                                    <option data-target-type=""/>
+                                                    {
+                                                        this.state.form.categoryStates.map((type, index) => {
+                                                            return <option key={`td_${index}`} data-categorical-state-item={type.id}>{type.name}</option>;
+                                                        })
+                                                    }
+                                                </Input>
+                                            </Col>
+                                            <Col md={4} className='crud-icons-wrapper'>
+                                                <i className="fa fa-plus-square fa-lg crud-icons" aria-hidden="true" onClick={this.toggleCategoricalStateItemModal}/>
+                                                <i className="fa fa-pencil fa-lg  crud-icons" aria-hidden="true"  onClick={this.toggleCategoricalStateItemEdit} disabled={!this.state.form.categoricalStateItem}/>
+                                                <i className="fa fa-trash fa-lg crud-icons" aria-hidden="true" onClick={this._deleteCategoricalStateItem} disabled={!this.state.form.categoricalStateItem}/>
+                                            </Col>
+                                        </Row>
+                                    </FormGroup>
+                                }
                                 <FormGroup>
                                     <Label for="unit">{t('models.target_descriptors.dialog_edit.lbl_unit')}</Label>
                                     <Input type="select" name="unit" id="unit"
@@ -580,7 +679,27 @@ class TargetDescriptors extends PureComponent {
                             <Button color="secondary" onClick={this.toggleTargetTypeEdit}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
-
+                    {/*Edit Categorical state item*/}
+                    <Modal isOpen={this.state.categoricalStateItemModal} toggle={this.toggleCategoricalStateItemModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleCategoricalStateItemModal}>{t('models.target_descriptors.dialog_edit_categorical_state_item.title')}</ModalHeader>
+                        <ModalBody>
+                            <Form onSubmit={(e) => {
+                                e.preventDefault();
+                            }}>
+                                <FormGroup>
+                                    <Label for="categoricalStateEdit">{t('models.target_descriptors.dialog_edit_categorical_state_item.lbl_state_name')}</Label>
+                                    <Input type="text" name="categoricalStateEdit" id="categoricalStateEdit" value={this.state.categoricalStateItemInput}
+                                           onChange={this.handleCategoricalStateInputChangeForEdit}
+                                    />
+                                </FormGroup>
+                            </Form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this._saveCategoricalStateItem}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleCategoricalStateItemModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
                 </div>
             </div>
         );

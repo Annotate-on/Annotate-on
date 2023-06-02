@@ -845,8 +845,11 @@
           "lbl_unit": "Unit",
           "lbl_color": "Color",
           "lbl_checkbox_include_in_calculation": "Calculate standard deviation and average value",
-          "alert_select_target_group_to_delete": "please select target group you want to delete.",
-          "alert_select_target_group_to_edit": "please select target group you want to edit."
+          "alert_select_target_group_to_delete": "Please select target group you want to delete.",
+          "alert_select_target_group_to_edit": "Please select target group you want to edit.",
+          "alert_select_categorical_state_item_to_delete": "Please select enumeration value you want to delete.",
+          "alert_select_categorical_state_item_to_edit": "Please select enumeration value you want to edit.",
+          "lbl_enum_states": "Enumeration states"
         },
         "dialog_create_new_character_group": {
           "title": "Create new character group",
@@ -855,6 +858,12 @@
         "dialog_edit_character_group": {
           "title": "Edit character group name",
           "lbl_group_name": "New group name"
+        },
+        "dialog_edit_categorical_state_item": {
+          "title": "Edit state item",
+          "lbl_state_name": "State name",
+          "alert_categorical_state_item_is_empty": "Enumeration value can't be empty!",
+          "alert_categorical_state_item_already_exist": "Enumeration with the same value already exist!"
         }
       },
       "import_from_xper": {
