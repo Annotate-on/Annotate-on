@@ -76,7 +76,7 @@ export default class extends Component {
                                 image.annotations = [];
                                 
                             if(annotation.video){
-                            let vtt_rec = {'text': annotation.title + ' ' +annotation.value, 'start':annotation.video.start, 'end':annotation.video.end, };
+                            let vtt_rec = {'text': annotation.title + ' ' + (annotation.value !== undefined ? annotation.value : ''), 'start':annotation.video.start, 'end':annotation.video.end, };
                             image.vtt.push(vtt_rec);
                             }
                             image.annotations.push(annotation);
@@ -133,6 +133,7 @@ export default class extends Component {
                             }
                             const vttString ={'value':`WEBVTT\n\n${vttRecords.join('\n\n')}`};
                             // console.log(vttString);
+                            debugger
                             image.vtt = vttString;
                     }
                 }
