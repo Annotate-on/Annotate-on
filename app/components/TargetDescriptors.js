@@ -362,7 +362,7 @@ class TargetDescriptors extends PureComponent {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
         let form = this.state.form;
-        if (target.type === 'select-one') {
+        if (target.type === 'select-one' || target.type === 'select-multiple') {
             form[name] = target.selectedOptions[0].dataset[name];
         } else {
             form[name] = value;
@@ -571,10 +571,8 @@ class TargetDescriptors extends PureComponent {
                                         <Label for="categoricalStateItem">{t('models.target_descriptors.dialog_edit.lbl_enum_states')}</Label>
                                         <Row>
                                             <Col md={8}>
-                                                <Input type="select" name="categoricalStateItem" id="categoricalStateItem"
-                                                       defaultValue={this.state.form.targetType}
+                                                <Input type="select" multiple='multiple' name="categoricalStateItem" id="categoricalStateItem"
                                                        onChange={this.handleInputChange}>
-                                                    <option data-target-type=""/>
                                                     {
                                                         this.state.form.categoryStates.map((type, index) => {
                                                             return <option key={`td_${index}`} data-categorical-state-item={type.id}>{type.name}</option>;
