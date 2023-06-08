@@ -76,7 +76,7 @@ export default class extends Component {
                                 image.annotations = [];
                                 
                             if(annotation.video){
-                            let vtt_rec = {'text': annotation.title + ' ' + (annotation.value !== undefined ? annotation.value : ''), 'start':annotation.video.start, 'end':annotation.video.end, };
+                            let vtt_rec = {'text': annotation.title + ' ' + ((annotation.hasOwnProperty('value')) ? annotation.value : ''), 'start':annotation.video.start, 'end':annotation.video.end, };
                             image.vtt.push(vtt_rec);
                             }
                             image.annotations.push(annotation);
@@ -133,7 +133,6 @@ export default class extends Component {
                             }
                             const vttString ={'value':`WEBVTT\n\n${vttRecords.join('\n\n')}`};
                             // console.log(vttString);
-                            debugger
                             image.vtt = vttString;
                     }
                 }
@@ -146,7 +145,7 @@ export default class extends Component {
                 description: this.state.collectionDescription,
                 license: recolnatLicense,
                 logo: logo,
-                thumbnail: thumbnailName,
+                thumbnail: thumbnailName + (this.state.collectionType=='RESOURCE_TYPE_VIDEO' && !this.state.selectedThumbnailImage ? '.jpg' : ''),
                 resourceType: this.state.collectionType
             }));
             zip.generateAsync({ type: 'blob' }).then(content => {
