@@ -760,14 +760,14 @@ export const setSelectedTaxonomy = (id) => ({
     id
 });
 
-export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation) => ({
+export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
     type: CREATE_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
 });
 
-export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation) => ({
+export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
     type: EDIT_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
 });
 
 export const deleteTargetDescriptor = (taxonomyId, id) => ({

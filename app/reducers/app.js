@@ -3661,11 +3661,11 @@ export default (state = {}, action) => {
 
         case CREATE_TARGET_DESCRIPTOR: {
             const counter = state.counter + 1;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 selectedTaxonomy.descriptors.push({
-                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation
+                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
                 });
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -3684,7 +3684,7 @@ export default (state = {}, action) => {
             const counter = state.counter + 1;
             if (!state.selectedTaxonomy)
                 return state;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 const target = selectedTaxonomy.descriptors.find((target, index) => target.id === id);
@@ -3695,6 +3695,7 @@ export default (state = {}, action) => {
                     target.unit = unit;
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
+                    target.states = states;
                 }
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -3708,6 +3709,7 @@ export default (state = {}, action) => {
                     target.unit = unit;
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
+                    target.states = states;
                 }
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}
