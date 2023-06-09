@@ -63,7 +63,10 @@
         "iiif_parameters_section_title": "IIIF parameters",
         "lbl_iiif_parameters_url": "Url",
         "lbl_iiif_parameters_username": "Username",
-        "lbl_iiif_parameters_password": "Password"
+        "lbl_iiif_parameters_password": "Password",
+        "annotation_tools_title": "Annotation tools",
+        "lbl_color_picker_radius": "Color picker radius",
+        "alert_color_picker_radius_invalid": "Color picker radius value must be positive integer number!"
       },
       "languages": {
         "EN": "English",

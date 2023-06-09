@@ -1183,6 +1183,28 @@ export const updateSelectedLanguage = (lang) => {
 };
 
 /**
+ * Update tools parameters
+ * @param projectPath
+ */
+export const updateToolsParams = (colorPickerRadius) => {
+    console.log("updateToolsParams ", colorPickerRadius)
+    config.tools = {
+        colorPickerRadius
+    };
+    yaml.sync(config_file_path, config);
+};
+
+export const getToolsParams = () => {
+    // console.log("getXperParams")
+    if(!config.tools) {
+        updateToolsParams('');
+    }
+    return {
+        colorPickerRadius: config.tools.colorPickerRadius
+    };
+};
+
+/**
  * Update Xper connection parameters
  * @param projectPath
  */

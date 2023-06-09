@@ -4,7 +4,14 @@ import { Button, Col, Container, Input, Row } from 'reactstrap';
 import { remote } from "electron";
 import { DEFAULT_IIIF_CONNECTION_URL, DEFAULT_XPER_CONNECTION_URL } from "../constants/constants";
 import { SUPPORTED_LANGUAGES } from "../i18n";
-import { getIIIFParams, getXperParams, updateIIIFParams, updateSelectedLanguage, updateXperParams } from "../utils/config";
+import {
+    getIIIFParams,
+    getToolsParams,
+    getXperParams,
+    updateIIIFParams,
+    updateSelectedLanguage, updateToolsParams,
+    updateXperParams
+} from "../utils/config";
 import PageTitle from "./PageTitle";
 const OPTIONS_IMAGE_CONTEXT = require('./pictures/options.svg');
 
@@ -15,7 +22,7 @@ export default class Options extends Component {
         super(props);
         this.state = {
             xper: {
-                formSaved:true,
+                formSaved: true,
                 url: '',
                 email: '',
                 password: '',
@@ -23,10 +30,16 @@ export default class Options extends Component {
                 }
             },
             IIIF: {
-                formSaved:true,
+                formSaved: true,
                 url: '',
                 username: '',
                 password: '',
+                errors: {
+                }
+            },
+            tools: {
+                formSaved: true,
+                colorPickerRadius: '',
                 errors: {
                 }
             }
@@ -36,6 +49,7 @@ export default class Options extends Component {
     componentDidMount() {
         let xperParams = getXperParams();
         let IIIFParams = getIIIFParams();
+        let toolsParams = getToolsParams();
         this.setState({
                 xper: {
                     formSaved:true,
@@ -48,10 +62,38 @@ export default class Options extends Component {
                     url: IIIFParams.url ? IIIFParams.url : DEFAULT_IIIF_CONNECTION_URL,
                     username:IIIFParams.username ? IIIFParams.username : '',
                     password:IIIFParams.password ? IIIFParams.password : ''
+                }, tools : {
+                    formSaved:true,
+                    colorPickerRadius: toolsParams.colorPickerRadius
                 }
             }
         )
     }
+
+    _handleOnSaveToolsParamsForm = () => {
+        const { t } = this.props;
+        const valid = this._validateToolsForm()
+        if(valid) {
+            updateToolsParams(this.state.tools.colorPickerRadius);
+            this.setState({
+                    tools: {
+                        ...this.state.tools,
+                        formSaved: true,
+                    }
+                }
+            )
+        } else {
+            this.setState({
+                    tools: {
+                        ...this.state.tools,
+                        formSaved: false
+                    }
+                }
+            )
+            remote.dialog.showErrorBox(t('global.error'), t('global.options.alert_color_picker_radius_invalid'));
+        }
+    };
+
 
     _handleOnSaveXperParamsForm = () => {
         const { t } = this.props;
@@ -102,7 +144,6 @@ export default class Options extends Component {
                     }
                 )
             } catch (e) {
-                
                 this.setState({
                         IIIF: {
                             ...this.state.IIIF,
@@ -123,13 +164,18 @@ export default class Options extends Component {
             remote.dialog.showErrorBox(t('global.error'), "All IIIF parameters are required!");
         }
     };
-
-
+    _validateToolsForm = () => {
+        const value = this.state.tools.colorPickerRadius;
+        if(!value) return true;
+        const intValue = parseInt(value, 10);
+        return Number.isInteger(intValue) && intValue > 0;
+    };
 
     _validateForm = () => {
-        let valid = this.state.xper.url && this.state.xper.email&& this.state.xper.password;
+        let valid = this.state.xper.url && this.state.xper.email && this.state.xper.password;
         return valid;
     };
+
     _validateIIIFForm = () => {
         let valid = this.state.IIIF.url && this.state.IIIF.username&& this.state.IIIF.password;
         return valid;
@@ -139,6 +185,17 @@ export default class Options extends Component {
         updateSelectedLanguage(event.target.value)
     };
 
+    _toolsParamsFormChangeHandler = ( event ) => {
+        const { name, value } = event.target;
+        const { t } = this.props;
+        let errors = this.state.errors;
+        const tools = {...this.state.tools};
+        tools[name] = value ? value : '';
+        tools.formSaved=false
+        this.setState({
+            tools: tools
+        });
+    };
     _xperParamsFormChangeHandler = ( event ) => {
         const { name, value } = event.target;
         const { t } = this.props;
@@ -150,6 +207,7 @@ export default class Options extends Component {
             xper: xper
         });
     };
+
     _IIIFParamsFormChangeHandler = ( event ) => {
         const { name, value } = event.target;
         const { t } = this.props;
@@ -207,6 +265,31 @@ export default class Options extends Component {
                             </div>
                             <div className="options-form-section">
                                 <div className="options-form-section-title">
+                                    {t('global.options.annotation_tools_title')}
+                                </div>
+                                <div className="options-form-section-content">
+                                    <div className="options-form-item">
+                                        <Row>
+                                            <Col sm={2} md={2} lg={2}  className="options-form-field-label">
+                                                {t('global.options.lbl_color_picker_radius')}:
+                                            </Col>
+                                            <Col sm={2} md={2} lg={2}>
+                                                <Input name="colorPickerRadius" type="number" bsSize="md" title={t('global.options.select_language.tooltip')}
+                                                       value={this.state.tools.colorPickerRadius}
+                                                       onChange={this._toolsParamsFormChangeHandler}>
+                                                </Input>
+                                            </Col>
+                                            <Col sm={4} md={4} lg={4}>
+                                                <Button color={this.state.tools.formSaved ? 'success' : 'danger'} onClick={() => this._handleOnSaveToolsParamsForm()}>{t('global.save')}</Button>
+                                            </Col>
+                                            <Col sm={4} md={4} lg={4}/>
+                                        </Row>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="options-form-section">
+                                <div className="options-form-section-title">
                                     {t('global.options.xper_parameters_section_title')}
                                 </div>
                                 <div className="options-form-section-content">
@@ -216,7 +299,7 @@ export default class Options extends Component {
                                                 {t('global.options.lbl_xper_parameters_url')}:
                                             </Col>
                                             <Col sm={4} md={4} lg={4}>
-                                                <Input name="url" type="text" bsSize="md" title={t('global.options.select_language.tooltip')}
+                                                <Input name="url" type="text" bsSize="md"
                                                        value={this.state.xper.url}
                                                        onChange={this._xperParamsFormChangeHandler}>
                                                 </Input>
@@ -230,7 +313,7 @@ export default class Options extends Component {
                                                 {t('global.options.lbl_xper_parameters_email')}:
                                             </Col>
                                             <Col sm={4} md={4} lg={4}>
-                                                <Input name="email"  type="text" bsSize="md" title={t('global.options.select_language.tooltip')}
+                                                <Input name="email"  type="text" bsSize="md"
                                                        value={this.state.xper.email}
                                                        onChange={this._xperParamsFormChangeHandler}>
                                                 </Input>
@@ -244,7 +327,7 @@ export default class Options extends Component {
                                                 {t('global.options.lbl_xper_parameters_password')}:
                                             </Col>
                                             <Col sm={4} md={4} lg={4}>
-                                                <Input name="password" type="password" bsSize="md" title={t('global.options.select_language.tooltip')}
+                                                <Input name="password" type="password" bsSize="md"
                                                        value={this.state.xper.password}
                                                        onChange={this._xperParamsFormChangeHandler}>
                                                 </Input>

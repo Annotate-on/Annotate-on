@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import {getToolsParams} from "../utils/config";
 
 /**
  * @class L.Draw.Occurrence
@@ -61,10 +62,21 @@ L.Draw.ColorPicker = L.Draw.Marker.extend({
                 .addTo(this._map);
             this._map.on('mousemove', this._onMouseMoveCursor, this);
 
+            let toolsParams = getToolsParams();
+            // console.log("toolsParams", toolsParams);
+            if(toolsParams && toolsParams.colorPickerRadius) {
+                this._r =  parseInt(toolsParams.colorPickerRadius);
+            }
+            if(this._r) {
+                this._d = this._r * 2 + 1;
+            } else {
+                this._d = 3;
+            }
+
             let canvas = document.createElement("canvas");
             canvas.id = this._map.options.picture;
-            canvas.width = 3;
-            canvas.height = 3;
+            canvas.width = this._d;
+            canvas.height = this._d;
 
             this._context = canvas.getContext('2d');
             this._image = new Image();
@@ -96,16 +108,62 @@ L.Draw.ColorPicker = L.Draw.Marker.extend({
     },
 
     _pickColor: function (e) {
-        this._point = this._map.project(e.latlng, this._map.options.boundsZoomLevel).floor();
-        this._context.drawImage(this._image, this._point.x, this._point.y, 1, 1, 0, 0, 1, 1);
-        this._color = this._rgbToHex(this._context.getImageData(0, 0, 1, 1).data);
-        console.log('Image data', this._color);
+        if(!this._r) {
+            this._pickColorWithoutRadius(e);
+        } else {
+            this._pickColorWithRadius(e)
+        }
+        console.log('picked color', this._color);
         this._fireCreatedEvent();
         this.disable();
-
         if (this.options.repeatMode) {
             this.enable();
         }
+    },
+
+    _pickColorWithoutRadius: function (e) {
+        console.log("_pickColorWithoutRadius");
+        this._point = this._map.project(e.latlng, this._map.options.boundsZoomLevel).floor();
+        this._context.drawImage(this._image, this._point.x, this._point.y, 1, 1, 0, 0, 1, 1);
+        this._color = this._rgbToHex(this._context.getImageData(0, 0, 1, 1).data);
+    },
+
+    _pickColorWithRadius: function (e) {
+        console.log("_pickColorWithRadius");
+        // console.log("_r", this._r);
+        this._point = this._map.project(e.latlng, this._map.options.boundsZoomLevel).floor();
+        // console.log("_point", this._point);
+        this._context.drawImage(this._image, this._point.x - this._r, this._point.y-this._r, this._d, this._d, 0, 0, this._d, this._d);
+        let pixelsInCircle = this._getAllPixelsInCircle(this._r, this._r, this._r)
+        // console.log("pixelsInCircle", pixelsInCircle);
+        let colors = pixelsInCircle.map( p => {
+            return this._context.getImageData(p.x, p.y, 1, 1).data;
+        });
+        // console.log("colors", colors);
+        const rgb = [];
+        rgb.push(this._calculateAverageValue(colors.map(c => {return c[0]})));
+        rgb.push(this._calculateAverageValue(colors.map(c => {return c[1]})));
+        rgb.push(this._calculateAverageValue(colors.map(c => {return c[2]})));
+        // console.log("rgb", rgb);
+        this._color = this._rgbToHex(rgb);
+    },
+
+    _calculateAverageValue: function (array) {
+        const sum = array.reduce((acc, curr) => acc + curr, 0);
+        return Math.floor(sum / array.length);
+    },
+
+    _getAllPixelsInCircle: function (x, y, radius) {
+        const pixels = [];
+        for (let i = x - radius; i <= x + radius; i++) {
+            for (let j = y - radius; j <= y + radius; j++) {
+                const distance = Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2));
+                if (distance <= radius) {
+                    pixels.push({x: i, y: j});
+                }
+            }
+        }
+        return pixels;
     },
 
     _fireCreatedEvent: function () {
