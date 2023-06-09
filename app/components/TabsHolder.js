@@ -8,7 +8,7 @@ import {
     EVENT_OPEN_TAB,
     EVENT_SELECT_TAB, EVENT_UPDATE_EVENT_RECORDING_STATUS,
     EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
-    EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION, SHOW_EDIT_MODE_VIOLATION_MODAL
+    EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION, SHOW_EDIT_MODE_VIOLATION_MODAL, EVENT_SELECTED_TAB_NAME
 } from "../utils/library";
 import {ContextMenu, ContextMenuTrigger, MenuItem} from "react-contextmenu";
 const CLOSE_TAB = require('./pictures/close-tab.svg');
@@ -220,13 +220,15 @@ export default class extends PureComponent {
 
         // select last tab
         if(name === undefined && index == -1) {
+            const keys = Object.keys(this.props.openTabs);
             setTimeout(() => {
-                const keys = Object.keys(this.props.openTabs);
                 this.setState({
                     selectedTab: keys.length - 1
                 });
                 ee.emit(EVENT_SELECT_TAB, this.props.openTabs[keys[keys.length - 1]].view);
             }, 100);
+
+            ee.emit(EVENT_SELECTED_TAB_NAME, keys[keys.length - 1]);
         }
 
         // find tab by tab name
@@ -238,6 +240,8 @@ export default class extends PureComponent {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, this.props.openTabs[name].view);
             }, 100)
+
+            ee.emit(EVENT_SELECTED_TAB_NAME, name);
             return;
         }
 
@@ -248,14 +252,16 @@ export default class extends PureComponent {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, this.props.openTabs[name].view);
             }, 100);
+            ee.emit(EVENT_SELECTED_TAB_NAME, name);
         } else if (index === undefined) {
+            const keys = Object.keys(this.props.openTabs);
             setTimeout(() => {
-                const keys = Object.keys(this.props.openTabs);
                 this.setState({
                     selectedTab: keys.length - 1
                 });
                 ee.emit(EVENT_SELECT_TAB, this.props.openTabs[keys[keys.length - 1]].view);
             }, 100);
+            ee.emit(EVENT_SELECTED_TAB_NAME, keys[keys.length - 1]);
         } else {
             this.setState({
                 selectedTab: index
@@ -263,6 +269,7 @@ export default class extends PureComponent {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, this.props.openTabs[this.state.tabs[index]].view);
             }, 100);
+            ee.emit(EVENT_SELECTED_TAB_NAME, this.state.tabs[index]);
         }
     };
 }

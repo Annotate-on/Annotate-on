@@ -38,7 +38,7 @@ import {
     EVENT_UPDATE_EVENT_RECORDING_STATUS,
     EVENT_FORCE_UPDATE_EDIT_MODE,
     updateProjectInfoVersion,
-    getProjectVersion, EVENT_SELECT_LIBRARY_TAB
+    getProjectVersion, EVENT_SELECT_LIBRARY_TAB, EVENT_SELECTED_TAB_NAME
 } from '../utils/library';
 import {Alert, Col, Container, Row} from "reactstrap";
 import Loading from "../containers/Loading";
@@ -112,6 +112,7 @@ const SETTINGS = 'SETTINGS';
 const TAXONOMIES = 'TAXONOMIES';
 const OPTIONS = 'OPTIONS';
 const SEARCH = 'SEARCH';
+const IIIF = 'IIIF';
 const ERROR = require('./pictures/error.svg');
 let autoSaveInterval;
 let waitPane;
@@ -121,6 +122,9 @@ export default class AppMenu extends Component {
 
     constructor(props, context) {
         super(props, context);
+
+
+        let keys = Object.keys(props.appState.open_tabs);
         this.state = {
             selectedMenu: SELECTION,
             showAlert: false,
@@ -134,7 +138,8 @@ export default class AppMenu extends Component {
             showEditFormViolationModal: false,
             isEventRecordingLive: false,
             showProjects: false,
-            online: false
+            online: false,
+            tabName: keys[0]
         }
         window.addEventListener('online', this._updateOnlineStatus)
         window.addEventListener('offline', this._updateOnlineStatus)
@@ -170,6 +175,7 @@ export default class AppMenu extends Component {
         ee.on(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this.updateIsEditModeOpen);
         ee.on(SHOW_EDIT_MODE_VIOLATION_MODAL , this._showEditFormViolationModalWarning);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsEventRecordingLive);
+        ee.on(EVENT_SELECTED_TAB_NAME , this._saveSelectedTabName)
 
         let localCounter = this.props.counter;
         // Autosave current app state to json.
@@ -225,6 +231,7 @@ export default class AppMenu extends Component {
         ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS , this.updateIsEventRecordingLive);
         ee.removeListener(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, this.updateIsEditModeOpen);
         ee.removeListener(SHOW_EDIT_MODE_VIOLATION_MODAL , this._showEditFormViolationModalWarning)
+        ee.removeListener(EVENT_SELECTED_TAB_NAME , this._saveSelectedTabName)
 
         clearInterval(autoSaveInterval)
     }
@@ -357,6 +364,10 @@ export default class AppMenu extends Component {
             this.setState({
                 selectedMenu: TAXONOMIES
             });
+        } else if(selection === 'iiif') {
+            this.setState({
+                selectedMenu: IIIF
+            });
         } else {
             this.setState({
                 selectedMenu: SELECTION
@@ -378,6 +389,12 @@ export default class AppMenu extends Component {
        this.setState({
            online: navigator.onLine
        });
+    }
+
+    _saveSelectedTabName = (name) => {
+        this.setState({
+            tabName: name
+        });
     }
 
     render() {
@@ -558,17 +575,22 @@ export default class AppMenu extends Component {
                         <div className="credits"/>
                         <div className="right-menu-title">{t('main_navbar.credits')}</div>
                     </_Link>
-                    <_Link
-                        to=""
-                        disabled={true}
-                        style={{background: 'lightgrey'}}
+                    <_Link className={(this.state.selectedMenu === IIIF ? 'active-menu-item' : '') + ' menu-item'}
+                        to={'/collection-export/'+this.state.tabName}
                         title={t('main_navbar.tooltip_iiif')}
-                        onClick={event => event.preventDefault()}
+                           onClick={(e) => {
+                               if (this.state.isAnnotationRecording  || this.state.isEditModeOpen || this.state.isEventRecordingLive){
+                                   e.preventDefault();
+                                   this._showEditFormViolationModalWarning();
+                               }else{
+                                   this.setState({
+                                       selectedMenu: IIIF
+                                   });
+                               }
+                           }}
                     >
-                        <div className="nav_box">
                             <div className="iiif"/>
                             <div className="right-menu-title">{t('main_navbar.iiif')}</div>
-                        </div>
                     </_Link>
                     <div className="navbar-spacer"/>
                     <div className={this.state.online ? "connection-status connection-status-online" :"connection-status connection-status-offline"} title={t('global.connection_status_tooltip')}>
