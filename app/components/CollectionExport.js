@@ -135,6 +135,8 @@ export default class extends Component {
                             const vttString ={'value':`WEBVTT\n\n${vttRecords.join('\n\n')}`};
                             // console.log(vttString);
                             image.vtt = vttString;
+                    } else {
+                        delete image.vtt;
                     }
                 }
                 selectedPictures.push(image);
