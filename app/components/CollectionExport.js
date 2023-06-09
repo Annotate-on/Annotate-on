@@ -18,8 +18,9 @@ export default class extends Component {
     }
 
     exportCollection = () => {
-        ee.emit(EVENT_SHOW_WAITING);
         const { t } = this.props;
+        if(Object.values(this.state.initPicturesList).filter(picture => picture.resourceType === this.state.collectionType).length>=1){
+        ee.emit(EVENT_SHOW_WAITING);
         let zip = new JSZip();
         let imgFolder = zip.folder("images");
         let imgThumbnailFolder = imgFolder.folder("img_thumb");
@@ -200,7 +201,11 @@ export default class extends Component {
             });
 
                 }
-            };
+        }
+        else{
+            remote.dialog.showErrorBox(t('global.error'), t('results.collections.export.alert_no_resources'));
+        }
+        };
       openLink = () => {
         const { serverResponseUrl } = this.state;
         if (serverResponseUrl) {
