@@ -68,6 +68,7 @@ import Select from "react-select";
 import {acceptedTypes} from "../utils/annotationRecording";
 import {withTranslation} from "react-i18next";
 import lodash from "lodash";
+import {findClosestColor} from "../utils/web-colors";
 
 const EDIT_DATING = require('./pictures/clock-regular.svg');
 const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
@@ -1098,12 +1099,15 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_COLORPICKER ? (
-                                    <span><span style={{
-                                        backgroundColor: annotation.value,
-                                        width: '10px',
-                                        height: '10px',
-                                        display: 'inline-block'
-                                    }}/> <span>{annotation.value}</span></span>) : ''}
+                                    <span>
+                                        {/*<span style={{*/}
+                                        {/*backgroundColor: annotation.value,*/}
+                                        {/*width: '10px',*/}
+                                        {/*height: '10px',*/}
+                                        {/*display: 'inline-block'*/}
+                                        {/*}}/>*/}
+                                        <span>{annotation.value}</span>
+                                    </span>) : ''}
                                 {annotation.annotationType === ANNOTATION_RATIO && ` ${annotation.value1 && annotation.value2 ? (annotation.value1 / annotation.value2).toFixed(2) : ''}`}
                             </div>
                         </Col>
