@@ -1,5 +1,5 @@
 // @flow
-import { app, Menu, shell, BrowserWindow } from 'electron';
+import { BrowserWindow, Menu, app, shell } from 'electron';
 
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
@@ -17,15 +17,15 @@ export default class MenuBuilder {
     }
 
     const template =
-      process.platform === 'darwin'
-        ? this.buildDarwinTemplate()
-        : this.buildDefaultTemplate();
+    process.platform === 'darwin'
+      ? this.buildDarwinTemplate()
+      : null;
 
-    const menu = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(null);
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
-    return menu;
-  }
+  return menu;
+}
 
   setupDevelopmentEnvironment() {
     this.mainWindow.openDevTools();
