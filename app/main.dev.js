@@ -11,8 +11,8 @@
  * @flow
  */
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { autoUpdater } from 'electron-updater';
 import MenuBuilder from './menu';
 
 export default class AppUpdater {
@@ -117,6 +117,7 @@ app.on('ready', async () => {
 
   ipcMain.on('closed', _ => {
     mainWindow = null;
+    app.quit();
     if (process.platform !== 'darwin') {
       app.quit();
     }

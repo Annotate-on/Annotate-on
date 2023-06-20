@@ -55,6 +55,7 @@ import EventController from "../containers/EventController";
 import {_checkImageType} from "../utils/js";
 import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
+import {findClosestColor} from "../utils/web-colors";
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
 
@@ -1144,9 +1145,14 @@ class Image extends PureComponent {
     }
 
     completeAnnotationColorPicker(color, x, y, id) {
+        // console.log("color picker color = ", color);
+        const closest = findClosestColor(color)
+        // console.log("color picker closest = ", closest);
+        const value = `${closest.name} (${color})`;
+        // console.log("value = ", value);
         this.props.createAnnotationColorPicker(
             this.state.currentPicture.sha1,
-            color,
+            value,
             x,
             y,
             id

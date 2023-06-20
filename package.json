@@ -1,7 +1,7 @@
 {
   "name": "annotate-on",
   "productName": "Annotate-on",
-  "version": "v2.1.0",
+  "version": "v2.1.12",
   "description": "Annotate-on is free software tool based used for image, video and event annotations.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -277,6 +277,7 @@
     "bootstrap": "^4.3.1",
     "chance": "^1.0.18",
     "classnames": "^2.2.6",
+    "color-diff": "1.2.0",
     "config-yaml": "^1.1.1",
     "connected-react-router": "^6.4.0",
     "core-js": "2",
