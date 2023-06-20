@@ -291,7 +291,7 @@ class TargetDescriptors extends PureComponent {
                 if (this.state.form.targetName !== '' &&
                     (this.state.form.unit !== '' || this.state.form.annotationType !== NUMERICAL) &&
                     this.state.form.annotationType !== '' &&
-                    (this.state.form.annotationType === CATEGORICAL && this.state.form.categoryStates.length > 0)) {
+                    (this.state.form.categoryStates.length > 0 || this.state.form.annotationType !== CATEGORICAL)) {
                     const id = chance.guid();
                     this.props.createTargetDescriptor(
                         this.props.taxonomyModel.id,
@@ -369,6 +369,10 @@ class TargetDescriptors extends PureComponent {
         }
         if(form.annotationType !== CATEGORICAL) {
             form.categoryStates = []
+        }
+        if(form.annotationType !== NUMERICAL) {
+            form.unit = ''
+            form.includeInCalculation = false
         }
         this.setState({
             form
@@ -591,7 +595,7 @@ class TargetDescriptors extends PureComponent {
                                 <FormGroup>
                                     <Label for="unit">{t('models.target_descriptors.dialog_edit.lbl_unit')}</Label>
                                     <Input type="select" name="unit" id="unit"
-                                           defaultValue={this.state.form.unit}
+                                           value={this.state.form.unit}
                                            disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
                                            onChange={this.handleInputChange}>
                                         <option data-unit=""/>
@@ -620,7 +624,7 @@ class TargetDescriptors extends PureComponent {
                                 <FormGroup check>
                                     <Label check>
                                         <Input type="checkbox" name="includeInCalculation" id="includeInCalculation"
-                                               defaultChecked={this.state.form.includeInCalculation}
+                                               checked={this.state.form.includeInCalculation}
                                                disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
                                                onChange={this.handleInputChange}>
                                         </Input>
