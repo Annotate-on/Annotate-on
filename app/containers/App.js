@@ -20,7 +20,8 @@ const mapStateToProps = state => {
     appState: state.app,
     counter: state.app.counter,
     selectedMenu: state.app.selected_menu,
-    picturesSize: Object.keys(state.app.pictures).length
+    picturesSize: Object.keys(state.app.pictures).length,
+    selectedTab: state.app.selected_tab
   };
 };
 

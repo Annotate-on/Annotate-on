@@ -38,7 +38,10 @@ import {
     EVENT_UPDATE_EVENT_RECORDING_STATUS,
     EVENT_FORCE_UPDATE_EDIT_MODE,
     updateProjectInfoVersion,
-    getProjectVersion, EVENT_SELECT_LIBRARY_TAB, EVENT_SELECTED_TAB_NAME
+    getProjectVersion,
+    EVENT_SELECT_LIBRARY_TAB,
+    EVENT_SELECTED_TAB_NAME,
+    EVENT_SELECT_SELECTION_TAB
 } from '../utils/library';
 import {Alert, Col, Container, Row} from "reactstrap";
 import Loading from "../containers/Loading";
@@ -438,7 +441,7 @@ export default class AppMenu extends Component {
                                    this._showEditFormViolationModalWarning();
                                }else {
                                    setTimeout(() => {
-                                       ee.emit(EVENT_SELECT_TAB, 'library')
+                                       ee.emit(EVENT_SELECT_SELECTION_TAB, undefined, this.props.selectedTab);
                                    }, 100)
                                }
                            }} title={t('main_navbar.tooltip_library')}>

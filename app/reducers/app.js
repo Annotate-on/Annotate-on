@@ -2886,6 +2886,7 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 open_tabs: {...tabs},
+                selected_tab: action.tab,
                 counter
             };
         }
