@@ -373,6 +373,8 @@ class TargetDescriptors extends PureComponent {
         if(form.annotationType !== NUMERICAL) {
             form.unit = ''
             form.includeInCalculation = false
+        } else {
+            form.includeInCalculation = true
         }
         this.setState({
             form
