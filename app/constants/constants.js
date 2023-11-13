@@ -17,6 +17,7 @@ export const ANNOTATION_RATIO = 'ratio';
 export const ANNOTATION_TRANSCRIPTION = 'transcription';
 export const ANNOTATION_CATEGORICAL = 'categorical';
 export const ANNOTATION_RICHTEXT = 'richtext';
+export const ANNOTATION_CIRCLE_OF_INTEREST = 'circleOfInterest';
 
 export const CARTEL = 'cartel';
 

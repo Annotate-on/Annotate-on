@@ -15,6 +15,7 @@ import './leaflet-richtext'
 import './leaflet-cartel'
 import './leaflet-control-menu'
 import './leaflet-chronotematic'
+import './leaflet-circle-of-interest'
 
 i18next.on('languageChanged', () => {
     overrideLeafletDefaultLabels();
@@ -115,6 +116,15 @@ export const overrideLeafletDefaultLabels = () => {
         }
     };
 
+    L.drawLocal.draw.toolbar.buttons.circleOfInterest = 'Circle of Interest';
+    L.drawLocal.draw.handlers.circleOfInterest = {
+        tooltip: {
+            start: 'sssssssss',
+            cont: 'aaaaaaaaa',
+            end: 'vvvvvvvvvvvv'
+        }
+    };
+
     L.drawLocal.edit.handlers.edit = {
         tooltip: {
             text: '',
@@ -202,6 +212,11 @@ export const initLeaflet = () => {
                     enabled: this.options.chronotematic,
                     handler: new L.Draw.Chronotematic(map, this.options.chronotematic),
                     title: L.drawLocal.draw.toolbar.buttons.chronotematic
+                },
+                {
+                    enabled: this.options.circleOfInterest,
+                    handler: new L.Draw.CircleOfInterest(map, this.options.circleOfInterest),
+                    title: L.drawLocal.draw.toolbar.buttons.circleOfInterest
                 }
             ];
         }
