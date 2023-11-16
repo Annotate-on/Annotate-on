@@ -388,7 +388,15 @@ class LeafletImage extends Component {
                 end: t('annotate.editor.tooltip_click_last_point_to_finish_line')
             }
         };
-        // TODO 07.11.2023 21:28 mseslija: addd circle of interest
+
+        L.drawLocal.draw.toolbar.buttons.circleOfInterest = t('annotate.editor.btn_tooltip_circle_of_interest');
+        L.drawLocal.draw.handlers.circleOfInterest = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
+                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
+            }
+        };
     }
 
     componentWillReceiveProps(nextProps) {

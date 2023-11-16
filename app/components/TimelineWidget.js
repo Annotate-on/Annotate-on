@@ -19,6 +19,7 @@ import ANGLE from "./pictures/angle.svg";
 import POI from "./pictures/poi.svg";
 import RECTANGLE from "./pictures/rectangle.svg";
 import COLOR_PICKER from "./pictures/color_picker.svg";
+import CIRCLE_OF_INTEREST from "./pictures/circleOfInterest.svg";
 import SVGtoPDF from "svg-to-pdfkit/source";
 
 import {
@@ -27,7 +28,7 @@ import {
     ANNOTATION_POLYGON,
     ANNOTATION_POLYLINE, ANNOTATION_RECTANGLE,
     ANNOTATION_RICHTEXT,
-    ANNOTATION_SIMPLELINE, ANNOTATION_TRANSCRIPTION
+    ANNOTATION_SIMPLELINE, ANNOTATION_TRANSCRIPTION, ANNOTATION_CIRCLE_OF_INTEREST
 } from "../constants/constants";
 import {Button} from "reactstrap";
 const PDFDocument = require('pdfkit');
@@ -52,6 +53,7 @@ export default class TimelineWidget extends Component {
         if (type === ANNOTATION_ANGLE) return ANGLE;
         if (type === ANNOTATION_MARKER) return POI;
         if (type === ANNOTATION_COLORPICKER) return COLOR_PICKER;
+        if (type === ANNOTATION_CIRCLE_OF_INTEREST) return CIRCLE_OF_INTEREST;
         return MOZAIC
     }
 

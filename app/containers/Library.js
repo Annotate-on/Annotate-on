@@ -41,6 +41,7 @@ const mapStateToProps = (state, ownProps) => {
         annotationsTranscription: state.app.annotations_transcription,
         annotationsCategorical: state.app.annotations_categorical,
         annotationsRichtext: state.app.annotations_richtext,
+        annotationsCircleOfInterest: state.app.annotations_circle_of_interest,
         picturesByTag: state.app.pictures_by_tag,
         selectedTags: state.app.open_tabs[ownProps.tabName].selected_tags,
         tags: state.app.tags,
@@ -56,7 +57,8 @@ const mapStateToProps = (state, ownProps) => {
             ...Object.values(state.app.annotations_occurrence),
             ...Object.values(state.app.annotations_transcription),
             ...Object.values(state.app.annotations_categorical),
-            ...Object.values(state.app.annotations_richtext)
+            ...Object.values(state.app.annotations_richtext),
+            ...Object.values(state.app.annotations_circle_of_interest)
         ]),
         tagsByAnnotation: state.app.tags_by_annotation,
         tabData: state.app.open_tabs,

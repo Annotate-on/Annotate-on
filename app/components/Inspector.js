@@ -360,7 +360,8 @@ export default class extends Component {
                             this.state.editedAnnotation.annotationType === ANNOTATION_COLORPICKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_CATEGORICAL ||
-                            this.state.editedAnnotation.annotationType === ANNOTATION_RICHTEXT
+                            this.state.editedAnnotation.annotationType === ANNOTATION_RICHTEXT ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
                         ) {
                             let color = '#ff0000';
                             if (targetType === INTEREST) {

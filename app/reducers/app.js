@@ -2325,7 +2325,7 @@ export default (state = {}, action) => {
             if (action.annotationData.value_in_mm !== null) {
                 annotation.value_in_mm = action.annotationData.value_in_mm
             }
-            debugger
+
             if (action.annotationData.hasOwnProperty('vertices') && action.annotationData.vertices !== null) {
                 if (Array.isArray(action.annotationData.vertices)) {
                     annotation.vertices = action.annotationData.vertices;
@@ -4086,6 +4086,9 @@ export default (state = {}, action) => {
                     break;
                 case ANNOTATION_RICHTEXT:
                     branch = 'annotations_richtext';
+                    break;
+                case ANNOTATION_CIRCLE_OF_INTEREST:
+                    branch = 'annotations_circle_of_interest';
                     break;
                 default:
                     return state;

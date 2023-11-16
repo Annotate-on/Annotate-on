@@ -586,7 +586,8 @@
         "tooltip_click_first_point_to_close_shape": "Cliquer sur le point de départ pour fermer cette forme",
         "tooltip_click_to_start_drawing_rectangle": "Cliquer et glisser pour dessiner le rectangle",
         "tooltip_release_mouse_to_finish_drawing": "Relâcher la souris pour terminer le dessin",
-        "tooltip_click_cancel_to_undo_changes": "Cliquer sur cancel pour annuler les changements"
+        "tooltip_click_cancel_to_undo_changes": "Cliquer sur cancel pour annuler les changements",
+        "btn_tooltip_circle_of_interest": "Circle of interest"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "L'événement est près de sa fin, voulez-vous le prolonger de 30mn ?",

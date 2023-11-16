@@ -21,6 +21,7 @@ const mapStateToProps = state => {
         annotationsTranscription: state.app.annotations_transcription,
         annotationsCategorical: state.app.annotations_categorical,
         annotationsRichtext: state.app.annotations_richtext,
+        annotationsCircleOfInterest: state.app.annotations_circle_of_interest,
     };
 };
 

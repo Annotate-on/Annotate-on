@@ -585,7 +585,8 @@
         "tooltip_click_first_point_to_close_shape": "Haga clic en el primer punto para cerrar esta forma",
         "tooltip_click_to_start_drawing_rectangle": "Haga clic y arrastre para dibujar un rectángulo",
         "tooltip_release_mouse_to_finish_drawing": "Suelta el cursor para terminar de dibujar",
-        "tooltip_click_cancel_to_undo_changes": "Haga clic en cancelar para deshacer los cambios"
+        "tooltip_click_cancel_to_undo_changes": "Haga clic en cancelar para deshacer los cambios",
+        "btn_tooltip_circle_of_interest": "Circle of interest"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "El evento está a punto de expirar, ¿desea prolongarlo otros 30 minutos?",

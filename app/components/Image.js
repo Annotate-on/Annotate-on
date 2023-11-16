@@ -30,7 +30,7 @@ import {
 import {
     getAngleInDegrees,
     getCartesianDistanceInMm,
-    getCartesianDistanceInPx,
+    getCartesianDistanceInPx, surfaceCircleInMm,
     surfacePolygonInMm
 } from '../utils/maths';
 import Inspector from '../containers/Inspector';
@@ -1054,8 +1054,9 @@ class Image extends PureComponent {
                             break
                         case ANNOTATION_CIRCLE_OF_INTEREST:
                             vertices = this.leafletImage.current.getRealCoordinates(editedLayer.getLatLng());
-                            editedLayer.setTooltipContent(title);
                             radius = editedLayer.getRadius()
+                            area = surfaceCircleInMm(radius, this._getImageCalibration().dpix, this._getImageCalibration().dpiy);
+                            editedLayer.setTooltipContent(title);
                             break
                     }
                 }

@@ -603,7 +603,8 @@
         "tooltip_click_first_point_to_close_shape": "Click first point to close this shape",
         "tooltip_click_to_start_drawing_rectangle": "Click and drag to draw rectangle",
         "tooltip_release_mouse_to_finish_drawing": "Release mouse to finish drawing",
-        "tooltip_click_cancel_to_undo_changes": "Click cancel to undo changes"
+        "tooltip_click_cancel_to_undo_changes": "Click cancel to undo changes",
+        "btn_tooltip_circle_of_interest": "Circle of interest"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",

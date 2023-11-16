@@ -15,6 +15,7 @@ import {
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_CIRCLE_OF_INTEREST,
     DELETE_EVENT,
     EDIT_EVENT,
     HIGHLIGHT_OPTIONS
@@ -201,6 +202,23 @@ const RICHTEXT_OPTIONS = {
         clickable: true
     },
     textSize: 20
+};
+
+const CIRCLE_OF_INTEREST_OPTIONS = {
+    shapeOptions: {
+        stroke: true,
+        color: '#FF0000',
+        weight: 2,
+        opacity: 1.0,
+        fill: true,
+        fillColor: null, //same as color by default
+        fillOpacity: 0.2,
+        clickable: true
+    },
+    showRadius: true,
+    metric: true,
+    feet: true,
+    nautic: false
 };
 
 const lpd = {};
@@ -767,6 +785,31 @@ class LeafletVideo extends Component {
                 layer.on('click', this._emitEvent);
             });
         }
+
+        if (this.props.annotationsCircleOfInterest) {
+            this.props.annotationsCircleOfInterest.map(circle => {
+                if(lodash.isNil(rectangle.video))
+                    return
+                if(currentTime < rectangle.video.start || (currentTime > rectangle.video.end && rectangle.video.end !== -1) || skipRedrawing.indexOf(rectangle.id) !== -1)
+                    return;
+
+                const center = map.unproject(L.point(circle.x, circle.y), this.boundsZoomLevel);
+                const options = {...CIRCLE_OF_INTEREST_OPTIONS.shapeOptions, ...contextMenu};
+                this._resolveColor(circle.id, options);
+
+                const layer = L.circleOfInterest(center, circle.r, options);
+                layer.annotationId = circle.id;
+                layer.annotationType = circle.annotationType;
+                featureGroup.addLayer(layer);
+                layer.bindTooltip(circle.title, {
+                    permanent: true,
+                    opacity: 1,
+                    direction: 'center',
+                    className: 'coi-tooltip'
+                }).openTooltip();
+                layer.on('click', this._emitEvent);
+            });
+        }
     };
 
     /**
@@ -974,6 +1017,9 @@ class LeafletVideo extends Component {
                             break;
                         case ANNOTATION_RICHTEXT:
                             this.focusedStyle = RICHTEXT_OPTIONS.color;
+                            break;
+                        case ANNOTATION_CIRCLE_OF_INTEREST:
+                            this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
                             break;
                     }
                 } else {

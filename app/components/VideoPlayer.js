@@ -154,6 +154,7 @@ export default class extends PureComponent {
                                   annotationsOccurrence={this.props.annotationsOccurrence}
                                   annotationsTranscription={this.props.annotationsTranscription}
                                   annotationsRichtext={this.props.annotationsRichtext}
+                                  annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
                                   onCreated={this._onCreated}
                                   onEditStop={this.props.onEditStop}
                                   onDrawStart={this.props.onDrawStart}
@@ -177,6 +178,7 @@ export default class extends PureComponent {
                               annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
                               annotationsRectangular={this.props.annotationsRectangular}
                               annotationsChronothematique={this.props.annotationsChronothematique}
+                              annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
                               file={this.props.currentPicture.file}
                               videoId={this.props.currentPicture.sha1}
                               isEditing={this.props.isEditing}
