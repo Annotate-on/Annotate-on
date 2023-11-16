@@ -21,6 +21,7 @@ import {
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_EVENT,
     EDIT_EVENT,
     HIGHLIGHT_OPTIONS
@@ -397,6 +398,15 @@ class LeafletImage extends Component {
                 end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
             }
         };
+
+        L.drawLocal.draw.toolbar.buttons.polygonOfInterest = t('annotate.editor.btn_tooltip_polygon_of_interest');
+        L.drawLocal.draw.handlers.polygonOfInterest = {
+            tooltip: {
+                start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
+                cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
+                end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
+            }
+        };
     }
 
     componentWillReceiveProps(nextProps) {
@@ -413,7 +423,8 @@ class LeafletImage extends Component {
             (nextProps.annotationsColorPicker !== undefined && nextProps.annotationsColorPicker && this.props.annotationsColorPicker === undefined) ||
             (nextProps.annotationsRichtext !== undefined && nextProps.annotationsRichtext && this.props.annotationsRichtext === undefined) ||
             (nextProps.annotationsAngle !== undefined && nextProps.annotationsAngle && this.props.annotationsAngle === undefined) ||
-            (nextProps.annotationsCircleOfInterest !== undefined && nextProps.annotationsCircleOfInterest && this.props.annotationsCircleOfInterest === undefined)) {
+            (nextProps.annotationsCircleOfInterest !== undefined && nextProps.annotationsCircleOfInterest && this.props.annotationsCircleOfInterest === undefined) ||
+            (nextProps.annotationsPolygonOfInterest !== undefined && nextProps.annotationsPolygonOfInterest && this.props.annotationsPolygonOfInterest === undefined)) {
 
             if (this._recolnatPrint) {
                 this._recolnatPrint.initialize({
@@ -426,7 +437,8 @@ class LeafletImage extends Component {
                     annotationsOccurrence: nextProps.annotationsOccurrence,
                     annotationsTranscription: nextProps.annotationsTranscription,
                     annotationsRichtext: nextProps.annotationsRichtext,
-                    annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest
+                    annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest,
+                    annotationsPolygonOfInterest: nextProps.annotationsPolygonOfInterest
                 })
             }
         }
@@ -439,7 +451,8 @@ class LeafletImage extends Component {
             (nextProps.annotationsColorPicker && this.props.annotationsColorPicker && nextProps.annotationsColorPicker.length !== this.props.annotationsColorPicker.length) ||
             (nextProps.annotationsRichtext && this.props.annotationsRichtext && nextProps.annotationsRichtext.length !== this.props.annotationsRichtext.length) ||
             (nextProps.annotationsAngle && this.props.annotationsAngle && nextProps.annotationsAngle.length !== this.props.annotationsAngle.length) ||
-            (nextProps.annotationsCircleOfInterest && this.props.annotationsCircleOfInterest && nextProps.annotationsCircleOfInterest.length !== this.props.annotationsCircleOfInterest.length)) {
+            (nextProps.annotationsCircleOfInterest && this.props.annotationsCircleOfInterest && nextProps.annotationsCircleOfInterest.length !== this.props.annotationsCircleOfInterest.length) ||
+            (nextProps.annotationsPolygonOfInterest && this.props.annotationsPolygonOfInterest && nextProps.annotationsPolygonOfInterest.length !== this.props.annotationsPolygonOfInterest.length)) {
 
             if (this._recolnatPrint) {
                 this._recolnatPrint.initialize({
@@ -452,7 +465,8 @@ class LeafletImage extends Component {
                     annotationsOccurrence: nextProps.annotationsOccurrence,
                     annotationsTranscription: nextProps.annotationsTranscription,
                     annotationsRichtext: nextProps.annotationsRichtext,
-                    annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest
+                    annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest,
+                    annotationsPolygonOfInterest: nextProps.annotationsPolygonOfInterest
                 })
             }
 
@@ -537,7 +551,8 @@ class LeafletImage extends Component {
                                              categorical: !this.props.calibrationMode,
                                              richtext: !this.props.calibrationMode ? RICHTEXT_OPTIONS : false,
                                              cartel: !this.props.calibrationMode,
-                                             circleOfInterest: !this.props.calibrationMode ? CIRCLE_OF_INTEREST_OPTIONS : false
+                                             circleOfInterest: !this.props.calibrationMode ? CIRCLE_OF_INTEREST_OPTIONS : false,
+                                             polygonOfInterest: !this.props.calibrationMode ? POLYGON_OPTIONS : false
                                          }}
                             />
 
@@ -668,7 +683,8 @@ class LeafletImage extends Component {
                 annotationsOccurrence: this.props.annotationsOccurrence,
                 annotationsTranscription: this.props.annotationsTranscription,
                 annotationsRichtext: this.props.annotationsRichtext,
-                annotationsCircleOfInterest: this.props.annotationsCircleOfInterest
+                annotationsCircleOfInterest: this.props.annotationsCircleOfInterest,
+                annotationsPolygonOfInterest: this.props.annotationsPolygonOfInterest
             }).addTo(map);
 
             this._recolnatZoiExport = L.recolnatZOIExport({
@@ -987,6 +1003,24 @@ class LeafletImage extends Component {
                 layer.on('click', this._emitEvent);
             });
         }
+
+        if (this.props.annotationsPolygonOfInterest) {
+            this.props.annotationsPolygonOfInterest.map(polygon => {
+                const latLngs = [];
+                polygon.vertices.map(vertex => {
+                    latLngs.push(map.unproject(L.point(vertex.x, vertex.y), this.boundsZoomLevel));
+                });
+
+                const options = {...POLYGON_OPTIONS.shapeOptions, ...contextMenu};
+                this._resolveColor(polygon.id, options);
+
+                const layer = L.polygon(latLngs, options);
+                layer.annotationId = polygon.id;
+                layer.annotationType = polygon.annotationType;
+                featureGroup.addLayer(layer);
+                layer.on('click', this._emitEvent);
+            });
+        }
     };
 
     /**
@@ -1201,6 +1235,9 @@ class LeafletImage extends Component {
                             break;
                         case ANNOTATION_CIRCLE_OF_INTEREST:
                             this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
+                            break;
+                        case ANNOTATION_POLYGON_OF_INTEREST:
+                            // this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
                             break;
                     }
                 } else {

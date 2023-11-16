@@ -155,6 +155,7 @@ export default class extends PureComponent {
                                   annotationsTranscription={this.props.annotationsTranscription}
                                   annotationsRichtext={this.props.annotationsRichtext}
                                   annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
+                                  annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest}
                                   onCreated={this._onCreated}
                                   onEditStop={this.props.onEditStop}
                                   onDrawStart={this.props.onDrawStart}

@@ -5,7 +5,7 @@ import lodash from 'lodash';
 import {
     ANNOTATION_ANGLE,
     ANNOTATION_CATEGORICAL,
-    ANNOTATION_CHRONOTHEMATIQUE, ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_CHRONOTHEMATIQUE,
     ANNOTATION_CIRCLEMARKER,
     ANNOTATION_COLORPICKER, ANNOTATION_EVENT_ANNOTATION,
     ANNOTATION_MARKER,
@@ -16,7 +16,10 @@ import {
     ANNOTATION_RECTANGLE,
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
-    ANNOTATION_TRANSCRIPTION, APP_NAME,
+    ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
+    APP_NAME,
     CARTEL,
     DELETE_EVENT,
     EDIT_EVENT,
@@ -148,6 +151,7 @@ class Image extends PureComponent {
         this.completeAnnotationTranscription = this.completeAnnotationTranscription.bind(this);
         this.completeAnnotationRichtext = this.completeAnnotationRichtext.bind(this);
         this.completeAnnotationCircleOfInterest = this.completeAnnotationCircleOfInterest.bind(this);
+        this.completeAnnotationPolygonOfInterest = this.completeAnnotationPolygonOfInterest.bind(this);
 
         this.leafletImage = React.createRef();
     }
@@ -282,6 +286,7 @@ class Image extends PureComponent {
                                     annotationsCategorical={this.props.annotationsCategorical}
                                     annotationsRichtext={this.props.annotationsRichtext}
                                     annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
+                                    annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest}
                                     selectAnnotation={this._callEditAnnotation}
                                     saveOrCancelEditAnnotation={this._callSaveOrCancelEdit}
                                     setAnnotationColor={this._setAnnotationColor}
@@ -298,6 +303,7 @@ class Image extends PureComponent {
                                     deleteAnnotationTranscription={this._deleteAnnotationTranscription}
                                     deleteAnnotationRichtext={this._deleteAnnotationRichtext}
                                     deleteAnnotationCircleOfInterest={this._deleteAnnotationCircleOfInterest}
+                                    deleteAnnotationPolygonOfInterest={this._deleteAnnotationPolygonOfInterest}
                                     deleteCartel={this._deleteCartel}
                                     picture={this.state.currentPicture}
                                     tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
@@ -394,6 +400,7 @@ class Image extends PureComponent {
                                             annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
                                             annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
                                             annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
+                                            annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
                                             targetColors={targetColors}
 
                                             onCreated={this._onCreated}
@@ -423,6 +430,7 @@ class Image extends PureComponent {
                                                       annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
                                                       annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
                                                       annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
+                                                      annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
                                                       onCreated={this._onCreated}
                                                       onEditStop={this._onEditStop}
                                                       onDrawStart={this._onDrawStart}
@@ -823,6 +831,13 @@ class Image extends PureComponent {
                     this.completeAnnotationCircleOfInterest(point.x, point.y, e.layer.getRadius(), e.layer.annotationId);
                 }
                     break;
+                case ANNOTATION_POLYGON_OF_INTEREST: {
+                    this.completeAnnotationPolygonOfInterest(e.layer.getLatLngs()[0].map(latLng => {
+                        return this.leafletImage.current.getRealCoordinates(latLng);
+                    }), e.layer.annotationId);
+                    break;
+                }
+                    break;
             }
         } else if (e.layerType === ANNOTATION_CATEGORICAL) {
             e.layer.annotationId = chance.guid();
@@ -871,6 +886,7 @@ class Image extends PureComponent {
                 , ...this.props.annotationsRichtext[sha1] || ''
                 , ...this.props.annotationsOccurrence[sha1] || ''
                 , ...this.props.annotationsCircleOfInterest[sha1] || ''
+                , ...this.props.annotationsPolygonOfInterest[sha1] || ''
             ].filter(_ => _.id === annotationId);
 
             if (annotation && annotation.length > 0) {
@@ -911,6 +927,9 @@ class Image extends PureComponent {
                     break;
                 case ANNOTATION_CIRCLE_OF_INTEREST:
                     this._deleteAnnotationCircleOfInterest(this.state.currentPicture.sha1, annotationId);
+                    break;
+                case ANNOTATION_POLYGON_OF_INTEREST:
+                    this._deleteAnnotationPolygonOfInterest(this.state.currentPicture.sha1, annotationId);
                     break;
             }
         }
@@ -1019,6 +1038,7 @@ class Image extends PureComponent {
                         case ANNOTATION_POLYGON:
                         case ANNOTATION_RECTANGLE:
                         case ANNOTATION_TRANSCRIPTION:
+                        case ANNOTATION_POLYGON_OF_INTEREST:
                             //TODO calculate total area
                             vertices = editedLayer.getLatLngs()[0].map(latLng => {
                                 return this.leafletImage.current.getRealCoordinates(latLng);
@@ -1138,6 +1158,11 @@ class Image extends PureComponent {
         this.leafletImage.current.deleteAnnotation(id);
     };
 
+    _deleteAnnotationPolygonOfInterest = (sha1, id) => {
+        this.props.deleteAnnotationPolygonOfInterest(sha1, id);
+        this.leafletImage.current.deleteAnnotation(id);
+    };
+
     _deleteCartel = (sha1, id) => {
         this.props.deleteCartel(sha1, id);
         this.leafletImage.current.deleteAnnotation(id);
@@ -1208,6 +1233,10 @@ class Image extends PureComponent {
 
     completeAnnotationCircleOfInterest(x, y, r, id) {
         this.props.createAnnotationCircleOfInterest(this.state.currentPicture.sha1, x, y, r, id);
+    }
+
+    completeAnnotationPolygonOfInterest(vertices, id) {
+        this.props.createAnnotationPolygonOfInterest(this.state.currentPicture.sha1, vertices, id);
     }
 
 

@@ -16,6 +16,7 @@ import './leaflet-cartel'
 import './leaflet-control-menu'
 import './leaflet-chronotematic'
 import './leaflet-circle-of-interest'
+import './leaflet-polygon-of-interest'
 
 i18next.on('languageChanged', () => {
     overrideLeafletDefaultLabels();
@@ -125,6 +126,15 @@ export const overrideLeafletDefaultLabels = () => {
         }
     };
 
+    L.drawLocal.draw.toolbar.buttons.polygonOfInterest = t('annotate.editor.btn_tooltip_polygon_of_interest');
+    L.drawLocal.draw.handlers.polygonOfInterest = {
+        tooltip: {
+            start: t('annotate.editor.tooltip_click_to_start_drawing_shape'),
+            cont: t('annotate.editor.tooltip_click_to_continue_drawing_shape'),
+            end: t('annotate.editor.tooltip_click_first_point_to_close_shape')
+        }
+    };
+
     L.drawLocal.edit.handlers.edit = {
         tooltip: {
             text: '',
@@ -217,6 +227,11 @@ export const initLeaflet = () => {
                     enabled: this.options.circleOfInterest,
                     handler: new L.Draw.CircleOfInterest(map, this.options.circleOfInterest),
                     title: L.drawLocal.draw.toolbar.buttons.circleOfInterest
+                },
+                {
+                    enabled: this.options.polygonOfInterest,
+                    handler: new L.Draw.PolygonOfInterest(map, this.options.polygon),
+                    title: L.drawLocal.draw.toolbar.buttons.polygonOfInterest
                 }
             ];
         }

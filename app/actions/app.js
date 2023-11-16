@@ -2,7 +2,7 @@
 pictureId refers to a picture SHA1
 */
 
-import {ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
+import {ANNOTATION_POLYGON_OF_INTEREST, ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
 
 export const CREATE_ANNOTATION_CHRONOTHEMATIQUE = 'CREATE_ANNOTATION_CHRONOTHEMATIQUE';
 export const CREATE_EVENT_ANNOTATION = 'CREATE_EVENT_ANNOTATION';
@@ -47,6 +47,8 @@ export const DELETE_ANNOTATION_TRANSCRIPTION = 'DELETE_ANNOTATION_TRANSCRIPTION'
 export const DELETE_ANNOTATION_CATEGORICAL = 'DELETE_ANNOTATION_CATEGORICAL';
 export const DELETE_ANNOTATION_RICHTEXT = 'DELETE_ANNOTATION_RICHTEXT';
 export const DELETE_ANNOTATION_CIRCLE_OF_INTEREST = 'DELETE_ANNOTATION_CIRCLE_OF_INTEREST';
+export const DELETE_ANNOTATION_POLYGON_OF_INTEREST = 'DELETE_ANNOTATION_POLYGON_OF_INTEREST';
+
 export const DELETE_TARGET_TYPE = 'DELETE_TARGET_TYPE';
 export const EDIT_TARGET_TYPE = 'EDIT_TARGET_TYPE';
 
@@ -132,6 +134,7 @@ export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_A
 export const SAVE_SELECTED_CATEGORY = 'SAVE_SELECTED_CATEGORY';
 export const SAVE_SEARCH = 'SAVE_SEARCH';
 export const CREATE_ANNOTATION_CIRCLE_OF_INTEREST = 'CREATE_ANNOTATION_CIRCLE_OF_INTEREST';
+export const CREATE_ANNOTATION_POLYGON_OF_INTEREST = 'CREATE_ANNOTATION_POLYGON_OF_INTEREST';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration, text, id) => {
     return {
@@ -454,6 +457,12 @@ export const deleteAnnotationRichtext = (pictureId, annotationId) => ({
 
 export const deleteAnnotationCircleOfInterest = (pictureId, annotationId) => ({
     type: DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
+    pictureId,
+    annotationId
+});
+
+export const deleteAnnotationPolygonOfInterest = (pictureId, annotationId) => ({
+    type: DELETE_ANNOTATION_POLYGON_OF_INTEREST,
     pictureId,
     annotationId
 });
@@ -890,5 +899,12 @@ export const createAnnotationCircleOfInterest = (pictureId, x, y, r, id) => ({
     type: CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
     pictureId,
     x, y, r,
+    id
+});
+
+export const createAnnotationPolygonOfInterest = (pictureId, vertices, area, id) => ({
+    type: CREATE_ANNOTATION_POLYGON_OF_INTEREST,
+    pictureId,
+    vertices, area,
     id
 });

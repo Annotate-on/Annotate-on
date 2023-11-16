@@ -28,6 +28,7 @@ const mapStateToProps = (state, ownProps) => {
         annotationsCategorical: state.app.annotations_categorical,
         annotationsRichtext: state.app.annotations_richtext,
         annotationsCircleOfInterest: state.app.annotations_circle_of_interest,
+        annotationsPolygonOfInterest: state.app.annotations_polygon_of_interest,
         tags: state.app.tags,
         manualOrderLock: state.app.open_tabs[ownProps.tabName].manualOrderLock,
         cartels: state.app.cartel_by_picture

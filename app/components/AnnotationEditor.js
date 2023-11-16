@@ -14,6 +14,7 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
     ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
     NUMERICAL
@@ -146,6 +147,7 @@ export default class extends Component {
             case ANNOTATION_CATEGORICAL:
             case ANNOTATION_RICHTEXT:
             case ANNOTATION_CIRCLE_OF_INTEREST:
+            case ANNOTATION_POLYGON_OF_INTEREST:
                 value = props.annotation.value;
                 break;
             case ANNOTATION_COLORPICKER:
@@ -536,6 +538,7 @@ export default class extends Component {
                                 this.props.annotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                                 this.props.annotation.annotationType === ANNOTATION_COLORPICKER ||
                                 this.props.annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                                this.props.annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
                                 this.props.annotation.annotationType === ANNOTATION_CATEGORICAL) ?
                                 <Input bsSize="sm" type="textarea" name="value" id="value" rows={2}
                                        onChange={e => this.setState({value: e.target.value})}
@@ -844,6 +847,7 @@ export default class extends Component {
                             {(this.state.annotationType === ANNOTATION_MARKER
                                 || this.state.annotationType === ANNOTATION_RECTANGLE
                                 || this.state.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
+                                || this.state.annotationType === ANNOTATION_POLYGON_OF_INTEREST
                                 || this.state.annotationType === ANNOTATION_CATEGORICAL) ?
                                 <Col sm={1} className="no-padding">
                                     <img className="btn_menu"
@@ -1178,6 +1182,7 @@ export default class extends Component {
                                     annotation.annotationType === ANNOTATION_COLORPICKER ||
                                     annotation.annotationType === ANNOTATION_RICHTEXT ||
                                     annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                                    annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
                                     annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                     options.push({
                                         value: target.id,

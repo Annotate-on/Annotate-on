@@ -38,6 +38,7 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
     ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
     NUMERICAL, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_PICTURE, RESOURCE_TYPE_VIDEO,
@@ -211,6 +212,7 @@ export default class extends Component {
                 || this._getArrayLength(nextProps.annotationsCategorical) !== this._getArrayLength(this.props.annotationsCategorical)
                 || this._getArrayLength(nextProps.annotationsRichtext) !== this._getArrayLength(this.props.annotationsRichtext)
                 || this._getArrayLength(nextProps.annotationsCircleOfInterest) !== this._getArrayLength(this.props.annotationsCircleOfInterest)
+                || this._getArrayLength(nextProps.annotationsPolygonOfInterest) !== this._getArrayLength(this.props.annotationsPolygonOfInterest)
             )) {
             targetUpdated = false;
             const annotations = this._sortAnnotations(this._mergeAnnotations(nextProps),
@@ -235,7 +237,8 @@ export default class extends Component {
             ...(props.annotationsTranscription && props.annotationsTranscription[props.picture.sha1] || []),
             ...(props.annotationsCategorical && props.annotationsCategorical[props.picture.sha1] || []),
             ...(props.annotationsRichtext && props.annotationsRichtext[props.picture.sha1] || []),
-            ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[props.picture.sha1] || [])
+            ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[props.picture.sha1] || []),
+            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || [])
         ];
     };
 
@@ -361,7 +364,8 @@ export default class extends Component {
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_CATEGORICAL ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_RICHTEXT ||
-                            this.state.editedAnnotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
+                            this.state.editedAnnotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST
                         ) {
                             let color = '#ff0000';
                             if (targetType === INTEREST) {
@@ -730,6 +734,9 @@ export default class extends Component {
             case ANNOTATION_CIRCLE_OF_INTEREST:
                 this.props.deleteAnnotationCircleOfInterest(sha1, annotation.id);
                 break;
+            case ANNOTATION_POLYGON_OF_INTEREST:
+                this.props.deleteAnnotationPolygonOfInterest(sha1, annotation.id);
+                break;
         }
     };
 
@@ -824,6 +831,7 @@ export default class extends Component {
                                 annotation.annotationType === ANNOTATION_COLORPICKER ||
                                 annotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                                 annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                                annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
                                 annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                 options.push({
                                     value: target.id,
@@ -1110,6 +1118,7 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_COLORPICKER ? (
                                     <span>
                                         {/*<span style={{*/}

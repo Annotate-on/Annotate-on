@@ -16,6 +16,7 @@ import {
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
     ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_EVENT,
     EDIT_EVENT,
     HIGHLIGHT_OPTIONS
@@ -1020,6 +1021,9 @@ class LeafletVideo extends Component {
                             break;
                         case ANNOTATION_CIRCLE_OF_INTEREST:
                             this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
+                            break;
+                        case ANNOTATION_POLYGON_OF_INTEREST:
+                            // this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
                             break;
                     }
                 } else {

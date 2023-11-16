@@ -14,6 +14,7 @@ import {
     ANNOTATION_RECTANGLE,
     ANNOTATION_SIMPLELINE,
     ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     ANNOTATION_TRANSCRIPTION, MODEL_ANNOTATE, MODEL_XPER, NUMERICAL,
     RESOURCE_TYPE_EVENT,
     RESOURCE_TYPE_PICTURE,
@@ -310,6 +311,7 @@ export default class Search extends Component {
                         case ANNOTATION_RECTANGLE:
                         case ANNOTATION_TRANSCRIPTION:
                         case ANNOTATION_CIRCLE_OF_INTEREST:
+                        case ANNOTATION_POLYGON_OF_INTEREST:
                             value = annotation.value ? annotation.value : '';
                             break;
                     }

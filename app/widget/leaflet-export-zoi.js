@@ -24,6 +24,7 @@ L.Control.RecolnatZOIExport = L.Control.extend({
         annotationsAngle: null,
         annotationsRichtext: null,
         annotationsCircleOfInterest: null,
+        annotationsPolygonOfInterest: null,
         picture: null
     },
     initialize: function (options) {

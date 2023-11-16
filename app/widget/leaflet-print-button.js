@@ -8,7 +8,8 @@ import {
     ANNOTATION_RECTANGLE,
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
-    ANNOTATION_TRANSCRIPTION
+    ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_POLYGON_OF_INTEREST
 } from "../constants/constants";
 import i18next from "i18next"
 
@@ -25,6 +26,7 @@ L.Control.RecolnatPrint = L.Control.extend({
         annotationsAngle: null,
         annotationsRichtext: null,
         annotationsCircleOfInterest: null,
+        annotationsPolygonOfInterest: null,
         picture: null
     },
     initialize: function (options) {
@@ -72,6 +74,7 @@ L.Control.RecolnatPrint = L.Control.extend({
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsTranscription || []), 2)
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsRichtext || []), 2)
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsCircleOfInterest || []), 2)
+                , ...lodash.flattenDepth(Object.values(this.options.annotationsPolygonOfInterest || []), 2)
             ];
             const pointer = require('../components/pictures/poi-marker.svg');
             const marker = new Image();
@@ -172,6 +175,7 @@ L.Control.RecolnatPrint = L.Control.extend({
                         //     resolve();
                         // }
                         //     break;
+                            // TODO 16.11.2023 21:23 mseslija: implement PLOI
                         default:
                             resolve();
                     }

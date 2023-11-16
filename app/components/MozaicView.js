@@ -443,6 +443,7 @@ export default class extends PureComponent {
                                 annotationsCategorical={this.props.annotationsCategorical}
                                 annotationsRichtext={this.props.annotationsRichtext}
                                 annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
+                                annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest}
                                 picture={this.props.currentPictureSelection}
                                 tags={this.props.tagsByPicture[this.props.currentPictureSelection.sha1]}
                                 readOnly={true}

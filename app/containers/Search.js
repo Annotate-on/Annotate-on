@@ -30,6 +30,7 @@ const mapStateToProps = state => {
             ...Object.values(state.app.annotations_eventAnnotations),
             ...Object.values(state.app.annotations_chronothematique),
             ...Object.values(state.app.annotations_circle_of_interest),
+            ...Object.values(state.app.annotations_polygon_of_interest),
             ...Object.values(state.app.annotations_ratio),
         ]),
         selectedTaxonomy: state.app.selectedTaxonomy,

@@ -20,6 +20,7 @@ const mapStateToProps = (state) => {
             ...Object.values(state.app.annotations_categorical),
             ...Object.values(state.app.annotations_richtext),
             ...Object.values(state.app.annotations_circle_of_interest),
+            ...Object.values(state.app.annotations_polygon_of_interest),
             ...Object.values(state.app.annotations_transcription)]),
     };
 };
