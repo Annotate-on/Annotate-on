@@ -428,7 +428,11 @@
         "btn_open_json_with_search_results": "Open json with search results",
         "alert_cannot_reach_mediaphoto": "Cannot reach http://mediaphoto.mnhn.fr. Check your internet connection!",
         "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper image.",
-        "lbl_apply_exif_metadata_for_rotation": "Straighten rotated images (from mobiles or photo devices)"
+        "lbl_apply_exif_metadata_for_rotation": "Straighten rotated images (from mobiles or photo devices)",
+        "lbl_import_from_iiif": "Import from IIIF manifest",
+        "btn_tooltip_import_from_iiif": "Import all images from selected IIIF manifest",
+        "btn_import_from_iiif": "Select IIIF manifest",
+        "text_area_placeholder_paste_IIIF_url": "Paste here IIIF manifest url"
       },
       "import_video": {
         "title": "Import",

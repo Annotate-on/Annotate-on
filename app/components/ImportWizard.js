@@ -1,18 +1,18 @@
-import {remote} from 'electron';
-import React, {Component} from 'react';
-import styled from 'styled-components';
-import Tags from '../containers/Tags';
-import {DOC_FG, DOC_ICON, DOC_ICON_HOVER} from '../constants/constants';
-import {importClipboardResource, importFolder, importResources} from '../utils/config'
-import {Button, Col, Container, Input, Label, Row} from 'reactstrap';
+import { remote } from 'electron';
 import path from "path";
-import Folders from "../containers/Folders";
-import UrlImageImport from "../containers/UrlImageImport";
+import React, { Component } from 'react';
+import { Button, Col, Container, Input, Label, Row } from 'reactstrap';
+import styled from 'styled-components';
+import { DOC_FG, DOC_ICON, DOC_ICON_HOVER } from '../constants/constants';
 import DragAndDropImport from "../containers/DragAndDropImport";
-import {ee, EVENT_HIDE_LOADING, EVENT_SELECT_TAB, EVENT_SHOW_LOADING, initPicturesLibrary} from "../utils/library";
-import {attachDefaultTags, findTag, loadTags} from "../utils/tags";
+import Folders from "../containers/Folders";
+import ImportIIIF from '../containers/ImportIIIF';
 import PasteImageImport from "../containers/PasteImageImport";
-import {Column} from "react-virtualized";
+import Tags from '../containers/Tags';
+import UrlImageImport from "../containers/UrlImageImport";
+import { importClipboardResource, importFolder, importResources } from '../utils/config';
+import { EVENT_HIDE_LOADING, EVENT_SELECT_TAB, EVENT_SHOW_LOADING, ee, initPicturesLibrary } from "../utils/library";
+import { attachDefaultTags, loadTags } from "../utils/tags";
 
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 
@@ -57,7 +57,9 @@ export default class extends Component {
         super(props);
         this.state = {
             parentFolder: props.match.params.folderName === 'null' ? null : decodeURIComponent(props.match.params.folderName),
-            applyExifMetadataForRotation: true
+            applyExifMetadataForRotation: true,
+            showImportRemoteUrl: false,
+            showImportIIIF: false
         };
     }
 
@@ -182,6 +184,7 @@ export default class extends Component {
                                                     title={t('library.import_images.btn_tooltip_select_images')}
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: false});
+                                                        this.setState({showImportIIIF: false});
                                                         const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
                                                             filters: [
                                                                 {name: 'Images', extensions: ['jpg', 'png', 'jpeg']}
@@ -202,6 +205,7 @@ export default class extends Component {
                                                     title={t('library.import_images.btn_tooltip_paste_urls')}
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: true});
+                                                        this.setState({showImportIIIF: false});
                                                     }}
                                             >{t('library.import_images.btn_paste_urls')}</Button>
                                         </div>
@@ -233,6 +237,19 @@ export default class extends Component {
                                             >{t('library.import_images.btn_import_from_recolnat')}</Button>
                                         </div>
                                     </fieldset>
+                                    <fieldset className="import-fieldset">
+                                        <legend className="import-legend">{t('library.import_images.lbl_import_from_iiif')}</legend>
+                                        <div className="import-title">
+                                            <Button disabled={this.state.parentFolder === null}
+                                                    className="btn btn-secondary btn_import"
+                                                    title={t('library.import_images.btn_tooltip_import_from_iiif')}
+                                                    onClick={ () => {
+                                                        this.setState({showImportRemoteUrl: false});
+                                                        this.setState({showImportIIIF: true});
+                                                    }}
+                                            >{t('library.import_images.btn_import_from_iiif')}</Button>
+                                        </div>
+                                    </fieldset>
                                 </Col>
                                 <Col sm={9} md={9} lg={9}>
                                     {this.state.showImportRemoteUrl ?
@@ -240,17 +257,26 @@ export default class extends Component {
                                                         applyExifMetadataForRotation = {this.state.applyExifMetadataForRotation}
                                                         onClose={() => {
                                                             this.setState({showImportRemoteUrl: false});
-                                                        }}/> :
-                                        <fieldset className="import-fieldset">
+                                                            this.setState({showImportIIIF: false});
+                                                        }}/> : <div></div> }
+                                    {this.state.showImportIIIF ?
+                                        <div>
+                                            <ImportIIIF parentFolder={this.state.parentFolder}
+                                                        applyExifMetadataForRotation = {this.state.applyExifMetadataForRotation}
+                                                        onClose={() => {
+                                                            this.setState({showImportIIIF: false});
+                                                        }}/>
+                                                        </div> : <div></div> }
+                                                        {this.state.showImportIIIF == false && this.state.showImportRemoteUrl == false?
+                                                        <div><fieldset className="import-fieldset">
                                             <legend className="import-legend">{t('library.import_images.lbl_import_local_images_by_dnd')}</legend>
                                             <DragAndDropImport parentFolder={this.state.parentFolder}
-                                                               saveImages={this._saveImages}/></fieldset>}
+                                                               saveImages={this._saveImages}/></fieldset>
                                     <fieldset className="import-fieldset">
                                     <legend className="import-legend">{t('library.import_images.lbl_paste_images_from_clipboard')}</legend>
                                     <PasteImageImport  parentFolder={this.state.parentFolder}
                                                       saveImage={this._saveImageFromClipboard} />
-
-                                    </fieldset>
+                                    </fieldset></div>: <div></div>}
                                 </Col>
                             </Row>
                             <Row>

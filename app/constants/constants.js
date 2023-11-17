@@ -84,6 +84,7 @@ export const TAG_MODE_PORTRAIT = "Mode: portrait";
 export const TAG_GPS_WIDTH = "GPS: with";
 export const TAG_GPS_NO = "GPS: no";
 export const TAG_AUTHOR = "@author";
+export const TAG_IIIF = "IIIF collections";
 
 export const ORIENTATION_TOP_LEFT_SIDE = "1";
 export const ORIENTATION_BOTTOM_RIGHT_SIDE = "3";
