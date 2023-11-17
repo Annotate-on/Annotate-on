@@ -1023,7 +1023,7 @@ class LeafletVideo extends Component {
                             this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
                             break;
                         case ANNOTATION_POLYGON_OF_INTEREST:
-                            // this.focusedStyle = CIRCLE_OF_INTEREST_OPTIONS.color;
+                            this.focusedStyle = POLYGON_OPTIONS.color;
                             break;
                     }
                 } else {

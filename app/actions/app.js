@@ -902,9 +902,9 @@ export const createAnnotationCircleOfInterest = (pictureId, x, y, r, id) => ({
     id
 });
 
-export const createAnnotationPolygonOfInterest = (pictureId, vertices, area, id) => ({
+export const createAnnotationPolygonOfInterest = (pictureId, vertices, id) => ({
     type: CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     pictureId,
-    vertices, area,
+    vertices,
     id
 });

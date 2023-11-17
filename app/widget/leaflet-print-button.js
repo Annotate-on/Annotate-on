@@ -133,6 +133,7 @@ L.Control.RecolnatPrint = L.Control.extend({
                         case ANNOTATION_RECTANGLE:
                         case ANNOTATION_TRANSCRIPTION:
                         case ANNOTATION_ANGLE:
+                        case ANNOTATION_POLYGON_OF_INTEREST:
                         case ANNOTATION_POLYGON: {
                             let path = new Path2D();
                             annotation.vertices.map((vertex, i) => {

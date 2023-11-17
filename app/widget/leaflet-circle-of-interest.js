@@ -85,13 +85,3 @@ L.Draw.CircleOfInterest = L.Draw.Circle.extend({
 L.circleOfInterest = function circleOfInterest(center, radius, options) {
     return new L.Circle(center, radius, options);
 };
-
-// L.CircleOfInterest.addInitHook(function () {
-//     if (L.Edit.CircleOfInterest) {
-//         this.editing = new L.Edit.Occurrence(this);
-//
-//         if (this.options.editable) {
-//             this.editing.enable();
-//         }
-//     }
-// });

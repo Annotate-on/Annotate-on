@@ -189,6 +189,16 @@ export const initLeaflet = () => {
                     title: L.drawLocal.draw.toolbar.buttons.rectangle
                 },
                 {
+                    enabled: this.options.circleOfInterest,
+                    handler: new L.Draw.CircleOfInterest(map, this.options.circleOfInterest),
+                    title: L.drawLocal.draw.toolbar.buttons.circleOfInterest
+                },
+                {
+                    enabled: this.options.polygonOfInterest,
+                    handler: new L.Draw.PolygonOfInterest(map, this.options.polygon),
+                    title: L.drawLocal.draw.toolbar.buttons.polygonOfInterest
+                },
+                {
                     enabled: this.options.colorPicker,
                     handler: new L.Draw.ColorPicker(map, this.options.colorPicker),
                     title: L.drawLocal.draw.toolbar.buttons.colorPicker
@@ -222,16 +232,6 @@ export const initLeaflet = () => {
                     enabled: this.options.chronotematic,
                     handler: new L.Draw.Chronotematic(map, this.options.chronotematic),
                     title: L.drawLocal.draw.toolbar.buttons.chronotematic
-                },
-                {
-                    enabled: this.options.circleOfInterest,
-                    handler: new L.Draw.CircleOfInterest(map, this.options.circleOfInterest),
-                    title: L.drawLocal.draw.toolbar.buttons.circleOfInterest
-                },
-                {
-                    enabled: this.options.polygonOfInterest,
-                    handler: new L.Draw.PolygonOfInterest(map, this.options.polygon),
-                    title: L.drawLocal.draw.toolbar.buttons.polygonOfInterest
                 }
             ];
         }
