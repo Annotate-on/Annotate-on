@@ -1,5 +1,7 @@
 import lodash from 'lodash';
 
+import { genId } from "../components/event/utils";
+import { createNewCategory } from "../components/tags/tagUtils";
 import {
     HIGH_RESOLUTION,
     LOW_RESOLUTION,
@@ -8,6 +10,7 @@ import {
     ORIENTATION_LEFT_SIDE_BOTTOM,
     ORIENTATION_RIGHT_SIDE_TOP,
     ORIENTATION_TOP_LEFT_SIDE,
+    TAGS_SELECTION_MODE_AND,
     TAG_AUTO,
     TAG_DPI_1200,
     TAG_DPI_150,
@@ -17,12 +20,12 @@ import {
     TAG_DPI_NO,
     TAG_GPS_NO,
     TAG_GPS_WIDTH,
+    TAG_IIIF,
     TAG_MODE_LANDSCAPE,
-    TAG_MODE_PORTRAIT, TAGS_SELECTION_MODE_AND, TAGS_SELECTION_MODE_OR,
+    TAG_MODE_PORTRAIT,
     VERY_LOW_RESOLUTION
 } from '../constants/constants';
-import {_formatTimeDisplay} from "./maths";
-import {genId} from "../components/event/utils";
+import { _formatTimeDisplay } from "./maths";
 
 export const AND = "AND"
 export const OR = "OR"
@@ -188,7 +191,6 @@ const evaluateTagsExpression = (expression, allPictures, picturesByTag) => {
 }
 
 export const attachDefaultTags = (picture, tagPicture, createTag, addSubTag) => {
-
     // Tag with system tags if applicable.
     if ('creator' in picture && !lodash.isNil(picture.creator) && picture.creator !== "") {
         createTag('author: ' + picture.creator, false);
@@ -358,5 +360,19 @@ export const loadTags = (tags, selectedTags) => {
     }
 };
 
+export const attachCollectionTags = (picture, tagPicture, createTag, addSubTag, collectionName, createCategory, tags) => {
 
+    if (collectionName == '') collectionName = 'collection_' + genId();
 
+    const hasCategoryTest = tags.some(obj => obj.type === "category" && obj.name === TAG_IIIF);
+
+    if (!hasCategoryTest) {
+    const newIIIFCategory = createNewCategory(chance.guid() , TAG_IIIF);
+    createCategory(newIIIFCategory);
+    }
+
+    createTag('collection IIIF: ' + collectionName, false);
+    addSubTag(TAG_IIIF, 'collection IIIF: ' + collectionName);
+    tagPicture(picture.sha1, 'collection IIIF: ' + collectionName);
+
+};

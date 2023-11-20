@@ -414,7 +414,11 @@
         "btn_search_in_paleontology_database": "Buscar en la base de datos de paleontología",
         "btn_open_json_with_search_results": "Abrir json con los resultados de la búsqueda",
         "alert_cannot_reach_mediaphoto": "No se puede acceder a http://mediaphoto.mnhn.fr. Compruebe su conexión a Internet.",
-        "alert_following_urls_are_invalid": "Las siguientes URL no son válidas o no contienen la imagen adecuada."
+        "alert_following_urls_are_invalid": "Las siguientes URL no son válidas o no contienen la imagen adecuada.",
+        "lbl_import_from_iiif": "Importar desde el manifiesto IIIF",
+        "btn_tooltip_import_from_iiif": "Importar todas las imágenes del manifiesto IIIF seleccionado",
+        "btn_import_from_iiif": "Seleccione el manifiesto IIIF",
+        "text_area_placeholder_paste_IIIF_url": "Pegue aquí la URL del manifiesto IIIF"
       },
       "import_video": {
         "title": "Importar",
