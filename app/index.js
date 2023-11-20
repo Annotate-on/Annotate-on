@@ -129,11 +129,11 @@ const go = () => {
                 }
                 if (!tmpState.hasOwnProperty("annotations_circle_of_interest")){
                     console.log('project from previous version , adding annotations_circle_of_interest');
-                    tmpState["annotations_circle_of_interest"] = [];
+                    tmpState.app["annotations_circle_of_interest"] = {};
                 }
                 if (!tmpState.hasOwnProperty("annotations_polygon_of_interest")){
                     console.log('project from previous version , adding annotations_polygon_of_interest');
-                    tmpState["annotations_polygon_of_interest"] = [];
+                    tmpState.app["annotations_polygon_of_interest"] = {};
                 }
                 // Check if object structure match to expected one.
                 for (const prop in initialState.app) {
