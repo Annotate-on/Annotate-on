@@ -20,6 +20,10 @@ export const surfacePolygonInMm = (coordinatesPolygon, dpix, dpiy) => {
     return Math.abs(area / 2);
 };
 
+export const surfaceCircleInMm = (radius, dpix, dpiy) => {
+    return Math.pow(radius, 2) * 3.14;
+};
+
 export const convertMMToDpi = (mmValue, pxValue) => {
     let result = 25.4 * pxValue / mmValue;
     return !isNaN(result) && result !== Infinity ? result : 0;

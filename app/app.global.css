@@ -290,6 +290,15 @@ textarea {
   font-size: 16px;
 }
 
+.coi-tooltip:before,
+.coi-tooltip {
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  box-shadow: none;
+  color: #ffffff;
+  font-size: 10px;
+}
+
 .targets-table {
   padding: 20px;
 }
@@ -489,6 +498,28 @@ div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-d
 div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-chronothematique.leaflet-draw-toolbar-button-enabled,
 div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-chronothematique:hover {
   background-image: url(components/pictures/chronothematique-white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-circleOfInterest {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/circleOfInterest.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-circleOfInterest.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-circleOfInterest:hover {
+  background-image: url(components/pictures/circleOfInterest-white.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygonOfInterest {
+  background-position: 7px 7px;
+  background-size: 16px 16px;
+  background-image: url(components/pictures/polygonOfInterest.svg) !important;
+}
+
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygonOfInterest.leaflet-draw-toolbar-button-enabled,
+div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-draw-polygonOfInterest:hover {
+  background-image: url(components/pictures/polygonOfInterest_white.svg) !important;
 }
 
 .leaflet-div-color-picker.leaflet-editing-color-picker {

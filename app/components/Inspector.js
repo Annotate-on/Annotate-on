@@ -37,6 +37,8 @@ import {
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
     NUMERICAL, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_PICTURE, RESOURCE_TYPE_VIDEO,
@@ -209,6 +211,8 @@ export default class extends Component {
                 || this._getArrayLength(nextProps.annotationsTranscription) !== this._getArrayLength(this.props.annotationsTranscription)
                 || this._getArrayLength(nextProps.annotationsCategorical) !== this._getArrayLength(this.props.annotationsCategorical)
                 || this._getArrayLength(nextProps.annotationsRichtext) !== this._getArrayLength(this.props.annotationsRichtext)
+                || this._getArrayLength(nextProps.annotationsCircleOfInterest) !== this._getArrayLength(this.props.annotationsCircleOfInterest)
+                || this._getArrayLength(nextProps.annotationsPolygonOfInterest) !== this._getArrayLength(this.props.annotationsPolygonOfInterest)
             )) {
             targetUpdated = false;
             const annotations = this._sortAnnotations(this._mergeAnnotations(nextProps),
@@ -232,7 +236,9 @@ export default class extends Component {
             ...(props.annotationsRatio && props.annotationsRatio[props.picture.sha1] || []),
             ...(props.annotationsTranscription && props.annotationsTranscription[props.picture.sha1] || []),
             ...(props.annotationsCategorical && props.annotationsCategorical[props.picture.sha1] || []),
-            ...(props.annotationsRichtext && props.annotationsRichtext[props.picture.sha1] || [])
+            ...(props.annotationsRichtext && props.annotationsRichtext[props.picture.sha1] || []),
+            ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[props.picture.sha1] || []),
+            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || [])
         ];
     };
 
@@ -357,7 +363,9 @@ export default class extends Component {
                             this.state.editedAnnotation.annotationType === ANNOTATION_COLORPICKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_CATEGORICAL ||
-                            this.state.editedAnnotation.annotationType === ANNOTATION_RICHTEXT
+                            this.state.editedAnnotation.annotationType === ANNOTATION_RICHTEXT ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST
                         ) {
                             let color = '#ff0000';
                             if (targetType === INTEREST) {
@@ -723,6 +731,12 @@ export default class extends Component {
             case ANNOTATION_RICHTEXT:
                 this.props.deleteAnnotationRichtext(sha1, annotation.id);
                 break;
+            case ANNOTATION_CIRCLE_OF_INTEREST:
+                this.props.deleteAnnotationCircleOfInterest(sha1, annotation.id);
+                break;
+            case ANNOTATION_POLYGON_OF_INTEREST:
+                this.props.deleteAnnotationPolygonOfInterest(sha1, annotation.id);
+                break;
         }
     };
 
@@ -816,6 +830,8 @@ export default class extends Component {
                                 annotation.annotationType === ANNOTATION_POLYGON ||
                                 annotation.annotationType === ANNOTATION_COLORPICKER ||
                                 annotation.annotationType === ANNOTATION_TRANSCRIPTION ||
+                                annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                                annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
                                 annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                 options.push({
                                     value: target.id,
@@ -853,40 +869,40 @@ export default class extends Component {
                 }}
                 className={
                     classnames({'highlight-ann': this.state.highlightAnn === annotation.id},
-                    {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
-                    'react-contextmenu-wrapper row')
+                        {'recording-ann': (!lodash.isNil(annotation.video) && annotation.video.end === -1) || annotation.end === -1},
+                        'react-contextmenu-wrapper row')
                 }
-                 onClick={(this.props.picture.resourceType === RESOURCE_TYPE_EVENT || this.props.picture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
-                     if (this.state.isAnnotateEventRecording) {
-                         return false;
-                     }
-                     this._focusAnnotation(e, annotation);
-                     this._gotoAnnotation(e, annotation, "start");
-                     this.setState({
-                         isFromLeaflet: false,
-                         highlightAnn: annotation.id
-                     });
+                onClick={(this.props.picture.resourceType === RESOURCE_TYPE_EVENT || this.props.picture.resourceType === RESOURCE_TYPE_VIDEO) ? e => {
+                    if (this.state.isAnnotateEventRecording) {
+                        return false;
+                    }
+                    this._focusAnnotation(e, annotation);
+                    this._gotoAnnotation(e, annotation, "start");
+                    this.setState({
+                        isFromLeaflet: false,
+                        highlightAnn: annotation.id
+                    });
 
-                 } : undefined}
-                 onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
-                     if (this.state.isAnnotateEventRecording) {
-                         return false;
-                     }
+                } : undefined}
+                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                    if (this.state.isAnnotateEventRecording) {
+                        return false;
+                    }
 
-                     if (!lodash.isNil(annotation.video)) {
-                         this._focusAnnotation(e, annotation);
-                         console.log(annotation.video.end)
-                         if (annotation.video.end !== -1)
-                             this._gotoAnnotation(e, annotation, "start");
-                     } else
-                         this._emitEvent(e, annotation.id, annotation.annotationType);
+                    if (!lodash.isNil(annotation.video)) {
+                        this._focusAnnotation(e, annotation);
+                        console.log(annotation.video.end)
+                        if (annotation.video.end !== -1)
+                            this._gotoAnnotation(e, annotation, "start");
+                    } else
+                        this._emitEvent(e, annotation.id, annotation.annotationType);
 
-                     this.setState({
-                         isFromLeaflet: false,
-                         highlightAnn: annotation.id
-                     });
-                 } : undefined}
-                 key={key}
+                    this.setState({
+                        isFromLeaflet: false,
+                        highlightAnn: annotation.id
+                    });
+                } : undefined}
+                key={key}
             >
                 <Col md={12} lg={12} sm={12}>
                     <Row>
@@ -955,7 +971,8 @@ export default class extends Component {
                                         ee.emit(STOP_ANNOTATION_RECORDING, annotation);
                                     }}/> : ''}
 
-                                <img alt="add dating " className="btn_menu" src={EDIT_DATING} title={t('inspector.tooltip_add_dating')} height="16px"
+                                <img alt="add dating " className="btn_menu" src={EDIT_DATING}
+                                     title={t('inspector.tooltip_add_dating')} height="16px"
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
@@ -974,9 +991,10 @@ export default class extends Component {
                                              this.setState({editedAnnotation: annotation, openEditDating: true});
                                          }
                                      }
-                                }/>
+                                     }/>
 
-                                <img alt="add location " className="btn_menu" src={MAP_LOCATION} title={t('inspector.tooltip_add_location')} height="16px"
+                                <img alt="add location " className="btn_menu" src={MAP_LOCATION}
+                                     title={t('inspector.tooltip_add_location')} height="16px"
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();
@@ -995,8 +1013,9 @@ export default class extends Component {
                                              this.setState({editedAnnotation: annotation, openEditLocation: true});
                                          }
                                      }
-                                }/>
-                                <img alt="add keyword" className="btn_menu" src={ADD_TAG} title={t('inspector.tooltip_add_keyword')} onClick={event => {
+                                     }/>
+                                <img alt="add keyword" className="btn_menu" src={ADD_TAG}
+                                     title={t('inspector.tooltip_add_keyword')} onClick={event => {
                                     event.preventDefault();
                                     event.stopPropagation();
                                     if (this.state.isAnnotateEventRecording) {
@@ -1098,6 +1117,8 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_MARKER && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_COLORPICKER ? (
                                     <span>
                                         {/*<span style={{*/}

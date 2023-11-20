@@ -604,6 +604,8 @@ export default class extends Component {
                                                 annotationsTranscription={this.props.annotationsTranscription}
                                                 annotationsCategorical={this.props.annotationsCategorical}
                                                 annotationsRichtext={this.props.annotationsRichtext}
+                                                annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
+                                                annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest}
                                                 picture={this.state.currentPicture}
                                                 tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
                                                 readOnly={true}

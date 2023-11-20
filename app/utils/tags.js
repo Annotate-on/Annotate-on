@@ -90,6 +90,8 @@ export const findPicturesByTagFilter = (expression, allPictures, state) => {
         , ...lodash.flattenDepth(Object.values(state.annotations_transcription), 2)
         , ...lodash.flattenDepth(Object.values(state.annotations_categorical), 2)
         , ...lodash.flattenDepth(Object.values(state.annotations_richtext), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_circle_of_interest), 2)
+        , ...lodash.flattenDepth(Object.values(state.annotations_polygon_of_interest), 2)
     ];
     // console.log("findPictures annotations", annotations)
     let picturesByTag = {}

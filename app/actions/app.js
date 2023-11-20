@@ -2,7 +2,7 @@
 pictureId refers to a picture SHA1
 */
 
-import {ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
+import {ANNOTATION_POLYGON_OF_INTEREST, ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
 
 export const CREATE_ANNOTATION_CHRONOTHEMATIQUE = 'CREATE_ANNOTATION_CHRONOTHEMATIQUE';
 export const CREATE_EVENT_ANNOTATION = 'CREATE_EVENT_ANNOTATION';
@@ -46,6 +46,9 @@ export const DELETE_ANNOTATION_COLORPICKER = 'DELETE_ANNOTATION_COLORPICKER';
 export const DELETE_ANNOTATION_TRANSCRIPTION = 'DELETE_ANNOTATION_TRANSCRIPTION';
 export const DELETE_ANNOTATION_CATEGORICAL = 'DELETE_ANNOTATION_CATEGORICAL';
 export const DELETE_ANNOTATION_RICHTEXT = 'DELETE_ANNOTATION_RICHTEXT';
+export const DELETE_ANNOTATION_CIRCLE_OF_INTEREST = 'DELETE_ANNOTATION_CIRCLE_OF_INTEREST';
+export const DELETE_ANNOTATION_POLYGON_OF_INTEREST = 'DELETE_ANNOTATION_POLYGON_OF_INTEREST';
+
 export const DELETE_TARGET_TYPE = 'DELETE_TARGET_TYPE';
 export const EDIT_TARGET_TYPE = 'EDIT_TARGET_TYPE';
 
@@ -130,8 +133,10 @@ export const STOP_ANNOTATION_RECORDING = 'STOP_ANNOTATION_RECORDING';
 export const EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME = 'EDIT_CHRONOTHEMATIQUE_ANNOTATION_ENDTIME';
 export const SAVE_SELECTED_CATEGORY = 'SAVE_SELECTED_CATEGORY';
 export const SAVE_SEARCH = 'SAVE_SEARCH';
+export const CREATE_ANNOTATION_CIRCLE_OF_INTEREST = 'CREATE_ANNOTATION_CIRCLE_OF_INTEREST';
+export const CREATE_ANNOTATION_POLYGON_OF_INTEREST = 'CREATE_ANNOTATION_POLYGON_OF_INTEREST';
 
-export const createAnnotationChronoThematique = (videoId, start, end, duration , text , id) => {
+export const createAnnotationChronoThematique = (videoId, start, end, duration, text, id) => {
     return {
         type: CREATE_ANNOTATION_CHRONOTHEMATIQUE,
         videoId,
@@ -143,7 +148,7 @@ export const createAnnotationChronoThematique = (videoId, start, end, duration ,
     };
 };
 
-export const createEventAnnotation = (eventId, start, end, duration , text , id) => {
+export const createEventAnnotation = (eventId, start, end, duration, text, id) => {
     return {
         type: CREATE_EVENT_ANNOTATION,
         eventId,
@@ -310,14 +315,14 @@ export const deleteCategory = (category) => ({
     category,
 });
 
-export const mergeTMTags = (targetId , item, parentId) => ({
+export const mergeTMTags = (targetId, item, parentId) => ({
     type: MERGE_TM_TAGS,
     targetId,
     item,
     parentId
 });
 
-export const addSubCategory = (parentName , item, isCategory , parentId) => ({
+export const addSubCategory = (parentName, item, isCategory, parentId) => ({
     type: ADD_SUB_CATEGORY,
     parentName,
     item,
@@ -364,7 +369,7 @@ export const editTag = (oldName, newName) => ({
     newName
 });
 
-export const updateAnnotationValueInTaxonomyInstance = (annotations , taxonomyId , inPictureValues , sha1 , descriptorId) => ({
+export const updateAnnotationValueInTaxonomyInstance = (annotations, taxonomyId, inPictureValues, sha1, descriptorId) => ({
     type: UPDATE_ANNOTATION_VALUE_IN_TAXONOMY_INSTANCE,
     annotations,
     taxonomyId,
@@ -450,6 +455,18 @@ export const deleteAnnotationRichtext = (pictureId, annotationId) => ({
     annotationId
 });
 
+export const deleteAnnotationCircleOfInterest = (pictureId, annotationId) => ({
+    type: DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
+    pictureId,
+    annotationId
+});
+
+export const deleteAnnotationPolygonOfInterest = (pictureId, annotationId) => ({
+    type: DELETE_ANNOTATION_POLYGON_OF_INTEREST,
+    pictureId,
+    annotationId
+});
+
 export const deleteTag = name => ({
     type: DELETE_TAG,
     name
@@ -466,7 +483,7 @@ export const editAnnotation = (pictureId, annotationType, annotationId, title, t
     annotationData
 });
 
-export const extendEventDuration = (eventId , duration) => ({
+export const extendEventDuration = (eventId, duration) => ({
     type: EXTEND_EVENT_DURATION,
     eventId,
     duration
@@ -482,13 +499,13 @@ export const finishCorruptedEvent = (eventId) => ({
     eventId
 })
 
-export const editEvent = (eventId , annotateEvent) => ({
+export const editEvent = (eventId, annotateEvent) => ({
     type: EDIT_ANNOTATE_EVENT,
     eventId,
     annotateEvent
 });
 
-export const editEventAnnotationEndtime = (eventId , annotationId , endTime) => ({
+export const editEventAnnotationEndtime = (eventId, annotationId, endTime) => ({
     type: EDIT_EVENT_ANNOTATION_ENDTIME,
     eventId,
     annotationId,
@@ -599,7 +616,7 @@ export const setPictureInSelection = (pictureId, tabName) => ({
     tabName
 });
 
-export const untagEventAnnotation = (annotationId , tagName , inputGroup , eventId) => ({
+export const untagEventAnnotation = (annotationId, tagName, inputGroup, eventId) => ({
     type: UNTAG_EVENT_ANNOTATION,
     annotationId,
     tagName,
@@ -607,8 +624,8 @@ export const untagEventAnnotation = (annotationId , tagName , inputGroup , event
     eventId,
 });
 
-export const tagEventAnnotation = (annotationId , tag , inputGroup , eventId) => ({
-   type: TAG_EVENT_ANNOTATION,
+export const tagEventAnnotation = (annotationId, tag, inputGroup, eventId) => ({
+    type: TAG_EVENT_ANNOTATION,
     annotationId,
     tag,
     inputGroup,
@@ -733,14 +750,14 @@ export const lockSelection = (enabled, tabName, order) => ({
     order
 });
 
-export const saveTaxonomy = (id, name, path, model,version) => ({
+export const saveTaxonomy = (id, name, path, model, version) => ({
     type: SAVE_TAXONOMY,
     id, name, path, model, version
 });
 
-export const importTaxonomy = (id, name, path, version, taxonomyDefinition , targetTypes) => ({
+export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targetTypes) => ({
     type: IMPORT_TAXONOMY,
-    id, name, path, version, taxonomyDefinition , targetTypes
+    id, name, path, version, taxonomyDefinition, targetTypes
 });
 
 export const removeTaxonomy = (id) => ({
@@ -787,7 +804,7 @@ export const deleteTargetType = (taxonomyId, name) => ({
     name
 });
 
-export const editTargetType = (taxonomyId, name , newName) => ({
+export const editTargetType = (taxonomyId, name, newName) => ({
     type: EDIT_TARGET_TYPE,
     taxonomyId,
     name,
@@ -795,7 +812,7 @@ export const editTargetType = (taxonomyId, name , newName) => ({
 });
 
 export const createTargetInstance = (ofType, tabName, annotationId, descriptorId, value, oldDescriptorId) => ({
-    type: ofType === NUMERICAL? CREATE_TARGET_INSTANCE : CREATE_CATEGORICAL_TARGET_INSTANCE,
+    type: ofType === NUMERICAL ? CREATE_TARGET_INSTANCE : CREATE_CATEGORICAL_TARGET_INSTANCE,
     tabName, annotationId, descriptorId, value, ofType, oldDescriptorId
 });
 
@@ -878,3 +895,16 @@ export const saveSearch = (search, searchResults) => ({
     search, searchResults
 });
 
+export const createAnnotationCircleOfInterest = (pictureId, x, y, r, id) => ({
+    type: CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
+    pictureId,
+    x, y, r,
+    id
+});
+
+export const createAnnotationPolygonOfInterest = (pictureId, vertices, id) => ({
+    type: CREATE_ANNOTATION_POLYGON_OF_INTEREST,
+    pictureId,
+    vertices,
+    id
+});

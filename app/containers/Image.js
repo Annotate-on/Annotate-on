@@ -34,7 +34,9 @@ import {
     previousPictureInSelection,
     previousTenPictureInSelection,
     saveLeafletSettings,
-    updateTaxonomyValues
+    updateTaxonomyValues,
+    createAnnotationCircleOfInterest, deleteAnnotationCircleOfInterest,
+    createAnnotationPolygonOfInterest, deleteAnnotationPolygonOfInterest
 } from '../actions/app';
 import {withTranslation} from "react-i18next";
 
@@ -58,6 +60,8 @@ const mapStateToProps = (state, ownProps) => {
         annotationsTranscription: state.app.annotations_transcription,
         annotationsCategorical: state.app.annotations_categorical,
         annotationsRichtext: state.app.annotations_richtext,
+        annotationsCircleOfInterest: state.app.annotations_circle_of_interest,
+        annotationsPolygonOfInterest: state.app.annotations_polygon_of_interest,
         currentPictureIndexInSelection: state.app.open_tabs[ownProps.tabName].current_picture_index_in_selection,
         focusedAnnotation: state.app.focused_annotation,
         pictures: state.app.pictures,
@@ -169,6 +173,18 @@ const mapDispatchToProps = dispatch => {
         },
         saveLeafletSettings: (repeatMode) => {
             dispatch(saveLeafletSettings(repeatMode));
+        },
+        createAnnotationCircleOfInterest: (pictureId, x, y, r, id) => {
+            dispatch(createAnnotationCircleOfInterest(pictureId, x, y, r, id));
+        },
+        deleteAnnotationCircleOfInterest: (pictureId, annotationId) => {
+            dispatch(deleteAnnotationCircleOfInterest(pictureId, annotationId));
+        },
+        createAnnotationPolygonOfInterest: (pictureId, vertices, id) => {
+            dispatch(createAnnotationPolygonOfInterest(pictureId, vertices, id));
+        },
+        deleteAnnotationPolygonOfInterest: (pictureId, annotationId) => {
+            dispatch(deleteAnnotationPolygonOfInterest(pictureId, annotationId));
         }
     };
 };

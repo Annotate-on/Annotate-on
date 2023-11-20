@@ -121,12 +121,16 @@ import {
     UPDATE_TABULAR_VIEW,
     UPDATE_TAG_EXPRESSION_OPERATOR,
     SAVE_SELECTED_CATEGORY,
-    UPDATE_TAXONOMY_VALUES, SAVE_SEARCH
+    UPDATE_TAXONOMY_VALUES, SAVE_SEARCH,
+    CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
+    DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
+    CREATE_ANNOTATION_POLYGON_OF_INTEREST,
+    DELETE_ANNOTATION_POLYGON_OF_INTEREST
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
     ANNOTATION_CATEGORICAL,
-    ANNOTATION_CHRONOTHEMATIQUE,
+    ANNOTATION_CHRONOTHEMATIQUE, ANNOTATION_CIRCLE_OF_INTEREST,
     ANNOTATION_COLORPICKER,
     ANNOTATION_EVENT_ANNOTATION,
     ANNOTATION_MARKER,
@@ -138,6 +142,7 @@ import {
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
     ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_POLYGON_OF_INTEREST,
     CARTEL,
     CATEGORICAL,
     COMMON_TAGS,
@@ -211,6 +216,8 @@ export const createInitialState = () => ({
         annotations_transcription: {},
         annotations_categorical: {},
         annotations_richtext: {},
+        annotations_circle_of_interest: {},
+        annotations_polygon_of_interest: {},
         cartel_by_picture: {},
         counter: 0,
         focused_annotation: null,
@@ -271,6 +278,8 @@ export const userDataBranches = () => ({
     annotations_transcription: null,
     annotations_categorical: null,
     annotations_richtext: null,
+    annotations_circle_of_interest: null,
+    annotations_polygon_of_interest: null,
     cartel_by_picture: null,
     pictures_by_tag: null,
     tags_by_annotation: null,
@@ -891,6 +900,76 @@ export default (state = {}, action) => {
                         creationTimestamp: NOW_TIMESTAMP,
                         title: `CART`
                     }
+                }
+            };
+        }
+            break;
+        case CREATE_ANNOTATION_CIRCLE_OF_INTEREST: {
+            const counter = state.counter + 1;
+            const {type, ...payload} = action;
+
+            // Get greatest auto generated number from annotation name.
+            const patt = /COI-(\d+)/g;
+            const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_circle_of_interest);
+
+            return {
+                ...state,
+                counter,
+                annotations_circle_of_interest: {
+                    ...state.annotations_circle_of_interest,
+                    [payload.pictureId]: [
+                        {
+                            ...payload,
+                            annotationType: ANNOTATION_CIRCLE_OF_INTEREST,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `COI-${max}`
+                        },
+                        ...(state.annotations_circle_of_interest[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+        }
+        break;
+        case CREATE_ANNOTATION_POLYGON_OF_INTEREST: {
+            const counter = state.counter + 1;
+            const {type, ...payload} = action;
+
+            // Get greatest auto generated number from annotation name.
+            const patt = /PGI-(\d+)/g;
+            const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_polygon_of_interest);
+
+            return {
+                ...state,
+                counter,
+                annotations_polygon_of_interest: {
+                    ...state.annotations_polygon_of_interest,
+                    [payload.pictureId]: [
+                        {
+                            ...payload,
+                            annotationType: ANNOTATION_POLYGON_OF_INTEREST,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `PGI-${max}`
+                        },
+                        ...(state.annotations_polygon_of_interest[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
                 }
             };
         }
@@ -1782,6 +1861,32 @@ export default (state = {}, action) => {
             };
         }
             break;
+        case DELETE_ANNOTATION_CIRCLE_OF_INTEREST: {
+            const counter = state.counter + 1;
+            deleteAnnotationValues(state, action.annotationId);
+            return {
+                ...state,
+                counter,
+                annotations_circle_of_interest: {
+                    ...state.annotations_circle_of_interest,
+                    [action.pictureId]: state.annotations_circle_of_interest[action.pictureId].filter(_ => _.id !== action.annotationId)
+                }
+            };
+        }
+            break;
+        case DELETE_ANNOTATION_POLYGON_OF_INTEREST: {
+            const counter = state.counter + 1;
+            deleteAnnotationValues(state, action.annotationId);
+            return {
+                ...state,
+                counter,
+                annotations_polygon_of_interest: {
+                    ...state.annotations_polygon_of_interest,
+                    [action.pictureId]: state.annotations_polygon_of_interest[action.pictureId].filter(_ => _.id !== action.annotationId)
+                }
+            };
+        }
+            break;
 // ---------------------------------------------------------------------------------------------------------------------
         case DELETE_TAG: {
             const new_tags_by_picture = {...state.tags_by_picture};
@@ -2228,6 +2333,12 @@ export default (state = {}, action) => {
                 case ANNOTATION_RICHTEXT:
                     branch = 'annotations_richtext';
                     break;
+                case ANNOTATION_CIRCLE_OF_INTEREST:
+                    branch = 'annotations_circle_of_interest';
+                    break;
+                case ANNOTATION_POLYGON_OF_INTEREST:
+                    branch = 'annotations_polygon_of_interest';
+                    break;
                 default:
                     return state;
             }
@@ -2248,7 +2359,9 @@ export default (state = {}, action) => {
                 action.annotationType === ANNOTATION_COLORPICKER ||
                 action.annotationType === ANNOTATION_TRANSCRIPTION ||
                 action.annotationType === ANNOTATION_CATEGORICAL ||
-                action.annotationType === ANNOTATION_RICHTEXT
+                action.annotationType === ANNOTATION_RICHTEXT ||
+                action.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
+                action.annotationType === ANNOTATION_POLYGON_OF_INTEREST
             ) {
                 annotation.value = action.annotationData.value;
 
@@ -2271,6 +2384,7 @@ export default (state = {}, action) => {
             if (action.annotationData.value_in_mm !== null) {
                 annotation.value_in_mm = action.annotationData.value_in_mm
             }
+
             if (action.annotationData.hasOwnProperty('vertices') && action.annotationData.vertices !== null) {
                 if (Array.isArray(action.annotationData.vertices)) {
                     annotation.vertices = action.annotationData.vertices;
@@ -2280,6 +2394,7 @@ export default (state = {}, action) => {
                 } else {
                     annotation.x = action.annotationData.vertices.x;
                     annotation.y = action.annotationData.vertices.y;
+                    annotation.r = action.annotationData.r;
                 }
             }
             if (action.annotationData.area) {
@@ -4030,6 +4145,12 @@ export default (state = {}, action) => {
                     break;
                 case ANNOTATION_RICHTEXT:
                     branch = 'annotations_richtext';
+                    break;
+                case ANNOTATION_CIRCLE_OF_INTEREST:
+                    branch = 'annotations_circle_of_interest';
+                    break;
+                case ANNOTATION_POLYGON_OF_INTEREST:
+                    branch = 'annotations_polygon_of_interest';
                     break;
                 default:
                     return state;

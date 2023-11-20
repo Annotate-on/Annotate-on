@@ -1,14 +1,15 @@
 import L from "leaflet";
 import lodash from 'lodash';
 import {
-    ANNOTATION_ANGLE,
+    ANNOTATION_ANGLE, ANNOTATION_CIRCLE_OF_INTEREST,
     ANNOTATION_MARKER,
     ANNOTATION_POLYGON,
     ANNOTATION_POLYLINE,
     ANNOTATION_RECTANGLE,
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
-    ANNOTATION_TRANSCRIPTION
+    ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_POLYGON_OF_INTEREST
 } from "../constants/constants";
 import i18next from "i18next"
 
@@ -24,13 +25,15 @@ L.Control.RecolnatPrint = L.Control.extend({
         annotationsPolygon: null,
         annotationsAngle: null,
         annotationsRichtext: null,
+        annotationsCircleOfInterest: null,
+        annotationsPolygonOfInterest: null,
         picture: null
     },
     initialize: function (options) {
         L.Util.setOptions(this, options);
     },
     onAdd: function (map) {
-        const { t } = i18next;
+        const {t} = i18next;
         let container = L.DomUtil.create('div', 'leaflet-bar leaflet-recolnat-print');
         L.DomEvent.disableClickPropagation(container);
         this._link = L.DomUtil.create('a', 'recolnat-print', container);
@@ -70,6 +73,8 @@ L.Control.RecolnatPrint = L.Control.extend({
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsOccurrence || []), 2)
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsTranscription || []), 2)
                 , ...lodash.flattenDepth(Object.values(this.options.annotationsRichtext || []), 2)
+                , ...lodash.flattenDepth(Object.values(this.options.annotationsCircleOfInterest || []), 2)
+                , ...lodash.flattenDepth(Object.values(this.options.annotationsPolygonOfInterest || []), 2)
             ];
             const pointer = require('../components/pictures/poi-marker.svg');
             const marker = new Image();
@@ -128,6 +133,7 @@ L.Control.RecolnatPrint = L.Control.extend({
                         case ANNOTATION_RECTANGLE:
                         case ANNOTATION_TRANSCRIPTION:
                         case ANNOTATION_ANGLE:
+                        case ANNOTATION_POLYGON_OF_INTEREST:
                         case ANNOTATION_POLYGON: {
                             let path = new Path2D();
                             annotation.vertices.map((vertex, i) => {
@@ -160,6 +166,17 @@ L.Control.RecolnatPrint = L.Control.extend({
                             resolve();
                         }
                             break;
+                        // TODO 16.11.2023 20:01 mseslija: implement this
+                        // case ANNOTATION_CIRCLE_OF_INTEREST: {
+                        //     const color = this._hexToRgb(annotation.color || this.defaultColor);
+                        //     context.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ', 0.2)';
+                        //     context.beginPath();
+                        //     context.arc(annotation.x, annotation.y, annotation.r, 0, 2 * Math.PI);
+                        //     context.stroke();
+                        //     resolve();
+                        // }
+                        //     break;
+                            // TODO 16.11.2023 21:23 mseslija: implement PLOI
                         default:
                             resolve();
                     }

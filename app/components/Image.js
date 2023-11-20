@@ -16,7 +16,10 @@ import {
     ANNOTATION_RECTANGLE,
     ANNOTATION_RICHTEXT,
     ANNOTATION_SIMPLELINE,
-    ANNOTATION_TRANSCRIPTION, APP_NAME,
+    ANNOTATION_TRANSCRIPTION,
+    ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
+    APP_NAME,
     CARTEL,
     DELETE_EVENT,
     EDIT_EVENT,
@@ -30,7 +33,7 @@ import {
 import {
     getAngleInDegrees,
     getCartesianDistanceInMm,
-    getCartesianDistanceInPx,
+    getCartesianDistanceInPx, surfaceCircleInMm,
     surfacePolygonInMm
 } from '../utils/maths';
 import Inspector from '../containers/Inspector';
@@ -56,6 +59,7 @@ import {_checkImageType} from "../utils/js";
 import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
 import {findClosestColor} from "../utils/web-colors";
+
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
 
@@ -146,6 +150,8 @@ class Image extends PureComponent {
         this.completeAnnotationRatio = this.completeAnnotationRatio.bind(this);
         this.completeAnnotationTranscription = this.completeAnnotationTranscription.bind(this);
         this.completeAnnotationRichtext = this.completeAnnotationRichtext.bind(this);
+        this.completeAnnotationCircleOfInterest = this.completeAnnotationCircleOfInterest.bind(this);
+        this.completeAnnotationPolygonOfInterest = this.completeAnnotationPolygonOfInterest.bind(this);
 
         this.leafletImage = React.createRef();
     }
@@ -167,9 +173,9 @@ class Image extends PureComponent {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
-        if (prevState.videoAnnAddedId === null && this.state.videoAnnAddedId){
+        if (prevState.videoAnnAddedId === null && this.state.videoAnnAddedId) {
             this.setState({
-                videoAnnAddedId : null
+                videoAnnAddedId: null
             })
         }
     }
@@ -188,7 +194,7 @@ class Image extends PureComponent {
             catalognumber: this._extractCatalogNumber(currentPicture)
         });
 
-        if (this.leafletImage == null)  {
+        if (this.leafletImage == null) {
         }
 
         if (nextProps.focusedAnnotation && this.leafletImage.current) {
@@ -196,7 +202,7 @@ class Image extends PureComponent {
         }
     }
 
-    openEditPanelonVideoAnnotationCreate = (videoId , annotationId) => {
+    openEditPanelonVideoAnnotationCreate = (videoId, annotationId) => {
         this.setState({
             videoAnnAddedId: annotationId,
             isAnnotationRecording: true
@@ -211,7 +217,7 @@ class Image extends PureComponent {
     }
 
     render() {
-        const { t } = this.props;
+        const {t} = this.props;
         const toolbarConfig = {
             display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
             INLINE_STYLE_BUTTONS: [
@@ -244,7 +250,7 @@ class Image extends PureComponent {
                     showProjectInfo={true}
                     projectName={this.props.projectName}
                     selectedTaxonomy={this.props.selectedTaxonomy}
-                    titleWidget = {
+                    titleWidget={
                         <LibraryTabs
                             tabName={this.props.tabName}
                             numberOfResources={this.props.tabData.pictures_selection.length}
@@ -266,8 +272,8 @@ class Image extends PureComponent {
                                 <Inspector
                                     eventAnnotations={this.props.annotationsEventAnnotations}
                                     annotationsChronothematique={this.props.annotationsChronothematique}
-                                    videoAnnAddedId = {this.state.videoAnnAddedId}
-                                    isAnnotationRecording = {this.state.isAnnotationRecording}
+                                    videoAnnAddedId={this.state.videoAnnAddedId}
+                                    isAnnotationRecording={this.state.isAnnotationRecording}
                                     annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                     annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
                                     annotationsRectangular={this.props.annotationsRectangular}
@@ -279,6 +285,8 @@ class Image extends PureComponent {
                                     annotationsTranscription={this.props.annotationsTranscription}
                                     annotationsCategorical={this.props.annotationsCategorical}
                                     annotationsRichtext={this.props.annotationsRichtext}
+                                    annotationsCircleOfInterest={this.props.annotationsCircleOfInterest}
+                                    annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest}
                                     selectAnnotation={this._callEditAnnotation}
                                     saveOrCancelEditAnnotation={this._callSaveOrCancelEdit}
                                     setAnnotationColor={this._setAnnotationColor}
@@ -294,6 +302,8 @@ class Image extends PureComponent {
                                     deleteAnnotationRatio={this._deleteAnnotationRatio}
                                     deleteAnnotationTranscription={this._deleteAnnotationTranscription}
                                     deleteAnnotationRichtext={this._deleteAnnotationRichtext}
+                                    deleteAnnotationCircleOfInterest={this._deleteAnnotationCircleOfInterest}
+                                    deleteAnnotationPolygonOfInterest={this._deleteAnnotationPolygonOfInterest}
                                     deleteCartel={this._deleteCartel}
                                     picture={this.state.currentPicture}
                                     tags={this.props.tagsByPicture[this.state.currentPicture.sha1]}
@@ -325,7 +335,7 @@ class Image extends PureComponent {
                                              onClick={e => this._navigationHandler(e, this.props.previousTenPictureInSelection)}
                                              title={t('annotate.btn_tooltip_go_backward_ten_resources')}
                                         />
-                                        <img alt="navigation icon"  src={require('./pictures/step-backward.svg')}
+                                        <img alt="navigation icon" src={require('./pictures/step-backward.svg')}
                                              onClick={e => this._navigationHandler(e, this.props.previousPictureInSelection)}
                                              title={t('annotate.btn_tooltip_go_to_previous_resource')}
                                         />
@@ -334,7 +344,8 @@ class Image extends PureComponent {
                                                 {`${this.props.currentPictureIndexInSelection + 1}/${this.props.picturesSelection.length}`}
                                             </span>
                                             <div className="file-name-cat-number-container">
-                                                <div title={this.state.currentPicture.file_basename} className="file-name">
+                                                <div title={this.state.currentPicture.file_basename}
+                                                     className="file-name">
                                                     {this.state.currentPicture.file_basename}
                                                 </div>
                                             </div>
@@ -347,10 +358,12 @@ class Image extends PureComponent {
 
                                             <div className="map-timeline-indicators-container">
                                                 {this.state.currentPicture.exifPlace &&
-                                                    <img src={MAP_IMAGE_CONTEXT} title={this.state.currentPicture.placeName + ", " + this.state.currentPicture.exifPlace}/>
+                                                    <img src={MAP_IMAGE_CONTEXT}
+                                                         title={this.state.currentPicture.placeName + ", " + this.state.currentPicture.exifPlace}/>
                                                 }
-                                                {this.state.currentPicture.erecolnatMetadata &&  this.state.currentPicture.erecolnatMetadata.eventdate &&
-                                                    <img src={TIME_IMAGE_CONTEXT} title={this.state.currentPicture.erecolnatMetadata.eventdate}/>
+                                                {this.state.currentPicture.erecolnatMetadata && this.state.currentPicture.erecolnatMetadata.eventdate &&
+                                                    <img src={TIME_IMAGE_CONTEXT}
+                                                         title={this.state.currentPicture.erecolnatMetadata.eventdate}/>
                                                 }
                                             </div>
                                     </span>
@@ -386,6 +399,8 @@ class Image extends PureComponent {
                                             annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
                                             annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
                                             annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                            annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
+                                            annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
                                             targetColors={targetColors}
 
                                             onCreated={this._onCreated}
@@ -414,6 +429,8 @@ class Image extends PureComponent {
                                                       annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
                                                       annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
                                                       annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                                      annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
+                                                      annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
                                                       onCreated={this._onCreated}
                                                       onEditStop={this._onEditStop}
                                                       onDrawStart={this._onDrawStart}
@@ -441,7 +458,7 @@ class Image extends PureComponent {
                             </_RightColumn>
                         </div>
                         :
-                    <Nothing message={t('annotate.lbl_no_picture')}/>
+                        <Nothing message={t('annotate.lbl_no_picture')}/>
                 }
 
                 <div>
@@ -809,6 +826,18 @@ class Image extends PureComponent {
                     }, 200);
                 }
                     break;
+                case ANNOTATION_CIRCLE_OF_INTEREST: {
+                    const point = this.leafletImage.current.getRealCoordinates(e.layer.getLatLng());
+                    this.completeAnnotationCircleOfInterest(point.x, point.y, e.layer.getRadius(), e.layer.annotationId);
+                }
+                    break;
+                case ANNOTATION_POLYGON_OF_INTEREST: {
+                    this.completeAnnotationPolygonOfInterest(e.layer.getLatLngs()[0].map(latLng => {
+                        return this.leafletImage.current.getRealCoordinates(latLng);
+                    }), e.layer.annotationId);
+                    break;
+                }
+                    break;
             }
         } else if (e.layerType === ANNOTATION_CATEGORICAL) {
             e.layer.annotationId = chance.guid();
@@ -856,6 +885,8 @@ class Image extends PureComponent {
                 , ...this.props.annotationsTranscription[sha1] || ''
                 , ...this.props.annotationsRichtext[sha1] || ''
                 , ...this.props.annotationsOccurrence[sha1] || ''
+                , ...this.props.annotationsCircleOfInterest[sha1] || ''
+                , ...this.props.annotationsPolygonOfInterest[sha1] || ''
             ].filter(_ => _.id === annotationId);
 
             if (annotation && annotation.length > 0) {
@@ -894,6 +925,12 @@ class Image extends PureComponent {
                 case ANNOTATION_OCCURRENCE:
                     this._deleteAnnotationOccurrence(this.state.currentPicture.sha1, annotationId);
                     break;
+                case ANNOTATION_CIRCLE_OF_INTEREST:
+                    this._deleteAnnotationCircleOfInterest(this.state.currentPicture.sha1, annotationId);
+                    break;
+                case ANNOTATION_POLYGON_OF_INTEREST:
+                    this._deleteAnnotationPolygonOfInterest(this.state.currentPicture.sha1, annotationId);
+                    break;
             }
         }
     };
@@ -925,7 +962,7 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION){
+        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
             this.setState({
                 editedAnnotation: annotation
             });
@@ -937,17 +974,17 @@ class Image extends PureComponent {
         } else {
             this.leafletImage.current.editAnnotation(annotation);
         }
-        ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS , true);
+        ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, true);
         return true;
     };
 
-    _callSaveOrCancelEdit = (save, title, value , isVideoAnnotation , person , date, location , tags , topic) => {
+    _callSaveOrCancelEdit = (save, title, value, isVideoAnnotation, person, date, location, tags, topic) => {
 
-        if (isVideoAnnotation){
+        if (isVideoAnnotation) {
             let annotation = {
                 value: value,
                 person: person,
-                date:  date,
+                date: date,
                 location: location,
                 topic: topic ? topic : ''
             }
@@ -955,9 +992,9 @@ class Image extends PureComponent {
                 editedAnnotation: null
             });
             this.setAnnotationTool(null);
-            return  annotation;
+            return annotation;
         } else {
-            if (this.leafletImage === null || this.leafletImage.current === null){
+            if (this.leafletImage === null || this.leafletImage.current === null) {
                 this.setAnnotationTool(null);
                 this.setState({
                     editedAnnotation: null
@@ -970,6 +1007,7 @@ class Image extends PureComponent {
             let area = null;
             let value_in_mm = null;
             let value_in_deg = null;
+            let radius = null;
 
             this.setState({
                 editedAnnotation: null
@@ -1000,6 +1038,7 @@ class Image extends PureComponent {
                         case ANNOTATION_POLYGON:
                         case ANNOTATION_RECTANGLE:
                         case ANNOTATION_TRANSCRIPTION:
+                        case ANNOTATION_POLYGON_OF_INTEREST:
                             //TODO calculate total area
                             vertices = editedLayer.getLatLngs()[0].map(latLng => {
                                 return this.leafletImage.current.getRealCoordinates(latLng);
@@ -1033,17 +1072,24 @@ class Image extends PureComponent {
                             });
                             editedLayer.setText(null).setText(value);
                             break
+                        case ANNOTATION_CIRCLE_OF_INTEREST:
+                            vertices = this.leafletImage.current.getRealCoordinates(editedLayer.getLatLng());
+                            radius = editedLayer.getRadius()
+                            area = surfaceCircleInMm(radius, this._getImageCalibration().dpix, this._getImageCalibration().dpiy);
+                            editedLayer.setTooltipContent(title);
+                            break
                     }
                 }
             }
             this.setAnnotationTool(null);
-            console.log({vertices, value_in_mm, area, value_in_deg, color: ''})
+            console.log({vertices, value_in_mm, area, value_in_deg, color: '', r: radius})
             return lodash.omitBy({
                 vertices,
                 value_in_mm,
                 area,
                 value_in_deg,
-                color: ''
+                color: '',
+                r: radius
             }, v => lodash.isUndefined(v) || lodash.isNull(v));
         }
     };
@@ -1104,6 +1150,16 @@ class Image extends PureComponent {
 
     _deleteAnnotationRichtext = (sha1, id) => {
         this.props.deleteAnnotationRichtext(sha1, id);
+        this.leafletImage.current.deleteAnnotation(id);
+    };
+
+    _deleteAnnotationCircleOfInterest = (sha1, id) => {
+        this.props.deleteAnnotationCircleOfInterest(sha1, id);
+        this.leafletImage.current.deleteAnnotation(id);
+    };
+
+    _deleteAnnotationPolygonOfInterest = (sha1, id) => {
+        this.props.deleteAnnotationPolygonOfInterest(sha1, id);
         this.leafletImage.current.deleteAnnotation(id);
     };
 
@@ -1175,6 +1231,14 @@ class Image extends PureComponent {
         this.props.createAnnotationRichtext(this.state.currentPicture.sha1, vertices, id, richText, video);
     }
 
+    completeAnnotationCircleOfInterest(x, y, r, id) {
+        this.props.createAnnotationCircleOfInterest(this.state.currentPicture.sha1, x, y, r, id);
+    }
+
+    completeAnnotationPolygonOfInterest(vertices, id) {
+        this.props.createAnnotationPolygonOfInterest(this.state.currentPicture.sha1, vertices, id);
+    }
+
 
     setAnnotationTool(tool) {
         this.setState({
@@ -1198,7 +1262,7 @@ class Image extends PureComponent {
     };
 
     _navigationHandler = (e, callAction) => {
-        const { t } = this.props;
+        const {t} = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'info',
@@ -1206,11 +1270,9 @@ class Image extends PureComponent {
                 detail: t('library.alert_please_close_calibration_mode'),
                 cancelId: 1
             });
-        }
-        else if (this.state.isEventRecordingLive){
+        } else if (this.state.isEventRecordingLive) {
             ee.emit(SHOW_EDIT_MODE_VIOLATION_MODAL);
-        }
-        else if (this.state.currentAnnotationTool === null)
+        } else if (this.state.currentAnnotationTool === null)
             callAction(this.props.tabName);
         else {
             ee.emit(SHOW_EDIT_MODE_VIOLATION_MODAL);

@@ -27,10 +27,11 @@ export default class extends Component {
 
         const poi = props.annotationsPointsOfInterest ? props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
         const rec = props.annotationsRectangular ? props.annotationsRectangular.filter(ann => 'video' in ann) : [];
+        const coi = props.annotationsCircleOfInterest ? props.annotationsCircleOfInterest.filter(ann => 'video' in ann) : [];
         const chrono = props.annotationsChronothematique || [];
 
         this.state = {
-            tracks: this._sortAnnotationsIntoTracks([...poi, ...rec, ...chrono]),
+            tracks: this._sortAnnotationsIntoTracks([...poi, ...rec, ...chrono, ...coi]),
             duration: props.player.duration(),
             currentTime: 0,
             zoom: this.props.zoom,
@@ -113,9 +114,10 @@ export default class extends Component {
             this.props.annotationsChronothematique !== prevProps.annotationsChronothematique) {
             const poi = this.props.annotationsPointsOfInterest ? this.props.annotationsPointsOfInterest.filter(ann => 'video' in ann) : [];
             const rec = this.props.annotationsRectangular ? this.props.annotationsRectangular.filter(ann => 'video' in ann) : [];
+            const coi = this.props.annotationsCircleOfInterest ? this.props.annotationsCircleOfInterest.filter(ann => 'video' in ann) : [];
             const chrono = this.props.annotationsChronothematique || [];
             this.setState({
-                tracks: this._sortAnnotationsIntoTracks([...poi, ...rec, ...chrono])
+                tracks: this._sortAnnotationsIntoTracks([...poi, ...rec, ...chrono, ...coi])
             })
         }
         // TODO 21.12.2022 20:21 mseslija: add here old parts

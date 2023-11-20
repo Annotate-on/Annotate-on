@@ -33,6 +33,8 @@ import {
     ANNOTATION_POLYLINE,
     ANNOTATION_RECTANGLE,
     ANNOTATION_SIMPLELINE,
+    ANNOTATION_CIRCLE_OF_INTEREST,
+    ANNOTATION_POLYGON_OF_INTEREST,
     ANNOTATION_TRANSCRIPTION, APP_NAME,
     MODEL_XPER
 } from "../constants/constants";
@@ -211,6 +213,8 @@ class Data extends PureComponent {
                     case ANNOTATION_CATEGORICAL:
                     case ANNOTATION_MARKER:
                     case ANNOTATION_RECTANGLE:
+                    case ANNOTATION_CIRCLE_OF_INTEREST:
+                    case ANNOTATION_POLYGON_OF_INTEREST:
                     case ANNOTATION_TRANSCRIPTION:
                         value = annotation.value ? annotation.value : '';
                         break;
