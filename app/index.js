@@ -1,35 +1,34 @@
 import 'babel-polyfill';
+import React from 'react';
+import {render} from 'react-dom';
 import fs from 'fs-extra';
 import path from "path";
-import React from 'react';
-import { render } from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
+import {AppContainer} from 'react-hot-loader';
 import Root from './containers/Root';
-import { createInitialState } from "./reducers/app";
-import { configureStore, history } from './store/configureStore';
+import {configureStore, history} from './store/configureStore';
+import {createInitialState} from "./reducers/app";
 import {
-    doInitConfig,
     doInitWorkspace,
     getAllPicturesDirectoriesFlatten,
-    getAppHomePath,
     getCacheDir,
     getProjectInfoFile,
     getThumbNailsDir,
-    getUserWorkspace
+    getUserWorkspace,
+    doInitConfig, getAppHomePath
 } from "./utils/config";
 
-import { remote } from "electron";
-import i18next from "i18next";
-import lodash from 'lodash';
-import 'react-virtualized/styles.css';
-import './app.global.css';
 import './app.global.scss';
+import './app.global.css';
+import 'react-virtualized/styles.css';
+import {remote} from "electron";
 import Splash from "./components/Splash";
-import { IMAGE_STORAGE_DIR } from "./constants/constants";
+import {IMAGE_STORAGE_DIR} from "./constants/constants";
+import {formatDateForFileName} from "./utils/js";
+import lodash from 'lodash';
 import './i18n';
-import { formatDateForFileName } from "./utils/js";
-import { convertSelectedTagsToFilter } from "./utils/tags";
-import { initLeaflet } from './widget/leaflet-override';
+import i18next from "i18next";
+import {initLeaflet} from './widget/leaflet-override';
+import {convertSelectedTagsToFilter} from "./utils/tags";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
