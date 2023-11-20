@@ -586,7 +586,8 @@
         "tooltip_click_to_start_drawing_rectangle": "Clique e arraste para desenhar o retângulo",
         "tooltip_release_mouse_to_finish_drawing": "Solte o mouse para terminar o desenho",
         "tooltip_click_cancel_to_undo_changes": "Clique em cancelar para desfazer as mudanças",
-        "btn_tooltip_circle_of_interest": "Circle of interest"
+        "btn_tooltip_circle_of_interest": "Círculo de interesse",
+        "btn_tooltip_polygon_of_interest": "Polígono de interesse"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "O evento está prestes a expirar, você quer prolongar este evento por mais 30 min?",
