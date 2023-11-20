@@ -1,6 +1,7 @@
 import lodash from 'lodash';
 
 import { genId } from "../components/event/utils";
+import { createNewCategory } from "../components/tags/tagUtils";
 import {
     HIGH_RESOLUTION,
     LOW_RESOLUTION,
@@ -359,15 +360,19 @@ export const loadTags = (tags, selectedTags) => {
     }
 };
 
-export const attachCollectionTags = (picture, tagPicture, createTag, addSubTag, collectionName) => {
+export const attachCollectionTags = (picture, tagPicture, createTag, addSubTag, collectionName, createCategory, tags) => {
 
     if (collectionName == '') collectionName = 'collection_' + genId();
 
- // add check if TAG_IIIF category exist and if not create it....
+    const hasCategoryTest = tags.some(obj => obj.type === "category" && obj.name === TAG_IIIF);
+
+    if (!hasCategoryTest) {
+    const newIIIFCategory = createNewCategory(chance.guid() , TAG_IIIF);
+    createCategory(newIIIFCategory);
+    }
 
     createTag('collection IIIF: ' + collectionName, false);
     addSubTag(TAG_IIIF, 'collection IIIF: ' + collectionName);
     tagPicture(picture.sha1, 'collection IIIF: ' + collectionName);
-
 
 };

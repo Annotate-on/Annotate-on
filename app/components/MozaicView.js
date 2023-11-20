@@ -1,15 +1,15 @@
-import React, {PureComponent} from 'react';
-import {Input} from 'reactstrap';
-import {ee, EVENT_SHOW_ALERT} from "../utils/library";
-import {SortDirection} from 'react-virtualized';
 import classnames from "classnames";
-import ReactTooltip from 'react-tooltip'
-import moment from 'moment';
-import ToggleButton from 'react-toggle-button'
-import Inspector from "../containers/Inspector";
-import {remote} from "electron";
+import { remote } from "electron";
 import lodash from "lodash";
-import {MANUAL_ORDER, MAP_VIEW, RESOURCE_TYPE_EVENT} from "../constants/constants";
+import moment from 'moment';
+import React, { PureComponent } from 'react';
+import ToggleButton from 'react-toggle-button';
+import ReactTooltip from 'react-tooltip';
+import { SortDirection } from 'react-virtualized';
+import { Input } from 'reactstrap';
+import { MANUAL_ORDER, RESOURCE_TYPE_EVENT } from "../constants/constants";
+import Inspector from "../containers/Inspector";
+import { EVENT_SHOW_ALERT, ee } from "../utils/library";
 import MozaicPlayer from "./MozaicPlayer";
 import MAP from "./pictures/map-location-dot-solid.svg";
 
@@ -296,9 +296,14 @@ export default class extends PureComponent {
                             if (this.props.tagsByPicture.hasOwnProperty(pic.sha1)) {
                                 tags.push(...this.props.tagsByPicture[pic.sha1]);
                             }
-
-                            const name = pic.resourceType === RESOURCE_TYPE_EVENT ? pic.name : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber ?
+                            const maxLength = 35;
+                            const orig_name = pic.resourceType === RESOURCE_TYPE_EVENT ? pic.name : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber ?
                                 pic.erecolnatMetadata.catalognumber : pic.file_basename;
+                            if (orig_name.length > maxLength) {
+                                name = "..." + orig_name.slice(-maxLength + 3);
+                            }
+                            else
+                            { name = orig_name}
 
                             //TODO choose between fa-lg and fa-2x
                             const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';

@@ -1,7 +1,7 @@
 import { push } from 'connected-react-router';
 import { withTranslation } from "react-i18next";
 import { connect } from 'react-redux';
-import { addSubTag, createTag, refreshState, selectFolderGlobally, selectTag, tagPicture } from "../actions/app";
+import { addSubTag, createCategory, createTag, refreshState, selectFolderGlobally, selectTag, tagPicture } from "../actions/app";
 import Component from '../components/ImportIIIF';
 import { EVENT_SELECT_TAB, ee } from "../utils/library";
 
@@ -38,6 +38,9 @@ const mapDispatchToProps = dispatch => {
         },
         addSubTag: (addTo, tag) => {
             dispatch(addSubTag(addTo, tag));
+        },
+        createCategory: (id, name) => {
+            dispatch(createCategory(id, name));
         }
     };
 };

@@ -82,12 +82,25 @@ export default class IIIFImageImporter extends PureComponent {
 processIIIFManifest = async (manifestUrl) => {
     try {
     const response = await fetch(manifestUrl);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch IIIF manifest. Status: ${response.status}`);
+    }
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid content type. Expected JSON.');
+    }
+
     const manifest = await response.json();
+
+    if (!manifest.sequences || manifest.sequences.length === 0 || !manifest.sequences[0].canvases || manifest.sequences[0].canvases.length === 0) {
+        console.error('No images found in the IIIF manifest:', manifestUrl);
+        return;
+    }
 
     const imageUrls = manifest.sequences[0].canvases.map(
         (canvas) => canvas.images[0].resource['@id']
     );
-      const collectionLabel = manifest.label; 
+    const collectionLabel = manifest.label; 
 
     this.setState({
         collectionLabel,
@@ -277,7 +290,7 @@ startDownload = (imageUrls) => {
                             this.props.tagPicture(sha1, tag.name);
                         }
                         attachDefaultTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag);
-                        attachCollectionTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag, this.state.collectionLabel);
+                        attachCollectionTags(pictureObjects[sha1], this.props.tagPicture, this.props.createTag, this.props.addSubTag, this.state.collectionLabel, this.props.createCategory, this.props.tags);
                         
                     }
                     for (const tag of newTags) {
