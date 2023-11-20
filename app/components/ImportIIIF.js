@@ -26,7 +26,7 @@ export default class IIIFImageImporter extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      input: 'https://collections.recolnat.org/annotate-server/iiif/2/13/manifest', // Store IIIF manifest URL here
+      input: '',
       isDownloading: false,
       progress: [],
       validPictures: [],
@@ -37,6 +37,8 @@ export default class IIIFImageImporter extends PureComponent {
     const validPictureObjects = this.state.validPictures;
 
     const url = validPictureObjects.find(x => x.targetFile === image.file).url;
+    const segments = url.split("/");
+    const pictureTitle = segments[segments.length - 5];
 
     let metadata = {
         'naturalScienceMetadata': {
@@ -49,7 +51,7 @@ export default class IIIFImageImporter extends PureComponent {
 
         },
         'iptc': {
-            'title': image.title || '',
+            'title': pictureTitle || '',
             'creator': image.creator || '' ,
             'subject': image.subject || '',
             'description': image.description || '',
@@ -223,8 +225,7 @@ startDownload = (imageUrls) => {
 
         Promise.all(
             urls.map(url => {
-                const segments = url.split("/");
-                const pictureId = segments[segments.length - 5];
+                const pictureId = chance.guid();
                 const targetPictureFile = path.join(DESTINATION_DIR, pictureId + '.jpeg');
                 return limit(() =>
                     downloadPictureJob(

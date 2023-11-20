@@ -297,13 +297,21 @@ export default class extends PureComponent {
                                 tags.push(...this.props.tagsByPicture[pic.sha1]);
                             }
                             const maxLength = 35;
-                            const orig_name = pic.resourceType === RESOURCE_TYPE_EVENT ? pic.name : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber ?
-                                pic.erecolnatMetadata.catalognumber : pic.file_basename;
-                            if (orig_name.length > maxLength) {
-                                name = "..." + orig_name.slice(-maxLength + 3);
+                            let reduced_name = '';
+                            const origin_name = pic.resourceType === RESOURCE_TYPE_EVENT
+                              ? pic.name
+                              : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber
+                              ? pic.erecolnatMetadata.catalognumber
+                              : pic.file_basename;
+                            
+                            if (origin_name.length > maxLength) {
+                              reduced_name = "..." + origin_name.slice(-maxLength + 3);
+                            } else {
+                              reduced_name = origin_name;
                             }
-                            else
-                            { name = orig_name}
+                            
+                            const name = reduced_name; 
+                            
 
                             //TODO choose between fa-lg and fa-2x
                             const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
@@ -354,7 +362,7 @@ export default class extends PureComponent {
                                         <div data-tip data-for={'global_' + key} className='eventTitle'>{name} </div> :
                                         <div onMouseOut={(event) => this.stopVideo(event, pic.sha1)}
                                              onMouseOver={(event) => this.playVideo(event, pic.sha1)}
-                                             data-tip data-for={'global_' + key} className='cardTitle'>{name}
+                                             data-tip data-for={'global_' + key} className='cardTitle'>{reduced_name}
                                         </div>
                                     }
 
