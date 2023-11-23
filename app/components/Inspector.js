@@ -1181,13 +1181,13 @@ export default class extends Component {
                 this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1] &&
                 selectedTargetOptions.value in this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1]
             ) {
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-                    type: 'error',
-                    message: t('inspector.alert_categorical_descriptor_already_exist'),
-                    cancelId: 1
-                });
-                selectedTargetOptions.value = "-1";
-                return false;
+                // remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                //     type: 'error',
+                //     message: t('inspector.alert_categorical_descriptor_already_exist'),
+                //     cancelId: 1
+                // });
+                // selectedTargetOptions.value = "-1";
+                // return false;
             }
 
             targetUpdated = true;

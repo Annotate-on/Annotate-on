@@ -165,10 +165,10 @@ export default class extends Component {
             if (end === -1)
                 end = start;
         }
-
+        // debugger
         const descriptor = this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] ?
             this.props.taxonomyInstance.taxonomyByAnnotation[this.props.annotation.id] : {descriptorId: "-1"};
-
+        // debugger
         if (this.props.selectedTaxonomy) {
             const taxDesc = this.props.selectedTaxonomy.descriptors.find(target => target.id === descriptor.descriptorId);
             if (taxDesc) {
@@ -1038,32 +1038,23 @@ export default class extends Component {
             const descriptor = {
                 type: tmpDesc.annotationType,
                 descriptorId: tmpDesc.id || "-1",
+                targetType: tmpDesc.targetType,
                 value: []
             };
             this.setState({
                 oldDescriptorId,
                 descriptor: descriptor,
-                targetColor: selectedTargetOptions.color
+                targetColor: selectedTargetOptions.color,
+                descriptorGroup: descriptor.targetType
+
             });
 
             if (selectedTargetOptions.targetType === CATEGORICAL) {
                 if (this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByPicture[this.props.sha1] &&
                     selectedTargetOptions.value in this.props.taxonomyInstance.taxonomyByPicture[this.props.sha1]) {
-
-                    this.setState({
-                        descriptor: {descriptorId: '-1'},
-                        targetColor: '#333'
-                    });
-
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-                        type: 'error',
-                        message: t('inspector.alert_categorical_descriptor_already_exist'),
-                        cancelId: 1
-                    });
-
-                    return false;
-                } else if (selectedTargetOptions.value !== "-1") {
-                    this._catToggle(descriptor)
+                     this._catToggle(descriptor)
+                   } else if (selectedTargetOptions.value !== "-1") {
+                        this._catToggle(descriptor)
                 }
             } else if (selectedTargetOptions.targetType === INTEREST) {
                 this.props.createTargetInstance(INTEREST, this.props.tabName, annotation.id, selectedTargetOptions.value, this.state.value ? [this.state.value] : null, oldDescriptorId);
