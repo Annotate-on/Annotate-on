@@ -801,7 +801,12 @@
       "dialog_create_model": {
         "title_create_model": "Créer un modèle",
         "lbl_model_name": "Nom de modèle",
-        "lbl_model_type": "Type de modèle"
+        "lbl_model_type": "Type de modèle",
+        "lbl_model_image_detect_url": "Url de service",
+        "lbl_model_image_detect_user": "Utilisateur",
+        "lbl_model_image_detect_pwd": "Mot de passe",
+        "lbl_model_image_detect_desc": "Description",
+        "lbl_model_image_detect_confidence": "Confiance minimale"
       },
       "dialog_export_model": {
         "title_save_taxonomy": "Enregistrer la taxonomie sous"

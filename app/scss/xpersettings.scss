@@ -99,16 +99,31 @@
     transition: background 0.25s linear;
     -webkit-transition: background 0.25s linear;
   }
+  .annotate-models {
+    input[type=radio]:checked ~ .check {
+      border: 5px solid #0DFF92;
+    }
 
-  input[type=radio]:checked ~ .check {
-    border: 5px solid #0DFF92;
+    input[type=radio]:checked ~ .check::before {
+      background: #0DFF92;
+    }
+
+    input[type=radio]:checked ~ label {
+      color: #0DFF92;
+    }
   }
+  .image-detect-models
+  {
+    input[type=radio]:checked ~ .check {
+      border: 5px solid #0048ff;
+    }
 
-  input[type=radio]:checked ~ .check::before {
-    background: #0DFF92;
-  }
+    input[type=radio]:checked ~ .check::before {
+      background: #0048ff;
+    }
 
-  input[type=radio]:checked ~ label {
-    color: #0DFF92;
+    input[type=radio]:checked ~ label {
+      color: #0048ff;
+    }
   }
 }

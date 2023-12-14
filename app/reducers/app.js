@@ -9,6 +9,7 @@ import {
     ADD_TAG_IN_FILTER,
     ADD_TAGS_ID,
     CHANGE_TAXONOMY_STATUS,
+    CHANGE_IMAGE_DETECT_MODEL_STATUS,
     CLOSE_TAB,
     CREATE_ANNOTATE_EVENT,
     CREATE_ANNOTATION_ANGLE,
@@ -96,6 +97,7 @@ import {
     SAVE_TAGS_SORT,
     SAVE_TARGET_TYPE,
     SAVE_TAXONOMY,
+    SAVE_IMAGE_DETECT_MODEL,
     SELECT_FOLDER,
     SELECT_FOLDER_GLOBALLY,
     SELECT_LIBRARY_TAB,
@@ -3397,6 +3399,54 @@ export default (state = {}, action) => {
                 }]
             };
         }
+
+        case SAVE_IMAGE_DETECT_MODEL: {
+            const counter = state.counter + 1;
+            const imageDetectModels = state.imageDetectModels || [];
+            return {
+                ...state, counter, imageDetectModels: [...imageDetectModels, {
+                    id: action.id,
+                    name: action.name,
+                    creationDate: new Date(),
+                    isActive: false,
+                    model: action.model,
+                    version: action.version,
+                    url_service: action.url_service,
+                    user: action.user,
+                    password: action.password,
+                    description: action.description,
+                    confidence: action.confidence,
+                    modelClasses: action.modelClasses
+                }]
+            };
+        }
+
+        case CHANGE_IMAGE_DETECT_MODEL_STATUS: {
+            const counter = state.counter + 1;
+            const imageDetectModels = [...state.imageDetectModels];
+            let selectedImageDetectModel = {};
+            imageDetectModels.forEach(element => {
+                if (element.id === action.id) {
+                    element.isActive = action.isActive;
+                    if (action.isActive) {
+                        // selectedTaxonomy.descriptors = loadTaxonomy(element.id);
+                        selectedImageDetectModel.id = element.id;
+                        selectedImageDetectModel.name = element.name;
+                        selectedImageDetectModel.model = element.model;
+                        selectedImageDetectModel.modelClasses = element.modelClasses;
+                        selectedImageDetectModel.url_service = element.url_service;
+                        selectedImageDetectModel.user = element.user;
+                        selectedImageDetectModel.password = element.password;
+                        selectedImageDetectModel.confidence = element.confidence;
+                    } else
+                        selectedImageDetectModel = null;
+                } else {
+                    element.isActive = false;
+                }
+            });
+            return {...state, counter, imageDetectModels, selectedImageDetectModel};
+        }
+
         case IMPORT_TAXONOMY: {
             const counter = state.counter + 1;
             // create new file for annotate type of taxonomy

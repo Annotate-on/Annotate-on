@@ -67,6 +67,7 @@ export const INTEREST = "INTEREST";
 export const TEXTUAL = "TEXTUAL";
 
 export const MODEL_ANNOTATE = "MODEL_ANNOTATE";
+export const MODEL_IMAGE_DETECT = "MODEL_IMAGE_DETECT";
 export const MODEL_XPER = "MODEL_XPER";
 
 export const IMAGE_STORAGE_DIR = "image_storage";
@@ -127,6 +128,8 @@ export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 export const DEFAULT_XPER_CONNECTION_URL = 'http://xper3.fr/rest';
 export const DEFAULT_IIIF_CONNECTION_URL = 'http://localhost:8080/iiif-rest-api/';
+
+export const DEFAULT_IMAGE_CONNECT_CONNECTION_URL = 'https://plantai.ummisco.fr/image';
 
 export const SYSTEM_CATEGORIES = [TAG_AUTO, TAG_MAP_SELECTION];
 
