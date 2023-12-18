@@ -828,6 +828,7 @@
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
         "lbl_model_type": "Model type",
+        "lbl_model_image_detect_title": "Image-detect model",
         "lbl_model_image_detect_url": "Url of service",
         "lbl_model_image_detect_user": "User",
         "lbl_model_image_detect_pwd": "Password",

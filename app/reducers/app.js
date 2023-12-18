@@ -127,7 +127,8 @@ import {
     CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
-    DELETE_ANNOTATION_POLYGON_OF_INTEREST
+    DELETE_ANNOTATION_POLYGON_OF_INTEREST,
+    REMOVE_IMAGE_DETECT_MODEL
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -3429,7 +3430,6 @@ export default (state = {}, action) => {
                 if (element.id === action.id) {
                     element.isActive = action.isActive;
                     if (action.isActive) {
-                        // selectedTaxonomy.descriptors = loadTaxonomy(element.id);
                         selectedImageDetectModel.id = element.id;
                         selectedImageDetectModel.name = element.name;
                         selectedImageDetectModel.model = element.model;
@@ -3446,7 +3446,18 @@ export default (state = {}, action) => {
             });
             return {...state, counter, imageDetectModels, selectedImageDetectModel};
         }
-
+        case REMOVE_IMAGE_DETECT_MODEL: {
+            const counter = state.counter + 1;
+            const imageDetectModels = [...state.imageDetectModels];
+            const imageDetectModelId = action.id;
+            const index = imageDetectModels.findIndex(item => item.id === imageDetectModelId);
+            let selectedImageDetectModel = state.selectedImageDetectModel;
+            if (selectedImageDetectModel && selectedImageDetectModel.id === imageDetectModelId) {
+                selectedImageDetectModel = null;
+            }
+            imageDetectModels.splice(index, 1);
+            return {...state, counter, imageDetectModels, selectedImageDetectModel};
+        }
         case IMPORT_TAXONOMY: {
             const counter = state.counter + 1;
             // create new file for annotate type of taxonomy

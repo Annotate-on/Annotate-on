@@ -110,6 +110,7 @@ export const SAVE_IMAGE_DETECT_MODEL = 'SAVE_IMAGE_DETECT_MODEL';
 export const CHANGE_IMAGE_DETECT_MODEL_STATUS = 'CHANGE_IMAGE_DETECT_MODEL_STATUS';
 export const IMPORT_TAXONOMY = 'IMPORT_TAXONOMY';
 export const REMOVE_TAXONOMY = 'REMOVE_TAXONOMY';
+export const REMOVE_IMAGE_DETECT_MODEL = 'REMOVE_IMAGE_DETECT_MODEL';
 export const CHANGE_TAXONOMY_STATUS = 'CHANGE_TAXONOMY_STATUS';
 export const SET_SELECTED_TAXONOMY = 'SET_SELECTED_TAXONOMY';
 export const CREATE_EDIT_TAXONOMY_DESCRIPTION = 'CREATE_EDIT_TAXONOMY_DESCRIPTION';
@@ -776,6 +777,11 @@ export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targ
 
 export const removeTaxonomy = (id) => ({
     type: REMOVE_TAXONOMY,
+    id
+});
+
+export const removeImageDetectModel = (id) => ({
+    type: REMOVE_IMAGE_DETECT_MODEL,
     id
 });
 

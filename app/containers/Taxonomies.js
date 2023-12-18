@@ -4,6 +4,7 @@ import Component from '../components/Taxonomies';
 import {
     importTaxonomy,
     removeTaxonomy,
+    removeImageDetectModel,
     saveTaxonomy,
     setSelectedTaxonomy,
     updateTaxonomiesStatus,
@@ -45,6 +46,9 @@ const mapDispatchToProps = dispatch => {
         },
         removeTaxonomy: (id) => {
             dispatch(removeTaxonomy(id));
+        },
+        removeImageDetectModel: (id) => {
+            dispatch(removeImageDetectModel(id));
         },
         setSelectedTaxonomy: (id) => {
             dispatch(setSelectedTaxonomy(id))

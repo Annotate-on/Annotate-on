@@ -806,7 +806,11 @@
         "lbl_model_image_detect_user": "Utilisateur",
         "lbl_model_image_detect_pwd": "Mot de passe",
         "lbl_model_image_detect_desc": "Description",
-        "lbl_model_image_detect_confidence": "Confiance minimale"
+        "lbl_model_image_detect_confidence": "Confiance minimale",
+        "lbl_model_image_detect_title": "Image-detect modèle",
+        "lbl_model_image_detect_classes": "Classes",
+        "lbl_model_image_detect_class_name": "Nom de la classe",
+        "lbl_model_image_detect_class_id": "Id de la classe"
       },
       "dialog_export_model": {
         "title_save_taxonomy": "Enregistrer la taxonomie sous"

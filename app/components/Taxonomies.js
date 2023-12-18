@@ -67,8 +67,10 @@ export default class extends Component {
             selectedModel: selectedModel,
             selectedCharacterId: characterId,
             activeTab: 'annotate',
-            imageDetectModels: this.props.imageDetectModels,
+            imageDetectModels: this.props.imageDetectModels || [],
+            viewImageDetectModel: '',
             modelClassItemModal: false,
+            modelClassItemModalView: false,
             modelClassItemModalInEdit: false,
             modelClassNameItemInput: '',
             modelClassIdItemInput: '',
@@ -92,6 +94,12 @@ export default class extends Component {
         if (this.state.showView !== prevState.showView || prevProps.taxonomies.length !== this.props.taxonomies.length) {
             const taxonomies = this._sortList(this.state.sortBy, this.state.sortDirection, this.props.taxonomies);
             this.setState({taxonomies: taxonomies});
+        }
+        if (prevProps.imageDetectModels !== this.props.imageDetectModels) {
+            const imageDetectModels = this.props.imageDetectModels
+            this.setState({
+                imageDetectModels: imageDetectModels
+            });
         }
     }
 
@@ -197,10 +205,9 @@ export default class extends Component {
     };
 
     _viewImageDetectModel = (imageDetectModel) => {
-        debugger
         this.setState({
-            selectedImageDetectModel: imageDetectModel,
-            showView: LIST
+            modelClassItemModalView: true,
+            viewImageDetectModel: imageDetectModel
         });
     };
 
@@ -274,7 +281,6 @@ export default class extends Component {
     }
 
     _handleContextMenu = (e, data) => {
-        debugger
         const { t } = this.props;
         switch (data.action) {
             case 'view':
@@ -305,14 +311,24 @@ export default class extends Component {
                 this._viewImageDetectModel(data.imageDetectModel);
                 break;
             case 'delete_imageDetect':
-                // const result = remote.dialog.showMessageBox({
-                //     type: 'question',
-                //     buttons: ['Yes', 'No'],
-                //     message: t('models.delete_taxonomy_message', { taxonomy: data.taxonomy.name}),
-                //     cancelId: 1,
-                //     detail: t('global.delete_confirmation')
-                // });
-                // if (result === 0) this.props.removeTaxonomy(data.taxonomy.id);
+                const answer = remote.dialog.showMessageBox({
+                    type: 'question',
+                    buttons: ['Yes', 'No'],
+                    message: data.imageDetectModel.name,
+                    cancelId: 1,
+                    detail: t('global.delete_confirmation')
+                });
+                 if (answer === 0) this.props.removeImageDetectModel(data.imageDetectModel.id);
+                this.setState((prevState) => {
+                    const updatedImageDetectModels = prevState.imageDetectModels.filter(item => item.id !== data.imageDetectModel.id);
+                    const updatedSelectedImageDetectModel = (prevState.selectedImageDetectModel && prevState.selectedImageDetectModel.id === data.imageDetectModel.id) ? null : prevState.selectedImageDetectModel;
+
+                    return {
+                        imageDetectModels: updatedImageDetectModels,
+                        selectedImageDetectModel: updatedSelectedImageDetectModel,
+                    };
+                });
+                // this.setState({})
                 break;
         }
     };
@@ -329,6 +345,13 @@ export default class extends Component {
         this.setState({
             modelClassItemModal: !this.state.modelClassItemModal,
             modelClassItemModalInEdit: false,
+        });
+    };
+
+    toggleModelClassItemModalView = () => {
+        this.setState({
+            modelClassItemModalView: !this.state.modelClassItemModalView
+            // modelClassItemModalInEdit: false,
         });
     };
     toggleModelClassItemEdit = () => {
@@ -686,7 +709,7 @@ export default class extends Component {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {this.props.imageDetectModels.map((imageDetectModel, index) => {
+                                        {this.props.imageDetectModels ? (this.props.imageDetectModels.map((imageDetectModel, index) => {
                                             const date = moment(imageDetectModel.creationDate);
                                             return (
                                                 <ContextMenuTrigger
@@ -715,11 +738,8 @@ export default class extends Component {
                                                     </td>
                                                     <td/>
                                                     <td onClick={() => {
-                                                        // this.setState({
-                                                        //     selectedModel: imageDetectModel,
-                                                        //     showView: ADD_VIEW_DESCRIPTORS
-                                                        // })
-                                                    }}>
+                                                        this._viewImageDetectModel(imageDetectModel);
+                                                     }}>
                                                         {imageDetectModel.name}
                                                     </td>
                                                     <td>
@@ -733,7 +753,7 @@ export default class extends Component {
                                                     </td>
                                                 </ContextMenuTrigger>
                                             );
-                                        })}
+                                        })): null}
                                         </tbody>
                                     </Table>
                                 </div>
@@ -752,7 +772,7 @@ export default class extends Component {
                         </div>
                         <Modal isOpen={this.state.modalImageDetect} toggle={this._toggleImageDetect} wrapClassName="bst" autoFocus={false}>
                             <ModalHeader
-                                toggle={this._toggleImageDetect}>{t('models.dialog_create_model.title_create_model')}</ModalHeader>
+                                toggle={this._toggleImageDetect}>{t('models.dialog_create_model.lbl_model_image_detect_title')}</ModalHeader>
                             <ModalBody>
                                 <Form onSubmit={(e) => {
                                     e.preventDefault();
@@ -898,6 +918,66 @@ export default class extends Component {
                             <ModalFooter>
                                 <Button color="primary" onClick={this._saveModelClassItem}>{t('global.save')}</Button>
                                 <Button color="secondary" onClick={this.toggleModelClassItemModal}>{t('global.cancel')}</Button>
+                            </ModalFooter>
+                        </Modal>
+                        <Modal isOpen={this.state.modelClassItemModalView} toggle={this.toggleModelClassItemModalView} wrapClassName="bst" autoFocus={false}>
+                            <ModalHeader toggle={this.toggleModelClassItemModalView}>{t('models.dialog_create_model.lbl_model_image_detect_title')}</ModalHeader>
+                            <ModalBody>
+                                <Form>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectName" sm={5}>{t('models.dialog_create_model.lbl_model_name')}</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.name}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectUrl" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_url')}</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.url_service}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectUser" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_user')}</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.user}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectPwd" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_pwd')}</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.password}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectDesc" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_desc')}</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.description}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelImageDetectConfidence" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_confidence')} (%)</Label>
+                                        <Col sm={7}>
+                                            <Label>{this.state.viewImageDetectModel.confidence}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label for="modelClassItem" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_classes')}</Label>
+                                        <Col sm={7}>
+                                            {this.state.viewImageDetectModel.modelClasses && this.state.viewImageDetectModel.modelClasses.map((type, index) => (
+                                                <span><Label key={`td_${index}`} className="mr-2">{type.name}</Label><br /></span>
+                                            ))}
+                                        </Col>
+                                    </FormGroup>
+                                    <FormGroup row>
+                                        <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
+                                        <Col sm={7}>
+                                            <Label plaintext readOnly>{t('Image Detect IRD service')}</Label>
+                                        </Col>
+                                    </FormGroup>
+                                </Form>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="secondary" onClick={this.toggleModelClassItemModalView}>Close</Button>
                             </ModalFooter>
                         </Modal>
                     </TabPane>
