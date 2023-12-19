@@ -800,7 +800,16 @@
       "dialog_create_model": {
         "title_create_model": "Crear un modelo",
         "lbl_model_name": "Nombre del modelo",
-        "lbl_model_type": "Tipo de modelo"
+        "lbl_model_type": "Tipo de modelo",
+        "lbl_model_image_detect_url": "URL de servicio",
+        "lbl_model_image_detect_user": "Usuario",
+        "lbl_model_image_detect_pwd": "Contraseña",
+        "lbl_model_image_detect_desc": "Descripción",
+        "lbl_model_image_detect_confidence": "Confianza mínima",
+        "lbl_model_image_detect_title": "Image-detect Modelo",
+        "lbl_model_image_detect_classes": "Clases",
+        "lbl_model_image_detect_class_name": "Nombre de las clases",
+        "lbl_model_image_detect_class_id": "Identificador de clase"
       },
       "dialog_export_model": {
         "title_save_taxonomy": "Guardar la taxonomía en"

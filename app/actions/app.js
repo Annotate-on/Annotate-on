@@ -106,8 +106,11 @@ export const RENAME_TAB = 'RENAME_TAB';
 export const EMPTY_TAGS = 'EMPTY_TAGS';
 export const LOCK_SELECTION = 'LOCK_SELECTION';
 export const SAVE_TAXONOMY = 'SAVE_TAXONOMY';
+export const SAVE_IMAGE_DETECT_MODEL = 'SAVE_IMAGE_DETECT_MODEL';
+export const CHANGE_IMAGE_DETECT_MODEL_STATUS = 'CHANGE_IMAGE_DETECT_MODEL_STATUS';
 export const IMPORT_TAXONOMY = 'IMPORT_TAXONOMY';
 export const REMOVE_TAXONOMY = 'REMOVE_TAXONOMY';
+export const REMOVE_IMAGE_DETECT_MODEL = 'REMOVE_IMAGE_DETECT_MODEL';
 export const CHANGE_TAXONOMY_STATUS = 'CHANGE_TAXONOMY_STATUS';
 export const SET_SELECTED_TAXONOMY = 'SET_SELECTED_TAXONOMY';
 export const CREATE_EDIT_TAXONOMY_DESCRIPTION = 'CREATE_EDIT_TAXONOMY_DESCRIPTION';
@@ -755,6 +758,18 @@ export const saveTaxonomy = (id, name, path, model, version) => ({
     id, name, path, model, version
 });
 
+export const saveImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({
+    type: SAVE_IMAGE_DETECT_MODEL,
+    id, name, model, version, url_service, user, password, description, confidence, modelClasses
+});
+
+export const updateImageDetectModelStatus = (id, isActive, model) => ({
+    type: CHANGE_IMAGE_DETECT_MODEL_STATUS,
+    id,
+    isActive,
+    model
+});
+
 export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targetTypes) => ({
     type: IMPORT_TAXONOMY,
     id, name, path, version, taxonomyDefinition, targetTypes
@@ -762,6 +777,11 @@ export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targ
 
 export const removeTaxonomy = (id) => ({
     type: REMOVE_TAXONOMY,
+    id
+});
+
+export const removeImageDetectModel = (id) => ({
+    type: REMOVE_IMAGE_DETECT_MODEL,
     id
 });
 

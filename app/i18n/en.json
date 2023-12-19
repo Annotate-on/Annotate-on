@@ -827,7 +827,16 @@
       "dialog_create_model": {
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
-        "lbl_model_type": "Model type"
+        "lbl_model_type": "Model type",
+        "lbl_model_image_detect_title": "Image-detect model",
+        "lbl_model_image_detect_url": "Url of service",
+        "lbl_model_image_detect_user": "User",
+        "lbl_model_image_detect_pwd": "Password",
+        "lbl_model_image_detect_desc": "Description",
+        "lbl_model_image_detect_confidence": "Minimum confidence",
+        "lbl_model_image_detect_classes": "Classes",
+        "lbl_model_image_detect_class_name": "Class name",
+        "lbl_model_image_detect_class_id": "Class id"
       },
       "dialog_export_model": {
         "title_save_taxonomy": "Save taxonomy to"

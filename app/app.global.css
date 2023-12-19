@@ -560,3 +560,7 @@ div.leaflet-draw-toolbar.leaflet-bar.leaflet-draw-toolbar-top > a.leaflet-draw-d
   background-image: url(components/pictures/repeat-white.svg);
   background-color: #1d70f7;
 }
+.model-classes-container {
+  margin-bottom: 10px;
+  padding-top:10px;
+}

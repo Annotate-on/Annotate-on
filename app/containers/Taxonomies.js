@@ -4,9 +4,12 @@ import Component from '../components/Taxonomies';
 import {
     importTaxonomy,
     removeTaxonomy,
+    removeImageDetectModel,
     saveTaxonomy,
     setSelectedTaxonomy,
-    updateTaxonomiesStatus
+    updateTaxonomiesStatus,
+    saveImageDetectModel,
+    updateImageDetectModelStatus
 } from "../actions/app";
 import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
@@ -16,7 +19,8 @@ const mapStateToProps = state => {
     return {
         taxonomies: state.app.taxonomies,
         selectedTaxonomy: state.app.selectedTaxonomy,
-        projectName: state.app.selectedProjectName
+        projectName: state.app.selectedProjectName,
+        imageDetectModels: state.app.imageDetectModels
     };
 };
 
@@ -25,6 +29,12 @@ const mapDispatchToProps = dispatch => {
         saveTaxonomy: (id, name, path, model, version) => {
             return new Promise(resolve => {
                 dispatch(saveTaxonomy(id, name, path, model, version));
+                resolve();
+            })
+        },
+        saveImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => {
+            return new Promise(resolve => {
+                dispatch(saveImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses));
                 resolve();
             })
         },
@@ -37,12 +47,19 @@ const mapDispatchToProps = dispatch => {
         removeTaxonomy: (id) => {
             dispatch(removeTaxonomy(id));
         },
+        removeImageDetectModel: (id) => {
+            dispatch(removeImageDetectModel(id));
+        },
         setSelectedTaxonomy: (id) => {
             dispatch(setSelectedTaxonomy(id))
         },
         updateTaxonomiesStatus: (id, isActive, model) => {
             dispatch(updateTaxonomiesStatus(id, isActive, model));
         },
+        updateImageDetectModelStatus: (id, isActive, model) => {
+            dispatch(updateImageDetectModelStatus(id, isActive, model));
+        },
+
         goTo: (path) => {
             dispatch(push(path));
         },

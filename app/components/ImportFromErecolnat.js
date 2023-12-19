@@ -159,7 +159,7 @@ export default class extends Component {
             metadata.decimallatitude = specimen.decimallatitude;
             metadata.decimallongitude = specimen.decimallongitude;
             metadata.recordnumber = specimen.recordnumber;
-
+            metadata.mediaurl = specimen.m_[0].identifier;
 
             specimen.m_.map(spec => {
                 // Picture
