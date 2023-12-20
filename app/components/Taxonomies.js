@@ -76,12 +76,62 @@ export default class extends Component {
             modelClassIdItemInput: '',
             form: {
                 modelClassItem: '',
+                id: '',
+                model: '',
+                modelImageDetectName: '',
+                modelImageDetectUrl: '',
+                modelImageDetectUser: '',
+                modelImageDetectPwd: '',
+                modelImageDetectDesc: '',
+                modelImageDetectConfidence: '',
                 modelClasses: []
             },
+
         };
         this.handleModelClassNameInputChangeForEdit = this.handleModelClassNameInputChangeForEdit.bind(this);
         this.handleModelClassIdInputChangeForEdit = this.handleModelClassIdInputChangeForEdit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+
+        if(!this.props.imageDetectModels){
+            const id = chance.guid();
+            this.props.saveImageDetectModel(
+                id,
+                'IRD Image detect  model',
+                MODEL_IMAGE_DETECT,
+                0,
+                'https://plantai.ummisco.fr/image',
+                '',
+                '',
+                'Default service IRD',
+                '0',
+                [
+                    {
+                        "id":"O",
+                        "name":"leaf"
+                    },
+                    {
+                        "id":"1",
+                        "name":"root"
+                    },
+                    {
+                        "id":"2",
+                        "name":"stem"
+                    },
+                    {
+                        "id":"3",
+                        "name":"flower"
+                    },
+                    {
+                        "id":"4",
+                        "name":"fruit"
+                    },
+                    {
+                        "id":"5",
+                        "name":"seed"
+                    }
+                ]
+            )
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -306,6 +356,24 @@ export default class extends Component {
                     return;
                 }
                 this._exportTaxonomy(data.taxonomy);
+                break;
+            case 'edit_imageDetect':
+                const imageDetectModel = this.state.imageDetectModels.find(imageDetectModels => data.imageDetectModel.id === imageDetectModels.id);
+                this.setState({
+                    // modalTitle: t('models.target_descriptors.dialog_edit.title_edit_character'),
+                    form: {
+                        id: imageDetectModel.id,
+                        model: imageDetectModel.model,
+                        modelImageDetectName: imageDetectModel.name,
+                        modelImageDetectUrl: imageDetectModel.url_service,
+                        modelImageDetectUser: imageDetectModel.user,
+                        modelImageDetectPwd: imageDetectModel.password,
+                        modelImageDetectDesc: imageDetectModel.description,
+                        modelImageDetectConfidence: imageDetectModel.confidence,
+                        modelClasses: imageDetectModel.modelClasses
+                    }}
+                );
+                this._toggleImageDetect();
                 break;
             case 'view_imageDetect':
                 this._viewImageDetectModel(data.imageDetectModel);
@@ -765,6 +833,10 @@ export default class extends Component {
                                     <img alt="select all" className='select-all' src={LIST_ICON}/>&nbsp;{t('global.view')}
                                 </MenuItem>
                                 <MenuItem divider/>
+                                {/*<MenuItem data={{action: 'edit_imageDetect'}} onClick={this._handleContextMenu}>*/}
+                                {/*    <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}*/}
+                                {/*</MenuItem>*/}
+                                {/*<MenuItem divider/>*/}
                                 <MenuItem data={{action: 'delete_imageDetect'}} onClick={this._handleContextMenu}>
                                     <img alt="delete" src={DELETE_IMAGE_CONTEXT}/>&nbsp;{t('global.delete')}
                                 </MenuItem>
