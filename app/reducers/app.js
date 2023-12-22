@@ -98,6 +98,7 @@ import {
     SAVE_TARGET_TYPE,
     SAVE_TAXONOMY,
     SAVE_IMAGE_DETECT_MODEL,
+    EDIT_IMAGE_DETECT_MODEL,
     SELECT_FOLDER,
     SELECT_FOLDER_GLOBALLY,
     SELECT_LIBRARY_TAB,
@@ -3404,6 +3405,7 @@ export default (state = {}, action) => {
         case SAVE_IMAGE_DETECT_MODEL: {
             const counter = state.counter + 1;
             const imageDetectModels = state.imageDetectModels || [];
+            debugger
             return {
                 ...state, counter, imageDetectModels: [...imageDetectModels, {
                     id: action.id,
@@ -3420,6 +3422,20 @@ export default (state = {}, action) => {
                     modelClasses: action.modelClasses
                 }]
             };
+        }
+
+        case EDIT_IMAGE_DETECT_MODEL: {
+            const counter = state.counter + 1;
+            return {
+                ...state, counter,
+                imageDetectModels: state.imageDetectModels.map(model => {
+                    if (model.id === action.payload.id) {
+                        return { ...model, ...action.payload };
+                    }
+                    return model;
+                }),
+            };
+
         }
 
         case CHANGE_IMAGE_DETECT_MODEL_STATUS: {

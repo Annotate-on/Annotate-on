@@ -9,6 +9,7 @@ import {
     setSelectedTaxonomy,
     updateTaxonomiesStatus,
     saveImageDetectModel,
+    editImageDetectModel,
     updateImageDetectModelStatus
 } from "../actions/app";
 import {push} from "connected-react-router";
@@ -35,6 +36,12 @@ const mapDispatchToProps = dispatch => {
         saveImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => {
             return new Promise(resolve => {
                 dispatch(saveImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses));
+                resolve();
+            })
+        },
+        editImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => {
+            return new Promise(resolve => {
+                dispatch(editImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses));
                 resolve();
             })
         },

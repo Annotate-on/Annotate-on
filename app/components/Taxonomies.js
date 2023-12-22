@@ -106,7 +106,7 @@ export default class extends Component {
                 '0',
                 [
                     {
-                        "id":"O",
+                        "id":"0",
                         "name":"leaf"
                     },
                     {
@@ -200,6 +200,20 @@ export default class extends Component {
     };
 
     _toggleImageDetect = () => {
+        if(this.state.modalImageDetect === true){
+            this.setState({
+                form: {
+                    id: '',
+                    modelImageDetectName: '',
+                    modelImageDetectUrl: '',
+                    modelImageDetectUser: '',
+                    modelImageDetectPwd: '',
+                    modelImageDetectDesc: '',
+                    modelImageDetectConfidence: '',
+                    modelClasses: []
+                }
+            })
+        }
         this.setState({
             modalImageDetect: !this.state.modalImageDetect
         });
@@ -222,28 +236,74 @@ export default class extends Component {
     };
 
     _saveImageDetectModel = () => {
-        if (this.state.modelImageDetectName) {
+        if (this.state.form.modelImageDetectName) {
             this.setState({
                 modalImageDetect: false,
                 modelImageDetectName: null
             });
-            const id = chance.guid();
-            this.props.saveImageDetectModel(
-                id,
-                this.state.modelImageDetectName,
-                MODEL_IMAGE_DETECT,
-                0,
-                this.state.modelImageDetectUrl,
-                this.state.modelImageDetectUser,
-                this.state.modelImageDetectPwd,
-                this.state.modelImageDetectDesc,
-                this.state.modelImageDetectConfidence,
-                this.state.form.modelClasses
-            ).then(_ => {
+            if (this.state.form.id){
+                const id = this.state.form.id;
+                this.props.editImageDetectModel({
+                    id,
+                    name: this.state.form.modelImageDetectName,
+                    model: MODEL_IMAGE_DETECT,
+                    version: 0,
+                    url_service: this.state.form.modelImageDetectUrl,
+                    user: this.state.form.modelImageDetectUser,
+                    password: this.state.form.modelImageDetectPwd,
+                    description: this.state.form.modelImageDetectDesc,
+                    confidence: this.state.form.modelImageDetectConfidence,
+                    modelClasses: this.state.form.modelClasses
+                }).then(_ => {
                     this.setState({
+                        form: {
+                            id: '',
+                            modelImageDetectName: '',
+                            modelImageDetectUrl: '',
+                            modelImageDetectUser: '',
+                            modelImageDetectPwd: '',
+                            modelImageDetectDesc: '',
+                            modelImageDetectConfidence: '',
+                            modelClasses: []
+                        },
+                        showView: LIST
+                    });
+                    const imageDetectModelCheck = this.state.imageDetectModels.find(obj => obj.id === id)
+                    const isImageDetectModelActive = imageDetectModelCheck?.isActive
+                    if(isImageDetectModelActive){
+                        this.props.updateImageDetectModelStatus(id, true, {})
+                    }
+                })
+            }
+            else {
+                const id = chance.guid();
+                this.props.saveImageDetectModel(
+                    id,
+                    this.state.form.modelImageDetectName,
+                    MODEL_IMAGE_DETECT,
+                    0,
+                    this.state.form.modelImageDetectUrl,
+                    this.state.form.modelImageDetectUser,
+                    this.state.form.modelImageDetectPwd,
+                    this.state.form.modelImageDetectDesc,
+                    this.state.form.modelImageDetectConfidence,
+                    this.state.form.modelClasses
+                ).then(_ => {
+                    this.setState({
+                        form: {
+                            id: '',
+                            modelImageDetectName: '',
+                            modelImageDetectUrl: '',
+                            modelImageDetectUser: '',
+                            modelImageDetectPwd: '',
+                            modelImageDetectDesc: '',
+                            modelImageDetectConfidence: '',
+                            modelClasses: []
+                        },
                         showView: LIST
                     });
                 })
+            }
         }
     };
 
@@ -454,15 +514,16 @@ export default class extends Component {
         }
     };
     _saveModelClassItem = () => {
+        debugger
         const { t } = this.props;
         if(!this.state.modelClassNameItemInput || !this.state.modelClassIdItemInput) {
             alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_is_empty'));
             return;
         }
-        if (this.state.form.modelClasses.some(value => value.name === this.state.modelClassNameItemInput) || this.state.form.modelClasses.some(value => value.id === this.state.modelClassIdItemInput)) {
-            alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_already_exist'));
-            return;
-        }
+        // if (this.state.form.modelClasses.some(value => value.name === this.state.modelClassNameItemInput) || this.state.form.modelClasses.some(value => value.id === this.state.modelClassIdItemInput)) {
+        //     alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_already_exist'));
+        //     return;
+        // }
         if (this.state.modelClassItemModalInEdit) {
             const modelClassItem = this.state.form.modelClasses.find(value => value.id === this.state.form.modelClassItem);
             modelClassItem.name = this.state.modelClassNameItemInput;
@@ -833,10 +894,10 @@ export default class extends Component {
                                     <img alt="select all" className='select-all' src={LIST_ICON}/>&nbsp;{t('global.view')}
                                 </MenuItem>
                                 <MenuItem divider/>
-                                {/*<MenuItem data={{action: 'edit_imageDetect'}} onClick={this._handleContextMenu}>*/}
-                                {/*    <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}*/}
-                                {/*</MenuItem>*/}
-                                {/*<MenuItem divider/>*/}
+                                <MenuItem data={{action: 'edit_imageDetect'}} onClick={this._handleContextMenu}>
+                                    <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}
+                                </MenuItem>
+                                <MenuItem divider/>
                                 <MenuItem data={{action: 'delete_imageDetect'}} onClick={this._handleContextMenu}>
                                     <img alt="delete" src={DELETE_IMAGE_CONTEXT}/>&nbsp;{t('global.delete')}
                                 </MenuItem>
@@ -855,10 +916,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_name')}</Label>
                                         <Col sm={7}>
                                             <Input type="text" name="modelImageDetectName" id="modelImageDetectName" autoFocus={true}
+                                                   defaultValue={this.state.form.modelImageDetectName}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectName: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectName: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
@@ -868,10 +933,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_url')}</Label>
                                         <Col sm={7}>
                                             <Input type="text" name="modelImageDetectUrl" id="modelImageDetectUrl"
+                                                   defaultValue={this.state.form.modelImageDetectUrl}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectUrl: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectUrl: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
@@ -881,10 +950,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_user')}</Label>
                                         <Col sm={7}>
                                             <Input type="text" name="modelImageDetectUser" id="modelImageDetectUser"
+                                                   defaultValue={this.state.form.modelImageDetectUser}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectUser: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectUser: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
@@ -894,10 +967,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_pwd')}</Label>
                                         <Col sm={7}>
                                             <Input type="text" name="modelImageDetectPwd" id="modelImageDetectPwd"
+                                                   defaultValue={this.state.form.modelImageDetectPwd}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectPwd: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectPwd: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
@@ -907,10 +984,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_desc')}</Label>
                                         <Col sm={7}>
                                             <Input type="textarea" name="modelImageDetectDesc" id="modelImageDetectDesc" rows={3}
+                                                   defaultValue={this.state.form.modelImageDetectDesc || ''}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectDesc: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectDesc: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
@@ -920,10 +1001,14 @@ export default class extends Component {
                                                sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_confidence')} (%)</Label>
                                         <Col sm={7}>
                                             <Input type="text" name="modelImageDetectConfidence" id="modelImageDetectConfidence"
+                                                   defaultValue={this.state.form.modelImageDetectConfidence}
                                                    onChange={(e) => {
                                                        this.setState({
-                                                           modelImageDetectConfidence: e.target.value
-                                                       })
+                                                           form: {
+                                                               ...this.state.form,
+                                                               modelImageDetectConfidence: e.target.value,
+                                                           },
+                                                       });
                                                    }}
                                             />
                                         </Col>
