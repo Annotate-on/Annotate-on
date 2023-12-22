@@ -107,6 +107,7 @@ export const EMPTY_TAGS = 'EMPTY_TAGS';
 export const LOCK_SELECTION = 'LOCK_SELECTION';
 export const SAVE_TAXONOMY = 'SAVE_TAXONOMY';
 export const SAVE_IMAGE_DETECT_MODEL = 'SAVE_IMAGE_DETECT_MODEL';
+export const EDIT_IMAGE_DETECT_MODEL = 'EDIT_IMAGE_DETECT_MODEL';
 export const CHANGE_IMAGE_DETECT_MODEL_STATUS = 'CHANGE_IMAGE_DETECT_MODEL_STATUS';
 export const IMPORT_TAXONOMY = 'IMPORT_TAXONOMY';
 export const REMOVE_TAXONOMY = 'REMOVE_TAXONOMY';
@@ -763,6 +764,15 @@ export const saveImageDetectModel = (id, name, model, version, url_service, user
     id, name, model, version, url_service, user, password, description, confidence, modelClasses
 });
 
+// export const editImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({
+//     type: EDIT_IMAGE_DETECT_MODEL,
+//     id, name, model, version, url_service, user, password, description, confidence, modelClasses
+// });
+
+export const editImageDetectModel = (payload) => ({
+    type: EDIT_IMAGE_DETECT_MODEL,
+    payload
+});
 export const updateImageDetectModelStatus = (id, isActive, model) => ({
     type: CHANGE_IMAGE_DETECT_MODEL_STATUS,
     id,

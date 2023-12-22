@@ -88,7 +88,7 @@ processIIIFManifest = async (manifestUrl) => {
         throw new Error(`Failed to fetch IIIF manifest. Status: ${response.status}`);
     }
     const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
+    if (!contentType || !contentType.includes('application/json') && !contentType.includes('application/ld+json')) {
         throw new Error('Invalid content type. Expected JSON.');
     }
 
