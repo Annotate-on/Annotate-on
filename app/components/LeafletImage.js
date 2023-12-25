@@ -475,6 +475,25 @@ class LeafletImage extends Component {
                     annotationsRectangular: nextProps.annotationsRectangular
                 })
             }
+            if (this._recolnatPrint) {
+                this._recolnatPrint.initialize({
+                    annotationsPointsOfInterest: nextProps.annotationsPointsOfInterest,
+                    annotationsMeasuresLinear: nextProps.annotationsMeasuresLinear,
+                    annotationsRectangular: nextProps.annotationsRectangular,
+                    annotationsPolygon: nextProps.annotationsPolygon,
+                    annotationsAngle: nextProps.annotationsAngle,
+                    annotationsColorPicker: nextProps.annotationsColorPicker,
+                    annotationsOccurrence: nextProps.annotationsOccurrence,
+                    annotationsTranscription: nextProps.annotationsTranscription,
+                    annotationsRichtext: nextProps.annotationsRichtext,
+                    annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest,
+                    annotationsPolygonOfInterest: nextProps.annotationsPolygonOfInterest
+                })
+            }
+            if (this._imageDetectService) {
+                this._imageDetectService.initialize({
+                })
+            }
         }
     };
 
@@ -707,6 +726,9 @@ class LeafletImage extends Component {
                 if (this.state.enableToolBox)
                     this.editControlFirst.leafletElement.addTo(map);
             }
+            this._imageDetectService = L.ImageDetectService({
+                picture: this.props.currentPicture
+            }).addTo(map);
         }
     };
 

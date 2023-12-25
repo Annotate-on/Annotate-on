@@ -17,6 +17,7 @@ import './leaflet-control-menu'
 import './leaflet-chronotematic'
 import './leaflet-circle-of-interest'
 import './leaflet-polygon-of-interest'
+import './leaflet-image-detect-button'
 
 i18next.on('languageChanged', () => {
     overrideLeafletDefaultLabels();

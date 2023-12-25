@@ -593,7 +593,9 @@
         "tooltip_click_cancel_to_undo_changes": "Cliquer sur cancel pour annuler les changements",
         "btn_tooltip_circle_of_interest": "Cercle d'intérêt",
         "btn_tooltip_polygon_of_interest": "Polygone d'intérêt",
-        "btn_tooltip_chronotematic": "Annotation chronothematique"
+        "btn_tooltip_chronotematic": "Annotation chronothematique",
+        "btn_tooltip_image_detect_service": "Annoter l'image avec le service Image Detect",
+        "alert_bad_image_detect_response": "Vérifiez votre URL de service Image Detect"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "L'événement est près de sa fin, voulez-vous le prolonger de 30mn ?",

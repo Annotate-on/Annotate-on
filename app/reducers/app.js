@@ -600,7 +600,6 @@ export default (state = {}, action) => {
         case CREATE_ANNOTATION_RECTANGULAR: {
             const counter = state.counter + 1;
             const {type, ...payload} = action;
-
             // Get greatest auto generated number from annotation name.
             const patt = /REC-(\d+)/g;
             const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_rectangular);
