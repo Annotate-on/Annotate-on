@@ -11,6 +11,7 @@ export const CREATE_ANNOTATION_MEASURE_SIMPLELINE = 'CREATE_ANNOTATION_MEASURE_S
 export const CREATE_ANNOTATION_MEASURE_POLYLINE = 'CREATE_ANNOTATION_MEASURE_POLYLINE';
 export const CREATE_ANNOTATION_POINT_OF_INTEREST = 'CREATE_ANNOTATION_POINT_OF_INTEREST';
 export const CREATE_ANNOTATION_RECTANGULAR = 'CREATE_ANNOTATION_RECTANGULAR';
+export const CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR = 'CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR';
 export const CREATE_ANNOTATION_POLYGON = 'CREATE_ANNOTATION_POLYGON';
 export const CREATE_ANNOTATION_ANGLE = 'CREATE_ANNOTATION_ANGLE';
 export const CREATE_ANNOTATION_OCCURRENCE = 'CREATE_ANNOTATION_OCCURRENCE';
@@ -202,6 +203,16 @@ export const createAnnotationPointOfInterest = (pictureId, x, y, id, video) => {
 export const createAnnotationRectangular = (pictureId, vertices, id, video) => {
     return {
         type: CREATE_ANNOTATION_RECTANGULAR,
+        pictureId,
+        vertices,
+        id,
+        video
+    };
+};
+
+export const createImageDetectAnnotationRectangular = (pictureId, vertices, id, video) => {
+    return {
+        type: CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR,
         pictureId,
         vertices,
         id,

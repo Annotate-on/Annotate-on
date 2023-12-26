@@ -2,7 +2,8 @@ import L from "leaflet";
 import React, { Component } from 'react';
 import i18next from "i18next";
 import { getImageDetectAnnotations } from '../utils/imageDetectService';
-import {createAnnotationRectangular} from '../actions/app';
+import {createIMageDetectAnnotationRectangular} from '../actions/app';
+
 
 L.Control.ImageDetectService = L.Control.extend({
     options: {
@@ -38,17 +39,29 @@ L.Control.ImageDetectService = L.Control.extend({
         getImageDetectAnnotations(picture_url, (result) => {
             console.log('response from image detect:', result);
 
-            ///// TODO create annotations from result
-/*            createAnnotationRectangular('5e74c583a3c7eb9460d0e281f9d5bef0fb6066f8',{
-                    "x": 200,
-                    "y": 200
-                },
-                {
-                    "x": 500,
-                    "y": 500
-                },'123',false)*/
-       });
+            // TODO: Process 'result' and create annotations
+
+            // Example: Create rectangular annotations
+            // result.forEach(annotation => {
+            //     const { x, y, width, height } = annotation.boundingBox;
+            //     const vertices = [
+            //         { x, y },
+            //         { x: x + width, y },
+            //         { x: x + width, y: y + height },
+            //         { x, y: y + height },
+            //     ];
+            //
+            //     // Assuming you have the pictureId and video parameters
+            //     const pictureId = '5e74c583a3c7eb9460d0e281f9d5bef0fb6066f8';
+            //     const video = false;
+            //
+            //     // Dispatch the action to create a rectangular annotation
+                 createImageDetectAnnotationRectangular("pictureId", "vertices", "annotation.id", "");
+            // });
+
+        });
     },
+
 });
 
 L.ImageDetectService = function (picture_url) {

@@ -23,6 +23,7 @@ import {
     CREATE_ANNOTATION_POLYGON,
     CREATE_ANNOTATION_RATIO,
     CREATE_ANNOTATION_RECTANGULAR,
+    CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR,
     CREATE_ANNOTATION_RICHTEXT,
     CREATE_ANNOTATION_TRANSCRIPTION,
     CREATE_CARTEL,
@@ -595,6 +596,46 @@ export default (state = {}, action) => {
                     })
                 }
             };
+        }
+            break;
+        case CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR: {
+            debugger
+            // const counter = state.counter + 1;
+            // const {type, ...payload} = action;
+            // // Get greatest auto generated number from annotation name.
+            // const patt = /REC-(\d+)/g;
+            // const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_rectangular);
+            //
+            // if (payload.vertices && payload.vertices.length < 4) {
+            //     console.log('Size or vertices array is missing last point. %o', payload);
+            //     payload.vertices.push(payload.vertices[0]);
+            // }
+            //
+            // return {
+            //     ...state,
+            //     counter,
+            //     annotations_rectangular: {
+            //         ...state.annotations_rectangular,
+            //         [payload.pictureId]: [
+            //             {
+            //                 ...payload,
+            //                 annotationType: ANNOTATION_RECTANGLE,
+            //                 creationDate: NOW_DATE,
+            //                 creationTimestamp: NOW_TIMESTAMP,
+            //                 title: `REC-${max}`
+            //             },
+            //             ...(state.annotations_rectangular[payload.pictureId] || [])
+            //         ].sort((left, right) => {
+            //             if (left.title > right.title) {
+            //                 return -1;
+            //             }
+            //             if (left.title < right.title) {
+            //                 return 1;
+            //             }
+            //             return 0;
+            //         })
+            //     }
+            // };
         }
             break;
         case CREATE_ANNOTATION_RECTANGULAR: {
