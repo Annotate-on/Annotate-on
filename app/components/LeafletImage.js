@@ -266,7 +266,8 @@ class LeafletImage extends Component {
             currentPicture: props.currentPicture,
             sha1: props.currentPicture.sha1,
             control: null,
-            enableToolBox: true
+            enableToolBox: true,
+            selectedImageDetectModel: props.selectedImageDetectModel
         };
 
         SIMPLELINE_OPTIONS.repeatMode = props.repeatMode;
@@ -439,6 +440,10 @@ class LeafletImage extends Component {
                     annotationsRichtext: nextProps.annotationsRichtext,
                     annotationsCircleOfInterest: nextProps.annotationsCircleOfInterest,
                     annotationsPolygonOfInterest: nextProps.annotationsPolygonOfInterest
+                })
+            }
+            if (this._imageDetectService) {
+                this._imageDetectService.initialize({
                 })
             }
         }
@@ -717,8 +722,16 @@ class LeafletImage extends Component {
                 repeatModeHandler: this._setRepeatMode,
                 defaultValue: this.props.repeatMode
             });
+
+
+
             if (this.state.enableToolBox)
                 this._recolnatControlMenu.addTo(map);
+
+            this._imageDetectService = L.ImageDetectService({
+                picture: this.props.currentPicture,
+                urlImageDetect: this.props.selectedImageDetectModel
+            }).addTo(map);
 
             // This is workaround to make recolnat control menu appear on first palace
             if (this.editControlFirst) {
@@ -726,9 +739,8 @@ class LeafletImage extends Component {
                 if (this.state.enableToolBox)
                     this.editControlFirst.leafletElement.addTo(map);
             }
-            this._imageDetectService = L.ImageDetectService({
-                picture: this.props.currentPicture
-            }).addTo(map);
+
+
         }
     };
 
@@ -802,6 +814,9 @@ class LeafletImage extends Component {
         this.leafletMap.leafletElement.off('moveend', this._mapZoomOrMoveEvent, this);
         if (this._recolnatPrint) {
             this._recolnatPrint.remove();
+        }
+        if(this._imageDetectService) {
+        this._imageDetectService.remove();
         }
         if (this._recolnatZoiExport) {
             this._recolnatZoiExport.remove();
@@ -1066,6 +1081,7 @@ class LeafletImage extends Component {
         this.editControlFirst.leafletElement.remove();
         this._recolnatControlMenu.remove();
         this._recolnatPrint.remove();
+        this._imageDetectService.remove();
         this._recolnatZoiExport.remove()
         this.props.onContextMenuEvent(selectedAnnotation.annotationId, selectedAnnotation.annotationType, EDIT_EVENT);
         selectedAnnotation = null;
@@ -1151,7 +1167,9 @@ class LeafletImage extends Component {
         });
 
         this._recolnatControlMenu.addTo(this.leafletMap.leafletElement);
+
         this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement);
+        this._imageDetectService.addTo(this.leafletMap.leafletElement);
         this._recolnatPrint.addTo(this.leafletMap.leafletElement);
         this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         return editedLayer;
@@ -1284,15 +1302,20 @@ class LeafletImage extends Component {
 
     showHideToolbar = (show) => {
         if (show) {
-            if (this.state.enableToolBox)
+
+            // if (this.state.enableToolBox){
                 this._recolnatControlMenu.addTo(this.leafletMap.leafletElement)
+            // }
             this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement)
+            this._imageDetectService.addTo(this.leafletMap.leafletElement);
             this._recolnatPrint.addTo(this.leafletMap.leafletElement);
+
             this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         } else {
             this.editControlFirst.leafletElement.remove();
             this._recolnatControlMenu.remove();
             this._recolnatPrint.remove();
+            this._imageDetectService.remove();
             this._recolnatZoiExport.remove();
         }
     };

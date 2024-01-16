@@ -36,7 +36,8 @@ import {
     saveLeafletSettings,
     updateTaxonomyValues,
     createAnnotationCircleOfInterest, deleteAnnotationCircleOfInterest,
-    createAnnotationPolygonOfInterest, deleteAnnotationPolygonOfInterest
+    createAnnotationPolygonOfInterest, deleteAnnotationPolygonOfInterest,
+    createImageDetectAnnotationRectangular
 } from '../actions/app';
 import {withTranslation} from "react-i18next";
 
@@ -75,6 +76,7 @@ const mapStateToProps = (state, ownProps) => {
         repeatMode: state.app.leafletSettings.repeatMode,
         taxonomyInstance,
         projectName: state.app.selectedProjectName,
+        selectedImageDetectModel: state.app.selectedImageDetectModel
     };
 };
 
@@ -91,6 +93,9 @@ const mapDispatchToProps = dispatch => {
         },
         createAnnotationRectangular: (pictureId, vertices, id, video) => {
             dispatch(createAnnotationRectangular(pictureId, vertices, id, video));
+        },
+        createImageDetectAnnotationRectangular: (pictureId, vertices, id, confidence, name) => {
+            dispatch(createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name));
         },
         createAnnotationPolygon: (pictureId, vertices, area, id) => {
             dispatch(createAnnotationPolygon(pictureId, vertices, area, id));
