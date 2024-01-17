@@ -47,9 +47,7 @@ L.Control.ImageDetectService = L.Control.extend({
                     // console.log(`Class: ${classLabel}, Confidence: ${confidence}, Name: ${name}, Vertices: ${vertices}`);
                     ee.emit(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this.options.picture.sha1, vertices, confidence, name)
                 });
-            // _fireSaveEvent = (event) => {
-            //     this.setState({fireSaveEvent: event});
-            // };
+            this.options.leafletImage._drawAnnotations();
         });
     },
 });

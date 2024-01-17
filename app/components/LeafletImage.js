@@ -730,7 +730,8 @@ class LeafletImage extends Component {
 
             this._imageDetectService = L.ImageDetectService({
                 picture: this.props.currentPicture,
-                urlImageDetect: this.props.selectedImageDetectModel
+                urlImageDetect: this.props.selectedImageDetectModel,
+                leafletImage: this
             }).addTo(map);
 
             // This is workaround to make recolnat control menu appear on first palace
