@@ -35,19 +35,22 @@ L.Control.ImageDetectService = L.Control.extend({
 
     _callImageDetect: function (event) {
         getImageDetectAnnotations(this.options.urlImageDetect.url_service, this.options.picture.erecolnatMetadata.mediaurl, (result) => {
-
-            const resultArray = result.result || [];
-            const filteredResults = resultArray.filter(detection1 => detection1.confidence >= (this.options.urlImageDetect.confidence / 100));
-                filteredResults.forEach(detection => {
-                    const { xmax, xmin, ymax, ymin } = detection;
-                    const vertices = convertBoundingBoxToVertices(xmax, xmin, ymax, ymin);
-                    // const classLabel = detection.class;
-                    const confidence = detection.confidence;
-                    const name = detection.name;
-                    // console.log(`Class: ${classLabel}, Confidence: ${confidence}, Name: ${name}, Vertices: ${vertices}`);
-                    ee.emit(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this.options.picture.sha1, vertices, confidence, name)
-                });
-            this.options.leafletImage._drawAnnotations();
+            if(result != null){
+                let counter = 0;
+                const resultArray = result.result || [];
+                const filteredResults = resultArray.filter(detection1 => detection1.confidence >= (this.options.urlImageDetect.confidence / 100));
+                    filteredResults.forEach(detection => {
+                        const { xmax, xmin, ymax, ymin } = detection;
+                        const vertices = convertBoundingBoxToVertices(xmax, xmin, ymax, ymin);
+                        // const classLabel = detection.class;
+                        const confidence = detection.confidence;
+                        const name = detection.name;
+                        // console.log(`Class: ${classLabel}, Confidence: ${confidence}, Name: ${name}, Vertices: ${vertices}`);
+                        counter += 1;
+                        ee.emit(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this.options.picture.sha1, vertices, confidence, name, counter)
+                    });
+                this.options.leafletImage._drawAnnotations();
+            }
         });
     },
 });

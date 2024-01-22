@@ -599,18 +599,23 @@ export default (state = {}, action) => {
         }
             break;
         case CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR: {
-            // debugger
-             const counter = state.counter + 1;
-             const {type, ...payload} = action;
-            // Get greatest auto generated number from annotation name.
-            const patt = /IMDT-(\d+)/g;
-            const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_rectangular);
-
+              // debugger
+            function areVerticesEqual(vertices1, vertices2) {
+                return JSON.stringify(vertices1) === JSON.stringify(vertices2);
+            }
+            const counter = action.counter;
+            const {type, ...payload} = action;
             if (payload.vertices && payload.vertices.length < 4) {
                 console.log('Size or vertices array is missing last point. %o', payload);
                 payload.vertices.push(payload.vertices[0]);
             }
-
+            const existingAnnotations = state.annotations_rectangular[payload.pictureId] || [];
+            const isDuplicate = existingAnnotations.some((annotation) =>
+                areVerticesEqual(annotation.vertices, payload.vertices)
+            );
+            if (isDuplicate) {
+                return state;
+            }
             return {
                 ...state,
                 counter,
@@ -622,7 +627,7 @@ export default (state = {}, action) => {
                             annotationType: ANNOTATION_RECTANGLE,
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
-                            title: `IMDT-${max}`,
+                            title: `IMDT-${counter}`,
                             value: `${payload.name} (${payload.confidence})`,
                         },
                         ...(state.annotations_rectangular[payload.pictureId] || [])

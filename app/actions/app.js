@@ -210,14 +210,15 @@ export const createAnnotationRectangular = (pictureId, vertices, id, video) => {
     };
 };
 
-export const createImageDetectAnnotationRectangular = (pictureId, vertices, id, confidence, name) => {
+export const createImageDetectAnnotationRectangular = (pictureId, vertices, id, confidence, name, counter) => {
     return {
         type: CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR,
         pictureId,
         vertices,
         id,
         confidence,
-        name
+        name,
+        counter
     };
 };
 

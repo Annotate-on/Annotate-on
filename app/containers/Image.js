@@ -94,8 +94,8 @@ const mapDispatchToProps = dispatch => {
         createAnnotationRectangular: (pictureId, vertices, id, video) => {
             dispatch(createAnnotationRectangular(pictureId, vertices, id, video));
         },
-        createImageDetectAnnotationRectangular: (pictureId, vertices, id, confidence, name) => {
-            dispatch(createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name));
+        createImageDetectAnnotationRectangular: (pictureId, vertices, id, confidence, name, counter) => {
+            dispatch(createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter));
         },
         createAnnotationPolygon: (pictureId, vertices, area, id) => {
             dispatch(createAnnotationPolygon(pictureId, vertices, area, id));

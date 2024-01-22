@@ -173,10 +173,9 @@ class Image extends PureComponent {
             isEventRecordingLive: isEventRecording
         })
     }
-    _createImageDetectAnnotation = (pictureId, vertices, confidence, name) => {
+    _createImageDetectAnnotation = (pictureId, vertices, confidence, name, counter) => {
         const id = chance.guid();
-        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name)
-        // this.props.createAnnotationRectangular(pictureId, vertices, chance.guid())
+        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter)
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
