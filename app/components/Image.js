@@ -51,7 +51,7 @@ import {
     EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION,
     EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
     SHOW_EDIT_MODE_VIOLATION_MODAL,
-    EVENT_UPDATE_EVENT_RECORDING_STATUS, EVENT_UNFOCUS_ANNOTATION
+    EVENT_UPDATE_EVENT_RECORDING_STATUS, EVENT_UNFOCUS_ANNOTATION, EVENT_CREATE_IMAGE_DETECT_ANNOTATION
 } from "../utils/library";
 import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
@@ -136,9 +136,9 @@ class Image extends PureComponent {
             catalognumber: this._extractCatalogNumber(currentPicture),
             videoAnnAddedId: null,
             isAnnotationRecording: false,
-            isEventRecordingLive: false
+            isEventRecordingLive: false,
+            selectedImageDetectModel: this.props.selectedImageDetectModel
         };
-
         this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
         this.makeAnnotationPointOfInterest = this.makeAnnotationPointOfInterest.bind(this);
         this.completeAnnotationRectangular = this.completeAnnotationRectangular.bind(this);
@@ -159,17 +159,23 @@ class Image extends PureComponent {
     componentDidMount() {
         ee.on(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
+        ee.on(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
     }
 
     componentWillUnmount() {
         ee.removeListener(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
+        ee.removeListener(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
     }
 
     _updateEventRecordingStatus = (isEventRecording) => {
         this.setState({
             isEventRecordingLive: isEventRecording
         })
+    }
+    _createImageDetectAnnotation = (pictureId, vertices, confidence, name, counter) => {
+        const id = chance.guid();
+        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter)
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
@@ -442,6 +448,7 @@ class Image extends PureComponent {
                                                       taxonomyInstance={this.props.taxonomyInstance}
                                                       repeatMode={this.props.repeatMode}
                                                       saveLeafletSettings={this.props.saveLeafletSettings}
+                                                      selectedImageDetectModel={this.props.selectedImageDetectModel}
                                         /> : null
                                 }
                                 {

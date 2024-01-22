@@ -592,7 +592,9 @@
         "tooltip_click_cancel_to_undo_changes": "Haga clic en cancelar para deshacer los cambios",
         "btn_tooltip_circle_of_interest": "Círculo de interés",
         "btn_tooltip_polygon_of_interest": "Polígono de interés",
-        "btn_tooltip_chronotematic": "Annotation chronothematic"
+        "btn_tooltip_chronotematic": "Annotation chronothematic",
+        "btn_tooltip_image_detect_service": "Anotar imagen con el servicio Image Detect",
+        "alert_bad_image_detect_response": "Verifique la URL del servicio Image Detect"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "El evento está a punto de expirar, ¿desea prolongarlo otros 30 minutos?",
