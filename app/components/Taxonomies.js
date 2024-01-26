@@ -92,7 +92,7 @@ export default class extends Component {
         this.handleModelClassIdInputChangeForEdit = this.handleModelClassIdInputChangeForEdit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
 
-        if(!this.props.imageDetectModels){
+        if(this.props.imageDetectModels.length == 0){
             const id = chance.guid();
             this.props.saveImageDetectModel(
                 id,

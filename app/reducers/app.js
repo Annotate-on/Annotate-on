@@ -3454,7 +3454,6 @@ export default (state = {}, action) => {
         }
 
         case SAVE_IMAGE_DETECT_MODEL: {
-            debugger
             const counter = state.counter + 1;
             const imageDetectModels = state.imageDetectModels || [];
             return {
@@ -4032,6 +4031,7 @@ export default (state = {}, action) => {
         }
 
         case SAVE_ALIGNMENT_OBJECT: {
+            const counter = state.counter + 1;
             const imageDetectAlignments = state.imageDetectAlignments || [];
 
             // Check if an entry with the same taxonomyId and imageDetectModelId already exists
@@ -4065,7 +4065,7 @@ export default (state = {}, action) => {
                 ];
 
                 return {
-                    ...state,
+                    ...state,counter,
                     imageDetectAlignments: updatedImageDetectAlignments,
                 };
             } else {
@@ -4085,39 +4085,45 @@ export default (state = {}, action) => {
                 ];
 
                 return {
-                    ...state,
+                    ...state,counter,
                     imageDetectAlignments: updatedImageDetectAlignments,
                 };
             }
         }
 
         case REMOVE_ALIGNMENT_OBJECT: {
-            debugger
+            const counter = state.counter + 1;
+            const { taxonomyId, imageDetectModelId } = action;
             const imageDetectAlignments = state.imageDetectAlignments || [];
 
-            // Find the index of the entry with the specified taxonomyId and imageDetectModelId
             const existingIndex = imageDetectAlignments.findIndex(
                 (entry) =>
-                    entry[action.taxonomyId] &&
-                    entry[action.taxonomyId][action.imageDetectModelId]
+                    entry[taxonomyId] &&
+                    entry[taxonomyId][imageDetectModelId]
             );
 
             if (existingIndex !== -1) {
-                // If the entry exists, remove the specified characterId from the array
                 const existingEntry = imageDetectAlignments[existingIndex];
+
+                // Filter out the entry with the specified characterId
                 const updatedEntry = {
                     ...existingEntry,
-                    [action.taxonomyId]: {
-                        ...existingEntry[action.taxonomyId],
-                        [action.imageDetectModelId]: existingEntry[action.taxonomyId][action.imageDetectModelId].filter(
-                            (item) => item.characterId !== action.characterId
-                        ),
+                    [taxonomyId]: {
+                        ...existingEntry[taxonomyId],
+                        [imageDetectModelId]: (
+                            existingEntry[taxonomyId] &&
+                            existingEntry[taxonomyId][imageDetectModelId]
+                        )
+                            ? existingEntry[taxonomyId][imageDetectModelId].filter(
+                                (alignment) => alignment.characterId !== action.alignmentObject
+                            )
+                            : [],
                     },
                 };
 
-                // If there are no more characterIds for the specified model, remove the entire entry
+                // If there are no more alignments for the specified model, remove the entire model entry
                 const updatedImageDetectAlignments =
-                    updatedEntry[action.taxonomyId][action.imageDetectModelId].length > 0
+                    updatedEntry[taxonomyId][imageDetectModelId].length > 0
                         ? [
                             ...imageDetectAlignments.slice(0, existingIndex),
                             updatedEntry,
@@ -4129,14 +4135,16 @@ export default (state = {}, action) => {
                         ];
 
                 return {
-                    ...state,
+                    ...state, counter,
                     imageDetectAlignments: updatedImageDetectAlignments,
                 };
             }
 
-            // If the entry doesn't exist, return the current state
             return state;
         }
+
+
+
 
 
         case DELETE_TARGET_TYPE: {
