@@ -96,6 +96,8 @@ import {
     SAVE_SORTED_ARRAY,
     SAVE_TAGS_SORT,
     SAVE_TARGET_TYPE,
+    SAVE_ALIGNMENT_OBJECT,
+    REMOVE_ALIGNMENT_OBJECT,
     SAVE_TAXONOMY,
     SAVE_IMAGE_DETECT_MODEL,
     EDIT_IMAGE_DETECT_MODEL,
@@ -264,7 +266,10 @@ export const createInitialState = () => ({
         selectedCategory: null,
         selectedCategories: [],
         searchText: null,
-        searchResults: null
+        searchResults: null,
+        imageDetectModels: [],
+        selectedImageDetectModel: null,
+        imageDetectAlignments: []
     }
 });
 
@@ -3403,6 +3408,7 @@ export default (state = {}, action) => {
         }
 
         case SAVE_IMAGE_DETECT_MODEL: {
+            debugger
             const counter = state.counter + 1;
             const imageDetectModels = state.imageDetectModels || [];
             debugger
@@ -3979,6 +3985,114 @@ export default (state = {}, action) => {
             }
             return {...state, counter, taxonomies, selectedTaxonomy};
         }
+
+        case SAVE_ALIGNMENT_OBJECT: {
+            const imageDetectAlignments = state.imageDetectAlignments || [];
+
+            // Check if an entry with the same taxonomyId and imageDetectModelId already exists
+            const existingIndex = imageDetectAlignments.findIndex(
+                (entry) =>
+                    entry[action.taxonomyId] &&
+                    entry[action.taxonomyId][action.imageDetectModelId]
+            );
+
+            if (existingIndex !== -1) {
+                // If an entry exists, update the existing array without duplicates
+                const existingEntry = imageDetectAlignments[existingIndex];
+                const updatedEntry = {
+                    ...existingEntry,
+                    [action.taxonomyId]: {
+                        ...existingEntry[action.taxonomyId],
+                        [action.imageDetectModelId]: [
+                            ...existingEntry[action.taxonomyId][action.imageDetectModelId],
+                            {
+                                imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                characterId: action.alignmentObject.characterId,
+                            },
+                        ],
+                    },
+                };
+
+                const updatedImageDetectAlignments = [
+                    ...imageDetectAlignments.slice(0, existingIndex),
+                    updatedEntry,
+                    ...imageDetectAlignments.slice(existingIndex + 1),
+                ];
+
+                return {
+                    ...state,
+                    imageDetectAlignments: updatedImageDetectAlignments,
+                };
+            } else {
+                // If no entry exists, add a new one
+                const updatedImageDetectAlignments = [
+                    ...imageDetectAlignments,
+                    {
+                        [action.taxonomyId]: {
+                            [action.imageDetectModelId]: [
+                                {
+                                    imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                    characterId: action.alignmentObject.characterId,
+                                },
+                            ],
+                        },
+                    },
+                ];
+
+                return {
+                    ...state,
+                    imageDetectAlignments: updatedImageDetectAlignments,
+                };
+            }
+        }
+
+        case REMOVE_ALIGNMENT_OBJECT: {
+            debugger
+            const imageDetectAlignments = state.imageDetectAlignments || [];
+
+            // Find the index of the entry with the specified taxonomyId and imageDetectModelId
+            const existingIndex = imageDetectAlignments.findIndex(
+                (entry) =>
+                    entry[action.taxonomyId] &&
+                    entry[action.taxonomyId][action.imageDetectModelId]
+            );
+
+            if (existingIndex !== -1) {
+                // If the entry exists, remove the specified characterId from the array
+                const existingEntry = imageDetectAlignments[existingIndex];
+                const updatedEntry = {
+                    ...existingEntry,
+                    [action.taxonomyId]: {
+                        ...existingEntry[action.taxonomyId],
+                        [action.imageDetectModelId]: existingEntry[action.taxonomyId][action.imageDetectModelId].filter(
+                            (item) => item.characterId !== action.characterId
+                        ),
+                    },
+                };
+
+                // If there are no more characterIds for the specified model, remove the entire entry
+                const updatedImageDetectAlignments =
+                    updatedEntry[action.taxonomyId][action.imageDetectModelId].length > 0
+                        ? [
+                            ...imageDetectAlignments.slice(0, existingIndex),
+                            updatedEntry,
+                            ...imageDetectAlignments.slice(existingIndex + 1),
+                        ]
+                        : [
+                            ...imageDetectAlignments.slice(0, existingIndex),
+                            ...imageDetectAlignments.slice(existingIndex + 1),
+                        ];
+
+                return {
+                    ...state,
+                    imageDetectAlignments: updatedImageDetectAlignments,
+                };
+            }
+
+            // If the entry doesn't exist, return the current state
+            return state;
+        }
+
 
         case DELETE_TARGET_TYPE: {
 

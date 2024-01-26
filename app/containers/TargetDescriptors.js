@@ -8,7 +8,9 @@ import {
     editTargetDescriptor,
     editTargetType,
     saveTargetType,
-    setSelectedTaxonomy
+    setSelectedTaxonomy,
+    saveAlignmentObject,
+    removeAlignmentObject
 } from "../actions/app";
 import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
@@ -17,6 +19,7 @@ import {withTranslation} from "react-i18next";
 const mapStateToProps = state => {
     return {
         taxonomy: state.app.selectedTaxonomy,
+        imageDetectAlignments: state.app.imageDetectAlignments
     };
 };
 
@@ -48,6 +51,12 @@ const mapDispatchToProps = dispatch => {
             setTimeout(() => {
                 ee.emit(EVENT_SELECT_TAB, 'library')
             }, 100)
+        },
+        saveAlignmentObject: (taxonomyId, imageDetectModelId, alignmentObject) => {
+        dispatch(saveAlignmentObject(taxonomyId, imageDetectModelId, alignmentObject));
+        },
+        removeAlignmentObject: (taxonomyId, imageDetectModelId, alignmentObject) => {
+        dispatch(removeAlignmentObject(taxonomyId, imageDetectModelId, alignmentObject));
         }
     };
 };

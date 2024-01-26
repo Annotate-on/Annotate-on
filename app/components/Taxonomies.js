@@ -514,7 +514,6 @@ export default class extends Component {
         }
     };
     _saveModelClassItem = () => {
-        debugger
         const { t } = this.props;
         if(!this.state.modelClassNameItemInput || !this.state.modelClassIdItemInput) {
             alert(t('models.target_descriptors.dialog_edit_categorical_state_item.alert_categorical_state_item_is_empty'));
@@ -1145,6 +1144,7 @@ export default class extends Component {
             case ADD_VIEW_DESCRIPTORS:
                 return <TargetDescriptors
                     taxonomyModel={this.state.selectedModel}
+                    imageDetectModel={this.props.selectedImageDetectModel}
                     selectedId={this.state.selectedCharacterId}
                     goBack={() => this.setState({showView: LIST})}/>;
         }

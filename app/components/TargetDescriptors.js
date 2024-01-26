@@ -46,6 +46,12 @@ class TargetDescriptors extends PureComponent {
             modalTitle: 'New character',
             modalTitleEdit: 'Edit character group',
             categoricalStateItemModal: false,
+            imageDetectAlignmentModal: false,
+            selectedImageDetectClass: null,
+            selectedTarget: {
+                targetId: null,
+                targetName: null,
+            },
             categoricalStateItemModalInEdit: false,
             categoricalStateItemInput: '',
             form: {
@@ -63,9 +69,9 @@ class TargetDescriptors extends PureComponent {
             sortBy,
             sortDirection,
             sortedTargets: sorted.sortedTargets,
-            model
+            model,
+            imageDetectModel: this.props.imageDetectModel
         };
-
         this.toggle = this.toggle.bind(this);
         this.toggleTargetType = this.toggleTargetType.bind(this);
         this.saveTarget = this.saveTarget.bind(this);
@@ -75,6 +81,8 @@ class TargetDescriptors extends PureComponent {
         this.handleTargetTypeInputChange = this.handleTargetTypeInputChange.bind(this);
         this.handleTargetTypeInputChangeForEdit = this.handleTargetTypeInputChangeForEdit.bind(this);
         this.handleCategoricalStateInputChangeForEdit = this.handleCategoricalStateInputChangeForEdit.bind(this);
+        this.saveAlignment = this.saveAlignment.bind(this);
+        this._removeAlignment = this._removeAlignment.bind(this);
     }
 
     componentDidMount() {
@@ -195,6 +203,46 @@ class TargetDescriptors extends PureComponent {
         });
     };
 
+    toggleImageDetectAlignmentModal = () => {
+        this.setState({
+            imageDetectAlignmentModal: !this.state.imageDetectAlignmentModal
+        });
+    };
+
+    setAlignment = (targetId, targetName) => {
+        this.setState({
+            selectedTarget: {
+                targetId: targetId,
+                targetName: targetName,
+            },
+            imageDetectAlignmentModal: !this.state.imageDetectAlignmentModal,
+        });
+    };
+
+    handleImageDetectClassChange = (e) => {
+        this.setState({ selectedImageDetectClass: e.target.value });
+    };
+
+    saveAlignment = () => {
+       if(this.state.selectedImageDetectClass != null){
+            const alignmentObject = {
+                characterId: this.state.selectedTarget.targetId,
+                imageDetectClassId: this.state.selectedImageDetectClass,
+                imageDetectClassName: this.state.selectedImageDetectClassName
+            }
+
+            this.props.saveAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, alignmentObject);
+
+            this.setState({
+                imageDetectAlignmentModal: false,
+                selectedTarget: {
+                    targetId: null,
+                    targetName: null,
+                },
+                selectedImageDetectClass: null,
+            });
+        }
+    };
     toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -383,6 +431,7 @@ class TargetDescriptors extends PureComponent {
     }
 
     handleContextMenu = (e, data) => {
+        debugger
         const { t } = this.props;
         switch (data.action) {
             case 'edit':
@@ -416,6 +465,35 @@ class TargetDescriptors extends PureComponent {
                 this.props.deleteTargetDescriptor(this.props.taxonomyModel.id, data.atarget);
                 break;
         }
+    };
+
+    getImageDetectAlignments = () => this.props.imageDetectAlignments || [];
+
+    characterIdExists = (characterID) => {
+        const imageDetectAlignments = this.getImageDetectAlignments();
+        for (const entry of imageDetectAlignments) {
+            const taxonomyEntry = entry[this.props.taxonomyModel.id];
+            const modelEntry = taxonomyEntry && taxonomyEntry[this.state.imageDetectModel.id];
+
+            for (const item of modelEntry || []) {
+                if (item.characterId === characterID) {
+                    // Return the associated imageDetectClassId for the provided characterID
+                    return item.imageDetectClassId;
+                }
+            }
+        }
+        return null;
+    };
+
+    getClassNameById = (classId) => {
+        const { imageDetectModel } = this.state;
+        const modelClass = imageDetectModel.modelClasses.find((type) => type.id === classId);
+        return modelClass ? modelClass.name : null;
+    };
+
+    _removeAlignment = (characterID) => {
+
+        this.props.removeAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, characterID);
     };
 
     render() {
@@ -468,6 +546,8 @@ class TargetDescriptors extends PureComponent {
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    <TableHeader title={`${t('models.target_descriptors.table_column_pairing')}: ${this.state.imageDetectModel.name}`} sortKey="pairing"
+                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -500,6 +580,27 @@ class TargetDescriptors extends PureComponent {
                                             <td>{target.annotationType}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
+                                            <td>
+                                                {/* Render "Set Alignment" button based on the condition */}
+                                                {!this.characterIdExists(target.id) && (
+                                                    <Button color="primary" onClick={() => this.setAlignment(target.id, target.name)}>
+                                                        {t('models.target_descriptors.button_pairing')}
+                                                    </Button>
+                                                )}
+                                                {this.characterIdExists(target.id) !== null && (
+                                                    <div>
+                                                        <strong>{this.getClassNameById(this.characterIdExists(target.id))}</strong>
+                                                        &nbsp;
+                                                        <Button
+                                                        color="danger"
+                                                        className="button_remove_alignement"
+                                                        onClick={() => this._removeAlignment(target.id)}
+                                                        >
+                                                            {t('models.target_descriptors.button_remove_alignement')}
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -702,6 +803,36 @@ class TargetDescriptors extends PureComponent {
                         <ModalFooter>
                             <Button color="primary" onClick={this._saveCategoricalStateItem}>{t('global.save')}</Button>
                             <Button color="secondary" onClick={this.toggleCategoricalStateItemModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.imageDetectAlignmentModal} toggle={this.toggleImageDetectAlignmentModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleImageDetectAlignmentModal}>{t('models.target_descriptors.dialog_image_detect_alignment.title')}</ModalHeader>
+                        <ModalBody>
+                            <Form onSubmit={(e) => {
+                                e.preventDefault();
+                            }}>
+                                <div>
+                                    <strong>{this.state.selectedTarget.targetName} = &nbsp;
+                                        <Input type="select" name="imageDetectClasses" id="imageDetectClasses" className="select-image-detect-class-combo"
+                                        value={this.state.selectedImageDetectClass}
+                                        onChange={this.handleImageDetectClassChange}
+                                    >
+
+                                        <option value="-1">{t('models.target_descriptors.dialog_image_detect_alignment.select_class_combo')}</option>
+                                    {
+                                        this.state.imageDetectModel.modelClasses.map((type, index) => {
+                                            return <option key={`td_${index}`} value={type.id}>{type.name}</option>;
+                                        })
+                                    }
+                                </Input>
+                                </strong>
+                                </div>
+                            </Form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this.saveAlignment}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleImageDetectAlignmentModal}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>
