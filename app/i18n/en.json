@@ -610,7 +610,9 @@
         "tooltip_click_cancel_to_undo_changes": "Click cancel to undo changes",
         "btn_tooltip_circle_of_interest": "Circle of interest",
         "btn_tooltip_polygon_of_interest": "Polygon of interest",
-        "btn_tooltip_chronotematic": "Annotation chronothematic"
+        "btn_tooltip_chronotematic": "Annotation chronothematic",
+        "btn_tooltip_image_detect_service": "Annotate image with Image Detect service",
+        "alert_bad_image_detect_response": "Check your Image Detect service URL"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",

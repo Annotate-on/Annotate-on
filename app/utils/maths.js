@@ -210,3 +210,17 @@ export const _formatTimeDisplayForEvent = (time) => {
     }
     return output;
 }
+
+export const convertBoundingBoxToVertices = (xmax, xmin, ymax, ymin) => {
+    const width = xmax - xmin;
+    const height = ymax - ymin;
+
+    const vertices = [
+        { x: xmin, y: ymin + height },         // Bottom-left
+        { x: xmin, y: ymin },                    // Top-left
+        { x: xmin + width, y: ymin },           // Top-right
+        { x: xmin + width, y: ymin + height }  // Bottom-right
+    ];
+
+    return vertices;
+};
