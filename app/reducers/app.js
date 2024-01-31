@@ -4048,12 +4048,11 @@ export default (state = {}, action) => {
                 const existingClassIdEntry =
                     existingEntry[action.taxonomyId][action.imageDetectModelId] || [];
 
-                const isClassIdAssigned = existingClassIdEntry.some(
-                    (item) => item.imageDetectClassId === action.alignmentObject.imageDetectClassId
-                );
-                // const isClassIdAssigned = false;
+                // const isClassIdAssigned = existingClassIdEntry.some(
+                //     (item) => item.imageDetectClassId === action.alignmentObject.imageDetectClassId
+                // );
 
-                if (!isClassIdAssigned) {
+                // if (!isClassIdAssigned) {
                     let updatedEntry;
                     if(action.alignmentObject.characterId){
                         updatedEntry = {
@@ -4097,12 +4096,12 @@ export default (state = {}, action) => {
                         counter,
                         imageDetectAlignments: updatedImageDetectAlignments,
                     };
-                } else {
-                    // If the imageDetectClassId is already assigned, set an error message
-                    return {
-                        ...state
-                    };
-                }
+                // } else {
+                //     // If the imageDetectClassId is already assigned, set an error message
+                //     return {
+                //         ...state
+                //     };
+                // }
             } else {
                 // If no entry exists, add a new one
                 let updatedImageDetectAlignments;

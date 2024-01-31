@@ -72,7 +72,8 @@ class TargetDescriptors extends PureComponent {
             sortDirection,
             sortedTargets: sorted.sortedTargets,
             model,
-            imageDetectModel: this.props.imageDetectModel || []
+            imageDetectModel: this.props.imageDetectModel || [],
+            errorAlignment: false
         };
         this.toggle = this.toggle.bind(this);
         this.toggleTargetType = this.toggleTargetType.bind(this);
@@ -207,7 +208,15 @@ class TargetDescriptors extends PureComponent {
 
     toggleImageDetectAlignmentModal = () => {
         this.setState({
-            imageDetectAlignmentModal: !this.state.imageDetectAlignmentModal
+            imageDetectAlignmentModal: false,
+            selectedTarget: {
+                targetId: null,
+                targetName: null,
+                targetType: null
+            },
+            selectedImageDetectClass: null,
+            selectedImageDetectClassGroup: null,
+            errorAlignment: false
         });
     };
 
@@ -253,8 +262,26 @@ class TargetDescriptors extends PureComponent {
                 imageDetectClassId: this.state.selectedImageDetectClassGroup
             }
         }
-            this.props.saveAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, alignmentObject);
+        const imageDetectAlignments = this.props.imageDetectAlignments;
+        let isClassIdAssigned = false;
+        const existingIndex = imageDetectAlignments.findIndex(
+            (entry) =>
+                entry[this.props.taxonomyModel.id] &&
+                entry[this.props.taxonomyModel.id][this.state.imageDetectModel.id]
+        );
 
+        if (existingIndex !== -1) {
+            const existingEntry = imageDetectAlignments[existingIndex];
+            const existingClassIdEntry =
+                existingEntry[this.props.taxonomyModel.id][this.state.imageDetectModel.id] || [];
+
+            isClassIdAssigned = existingClassIdEntry.some(
+                (item) => item.imageDetectClassId === this.state.selectedImageDetectClass
+            );
+        }
+
+        if(!isClassIdAssigned){
+            this.props.saveAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, alignmentObject);
             this.setState({
                 imageDetectAlignmentModal: false,
                 selectedTarget: {
@@ -263,10 +290,16 @@ class TargetDescriptors extends PureComponent {
                     targetType: null
                 },
                 selectedImageDetectClass: null,
-                selectedImageDetectClassGroup: null
+                selectedImageDetectClassGroup: null,
+                errorAlignment: false
             });
-
+        }else{
+            this.setState({
+                errorAlignment: true
+            });
+        }
     };
+
     toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -893,6 +926,13 @@ class TargetDescriptors extends PureComponent {
                                 </div>:""
                                 }
                             </Form>
+                            {(this.state.errorAlignment==true)?
+                                <div>
+                                    <br />
+                                    <span>{t('models.target_descriptors.dialog_image_detect_alignment.msg_duplicate_alignment')}</span>
+                                </div>
+                                :""
+                            }
                         </ModalBody>
                         <ModalFooter>
                             <Button color="primary" onClick={this.saveAlignment}>{t('global.save')}</Button>

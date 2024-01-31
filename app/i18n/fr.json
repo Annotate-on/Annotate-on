@@ -858,7 +858,8 @@
         },
         "dialog_image_detect_alignment": {
           "title": "Aligner la classe de Image Detect",
-          "select_class_combo": "Sélectionner la classe Image Detect"
+          "select_class_combo": "Sélectionner la classe Image Detect",
+          "msg_duplicate_alignment": "Couplage pour cette classe existe déjà"
         }
       },
       "import_from_xper": {
