@@ -634,6 +634,7 @@ export default (state = {}, action) => {
                             creationTimestamp: NOW_TIMESTAMP,
                             title: `IMDT-${counter}`,
                             value: `${payload.name} (${payload.confidence})`,
+                            color: "",
                         },
                         ...(state.annotations_rectangular[payload.pictureId] || [])
                     ].sort((left, right) => {
@@ -4042,51 +4043,104 @@ export default (state = {}, action) => {
             );
 
             if (existingIndex !== -1) {
-                // If an entry exists, update the existing array without duplicates
+                // If an entry exists, check if the imageDetectClassId is already assigned to any characterId
                 const existingEntry = imageDetectAlignments[existingIndex];
-                const updatedEntry = {
-                    ...existingEntry,
-                    [action.taxonomyId]: {
-                        ...existingEntry[action.taxonomyId],
-                        [action.imageDetectModelId]: [
-                            ...existingEntry[action.taxonomyId][action.imageDetectModelId],
-                            {
-                                imageDetectClassId: action.alignmentObject.imageDetectClassId,
-                                characterId: action.alignmentObject.characterId,
+                const existingClassIdEntry =
+                    existingEntry[action.taxonomyId][action.imageDetectModelId] || [];
+
+                const isClassIdAssigned = existingClassIdEntry.some(
+                    (item) => item.imageDetectClassId === action.alignmentObject.imageDetectClassId
+                );
+                // const isClassIdAssigned = false;
+
+                if (!isClassIdAssigned) {
+                    let updatedEntry;
+                    if(action.alignmentObject.characterId){
+                        updatedEntry = {
+                            ...existingEntry,
+                            [action.taxonomyId]: {
+                                ...existingEntry[action.taxonomyId],
+                                [action.imageDetectModelId]: [
+                                    ...existingEntry[action.taxonomyId][action.imageDetectModelId],
+                                    {
+                                        imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                        characterId: action.alignmentObject.characterId,
+                                    },
+                                ],
                             },
-                        ],
-                    },
-                };
+                        };
+                    }
+                    if(action.alignmentObject.groupId){
+                        updatedEntry = {
+                            ...existingEntry,
+                            [action.taxonomyId]: {
+                                ...existingEntry[action.taxonomyId],
+                                [action.imageDetectModelId]: [
+                                    ...existingEntry[action.taxonomyId][action.imageDetectModelId],
+                                    {
+                                        imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                        groupId: action.alignmentObject.groupId,
+                                    },
+                                ],
+                            },
+                        };
+                    }
 
-                const updatedImageDetectAlignments = [
-                    ...imageDetectAlignments.slice(0, existingIndex),
-                    updatedEntry,
-                    ...imageDetectAlignments.slice(existingIndex + 1),
-                ];
+                    const updatedImageDetectAlignments = [
+                        ...imageDetectAlignments.slice(0, existingIndex),
+                        updatedEntry,
+                        ...imageDetectAlignments.slice(existingIndex + 1),
+                    ];
 
-                return {
-                    ...state,counter,
-                    imageDetectAlignments: updatedImageDetectAlignments,
-                };
+                    return {
+                        ...state,
+                        counter,
+                        imageDetectAlignments: updatedImageDetectAlignments,
+                    };
+                } else {
+                    // If the imageDetectClassId is already assigned, set an error message
+                    return {
+                        ...state
+                    };
+                }
             } else {
                 // If no entry exists, add a new one
-                const updatedImageDetectAlignments = [
-                    ...imageDetectAlignments,
-                    {
-                        [action.taxonomyId]: {
-                            [action.imageDetectModelId]: [
-                                {
-                                    imageDetectClassId: action.alignmentObject.imageDetectClassId,
-                                    characterId: action.alignmentObject.characterId,
-                                },
-                            ],
+                let updatedImageDetectAlignments;
+                if(action.alignmentObject.characterId) {
+                    updatedImageDetectAlignments = [
+                        ...imageDetectAlignments,
+                        {
+                            [action.taxonomyId]: {
+                                [action.imageDetectModelId]: [
+                                    {
+                                        imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                        characterId: action.alignmentObject.characterId,
+                                    },
+                                ],
+                            },
                         },
-                    },
-                ];
+                    ];
+                }
+                if(action.alignmentObject.groupId) {
+                    updatedImageDetectAlignments = [
+                        ...imageDetectAlignments,
+                        {
+                            [action.taxonomyId]: {
+                                [action.imageDetectModelId]: [
+                                    {
+                                        imageDetectClassId: action.alignmentObject.imageDetectClassId,
+                                        groupId: action.alignmentObject.groupId,
+                                    },
+                                ],
+                            },
+                        },
+                    ];
+                }
 
                 return {
-                    ...state,counter,
-                    imageDetectAlignments: updatedImageDetectAlignments,
+                    ...state,
+                    counter,
+                    imageDetectAlignments: updatedImageDetectAlignments
                 };
             }
         }
@@ -4106,20 +4160,39 @@ export default (state = {}, action) => {
                 const existingEntry = imageDetectAlignments[existingIndex];
 
                 // Filter out the entry with the specified characterId
-                const updatedEntry = {
-                    ...existingEntry,
-                    [taxonomyId]: {
-                        ...existingEntry[taxonomyId],
-                        [imageDetectModelId]: (
-                            existingEntry[taxonomyId] &&
-                            existingEntry[taxonomyId][imageDetectModelId]
-                        )
-                            ? existingEntry[taxonomyId][imageDetectModelId].filter(
-                                (alignment) => alignment.characterId !== action.alignmentObject
+                let updatedEntry;
+                if(action.alignmentObject.type == "Character") {
+                    updatedEntry = {
+                        ...existingEntry,
+                        [taxonomyId]: {
+                            ...existingEntry[taxonomyId],
+                            [imageDetectModelId]: (
+                                existingEntry[taxonomyId] &&
+                                existingEntry[taxonomyId][imageDetectModelId]
                             )
-                            : [],
-                    },
-                };
+                                ? existingEntry[taxonomyId][imageDetectModelId].filter(
+                                    (alignment) => alignment.characterId !== action.alignmentObject.characterId
+                                )
+                                : [],
+                        },
+                    };
+                }
+                if(action.alignmentObject.type == "Group") {
+                    updatedEntry = {
+                        ...existingEntry,
+                        [taxonomyId]: {
+                            ...existingEntry[taxonomyId],
+                            [imageDetectModelId]: (
+                                existingEntry[taxonomyId] &&
+                                existingEntry[taxonomyId][imageDetectModelId]
+                            )
+                                ? existingEntry[taxonomyId][imageDetectModelId].filter(
+                                    (alignment) => alignment.groupId !== action.alignmentObject.groupId
+                                )
+                                : [],
+                        },
+                    };
+                }
 
                 // If there are no more alignments for the specified model, remove the entire model entry
                 const updatedImageDetectAlignments =

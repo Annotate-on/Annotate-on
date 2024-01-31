@@ -332,6 +332,18 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding annotations_polygon_of_interest');
                 tmpState["annotations_polygon_of_interest"] = {};
             }
+            if (!tmpState.hasOwnProperty("imageDetectModels")){
+                console.log('project from previous version , adding imageDetectModels');
+                tmpState["imageDetectModels"] = [];
+            }
+            if (!tmpState.hasOwnProperty("selectedImageDetectModel")){
+                console.log('project from previous version , adding selectedImageDetectModel');
+                tmpState["selectedImageDetectModel"] = {};
+            }
+            if (!tmpState.hasOwnProperty("imageDetectAlignments")){
+                console.log('project from previous version , adding imageDetectAlignments');
+                tmpState["imageDetectAlignments"] = [];
+            }
 
             // Check if object structure match to expected one.
             for (const prop in initialState) {

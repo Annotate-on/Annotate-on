@@ -96,14 +96,14 @@ export default class extends Component {
             const id = chance.guid();
             this.props.saveImageDetectModel(
                 id,
-                'IRD Image detect  model',
+                'IRD Image Detect',
                 MODEL_IMAGE_DETECT,
                 0,
                 'https://plantai.ummisco.fr/image',
                 '',
                 '',
                 'Default service IRD',
-                '0',
+                '50',
                 [
                     {
                         "id":"0",

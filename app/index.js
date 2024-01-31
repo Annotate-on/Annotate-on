@@ -135,6 +135,19 @@ const go = () => {
                     console.log('project from previous version , adding annotations_polygon_of_interest');
                     tmpState.app["annotations_polygon_of_interest"] = {};
                 }
+                if (!tmpState.app.hasOwnProperty("imageDetectModels")){
+                    console.log('project from previous version , adding imageDetectModels');
+                    tmpState.app["imageDetectModels"] = [];
+                }
+                if (!tmpState.app.hasOwnProperty("selectedImageDetectModel")){
+                    console.log('project from previous version , adding selectedImageDetectModel');
+                    tmpState.app["selectedImageDetectModel"] = {};
+                }
+                if (!tmpState.app.hasOwnProperty("imageDetectAlignments")){
+                    console.log('project from previous version , adding imageDetectAlignments');
+                    tmpState.app["imageDetectAlignments"] = [];
+                }
+
                 // Check if object structure match to expected one.
                 for (const prop in initialState.app) {
                     if(!(prop in tmpState.app)) {
