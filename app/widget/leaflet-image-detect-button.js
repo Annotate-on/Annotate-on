@@ -42,12 +42,12 @@ L.Control.ImageDetectService = L.Control.extend({
                     filteredResults.forEach(detection => {
                         const { xmax, xmin, ymax, ymin } = detection;
                         const vertices = convertBoundingBoxToVertices(xmax, xmin, ymax, ymin);
-                        // const classLabel = detection.class;
+                        const classId = detection.class;
                         const confidence = detection.confidence;
                         const name = detection.name;
                         // console.log(`Class: ${classLabel}, Confidence: ${confidence}, Name: ${name}, Vertices: ${vertices}`);
                         counter += 1;
-                        ee.emit(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this.options.picture.sha1, vertices, confidence, name, counter)
+                        ee.emit(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this.options.picture.sha1, vertices, confidence, name, classId, counter)
                     });
                 this.options.leafletImage._drawAnnotations();
             }

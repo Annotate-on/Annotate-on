@@ -28,7 +28,7 @@ import {
     RESOURCE_TYPE_VIDEO,
     SECTION_BG,
     SECTION_FG,
-    TWO_DIMENSIONAL
+    TWO_DIMENSIONAL, CATEGORICAL, INTEREST
 } from '../constants/constants';
 import {
     getAngleInDegrees,
@@ -173,9 +173,60 @@ class Image extends PureComponent {
             isEventRecordingLive: isEventRecording
         })
     }
-    _createImageDetectAnnotation = (pictureId, vertices, confidence, name, counter) => {
+
+    getAlignedCharacter = (classId) => {
+        const selectedTaxonomyValue = this.props.selectedTaxonomy;
+        const imageDetectAlignmentsValues = this.props.imageDetectAlignments;
+        const selectedImageDetectModelId = this.props.selectedImageDetectModel.id
+
+        const matchingEntry = imageDetectAlignmentsValues.find(
+            (entry) =>
+                entry[selectedTaxonomyValue.id] &&
+                entry[selectedTaxonomyValue.id][selectedImageDetectModelId]
+        );
+        if (matchingEntry) {
+            const alignments = matchingEntry[selectedTaxonomyValue.id][selectedImageDetectModelId];
+
+            const matchingAlignment = alignments.find(
+                (alignment) => String(alignment.imageDetectClassId) == String(classId)
+            );
+
+            if (matchingAlignment) {
+                const characterId = matchingAlignment.characterId;
+                // const groupId = matchingAlignment.groupId;
+
+                const targetDescriptor = selectedTaxonomyValue.descriptors.find(
+                    (descriptor) => descriptor.id === characterId
+                );
+
+                if (targetDescriptor) {
+                    const targetColor = targetDescriptor.targetColor;
+
+                    return { characterId, targetColor };
+                }
+            }
+        }
+        return null;
+    };
+
+    _createImageDetectAnnotation = (pictureId, vertices, confidence, name, classId, counter) => {
         const id = chance.guid();
-        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter)
+        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter);
+
+        const character =  this.getAlignedCharacter(classId);
+        if(character != null){
+            const characterId = character.characterId;
+            const characterTargetColor = character.targetColor;
+            // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, "DataUnavailable", null);
+            this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, null, null);
+
+            // this.props.setAnnotationColor(id, characterTargetColor);
+
+            this._setAnnotationColor(id, characterTargetColor);
+        }
+        // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, "-1");
+        // this.props.createTargetInstance(INTEREST, this.props.tabName, id, "18152fb6-e385-544c-9396-8518c267ec25", null, null);
+        // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, this.state.categoricalAnnotation.id, this.state.targetId, this.state.categoricalIds, this.state.oldDescriptorId);
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {

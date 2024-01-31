@@ -856,6 +856,9 @@
         "table_column_character_group": "Character group",
         "table_column_annotation_type": "Annotation type",
         "table_column_color": "Color",
+        "table_column_pairing": "Image Detect alignment",
+        "button_pairing": "Add alignment",
+        "button_remove_alignement": "Remove alignment",
         "dialog_edit": {
           "title_new_character": "New character",
           "title_edit_character": "Edit character",
@@ -885,6 +888,11 @@
           "lbl_state_name": "State name",
           "alert_categorical_state_item_is_empty": "Enumeration value can't be empty!",
           "alert_categorical_state_item_already_exist": "Enumeration with the same value already exist!"
+        },
+        "dialog_image_detect_alignment": {
+          "title": "Align Image Detect class",
+          "select_class_combo": "Select Image Detect Class",
+          "msg_duplicate_alignment": "Alignment for this class exists already"
         }
       },
       "import_from_xper": {

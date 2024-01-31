@@ -21,7 +21,8 @@ const mapStateToProps = state => {
         taxonomies: state.app.taxonomies,
         selectedTaxonomy: state.app.selectedTaxonomy,
         projectName: state.app.selectedProjectName,
-        imageDetectModels: state.app.imageDetectModels
+        imageDetectModels: state.app.imageDetectModels,
+        selectedImageDetectModel: state.app.selectedImageDetectModel
     };
 };
 

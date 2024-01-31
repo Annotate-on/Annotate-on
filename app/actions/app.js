@@ -120,6 +120,8 @@ export const CREATE_TARGET_DESCRIPTOR = 'CREATE_TARGET_DESCRIPTOR';
 export const EDIT_TARGET_DESCRIPTOR = 'EDIT_TARGET_DESCRIPTOR';
 export const DELETE_TARGET_DESCRIPTOR = 'DELETE_TARGET_DESCRIPTOR';
 export const SAVE_TARGET_TYPE = 'SAVE_TARGET_TYPE';
+export const SAVE_ALIGNMENT_OBJECT = 'SAVE_ALIGNMENT_OBJECT';
+export const REMOVE_ALIGNMENT_OBJECT = 'REMOVE_ALIGNMENT_OBJECT';
 export const CREATE_TARGET_INSTANCE = 'CREATE_TARGET_INSTANCE';
 export const UPDATE_TAXONOMY_VALUES = 'UPDATE_TAXONOMY_VALUES';
 export const CREATE_CATEGORICAL_TARGET_INSTANCE = 'CREATE_CATEGORICAL_TARGET_INSTANCE';
@@ -839,6 +841,20 @@ export const saveTargetType = (taxonomyId, name) => ({
     type: SAVE_TARGET_TYPE,
     taxonomyId,
     name
+});
+
+export const saveAlignmentObject = (taxonomyId, imageDetectModelId, alignmentObject) => ({
+    type: SAVE_ALIGNMENT_OBJECT,
+    taxonomyId,
+    imageDetectModelId,
+    alignmentObject
+});
+
+export const removeAlignmentObject = (taxonomyId, imageDetectModelId, alignmentObject) => ({
+    type: REMOVE_ALIGNMENT_OBJECT,
+    taxonomyId,
+    imageDetectModelId,
+    alignmentObject
 });
 
 export const deleteTargetType = (taxonomyId, name) => ({

@@ -830,6 +830,9 @@
         "table_column_character_group": "Groupe de caractères",
         "table_column_annotation_type": "Type d'annotation",
         "table_column_color": "Couleur",
+        "table_column_pairing": "Image Detect couplage",
+        "button_pairing": "Ajouter couplage",
+        "button_remove_alignement": "Supprimer couplage",
         "dialog_edit": {
           "title_new_character": "Nouveau caractère",
           "title_edit_character": "Éditer le caractère",
@@ -841,7 +844,9 @@
           "lbl_color": "Couleur",
           "lbl_checkbox_include_in_calculation": "Calcul de valeur moyenne et écart-type",
           "alert_select_target_group_to_delete": "SVP, choisir le groupe cible que vous voulez effacer",
-          "alert_select_target_group_to_edit": "SVP, choisir le groupe cible que vous voulez éditer"
+          "alert_select_target_group_to_edit": "SVP, choisir le groupe cible que vous voulez éditer",
+          "alert_select_categorical_state_item_to_delete": "Sélectioner la valuer d'énumération que vous voulez supprimer",
+          "alert_select_categorical_state_item_to_edit": "Sélectionner la valeur d'énumération que vous souhaitez modifier."
         },
         "dialog_create_new_character_group": {
           "title": "Nouveau groupe de caractères",
@@ -850,6 +855,11 @@
         "dialog_edit_character_group": {
           "title": "Éditer le nom du groupe de caractères",
           "lbl_group_name": "Nouveau nom de groupe"
+        },
+        "dialog_image_detect_alignment": {
+          "title": "Aligner la classe de Image Detect",
+          "select_class_combo": "Sélectionner la classe Image Detect",
+          "msg_duplicate_alignment": "Couplage pour cette classe existe déjà"
         }
       },
       "import_from_xper": {
