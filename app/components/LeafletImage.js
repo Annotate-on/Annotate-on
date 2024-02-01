@@ -4,6 +4,8 @@ import {FeatureGroup, Map} from 'react-leaflet';
 import L from 'leaflet';
 import {EditControl} from 'react-leaflet-draw';
 import i18next from "i18next";
+import {loadMetadata} from "../utils/config";
+
 
 /**
  * NOTE!
@@ -507,6 +509,7 @@ class LeafletImage extends Component {
             this._initLeaflet();
         }
         ee.on(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, this.highlightAnnotationFromInspector);
+
     }
 
     componentWillUnmount() {
@@ -727,7 +730,6 @@ class LeafletImage extends Component {
 
             if (this.state.enableToolBox)
                 this._recolnatControlMenu.addTo(map);
-
             this._imageDetectService = L.ImageDetectService({
                 picture: this.props.currentPicture,
                 urlImageDetect: this.props.selectedImageDetectModel,

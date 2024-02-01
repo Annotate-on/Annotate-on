@@ -595,7 +595,10 @@
         "btn_tooltip_polygon_of_interest": "Polygone d'intérêt",
         "btn_tooltip_chronotematic": "Annotation chronothematique",
         "btn_tooltip_image_detect_service": "Annoter l'image avec le service Image Detect",
-        "alert_bad_image_detect_response": "Vérifiez votre URL de service Image Detect"
+        "alert_bad_image_detect_response": "Vérifiez votre URL de service Image Detect",
+        "alert_not_recolnat_image": "Le service Image Detect fonctionne uniquement avec les images eRecolnat.",
+        "alert_recolnat_image_no_url": "Il y a un problème avec l'accès à la version en ligne de cette image.",
+        "alert_not_active_image_detect_service": "Il n’existe aucun service Image Detect actif. Veuillez vérifier la page de gestion des modèles Image Detect!"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "L'événement est près de sa fin, voulez-vous le prolonger de 30mn ?",

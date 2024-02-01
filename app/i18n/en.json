@@ -612,7 +612,10 @@
         "btn_tooltip_polygon_of_interest": "Polygon of interest",
         "btn_tooltip_chronotematic": "Annotation chronothematic",
         "btn_tooltip_image_detect_service": "Annotate image with Image Detect service",
-        "alert_bad_image_detect_response": "Check your Image Detect service URL"
+        "alert_bad_image_detect_response": "Check your Image Detect service URL",
+        "alert_not_recolnat_image": "Image detect service works only with eRecolnat images.",
+        "alert_recolnat_image_no_url": "There is problem with accessing online version of this image.",
+        "alert_not_active_image_detect_service": "There is no active Image Detect service. Please check your Image Detect model page!"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",
