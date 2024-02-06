@@ -110,12 +110,13 @@ class Target extends PureComponent {
                 const descriptor = this.props.selectedTaxonomy.descriptors.find(descriptor => descriptor.id === annotation.descriptorId);
 
                 const satesValues = [];
-                descriptor.states.map(_ => {
-                    if (annotation.value.indexOf(_.id) !== -1) {
-                        satesValues.push(_.name);
-                    }
-                });
-
+                if(descriptor.states){
+                    descriptor.states.map(_ => {
+                        if (annotation.value.indexOf(_.id) !== -1) {
+                            satesValues.push(_.name);
+                        }
+                    });
+                }
                 unsortedTargets.push({
                     catalogNumber,
                     targetType: descriptor.targetType,
