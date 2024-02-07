@@ -1,13 +1,13 @@
-import React, {Component} from 'react';
-import {getProjectInfoFile, getThumbNailsDir, getUserWorkspace, setWorkspace, updateTargetTypes} from '../utils/config'
-import {Button, Col, Container, Form, FormGroup, Label, Row} from "reactstrap";
-import {remote} from "electron";
+import React, { Component } from 'react';
+import { getProjectInfoFile, getThumbNailsDir, getUserWorkspace, setWorkspace, updateTargetTypes } from '../utils/config';
+import { Button, Col, Container, Form, FormGroup, Label, Row } from "reactstrap";
+import { remote } from "electron";
 import fs from "fs-extra";
-import {IMAGE_STORAGE_DIR} from "../constants/constants";
+import { IMAGE_STORAGE_DIR } from "../constants/constants";
 import * as unzipper from "unzipper";
 import JSZip from 'jszip';
 import path from "path";
-import {ee, EVENT_CREATE_SYSTEM_TAGS, EVENT_HIDE_WAITING, EVENT_SHOW_ALERT, EVENT_SHOW_WAITING} from "../utils/library";
+import { ee, EVENT_CREATE_SYSTEM_TAGS, EVENT_HIDE_WAITING, EVENT_SHOW_ALERT, EVENT_SHOW_WAITING } from "../utils/library";
 import os from "os";
 import crypto from "crypto";
 import packageJson from '../../package.json';
@@ -15,7 +15,6 @@ import packageJson from '../../package.json';
 const RECOLNAT_LOGO = require('./pictures/logo.svg');
 
 export default class extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -27,31 +26,37 @@ export default class extends Component {
 
     validateZip = (source) => {
         console.log(source);
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             if (source.substring(source.length - 9) !== '.annotate') {
                 resolve(false);
             } else {
-                fs.readFile(source, function (err, data) {
-                    if (err) throw err;
-                    JSZip.loadAsync(data).then(function (zip) {
-                        if (Object.keys(zip.files).indexOf('project-info.json') > -1) {
-                            resolve(true);
-                        } else {
-                            resolve(false);
-                        }
-                    });
-                });
-            }
-        })
+                const readStream = fs.createReadStream(source);
 
+                readStream.pipe(unzipper.Parse())
+                    .on('entry', function (entry) {
+                        if (entry.path === 'project-info.json') {
+                            resolve(true);
+                        }
+                        entry.autodrain();
+                    })
+                    .on('error', function (err) {
+                        reject(err);
+                    })
+                    .on('finish', function () {
+                        resolve(false); // If 'project-info.json' file is not found
+                    });
+            }
+        });
     };
+
 
     unzipProject = (destination) => {
         const source = this.state.selectedProject;
         if (source !== null) {
             ee.emit(EVENT_SHOW_WAITING, "Importing project from zip file...");
-            fs.createReadStream(source)
-                .pipe(unzipper.Parse())
+            const readStream = fs.createReadStream(source);
+
+            readStream.pipe(unzipper.Parse())
                 .on('entry', function (entry) {
                     const fileName = entry.path;
                     const type = entry.type; // 'Directory' or 'File'
@@ -60,7 +65,7 @@ export default class extends Component {
                     if (entry.type === "Directory")
                         fs.ensureDirSync(path.join(destination, entry.props.path))
                     else
-                        entry.pipe(fs.createWriteStream(path.join(destination, entry.props.path), {encoding: 'utf8'}));
+                        entry.pipe(fs.createWriteStream(path.join(destination, entry.props.path), { encoding: 'utf8' }));
                 })
                 .on('finish', () => {
                     console.log("zip extracted at... " + destination);
@@ -69,12 +74,12 @@ export default class extends Component {
                     const project = JSON.parse(fs.readFileSync(getProjectInfoFile()));
                     const version = project.version;
 
-                    if (!version){
+                    if (!version) {
                         project.version = packageJson.version;
                     }
                     project.locked = crypto.createHash('sha1').update(os.userInfo().username).digest('hex');
                     project.lockedBy = os.userInfo().username;
-                    fs.writeFileSync(getProjectInfoFile(), JSON.stringify({...project, path: undefined}));
+                    fs.writeFileSync(getProjectInfoFile(), JSON.stringify({ ...project, path: undefined }));
 
                     ee.emit(EVENT_CREATE_SYSTEM_TAGS);
 
@@ -92,17 +97,14 @@ export default class extends Component {
                     updateTargetTypes(destination);
                     console.log("import project as zip set new tags....")
                     this.props.flatOldTags();
-                    setTimeout( ()=> {
+                    setTimeout(() => {
                         this.props.goToLibrary();
-                    },200)
-
+                    }, 200)
                 });
         } else {
             console.log('invalid source of a selected project!');
         }
-
     };
-
 
     render() {
         const { t } = this.props;
