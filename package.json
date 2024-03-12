@@ -1,7 +1,7 @@
 {
   "name": "annotate-on",
   "productName": "Annotate-on",
-  "version": "v2.3.9",
+  "version": "v2.3.13",
   "description": "Annotate-on is free software tool based used for image, video and event annotations.",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -67,10 +67,7 @@
       "app/main.prod.js.map",
       "package.json"
     ],
-    "extraResources": [
-      "./demo-workspace",
-      "./.ExifTool_config"
-    ],
+    "extraResources": ["./demo-workspace", "./.ExifTool_config"],
     "dmg": {
       "contents": [
         {
@@ -86,18 +83,10 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis",
-        "msi"
-      ]
+      "target": ["nsis", "msi"]
     },
     "linux": {
-      "target": [
-        "deb",
-        "rpm",
-        "snap",
-        "AppImage"
-      ],
+      "target": ["deb", "rpm", "snap", "AppImage"],
       "category": "Development"
     },
     "directories": {
@@ -162,17 +151,11 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "json"
-    ],
+    "moduleFileExtensions": ["js", "jsx", "json"],
     "transform": {
       "^.+\\.jsx?$": "babel-jest"
     },
-    "setupFiles": [
-      "./internals/scripts/CheckBuiltsExist.js"
-    ]
+    "setupFiles": ["./internals/scripts/CheckBuiltsExist.js"]
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
