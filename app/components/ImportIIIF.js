@@ -91,7 +91,6 @@ processIIIFManifest = async (manifestUrl) => {
     if (!contentType || !contentType.includes('application/json') && !contentType.includes('application/ld+json')) {
         throw new Error('Invalid content type. Expected JSON.');
     }
-
     const manifest = await response.json();
 
     if (!manifest.sequences || manifest.sequences.length === 0 || !manifest.sequences[0].canvases || manifest.sequences[0].canvases.length === 0) {
@@ -100,9 +99,16 @@ processIIIFManifest = async (manifestUrl) => {
     }
 
     const imageUrls = manifest.sequences[0].canvases.map(
-        (canvas) => canvas.images[0].resource['@id']
+        (canvas) => {
+            let imageUrl = canvas.images[0].resource['@id'];
+            if (!imageUrl.endsWith('/full/full/0/default.jpg')) {
+                imageUrl += '/full/full/0/default.jpg';
+            }
+            return imageUrl;
+        }
     );
-    const collectionLabel = manifest.label; 
+
+    const collectionLabel = manifest.label;
 
     this.setState({
         collectionLabel,
