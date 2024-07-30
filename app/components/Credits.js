@@ -20,6 +20,7 @@ import PRESEK from './pictures/credits/members/presek-i_logo.png';
 import {shell} from "electron";
 import pjson from "../../package";
 const REC_LOGO = require('./pictures/annotate-on_logo.jpg');
+const NEW_LOGO = require('./pictures/Logo_indigo_vertical.png');
 const CREDIT_IMAGE_CONTEXT = require('./pictures/credit.svg');
 
 export default class Credits extends PureComponent {
@@ -47,23 +48,17 @@ export default class Credits extends PureComponent {
                             }>
                                 <div className="logoContainer" data-toggle="tooltip" data-placement="top"
                                      title={t('global.open_link_in_external_browser')}>
-                                     <img src={REC_LOGO} className="logo-on"/>
-                                    <span className="version">{pjson.version}</span>
+                                     <img src={NEW_LOGO} className="logo-on"/>
+                                    {/*<span className="version">{pjson.version}</span>*/}
+                                </div>
+                                <div className="row justify-content-center -align-center no-margin">
+                                    <h5 >Annotate-on — {pjson.version}</h5>
                                 </div>
                             </a>
                         </div>
                     </div>
                     <div className="row justify-content-center -align-center no-margin">
                         <span className="citation">{t('credits.lbl_citation')}: RECOLNAT-ANR-11-INBS-0004</span>
-                    </div>
-                    <div className="social-media-div">
-                        <br/>
-                        <i className="fa fa-4x fa-twitter tw-icon" aria-hidden="true"
-                           onClick={ () => shell.openExternal('https://twitter.com/Annotate4images')}
-                        />
-                        <p onClick={ () => shell.openExternal('https://twitter.com/Annotate4images')}>
-                            @Annotate4images
-                        </p>
                     </div>
                 </section>
 

@@ -585,7 +585,10 @@ class TargetDescriptors extends PureComponent {
                 <Row>
                     <Col  md={11}  className="text-md-left ml-5">
                         <p>Model Annotate: <strong>{this.props.taxonomyModel.name}</strong></p>
-                        <p>Model Image Detect: <strong>{(this.state.imageDetectModel?this.state.imageDetectModel.name:"none")}</strong></p>
+                        {/*******/}
+                        {/*disabled for v2.3.4*/}
+                        {/*******/}
+                        {/*<p>Model Image Detect: <strong>{(this.state.imageDetectModel?this.state.imageDetectModel.name:"none")}</strong></p>*/}
                     </Col>
                 </Row>
                 <Row className="action-bar">
@@ -623,8 +626,11 @@ class TargetDescriptors extends PureComponent {
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <TableHeader title={`${t('models.target_descriptors.table_column_pairing')}: ${(this.state.imageDetectModel)?this.state.imageDetectModel.name:"none"}`} sortKey="pairing"
-                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    {/*******/}
+                                    {/*disabled for v2.3.4*/}
+                                    {/*******/}
+                                    {/*<TableHeader title={`${t('models.target_descriptors.table_column_pairing')}: ${(this.state.imageDetectModel)?this.state.imageDetectModel.name:"none"}`} sortKey="pairing"*/}
+                                    {/*             sortedBy={this.state.sortBy} sort={this._sort}/>*/}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -659,27 +665,30 @@ class TargetDescriptors extends PureComponent {
                                             <td>{target.annotationType}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
-                                            <td>
-                                                {(!alignObject && (!this.state.imageDetectModel || this.state.imageDetectModel.length!=0)) &&(
-                                                    <Button color="primary" onClick={() => this.setAlignment(target.id, target.name, target.targetType)}>
-                                                        {t('models.target_descriptors.button_pairing')}
-                                                    </Button>
-                                                )}
-                                                {alignObject !== null && (
-                                                    <div>
-                                                        <span>{`(${alignObject.type})`} {(alignObject.type === "Group") ? target.targetType : target.name} = </span>
-                                                        <strong>{this.getClassNameById(alignObject.imageDetectClassId)}</strong>
-                                                        &nbsp;
-                                                        <Button
-                                                        color="danger"
-                                                        className="button_remove_alignement"
-                                                        onClick={() => this._removeAlignment(target.id, target.targetType, this.characterIdExists(target.id, target.targetType).type)}
-                                                        >
-                                                            {t('models.target_descriptors.button_remove_alignement')}
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </td>
+                                            {/*******/}
+                                            {/*disabled for v2.3.4*/}
+                                            {/*******/}
+                                            {/*<td>*/}
+                                            {/*    {(!alignObject && (!this.state.imageDetectModel || this.state.imageDetectModel.length!=0)) &&(*/}
+                                            {/*        <Button color="primary" onClick={() => this.setAlignment(target.id, target.name, target.targetType)}>*/}
+                                            {/*            {t('models.target_descriptors.button_pairing')}*/}
+                                            {/*        </Button>*/}
+                                            {/*    )}*/}
+                                            {/*    {alignObject !== null && (*/}
+                                            {/*        <div>*/}
+                                            {/*            <span>{`(${alignObject.type})`} {(alignObject.type === "Group") ? target.targetType : target.name} = </span>*/}
+                                            {/*            <strong>{this.getClassNameById(alignObject.imageDetectClassId)}</strong>*/}
+                                            {/*            &nbsp;*/}
+                                            {/*            <Button*/}
+                                            {/*            color="danger"*/}
+                                            {/*            className="button_remove_alignement"*/}
+                                            {/*            onClick={() => this._removeAlignment(target.id, target.targetType, this.characterIdExists(target.id, target.targetType).type)}*/}
+                                            {/*            >*/}
+                                            {/*                {t('models.target_descriptors.button_remove_alignement')}*/}
+                                            {/*            </Button>*/}
+                                            {/*        </div>*/}
+                                            {/*    )}*/}
+                                            {/*</td>*/}
                                         </tr>
                                     );
                                 })}
