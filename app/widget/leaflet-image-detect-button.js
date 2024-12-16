@@ -9,14 +9,11 @@ import {loadMetadata} from "../utils/config";
 
 
 L.Control.ImageDetectService = L.Control.extend({
-    //*******/
-    //*disabled for v2.3.4*/
-    //*******/
-    // options: {
-    //     position: 'topleft',
-    //     picture: null,
-    //     urlImageDetect: null
-    // },
+    options: {
+        position: 'topleft',
+        picture: null,
+        urlImageDetect: null
+    },
     initialize: function (options) {
         L.Util.setOptions(this, options);
     },

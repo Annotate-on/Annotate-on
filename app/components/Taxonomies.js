@@ -606,17 +606,14 @@ export default class extends Component {
                                 Annotate Models
                             </NavLink>
                         </NavItem>
-                        {/*******/}
-                        {/*disabled for v2.3.4*/}
-                        {/*******/}
-                        {/*<NavItem>*/}
-                        {/*    <NavLink*/}
-                        {/*        onClick={() => this.toggleTab('imageDetect')}*/}
-                        {/*        className={this.state.activeTab === 'imageDetect' ? 'active' : ''}*/}
-                        {/*    >*/}
-                        {/*        Image Detect Models*/}
-                        {/*    </NavLink>*/}
-                        {/*</NavItem>*/}
+                        <NavItem>
+                            <NavLink
+                                onClick={() => this.toggleTab('imageDetect')}
+                                className={this.state.activeTab === 'imageDetect' ? 'active' : ''}
+                            >
+                                Image Detect Models
+                            </NavLink>
+                        </NavItem>
                     </Nav>
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="annotate">
