@@ -68,6 +68,7 @@ app.on('ready', async () => {
   }
 
   mainWindow = new BrowserWindow({
+      autoHideMenuBar: true,
     show: false,
     width: 1200,
     height: 800,
@@ -75,6 +76,16 @@ app.on('ready', async () => {
     minWidth: 1200,
     useContentSize: true,
     center: true,
+       frame: true,
+        titleBarStyle: 'hidden',
+      titleBarOverlay: {
+          color: '#2f3241',
+          symbolColor: '#74b1be',
+          height: 60
+      },
+
+      //   "display_override": [ "window-controls-overlay" ]
+      //
     webPreferences: {
       nodeIntegration: true
     }
