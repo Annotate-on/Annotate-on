@@ -132,6 +132,7 @@
       "context_menu_select_unselect_all": "(Dé)Sélectionner tout",
       "context_menu_rename_folder": "Renommer le dossier",
       "context_menu_delete_folder": "Supprimer le dossier",
+      "context_menu_filter_xper": "Filtrer avec Xper3 KB",
       "alert_delete_folder_message": "Dossier : '{{folder}}'",
       "alert_folder_contains_special_characters": "le dossier contient des caractères spéciaux < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "En ordre manuel, il n'est pas possible de faire une sélection.",

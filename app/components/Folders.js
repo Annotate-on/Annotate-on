@@ -27,6 +27,7 @@ const SAVE_ICON = require('./pictures/save-tag.svg');
 const CANCEL_ICON = require('./pictures/cancel-edit.svg');
 const DOWNLOAD_ICON = require('./pictures/download.svg');
 const SELECT_ALL = require('./pictures/select_all_gray.svg');
+const FILTER_XPER = require('./pictures/filter.svg');
 const ADD_DIALOG = 'ADD_DIALOG';
 
 export default class extends PureComponent {
@@ -311,6 +312,10 @@ export default class extends PureComponent {
                             <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
                                 <img alt="delete folder" src={DELETE}/> {t('folders.context_menu_delete_folder')}
                             </MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem data={{action: 'filter_xper'}} onClick={this._handleContextMenu}>
+                                <img alt="Filter with Xper KB" src={FILTER_XPER}/> {t('folders.context_menu_filter_xper')}
+                            </MenuItem>
                         </ContextMenu>
                             : ''}
                     </div>
@@ -391,6 +396,9 @@ export default class extends PureComponent {
                     }
                 }
                 toConfigFileWithoutRefresh();
+                break;
+            case 'filter_xper':
+                // open xper kb search modal
                 break;
         }
     };

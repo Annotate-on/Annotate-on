@@ -143,6 +143,7 @@
       "context_menu_select_unselect_all": "Select/Unselect all",
       "context_menu_rename_folder": "Rename folder",
       "context_menu_delete_folder": "Delete folder",
+      "context_menu_filter_xper": "Filter with Xper3 KB",
       "alert_delete_folder_message": "Folder: '{{folder}}'",
       "alert_folder_contains_special_characters": "folder contains special characters < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",

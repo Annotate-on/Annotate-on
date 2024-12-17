@@ -132,6 +132,7 @@
       "context_menu_select_unselect_all": "Selecionar/Desselecionar todos",
       "context_menu_rename_folder": "Renomear pasta",
       "context_menu_delete_folder": "Excluir pasta",
+      "context_menu_filter_xper": "Filtrar com Xper3 KB",
       "alert_delete_folder_message": "Pasta: '{{folder}}'",
       "alert_folder_contains_special_characters": "pasta contém caracteres especiais < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "Você não pode mudar a seleção quando o pedido manual está ativo!",

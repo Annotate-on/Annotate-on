@@ -132,6 +132,7 @@
       "context_menu_select_unselect_all": "Seleccionar/deseleccionar todo",
       "context_menu_rename_folder": "Cambiar el nombre de la carpeta",
       "context_menu_delete_folder": "Borrar la carpeta",
+      "context_menu_filter_xper": "Filtrar con Xper3 KB",
       "alert_delete_folder_message": "Carpeta: '{{folder}}'",
       "alert_folder_contains_special_characters": "la carpeta contiene caracteres especiales < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "No se puede cambiar la selección cuando la opción manual está activada !",
