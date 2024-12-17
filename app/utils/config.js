@@ -1240,8 +1240,15 @@ export const updateXperParams = (url, email, password) => {
     yaml.sync(config_file_path, config);
 };
 
+export const updateXperMonoParams = (url) => {
+    console.log("updateXperMonoParams ", url)
+    config.xper_mono = {
+        url
+    };
+    yaml.sync(config_file_path, config);
+};
+
 export const getXperParams = () => {
-    // console.log("getXperParams")
     if(!config.xper) {
         updateXperParams(DEFAULT_XPER_CONNECTION_URL, null, null)
     }
@@ -1249,6 +1256,15 @@ export const getXperParams = () => {
         url: config.xper.url,
         email: config.xper.email,
         password: config.xper.password ? atob(config.xper.password):config.xper.password
+    };
+};
+
+export const getXperMonoParams = () => {
+    if(!config.xper_mono) {
+        updateXperMonoParams(null, null, null)
+    }
+    return {
+        url: config.xper_mono.url
     };
 };
 
@@ -1264,7 +1280,6 @@ export const updateIIIFParams = (url, username, password) => {
 };
 
 export const getIIIFParams = () => {
-    // console.log("getXperParams")
     if(!config.IIIF) {
         updateIIIFParams(DEFAULT_IIIF_CONNECTION_URL, null, null)
     }
@@ -1288,7 +1303,6 @@ export const copyFolderSync = (from, to) => {
 
 export const existConfigFrom1xVersion = () => {
     let old_config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
-    // console.log(old_config_file_path, fs.existsSync(old_config_file_path));
     return fs.existsSync(old_config_file_path);
 }
 
