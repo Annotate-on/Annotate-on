@@ -54,7 +54,12 @@
         "xper_parameters_section_title": "Parámetros Xper",
         "lbl_xper_parameters_url": "Url",
         "lbl_xper_parameters_email": "E-mail",
-        "lbl_xper_parameters_password": "Contraseña"
+        "lbl_xper_parameters_password": "Contraseña",
+        "xper_mono_parameters_section_title": "Xper monobase parámetros",
+        "lbl_xper_mono_parameters_url": "Url",
+        "alert_all_xper_parameters_required": "¡Todas las configuraciones de xper son obligatorias!",
+        "alert_all_xper_monobase_parameters_required": "¡Todas las configuraciones de xper monobase son obligatorias!",
+        "alert_all_iiif_parameters_required": "T¡Todas las configuraciones de IIIF son obligatorias!"
       },
       "languages": {
         "EN": "Inglés",
