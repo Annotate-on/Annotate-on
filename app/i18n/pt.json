@@ -54,7 +54,12 @@
         "xper_parameters_section_title": "Parâmetros Xper",
         "lbl_xper_parameters_url": "Url",
         "lbl_xper_parameters_email": "E-mail",
-        "lbl_xper_parameters_password": "Senha"
+        "lbl_xper_parameters_password": "Senha",
+        "xper_mono_parameters_section_title": "Xper monobase configurações",
+        "lbl_xper_mono_parameters_url": "Url",
+        "alert_all_xper_parameters_required": "Todas as configurações do xper são necessárias!",
+        "alert_all_xper_monobase_parameters_required": "Todas as configurações do xper monobase são necessárias!",
+        "alert_all_iiif_parameters_required": "Todas as configurações do IIIF são necessárias!"
       },
       "languages": {
         "EN": "Inglês",
@@ -127,12 +132,29 @@
       "context_menu_select_unselect_all": "Selecionar/Desselecionar todos",
       "context_menu_rename_folder": "Renomear pasta",
       "context_menu_delete_folder": "Excluir pasta",
+      "context_menu_filter_xper": "Filtrar com Xper3 KB",
       "alert_delete_folder_message": "Pasta: '{{folder}}'",
       "alert_folder_contains_special_characters": "pasta contém caracteres especiais < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "Você não pode mudar a seleção quando o pedido manual está ativo!",
       "lbl_filter": "Filtro",
       "lbl_filters_selected": "{{numberOfFolders}} pastas selecionadas",
-      "btn_tooltip_cancel_folders_filter": "Cancelar filtro de pastas"
+      "btn_tooltip_cancel_folders_filter": "Cancelar filtro de pastas",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB pt",
+        "search_terms_placeholder": "Search terms (separated by ;) pt",
+        "language_placeholder": "Language pt",
+        "lbl_taxonomy": "Taxonomy pt",
+        "lbl_stratigraphy": "Stratigraphy pt",
+        "lbl_habitat": "Habitat pt",
+        "lbl_geography": "Geography pt",
+        "lbl_items": "Items pt ",
+        "lbl_item_groups": "Item groups pt",
+        "lbl_descriptor": "Descriptor pt",
+        "lbl_descriptor_groups": "Descriptor groups pt",
+        "lbl_states": "States pt",
+        "lbl_keywords": "Keywords pt",
+        "lbl-results": "Results pt"
+      }
     },
     "tags": {
       "title": "Palavras-chave",

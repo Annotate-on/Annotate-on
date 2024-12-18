@@ -54,7 +54,12 @@
         "xper_parameters_section_title": "Paramètres Xper",
         "lbl_xper_parameters_url": "Url",
         "lbl_xper_parameters_email": "E-mail",
-        "lbl_xper_parameters_password": "Mot de passe"
+        "lbl_xper_parameters_password": "Mot de passe",
+        "xper_mono_parameters_section_title": "Xper monobase paramètres",
+        "lbl_xper_mono_parameters_url": "Url",
+        "alert_all_xper_parameters_required": "Tous les paramètres xper sont requis!",
+        "alert_all_xper_monobase_parameters_required": "Tous les paramètres xper monobase sont requis!",
+        "alert_all_iiif_parameters_required": "Tous les paramètres IIIF sont requis!"
       },
       "languages": {
         "EN": "Anglais",
@@ -127,12 +132,29 @@
       "context_menu_select_unselect_all": "(Dé)Sélectionner tout",
       "context_menu_rename_folder": "Renommer le dossier",
       "context_menu_delete_folder": "Supprimer le dossier",
+      "context_menu_filter_xper": "Filtrer avec Xper3 KB",
       "alert_delete_folder_message": "Dossier : '{{folder}}'",
       "alert_folder_contains_special_characters": "le dossier contient des caractères spéciaux < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "En ordre manuel, il n'est pas possible de faire une sélection.",
       "lbl_filter": "Filtre",
       "lbl_filters_selected": "\n{{numberOfFolders}} dossiers sélectionnés",
-      "btn_tooltip_cancel_folders_filter": "Annuler le filtre sur les dossiers"
+      "btn_tooltip_cancel_folders_filter": "Annuler le filtre sur les dossiers",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB fr",
+        "search_terms_placeholder": "Search terms (separated by ;) fr",
+        "language_placeholder": "Language fr",
+        "lbl_taxonomy": "Taxonomy fr",
+        "lbl_stratigraphy": "Stratigraphy fr",
+        "lbl_habitat": "Habitat fr",
+        "lbl_geography": "Geography fr",
+        "lbl_items": "Items fr",
+        "lbl_item_groups": "Item groups fr",
+        "lbl_descriptor": "Descriptor fr",
+        "lbl_descriptor_groups": "Descriptor groups fr",
+        "lbl_states": "States fr",
+        "lbl_keywords": "Keywords fr",
+        "lbl-results": "Results fr"
+      }
     },
     "tags": {
       "title": "Mots clés",

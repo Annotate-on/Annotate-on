@@ -54,7 +54,12 @@
         "xper_parameters_section_title": "Parámetros Xper",
         "lbl_xper_parameters_url": "Url",
         "lbl_xper_parameters_email": "E-mail",
-        "lbl_xper_parameters_password": "Contraseña"
+        "lbl_xper_parameters_password": "Contraseña",
+        "xper_mono_parameters_section_title": "Xper monobase parámetros",
+        "lbl_xper_mono_parameters_url": "Url",
+        "alert_all_xper_parameters_required": "¡Todas las configuraciones de xper son obligatorias!",
+        "alert_all_xper_monobase_parameters_required": "¡Todas las configuraciones de xper monobase son obligatorias!",
+        "alert_all_iiif_parameters_required": "T¡Todas las configuraciones de IIIF son obligatorias!"
       },
       "languages": {
         "EN": "Inglés",
@@ -127,12 +132,29 @@
       "context_menu_select_unselect_all": "Seleccionar/deseleccionar todo",
       "context_menu_rename_folder": "Cambiar el nombre de la carpeta",
       "context_menu_delete_folder": "Borrar la carpeta",
+      "context_menu_filter_xper": "Filtrar con Xper3 KB",
       "alert_delete_folder_message": "Carpeta: '{{folder}}'",
       "alert_folder_contains_special_characters": "la carpeta contiene caracteres especiales < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "No se puede cambiar la selección cuando la opción manual está activada !",
       "lbl_filter": "Filtro",
       "lbl_filters_selected": "{{numberOfFolders}} Carpetas seleccionadas",
-      "btn_tooltip_cancel_folders_filter": "Cancelar el filtro de carpetas"
+      "btn_tooltip_cancel_folders_filter": "Cancelar el filtro de carpetas",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB es",
+        "search_terms_placeholder": "Search terms (separated by ;) es",
+        "language_placeholder": "Language es",
+        "lbl_taxonomy": "Taxonomy es",
+        "lbl_stratigraphy": "Stratigraphy es",
+        "lbl_habitat": "Habitat es",
+        "lbl_geography": "Geography es",
+        "lbl_items": "Items es",
+        "lbl_item_groups": "Item groups es",
+        "lbl_descriptor": "Descriptor es",
+        "lbl_descriptor_groups": "Descriptor groups es",
+        "lbl_states": "States es",
+        "lbl_keywords": "Keywords es",
+        "lbl-results": "Results es"
+      }
     },
     "tags": {
       "title": "Palabras clave",

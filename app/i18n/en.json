@@ -60,13 +60,18 @@
         "lbl_xper_parameters_url": "Url",
         "lbl_xper_parameters_email": "E-mail",
         "lbl_xper_parameters_password": "Password",
+        "xper_mono_parameters_section_title": "Xper monobase parameters",
+        "lbl_xper_mono_parameters_url": "Url",
         "iiif_parameters_section_title": "IIIF parameters",
         "lbl_iiif_parameters_url": "Url",
         "lbl_iiif_parameters_username": "Username",
         "lbl_iiif_parameters_password": "Password",
         "annotation_tools_title": "Annotation tools",
         "lbl_color_picker_radius": "Color picker radius",
-        "alert_color_picker_radius_invalid": "Color picker radius value must be positive integer number!"
+        "alert_color_picker_radius_invalid": "Color picker radius value must be positive integer number!",
+        "alert_all_xper_parameters_required": "All xper parameters are required!",
+        "alert_all_xper_monobase_parameters_required": "All xper monobase parameters are required!",
+        "alert_all_iiif_parameters_required": "All IIIF parameters are required!"
       },
       "languages": {
         "EN": "English",
@@ -138,12 +143,29 @@
       "context_menu_select_unselect_all": "Select/Unselect all",
       "context_menu_rename_folder": "Rename folder",
       "context_menu_delete_folder": "Delete folder",
+      "context_menu_filter_xper": "Filter with Xper3 KB",
       "alert_delete_folder_message": "Folder: '{{folder}}'",
       "alert_folder_contains_special_characters": "folder contains special characters < , > , : , \" , /, \\ , | , ? *",
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
       "lbl_filter": "Filter",
       "lbl_filters_selected": "{{numberOfFolders}} Folders selected",
-      "btn_tooltip_cancel_folders_filter": "Cancel folders filter"
+      "btn_tooltip_cancel_folders_filter": "Cancel folders filter",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB",
+        "search_terms_placeholder": "Search terms (separated by ;)",
+        "language_placeholder": "Language",
+        "lbl_taxonomy": "Taxonomy",
+        "lbl_stratigraphy": "Stratigraphy",
+        "lbl_habitat": "Habitat",
+        "lbl_geography": "Geography",
+        "lbl_items": "Items",
+        "lbl_item_groups": "Item groups",
+        "lbl_descriptor": "Descriptor",
+        "lbl_descriptor_groups": "Descriptor groups",
+        "lbl_states": "States",
+        "lbl_keywords": "Keywords",
+        "lbl-results": "Results"
+      }
     },
     "tags": {
       "title": "Keywords",
