@@ -149,7 +149,23 @@
       "alert_cannot_change_selection_when_manual_order": "You cannot change selection when manual order is active!",
       "lbl_filter": "Filter",
       "lbl_filters_selected": "{{numberOfFolders}} Folders selected",
-      "btn_tooltip_cancel_folders_filter": "Cancel folders filter"
+      "btn_tooltip_cancel_folders_filter": "Cancel folders filter",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB",
+        "search_terms_placeholder": "Search terms (separated by ;)",
+        "language_placeholder": "Language",
+        "lbl_taxonomy": "Taxonomy",
+        "lbl_stratigraphy": "Stratigraphy",
+        "lbl_habitat": "Habitat",
+        "lbl_geography": "Geography",
+        "lbl_items": "Items",
+        "lbl_item_groups": "Item groups",
+        "lbl_descriptor": "Descriptor",
+        "lbl_descriptor_groups": "Descriptor groups",
+        "lbl_states": "States",
+        "lbl_keywords": "Keywords",
+        "lbl-results": "Results"
+      }
     },
     "tags": {
       "title": "Keywords",

@@ -18,6 +18,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPhotoVideo} from '@fortawesome/free-solid-svg-icons';
 import {containsSpecialCharacters} from "../utils/js";
 import FoldersFilter from "./FoldersFilter";
+import XperMonoFilter from "../containers/XperMonoFilter";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const DELETE = require('./pictures/delete-tag.svg');
@@ -34,7 +35,11 @@ export default class extends PureComponent {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.state = {collapse: true, newFolderName: '', selected: this.props.preselected};
+        this.state = {collapse: true,
+            newFolderName: '',
+            selected: this.props.preselected,
+            showXperMonoFilterPopup: false
+        };
     }
 
     handleClickOnFolder = (event, path, selected) => {
@@ -320,6 +325,17 @@ export default class extends PureComponent {
                             : ''}
                     </div>
                 </Collapse>
+                <XperMonoFilter
+                    openModal={this.state.showXperMonoFilterPopup}
+                    onClose={() => {
+                        this.setState({showXperMonoFilterPopup: false});
+                    }}
+                    pickLocation = {this.state.pickLocation}
+                    onPickLocation={(location) => {
+                        this._onPickLocation(location);
+                    }}
+                />
+
             </Container>
         );
     }
@@ -399,6 +415,7 @@ export default class extends PureComponent {
                 break;
             case 'filter_xper':
                 // open xper kb search modal
+                this.setState({showXperMonoFilterPopup: true});
                 break;
         }
     };

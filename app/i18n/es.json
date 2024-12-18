@@ -138,7 +138,23 @@
       "alert_cannot_change_selection_when_manual_order": "No se puede cambiar la selección cuando la opción manual está activada !",
       "lbl_filter": "Filtro",
       "lbl_filters_selected": "{{numberOfFolders}} Carpetas seleccionadas",
-      "btn_tooltip_cancel_folders_filter": "Cancelar el filtro de carpetas"
+      "btn_tooltip_cancel_folders_filter": "Cancelar el filtro de carpetas",
+      "xper_mono_search_dialog": {
+        "title": "Search for Xper3 KB es",
+        "search_terms_placeholder": "Search terms (separated by ;) es",
+        "language_placeholder": "Language es",
+        "lbl_taxonomy": "Taxonomy es",
+        "lbl_stratigraphy": "Stratigraphy es",
+        "lbl_habitat": "Habitat es",
+        "lbl_geography": "Geography es",
+        "lbl_items": "Items es",
+        "lbl_item_groups": "Item groups es",
+        "lbl_descriptor": "Descriptor es",
+        "lbl_descriptor_groups": "Descriptor groups es",
+        "lbl_states": "States es",
+        "lbl_keywords": "Keywords es",
+        "lbl-results": "Results es"
+      }
     },
     "tags": {
       "title": "Palabras clave",

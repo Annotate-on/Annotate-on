@@ -184,6 +184,19 @@
     padding: 0;
   }
 
+  .form-check-label {
+    padding-top: 2px;
+    input{
+      margin-top: 2px;
+    }
+  }
+}
+
+@media (min-width: 576px){
+  .bst .modal-dialog.myMiddleSizedModal {
+    min-height: 500px;
+    max-width: 50%;
+  }
 }
 
 @media (min-width: 576px){
