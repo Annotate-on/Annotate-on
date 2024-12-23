@@ -330,10 +330,6 @@ export default class extends PureComponent {
                     onClose={() => {
                         this.setState({showXperMonoFilterPopup: false});
                     }}
-                    pickLocation = {this.state.pickLocation}
-                    onPickLocation={(location) => {
-                        this._onPickLocation(location);
-                    }}
                 />
 
             </Container>
@@ -460,4 +456,5 @@ export default class extends PureComponent {
             }
         }
     }
+
 }

@@ -77,6 +77,7 @@
       "confirmation": "Confirmation",
       "xper_params_are_required": "Les paramètres du serveur Xper3 sont nécessaires. Merci de les renseigner dans \"Options\".",
       "alert_please_check_your_xper_parameters": "Vérifiez les paramètres Xper dans \"Options\".",
+      "alert_please_check_your_xper_mono_parameters": "Vérifiez les paramètres Xper monobase dans \"Options\".",
       "alert_an_error_occurred_in_communication_with_xper_server": "Erreur dans la communication avec le serveur Xper.",
       "alert_bad_xper_3_response": "Réponse Xper3 erronée.",
       "alert_bad_format_for_xper_3_file": "Mauvais format du fichier Xper3 !",

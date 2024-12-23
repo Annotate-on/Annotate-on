@@ -9,6 +9,7 @@ import {
 
 import styled from "styled-components";
 import PLUS from "./pictures/plus.svg";
+import {searchKb} from "../utils/xper_mono";
 
 export const SUPPORTED_LANGUAGES = [
     'en',
@@ -55,6 +56,7 @@ export default class extends Component {
         super(props);
         this.state = {
             openModal: props.openModal,
+            searchTerm: '',
             selectedLanguage: 'fr',
             searchTaxonomy: false,
             searchStratigraphy: false,
@@ -66,6 +68,7 @@ export default class extends Component {
             searchDescriptorGroups: false,
             searchStates: false,
             searchKeywords: false,
+            kbSearchResults: []
         };
     }
 
@@ -94,13 +97,42 @@ export default class extends Component {
 
     _onSearchXper = () => {
         console.log('Search Xper', this.state);
+        searchKb({
+            q: this.state.searchTerm,
+            lang: this.state.selectedLanguage,
+            taxonomy: this.state.searchTaxonomy,
+            stratigraphy: this.state.searchStratigraphy,
+            habitat: this.state.searchHabitat,
+            geography: this.state.searchGeography,
+            item: this.state.searchItems,
+            item_group: this.state.searchItemGroups,
+            descriptor: this.state.searchDescriptor,
+            descriptor_group: this.state.searchDescriptorGroups,
+            state: this.state.searchStates,
+            keyword: this.state.searchKeywords
+        }, this._onXperMonoDatabaseKbSearchResponse);
     }
 
     _toggle = () => {
-        this.setState({});
         if (this.props.onClose) {
             this.props.onClose();
         }
+
+        this.setState({
+            searchTerm: '',
+            selectedLanguage: 'fr',
+            searchTaxonomy: false,
+            searchStratigraphy: false,
+            searchHabitat: false,
+            searchGeography: false,
+            searchItems: false,
+            searchItemGroups: false,
+            searchDescriptor: false,
+            searchDescriptorGroups: false,
+            searchStates: false,
+            searchKeywords: false,
+            kbSearchResults: []
+        });
     };
 
     render() {
@@ -126,6 +158,7 @@ export default class extends Component {
                                             <Row>
                                                 <Col sm={10} md={10} lg={10} className="options-form-field-label">
                                                     <Input type="text" name="searchTerm" id="search_term"
+                                                           value={this.state.searchTerm}
                                                            placeholder={t('folders.xper_mono_search_dialog.search_terms_placeholder')}
                                                            onChange={this._formChangeHandler}/>
                                                 </Col>
@@ -286,32 +319,34 @@ export default class extends Component {
                                         <Row>
                                             <Col sm={12} md={12} lg={12}>
                                                 <_ResultsPlaceholder>
-                                                    <_ResultItem>
-                                                        <_ResultItemButton>
-                                                            <img alt="Select Xper KB" src={PLUS}/>
-                                                        </_ResultItemButton>
-                                                        <_ResultItemDetails>
-                                                            <div>
-                                                                <strong>Androsace Ecrins</strong>
-                                                            </div>
-                                                            <div>
-                                                                Details, Authors, Dates
-                                                            </div>
-                                                        </_ResultItemDetails>
-                                                    </_ResultItem>
-                                                    <_ResultItem>
-                                                        <_ResultItemButton>
-                                                            <img alt="Select Xper KB" src={PLUS}/>
-                                                        </_ResultItemButton>
-                                                        <_ResultItemDetails>
-                                                            <div>
-                                                                <strong>Androsace Ecrins</strong>
-                                                            </div>
-                                                            <div>
-                                                                Details, Authors, Dates
-                                                            </div>
-                                                        </_ResultItemDetails>
-                                                    </_ResultItem>
+                                                    {
+                                                        this.state.kbSearchResults.map((kb, index) => {
+                                                            return (
+                                                                <_ResultItem key={index}>
+                                                                    <_ResultItemButton>
+                                                                        <img alt="Select Xper KB" src={PLUS}/>
+                                                                    </_ResultItemButton>
+                                                                    <_ResultItemDetails>
+                                                                        <div>
+                                                                            <h4>{kb.name}</h4>
+                                                                        </div>
+                                                                        <div>
+                                                                            <h6>{kb.authors}</h6>
+                                                                        </div>
+                                                                        <div>
+                                                                            {kb.detail}
+                                                                        </div>
+                                                                        {(kb.logoUrl && kb.logoUrl.length > 0) &&
+                                                                            <div>
+                                                                                <img src={kb.logoUrl} alt={""} style={{width: '100px'}}/>
+                                                                            </div>
+                                                                        }
+
+                                                                    </_ResultItemDetails>
+                                                                </_ResultItem>
+                                                            )
+                                                        })
+                                                    }
                                                 </_ResultsPlaceholder>
                                             </Col>
                                         </Row>
@@ -328,6 +363,14 @@ export default class extends Component {
                 </Modal>
             </div>
         );
+    }
+
+    _onXperMonoDatabaseKbSearchResponse = (result) => {
+        if(result) {
+            this.setState({
+                kbSearchResults: result
+            });
+        }
     }
 
 }
