@@ -9,7 +9,7 @@ import {
 
 import styled from "styled-components";
 import PLUS from "./pictures/plus.svg";
-import {searchKb} from "../utils/xper_mono";
+import {searchItemsInKb, searchKb} from "../utils/xper_mono";
 
 export const SUPPORTED_LANGUAGES = [
     'en',
@@ -54,8 +54,10 @@ const _ResultItemDetails = styled.div`
 export default class extends Component {
     constructor(props) {
         super(props);
+        console.log('XperMonoFilter props', props);
         this.state = {
             openModal: props.openModal,
+            folder: props.folder,
             searchTerm: '',
             selectedLanguage: 'fr',
             searchTaxonomy: false,
@@ -78,6 +80,16 @@ export default class extends Component {
                 openModal: this.props.openModal
             });
         }
+        if (prevProps.folder !== this.props.folder) {
+            this.setState({
+                folder: this.props.folder
+            });
+        }
+        if (prevProps.xperMatchedResources !== this.props.xperMatchedResources) {
+            this.setState({
+                xperMatchedResources: this.props.xperMatchedResources
+            });
+        }
     }
 
     _formChangeHandler = (event) => {
@@ -95,6 +107,14 @@ export default class extends Component {
         }
     };
 
+    _matchResourcesWithKBHandler = (kbId) => {
+        searchItemsInKb({kb: kbId, lang: this.state.selectedLanguage}, (result) => {
+            if(result && this.props.xperMatchResources) {
+                this.props.xperMatchResources(this.state.folder, {kb:kbId, items:result});
+            }
+        });
+    }
+
     _onSearchXper = () => {
         console.log('Search Xper', this.state);
         searchKb({
@@ -110,14 +130,19 @@ export default class extends Component {
             descriptor_group: this.state.searchDescriptorGroups,
             state: this.state.searchStates,
             keyword: this.state.searchKeywords
-        }, this._onXperMonoDatabaseKbSearchResponse);
+        }, (result) => {
+            if(result) {
+                this.setState({
+                    kbSearchResults: result
+                });
+            }
+        });
     }
 
     _toggle = () => {
         if (this.props.onClose) {
             this.props.onClose();
         }
-
         this.setState({
             searchTerm: '',
             selectedLanguage: 'fr',
@@ -341,12 +366,25 @@ export default class extends Component {
                                                                                 <img src={kb.logoUrl} alt={""} style={{width: '100px'}}/>
                                                                             </div>
                                                                         }
-
                                                                     </_ResultItemDetails>
+                                                                    <Button color="primary"
+                                                                            size="sm"
+                                                                            style={{height: 40}}
+                                                                            onClick={() => this._matchResourcesWithKBHandler(kb.id)}>
+                                                                        Match resources
+                                                                    </Button>
                                                                 </_ResultItem>
                                                             )
                                                         })
                                                     }
+                                                    {
+                                                        this.state.xperMatchedResources &&
+                                                        <div>
+                                                            Found {this.state.xperMatchedResources.matchedResources.length}/{this.state.xperMatchedResources.numOfProcessedResources}
+                                                            resources in this folder corresponding to kb {this.state.xperMatchedResources.xper.kb} items.
+                                                        </div>
+                                                    }
+
                                                 </_ResultsPlaceholder>
                                             </Col>
                                         </Row>
@@ -364,13 +402,4 @@ export default class extends Component {
             </div>
         );
     }
-
-    _onXperMonoDatabaseKbSearchResponse = (result) => {
-        if(result) {
-            this.setState({
-                kbSearchResults: result
-            });
-        }
-    }
-
 }

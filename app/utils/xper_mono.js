@@ -61,6 +61,52 @@ export const searchKb = (filter, callback) => {
     );
 }
 
+export const searchItemsInKb = (filter, callback) => {
+    console.log("searchItemsInKb ", filter);
+    if(!checkXperMonoSettings()) return;
+    const {t} = i18next;
+    let url = getUrl(`/api/knowledge-bases/${filter.kb}/items/search?lang=${filter.lang}`);
+    ee.emit(EVENT_SHOW_WAITING);
+    request({
+            url : url,
+            timeout: 10000
+        },
+        function (error, response, body){
+            console.log("error ", error);
+            console.log("response ", response);
+            console.log("body ", body);
+            ee.emit(EVENT_HIDE_WAITING);
+            if(error || !response || response.statusCode !== 200) {
+                callback(null);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
+                console.error(getErrorMessage(error, response, body), body);
+            } else {
+                try {
+                    let found = []
+                    let result = JSON.parse(body);
+                    if(result) {
+                        for (const resultElement of result) {
+                            let item = {}
+                            item.id = resultElement.id;
+                            item.name = resultElement.name;
+                            item.alternativeName = resultElement.alternativeName;
+                            found.push(item);
+                        }
+                    }
+                    // console.log("found ", found);
+                    // found[0].name = "Polygonatum vulgare";
+                    callback(found);
+                } catch (e) {
+                    callback(null);
+                    console.error(e);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
+                }
+            }
+        }
+    );
+
+}
+
 const checkXperMonoSettings = () => {
     const {t} = i18next;
     let xperMonoParams = getXperMonoParams();

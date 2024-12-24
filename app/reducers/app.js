@@ -132,7 +132,8 @@ import {
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
-    REMOVE_IMAGE_DETECT_MODEL
+    REMOVE_IMAGE_DETECT_MODEL,
+    XPER_MATCH_RESOURCES
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -241,6 +242,7 @@ export const createInitialState = () => ({
         selected_tab: null,
         annotations_by_tag: {},
         taxonomyInstance: {},
+        xperMatchResources: {},
         open_tabs: {
             'Selection 1': {
                 view: 'library',
@@ -4529,6 +4531,47 @@ export default (state = {}, action) => {
                 ...state,
                 search: action.search,
                 searchResults: action.searchResults,
+                counter
+            };
+        }
+            break;
+        case XPER_MATCH_RESOURCES: {
+            const counter = state.counter + 1;
+            const allPictures = state.pictures;
+            if(!action.folder || !action.xper || !action.xper.items){
+                return state;
+            }
+            const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
+            let picturesInFolder = 0;
+            const matchedPictures = [];
+            allFolders.map(folderName => {
+                const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
+                for (const sha1 in allPictures) {
+                    if (path.dirname(allPictures[sha1].file) === folder) {
+                        ++picturesInFolder;
+                        let name = allPictures[sha1].erecolnatMetadata ? allPictures[sha1].erecolnatMetadata.scientificname : null;
+                        if(name){
+                            for (const item of action.xper.items) {
+                                let itemName = item.name ? item.name.toLowerCase() : '';
+                                let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
+                                if (itemName === name.toLowerCase()
+                                    || itemAlternativeName === name.toLowerCase()) {
+                                    matchedPictures.push(allPictures[sha1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            return {
+                ...state,
+                xperMatchedResources: {
+                    type: "by recolnat scientificname to xper item name/alternative name",
+                    folder: action.folder.path,
+                    xper: action.xper,
+                    numOfProcessedResources: picturesInFolder,
+                    matchedResources: matchedPictures
+                },
                 counter
             };
         }
