@@ -128,5 +128,3 @@ export const getErrorMessage = (error, response, body) => {
     if(response) return `${response.statusMessage}. ${xperParamsCheckMessage}`;
     return t('global.alert_an_error_occurred_in_communication_with_xper_server')
 }
-
-

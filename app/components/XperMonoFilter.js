@@ -10,11 +10,18 @@ import {
 import styled from "styled-components";
 import PLUS from "./pictures/plus.svg";
 import {searchItemsInKb, searchKb} from "../utils/xper_mono";
+import Chance from "chance";
+import {categoryExists} from "./event/utils";
+import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils";
+import {TAG_XPER} from "../constants/constants";
+import {tagExist} from "../utils/tags";
 
 export const SUPPORTED_LANGUAGES = [
     'en',
     'fr',
 ]
+
+const chance = new Chance();
 
 const _ResultsPlaceholder = styled.div`
     display: flex;
@@ -49,6 +56,15 @@ const _ResultItemDetails = styled.div`
     justify-content: space-between;
     flex-direction: column;
     width: 100%;
+`;
+
+const _MatchingResultsContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    padding: 10px;
 `;
 
 export default class extends Component {
@@ -107,16 +123,43 @@ export default class extends Component {
         }
     };
 
-    _matchResourcesWithKBHandler = (kbId) => {
-        searchItemsInKb({kb: kbId, lang: this.state.selectedLanguage}, (result) => {
+    _matchResourcesWithKBHandler = (kb) => {
+        searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if(result && this.props.xperMatchResources) {
-                this.props.xperMatchResources(this.state.folder, {kb:kbId, items:result});
+                this.props.xperMatchResources(this.state.folder, {kb: kb, items:result});
             }
         });
     }
 
+    _onCreateXperTag = () => {
+        if(!this.state.xperMatchedResources.matchedResources) {
+            console.log('No matched resources');
+            return;
+        }
+        if (!categoryExists(this.props.tags, 'Xper')) {
+            console.log('Create Xper Category');
+            this.props.createCategory(createNewCategory(chance.guid(), 'Xper'));
+        }
+        setTimeout(() => {
+            console.log('xperMatchedResources', this.state.xperMatchedResources.matchedResources);
+            const folder = this.state.xperMatchedResources.folder;
+            const xperCategory = getXperCategory(this.props.tags);
+            const tagName = "Xper " + this.props.xperMatchedResources.xper.kb.name;
+            if (!tagExist(this.props.tags, tagName)) {
+                console.log('Create tag ', tagName);
+                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), tagName), false , xperCategory.id)
+            }
+            for (const resource of this.state.xperMatchedResources.matchedResources) {
+                this.props.tagPicture(resource.sha1, tagName);
+            }
+            this._toggle(tagName, folder);
+        }, 100);
+
+    }
+
     _onSearchXper = () => {
         console.log('Search Xper', this.state);
+        this.props.xperMatchResources(null, null);
         searchKb({
             q: this.state.searchTerm,
             lang: this.state.selectedLanguage,
@@ -139,10 +182,11 @@ export default class extends Component {
         });
     }
 
-    _toggle = () => {
+    _toggle = (tag, folder) => {
         if (this.props.onClose) {
-            this.props.onClose();
+            this.props.onClose(tag, folder);
         }
+        this.props.xperMatchResources(null, null);
         this.setState({
             searchTerm: '',
             selectedLanguage: 'fr',
@@ -334,62 +378,68 @@ export default class extends Component {
                                     </Col>
                                     <Col sm={1} md={1} lg={1}/>
                                 </Row>
-                                <Row>
-                                    <Col sm={12} md={12} lg={12}>
-                                        <Row>
-                                            <Col sm={12} md={12} lg={12}>
-                                                <h5>{t('folders.xper_mono_search_dialog.lbl-results')}</h5>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col sm={12} md={12} lg={12}>
-                                                <_ResultsPlaceholder>
-                                                    {
-                                                        this.state.kbSearchResults.map((kb, index) => {
-                                                            return (
-                                                                <_ResultItem key={index}>
-                                                                    <_ResultItemButton>
-                                                                        <img alt="Select Xper KB" src={PLUS}/>
-                                                                    </_ResultItemButton>
-                                                                    <_ResultItemDetails>
-                                                                        <div>
-                                                                            <h4>{kb.name}</h4>
-                                                                        </div>
-                                                                        <div>
-                                                                            <h6>{kb.authors}</h6>
-                                                                        </div>
-                                                                        <div>
-                                                                            {kb.detail}
-                                                                        </div>
-                                                                        {(kb.logoUrl && kb.logoUrl.length > 0) &&
+                                {this.state.kbSearchResults.length > 0 &&
+                                    <Row>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <Row>
+                                                <Col sm={12} md={12} lg={12}>
+                                                    <h5>{t('folders.xper_mono_search_dialog.lbl-results')}</h5>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col sm={12} md={12} lg={12}>
+                                                    <_ResultsPlaceholder>
+                                                        {
+                                                            this.state.kbSearchResults.map((kb, index) => {
+                                                                return (
+                                                                    <_ResultItem key={index}>
+                                                                        <_ResultItemButton>
+                                                                            <img alt="Select Xper KB" src={PLUS}/>
+                                                                        </_ResultItemButton>
+                                                                        <_ResultItemDetails>
                                                                             <div>
-                                                                                <img src={kb.logoUrl} alt={""} style={{width: '100px'}}/>
+                                                                                <h4>{kb.name}</h4>
                                                                             </div>
-                                                                        }
-                                                                    </_ResultItemDetails>
-                                                                    <Button color="primary"
-                                                                            size="sm"
-                                                                            style={{height: 40}}
-                                                                            onClick={() => this._matchResourcesWithKBHandler(kb.id)}>
-                                                                        Match resources
-                                                                    </Button>
-                                                                </_ResultItem>
-                                                            )
-                                                        })
-                                                    }
-                                                    {
-                                                        this.state.xperMatchedResources &&
-                                                        <div>
-                                                            Found {this.state.xperMatchedResources.matchedResources.length}/{this.state.xperMatchedResources.numOfProcessedResources}
-                                                            resources in this folder corresponding to kb {this.state.xperMatchedResources.xper.kb} items.
-                                                        </div>
-                                                    }
+                                                                            <div>
+                                                                                <h6>{kb.authors}</h6>
+                                                                            </div>
+                                                                            <div>
+                                                                                {kb.detail}
+                                                                            </div>
+                                                                            {(kb.logoUrl && kb.logoUrl.length > 0) &&
+                                                                                <div>
+                                                                                    <img src={kb.logoUrl} alt={""} style={{width: '100px'}}/>
+                                                                                </div>
+                                                                            }
+                                                                        </_ResultItemDetails>
+                                                                        <Button color="primary"
+                                                                                size="sm"
+                                                                                style={{height: 40}}
+                                                                                onClick={() => this._matchResourcesWithKBHandler(kb)}>
+                                                                            Match resources
+                                                                        </Button>
+                                                                    </_ResultItem>
+                                                                )
+                                                            })
+                                                        }
+                                                        {
+                                                            this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources &&
+                                                            <_MatchingResultsContainer>
+                                                                <div>
+                                                                    Found {this.state.xperMatchedResources.matchedResources.length}/{this.state.xperMatchedResources.numOfProcessedResources}
+                                                                    resources in this folder corresponding to KB <b>'{this.state.xperMatchedResources.xper.kb.name}'</b> items.
+                                                                </div>
+                                                                <Button color="primary" disabled={this.state.xperMatchedResources.matchedResources.length === 0}
+                                                                        onClick={() => this._onCreateXperTag()}>Create tag</Button>
+                                                            </_MatchingResultsContainer>
+                                                        }
 
-                                                </_ResultsPlaceholder>
-                                            </Col>
-                                        </Row>
-                                    </Col>
-                                </Row>
+                                                    </_ResultsPlaceholder>
+                                                </Col>
+                                            </Row>
+                                        </Col>
+                                    </Row>
+                                }
                             </Container>
                         </Form>
                     </ModalBody>

@@ -196,7 +196,12 @@ import {
 } from "../utils/config";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import {standardDeviation} from "../utils/maths";
-import {getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,} from "../components/tags/tagUtils";
+import {
+    getTagsOnly,
+    getValidTags,
+    lvlAutomaticTags,
+    lvlTags,
+} from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
 import {
     _addTagIdIfMissing,
@@ -4538,8 +4543,11 @@ export default (state = {}, action) => {
         case XPER_MATCH_RESOURCES: {
             const counter = state.counter + 1;
             const allPictures = state.pictures;
-            if(!action.folder || !action.xper || !action.xper.items){
-                return state;
+            if(!action.folder || !action.xper || !action.xper.items) {
+                return {
+                    ...state,
+                    xperMatchedResources: {}
+                };
             }
             const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
             let picturesInFolder = 0;
@@ -4556,7 +4564,9 @@ export default (state = {}, action) => {
                                 let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
                                 if (itemName === name.toLowerCase()
                                     || itemAlternativeName === name.toLowerCase()) {
-                                    matchedPictures.push(allPictures[sha1]);
+                                    const picture = allPictures[sha1];
+                                    picture.sha1 = sha1;
+                                    matchedPictures.push(picture);
                                 }
                             }
                         }
@@ -4567,7 +4577,7 @@ export default (state = {}, action) => {
                 ...state,
                 xperMatchedResources: {
                     type: "by recolnat scientificname to xper item name/alternative name",
-                    folder: action.folder.path,
+                    folder: action.folder,
                     xper: action.xper,
                     numOfProcessedResources: picturesInFolder,
                     matchedResources: matchedPictures
