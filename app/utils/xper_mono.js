@@ -7,19 +7,18 @@ import {getXperMonoParams} from "./config";
 export const searchKb = (filter, callback) => {
     if(!checkXperMonoSettings()) return;
     const {t} = i18next;
-    let url = getUrl(`/api/knowledge-bases/search?q=${filter.q}
-        ${filter.lang ? '&lang='+ filter.lang : ''}
-        ${filter.taxonomy ? '&taxonomy='+ filter.taxonomy : ''}
-        ${filter.stratigraphy ? '&stratigraphy='+ filter.stratigraphy : ''}
-        ${filter.geography ? '&geography='+ filter.geography : ''}
-        ${filter.keyword ? '&keyword='+ filter.keyword : ''}
-        ${filter.habitat ? '&habitat='+ filter.habitat : ''}
-        ${filter.item ? '&item='+ filter.item : ''}
-        ${filter.item_group ? '&item_group='+ filter.item_group : ''}
-        ${filter.descriptor ? '&descriptor='+ filter.descriptor : ''}
-        ${filter.descriptor_group ? '&descriptor_group='+ filter.descriptor_group : ''}
-        ${filter.state ? '&state='+ filter.state : ''}
-        `);
+    let url = getUrl(`/api/knowledge-bases/search?q=${filter.q}${filter.lang ? '&lang='+ filter.lang : ''}` +
+        `${filter.taxonomy ? '&taxonomy='+ filter.taxonomy : ''}` +
+        `${filter.stratigraphy ? '&stratigraphy='+ filter.stratigraphy : ''}` +
+        `${filter.geography ? '&geography='+ filter.geography : ''}` +
+        `${filter.keyword ? '&keyword='+ filter.keyword : ''}` +
+        `${filter.habitat ? '&habitat='+ filter.habitat : ''}` +
+        `${filter.item ? '&item='+ filter.item : ''}` +
+        `${filter.item_group ? '&item_group='+ filter.item_group : ''}` +
+        `${filter.descriptor ? '&descriptor='+ filter.descriptor : ''}` +
+        `${filter.descriptor_group ? '&descriptor_group='+ filter.descriptor_group : ''}` +
+        `${filter.state ? '&state='+ filter.state : ''}`);
+    console.log("url ", url);
     ee.emit(EVENT_SHOW_WAITING);
     request({
             url : url,
