@@ -344,6 +344,10 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding imageDetectAlignments');
                 tmpState["imageDetectAlignments"] = [];
             }
+            if (!tmpState.hasOwnProperty("xperMatchedResources")){
+                console.log('project from previous version , adding xperMatchedResources');
+                tmpState["xperMatchedResources"] = {};
+            }
 
             // Check if object structure match to expected one.
             for (const prop in initialState) {

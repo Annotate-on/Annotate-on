@@ -242,7 +242,7 @@ export const createInitialState = () => ({
         selected_tab: null,
         annotations_by_tag: {},
         taxonomyInstance: {},
-        xperMatchResources: {},
+        xperMatchedResources: {},
         open_tabs: {
             'Selection 1': {
                 view: 'library',
