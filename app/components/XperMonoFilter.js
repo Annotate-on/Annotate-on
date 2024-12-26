@@ -15,11 +15,7 @@ import {categoryExists} from "./event/utils";
 import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils";
 import {TAG_XPER} from "../constants/constants";
 import {tagExist} from "../utils/tags";
-
-export const SUPPORTED_LANGUAGES = [
-    'en',
-    'fr',
-]
+import {SUPPORTED_LANGUAGES} from "../i18n";
 
 const chance = new Chance();
 
@@ -62,9 +58,15 @@ const _MatchingResultsContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
     padding: 10px;
+`;
+
+const _MatchingResultsInfoContainer = styled.div`
+    font-size: 14px;
+    width: 100%;
+    padding-bottom: 10px;
 `;
 
 export default class extends Component {
@@ -75,7 +77,7 @@ export default class extends Component {
             openModal: props.openModal,
             folder: props.folder,
             searchTerm: '',
-            selectedLanguage: 'fr',
+            selectedLanguage: props.i18n.language,
             searchTaxonomy: false,
             searchStratigraphy: false,
             searchHabitat: false,
@@ -86,7 +88,10 @@ export default class extends Component {
             searchDescriptorGroups: false,
             searchStates: false,
             searchKeywords: false,
-            kbSearchResults: []
+            kbSearchResults: [],
+            tagName: '',
+            addAsTag: false,
+            addKbNameAsTag: true
         };
     }
 
@@ -109,9 +114,7 @@ export default class extends Component {
     }
 
     _formChangeHandler = (event) => {
-        console.log('Form Change', event.target);
         const {name, type, value, checked} = event.target;
-
         if (type === 'checkbox') {
             this.setState({
                 [name]: checked
@@ -128,33 +131,51 @@ export default class extends Component {
             if(result && this.props.xperMatchResources) {
                 this.props.xperMatchResources(this.state.folder, {kb: kb, items:result});
             }
+            this.setState({
+                tagName: this.state.searchTerm,
+                addAsTag: false
+            });
         });
     }
 
     _onCreateXperTag = () => {
+        console.log('_onCreateXperTag xperMatchedResources', this.state.xperMatchedResources.matchedResources);
         if(!this.state.xperMatchedResources.matchedResources) {
             console.log('No matched resources');
             return;
         }
+        const customTagName = this.state.addAsTag ? this.state.tagName : null;
+        const kbTagName = this.state.addKbNameAsTag ? "KB " + this.props.xperMatchedResources.xper.kb.name : null;
+        const tags = [];
+        if(customTagName) {
+            tags.push(customTagName);
+        }
+        if(kbTagName) {
+            tags.push(kbTagName);
+        }
+        console.log('tags = ', tags);
         if (!categoryExists(this.props.tags, 'Xper')) {
-            console.log('Create Xper Category');
             this.props.createCategory(createNewCategory(chance.guid(), 'Xper'));
         }
         setTimeout(() => {
-            console.log('xperMatchedResources', this.state.xperMatchedResources.matchedResources);
             const folder = this.state.xperMatchedResources.folder;
             const xperCategory = getXperCategory(this.props.tags);
-            const tagName = "Xper " + this.props.xperMatchedResources.xper.kb.name;
-            if (!tagExist(this.props.tags, tagName)) {
-                console.log('Create tag ', tagName);
-                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), tagName), false , xperCategory.id)
+            if (kbTagName && !tagExist(this.props.tags, kbTagName)) {
+                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), kbTagName), false , xperCategory.id)
+            }
+            if (customTagName && !tagExist(this.props.tags, customTagName)) {
+                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), customTagName), false , xperCategory.id)
             }
             for (const resource of this.state.xperMatchedResources.matchedResources) {
-                this.props.tagPicture(resource.sha1, tagName);
+                if(kbTagName) {
+                    this.props.tagPicture(resource.sha1, kbTagName);
+                }
+                if (customTagName) {
+                    this.props.tagPicture(resource.sha1, customTagName);
+                }
             }
-            this._toggle(tagName, folder);
+            this._toggle(tags, folder);
         }, 100);
-
     }
 
     _onSearchXper = () => {
@@ -182,9 +203,9 @@ export default class extends Component {
         });
     }
 
-    _toggle = (tag, folder) => {
+    _toggle = (tags, folder) => {
         if (this.props.onClose) {
-            this.props.onClose(tag, folder);
+            this.props.onClose(tags, folder);
         }
         this.props.xperMatchResources(null, null);
         this.setState({
@@ -200,7 +221,10 @@ export default class extends Component {
             searchDescriptorGroups: false,
             searchStates: false,
             searchKeywords: false,
-            kbSearchResults: []
+            kbSearchResults: [],
+            tagName: '',
+            addAsTag: false,
+            addKbNameAsTag: true
         });
     };
 
@@ -239,8 +263,13 @@ export default class extends Component {
                                                            onChange={this._formChangeHandler}>
                                                         {
                                                             SUPPORTED_LANGUAGES.map(lang => {
-                                                                return <option key={lang} value={lang}
-                                                                               title={t('global.languages.' + lang.toUpperCase())}>{t('global.languages.' + lang.toUpperCase())}</option>
+                                                                return (
+                                                                    <option key={lang}
+                                                                            value={lang}
+                                                                            title={t('global.languages.' + lang.toUpperCase())}>
+                                                                    {t('global.languages.' + lang.toUpperCase())}
+                                                                    </option>
+                                                                )
                                                             })
                                                         }
                                                     </Input>
@@ -416,7 +445,7 @@ export default class extends Component {
                                                                                 size="sm"
                                                                                 style={{height: 40}}
                                                                                 onClick={() => this._matchResourcesWithKBHandler(kb)}>
-                                                                            Match resources
+                                                                            {t('folders.xper_mono_search_dialog.btn_match_resources')}
                                                                         </Button>
                                                                     </_ResultItem>
                                                                 )
@@ -425,15 +454,66 @@ export default class extends Component {
                                                         {
                                                             this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources &&
                                                             <_MatchingResultsContainer>
-                                                                <div>
-                                                                    Found {this.state.xperMatchedResources.matchedResources.length}/{this.state.xperMatchedResources.numOfProcessedResources}
-                                                                    resources in this folder corresponding to KB <b>'{this.state.xperMatchedResources.xper.kb.name}'</b> items.
-                                                                </div>
-                                                                <Button color="primary" disabled={this.state.xperMatchedResources.matchedResources.length === 0}
-                                                                        onClick={() => this._onCreateXperTag()}>Create tag</Button>
+                                                                <Container>
+                                                                    <Row>
+                                                                        <Col sm={12} md={12} lg={12}>
+                                                                            <_MatchingResultsInfoContainer>
+                                                                                {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
+                                                                                    numOfMatchedResources: this.state.xperMatchedResources.matchedResources.length,
+                                                                                    numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
+                                                                                    folder: this.state.folder.path,
+                                                                                    kbName: this.state.xperMatchedResources.xper.kb.name
+                                                                                })}
+                                                                            </_MatchingResultsInfoContainer>
+                                                                        </Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col sm={3} md={3} lg={3}>
+                                                                            <Input type="text" name="tagName" id="tag-name"
+                                                                                   value={this.state.tagName}
+                                                                                   onChange={this._formChangeHandler}/>
+                                                                        </Col>
+                                                                        <Col sm={2} md={2} lg={2}>
+                                                                            <FormGroup>
+                                                                                <Input name="addAsTag" id="add-as-tag"
+                                                                                       type="checkbox"
+                                                                                       checked={this.state.addAsTag}
+                                                                                           disabled={!this.state.tagName}
+                                                                                       onChange={this._formChangeHandler}/>
+                                                                                <Label for="add-as-tag"
+                                                                                       className="form-check-label pointer">
+                                                                                    {t('folders.xper_mono_search_dialog.lbl_add_as_tag')}
+                                                                                </Label>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                        <Col sm={3} md={3} lg={3}>
+                                                                            <FormGroup>
+                                                                                <Input name="addKbNameAsTag" id="add-kb-name-as-tag"
+                                                                                       type="checkbox"
+                                                                                       checked={this.state.addKbNameAsTag}
+                                                                                       onChange={this._formChangeHandler}/>
+                                                                                <Label for="add-kb-name-as-tag"
+                                                                                       className="form-check-label pointer">
+                                                                                    {t('folders.xper_mono_search_dialog.lbl_include_kb_name_as_tag')}
+                                                                                </Label>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                        <Col sm={2} md={2} lg={2}>
+                                                                        </Col>
+                                                                        <Col sm={2} md={2} lg={2}>
+                                                                            <Button color="primary" disabled={
+                                                                                this.state.xperMatchedResources.matchedResources.length === 0 ||
+                                                                                (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
+                                                                                (!this.state.tagName && !this.state.addKbNameAsTag)
+                                                                            } onClick={() => this._onCreateXperTag()}>
+                                                                                {t('folders.xper_mono_search_dialog.btn_tag_images')}
+                                                                            </Button>
+
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Container>
                                                             </_MatchingResultsContainer>
                                                         }
-
                                                     </_ResultsPlaceholder>
                                                 </Col>
                                             </Row>

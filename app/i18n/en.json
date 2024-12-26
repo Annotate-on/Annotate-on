@@ -165,7 +165,12 @@
         "lbl_descriptor_groups": "Descriptor groups",
         "lbl_states": "States",
         "lbl_keywords": "Keywords",
-        "lbl-results": "Results"
+        "lbl-results": "Results",
+        "btn_match_resources": "Match resources",
+        "btn_match_resources_info": "Found {{numOfMatchedResources}}/{{numOfProcessedResources}} resources in '{{folder}}' folder corresponding to KB '{{kbName}}' items.",
+        "lbl_add_as_tag": "Add as tag",
+        "lbl_include_kb_name_as_tag": "Include KB name as tag",
+        "btn_tag_images": "Tag images"
       }
     },
     "tags": {

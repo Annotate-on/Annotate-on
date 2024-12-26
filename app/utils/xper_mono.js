@@ -92,7 +92,6 @@ export const searchItemsInKb = (filter, callback) => {
                             found.push(item);
                         }
                     }
-                    // console.log("found ", found);
                     // found[0].name = "Polygonatum vulgare";
                     callback(found);
                 } catch (e) {

@@ -328,17 +328,18 @@ export default class extends PureComponent {
                 <XperMonoFilter
                     openModal={this.state.showXperMonoFilterPopup}
                     folder={this.state.folderForXperMatching}
-                    onClose={(tag, folder) => {
-                        console.log('Close Xper Mono Filter tag & folder', tag, folder);
+                    onClose={(tags, folder) => {
                         this.setState({showXperMonoFilterPopup: false});
-                        if(tag && folder) {
+                        if(tags.length > 0 && folder) {
                             this.props.selectFolder(this.props.tabName, folder.path);
                             folder.selectAll = true;
                             if (folder.children) {
                                 this._selectFoldersRecursively(folder.children);
                             }
                             setTimeout(() => {
-                                this.props.addTagInFilter(tag, false, this.props.tabName);
+                                tags.forEach(tag => {
+                                    this.props.addTagInFilter(tag, false, this.props.tabName);
+                                });
                             }, 100);
                         }
                     }}
