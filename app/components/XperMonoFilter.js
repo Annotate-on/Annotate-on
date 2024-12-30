@@ -9,7 +9,7 @@ import {
 
 import styled from "styled-components";
 import PLUS from "./pictures/plus.svg";
-import {searchItemsInKb, searchKb} from "../utils/xper_mono";
+import {getKnowledgeBasesDetails, searchItemsInKb, searchKb} from "../utils/xper_mono";
 import Chance from "chance";
 import {categoryExists} from "./event/utils";
 import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils";
@@ -69,6 +69,32 @@ const _MatchingResultsInfoContainer = styled.div`
     padding-bottom: 10px;
 `;
 
+const _KbDetailsContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+`;
+
+const _KbDetailsAttribute = styled.div`
+    padding: 5px;
+    font-size: 14px;
+    width: 100%;
+`;
+
+const _KbDetailsHeader = styled.div`
+    padding: 5px;
+    font-size: 16px;
+    background-color: bisque;
+    width: 100%;
+`;
+
+const _KbDetailsLabel = styled.span`
+    font-weight: bold;
+    margin-right: 10px;
+`;
+
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -91,7 +117,9 @@ export default class extends Component {
             kbSearchResults: [],
             tagName: '',
             addAsTag: false,
-            addKbNameAsTag: true
+            addKbNameAsTag: true,
+            kbWithDetails: {},
+            openKbDetailsModal: false
         };
     }
 
@@ -202,6 +230,25 @@ export default class extends Component {
             }
         });
     }
+
+    _onShowKbDetailsHandler = (kb) => {
+        console.log('onShowKbDetailsHandler kb =', kb);
+        getKnowledgeBasesDetails({kb: kb.id, lang: this.state.selectedLanguage},(result) => {
+            console.log('getKnowledgeBasesDetails result =', result);
+            if(result) {
+                this.setState({
+                    kbWithDetails: result
+                });
+                this._toggleKbDetails();
+            }
+        });
+    }
+
+    _toggleKbDetails = () => {
+        this.setState({
+            openKbDetailsModal: !this.state.openKbDetailsModal
+        });
+    };
 
     _toggle = (tags, folder) => {
         if (this.props.onClose) {
@@ -423,7 +470,7 @@ export default class extends Component {
                                                                 return (
                                                                     <_ResultItem key={index}>
                                                                         <_ResultItemButton>
-                                                                            <img alt="Select Xper KB" src={PLUS}/>
+                                                                            <img alt="Select Xper KB" src={PLUS} onClick={() => this._onShowKbDetailsHandler(kb)}/>
                                                                         </_ResultItemButton>
                                                                         <_ResultItemDetails>
                                                                             <div>
@@ -529,7 +576,134 @@ export default class extends Component {
                         <Button color="secondary" onClick={this._toggle}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
+                <Modal isOpen={this.state.openKbDetailsModal} className="myMiddleSizedModal" toggle={this._toggleKbDetails}
+                       contentClassName="custom-modal-style" wrapClassName="bst"
+                       scrollable={false}
+                       autoFocus={false}>
+                    <ModalHeader toggle={this._toggleKbDetails}>
+                        {this.state.kbWithDetails.name}
+                    </ModalHeader>
+                    <ModalBody>
+                        <_KbDetailsContainer>
+                            <_KbDetailsHeader>
+                                {t('folders.xper_mono_kb_details_dialog.lbl_general_information')}
+                            </_KbDetailsHeader>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_description')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.detail}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_authors')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.authors}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_key_language')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.language}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_study_field')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.studyField}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_key_creation_context')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.keyCreationContext}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_target_public')} :</_KbDetailsLabel>
+                                <span>{this.state.kbWithDetails.targetAudience}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_copyrights')} :</_KbDetailsLabel>
+                                <span>@{this.state.kbWithDetails.copyrights}</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_associated_website')} :</_KbDetailsLabel>
+                                <span>?</span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_interactive_identification_key_url')} :</_KbDetailsLabel>
+                                <span>
+                                    <a href={this.state.kbWithDetails.interactiveIdentificationUrl}>{this.state.kbWithDetails.interactiveIdentificationUrl}</a>
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_data_publication_url')} :</_KbDetailsLabel>
+                                <span>
+                                    <a href={this.state.kbWithDetails.dataHtmlUrl}>{this.state.kbWithDetails.dataHtmlUrl}</a>
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_key_data_featuring_article')} :</_KbDetailsLabel>
+                                <span>
+                                    ?
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsHeader>
+                                {t('folders.xper_mono_kb_details_dialog.lbl_taxonomic_information')}
+                            </_KbDetailsHeader>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_taxa_types')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.scientificName : ''}
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_items_taxonomic_rank')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.rank : ''}
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsHeader>
+                                {t('folders.xper_mono_kb_details_dialog.lbl_biogeographic information')}
+                            </_KbDetailsHeader>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_geographic_areas')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.geographies ? this.state.kbWithDetails.geographies.map(t => t.translatedName).join(', ') : ''}
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_biogeographic_area')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.biogeoInfo}
+                                </span>
+                            </_KbDetailsAttribute>
+
+                            <_KbDetailsHeader>
+                                {t('folders.xper_mono_kb_details_dialog.lbl_stratigraphic_information')}
+                            </_KbDetailsHeader>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_stratigraphic_distribution')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.stratigraphies ? this.state.kbWithDetails.stratigraphies.map(t => t.translatedName).join(', ') : ''}
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsHeader>
+                                {t('folders.xper_mono_kb_details_dialog.lbl_current_base_status')}
+                            </_KbDetailsHeader>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{this.state.kbWithDetails.nbItems} {t('folders.xper_mono_kb_details_dialog.lbl_items')}</_KbDetailsLabel>
+                                <_KbDetailsLabel>- {this.state.kbWithDetails.nbDescriptors} {t('folders.xper_mono_kb_details_dialog.lbl_descriptors')}</_KbDetailsLabel>
+                                <_KbDetailsLabel>- {this.state.kbWithDetails.nbResources} {t('folders.xper_mono_kb_details_dialog.lbl_resources')}</_KbDetailsLabel>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_created_on')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.createTime}
+                                </span>
+                            </_KbDetailsAttribute>
+                            <_KbDetailsAttribute>
+                                <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_last_update_on')} :</_KbDetailsLabel>
+                                <span>
+                                    {this.state.kbWithDetails.lastKbUpdate}
+                                </span>
+                            </_KbDetailsAttribute>
+                        </_KbDetailsContainer>
+                    </ModalBody>
+                    <ModalFooter><Button color="secondary" onClick={this._toggleKbDetails}>{t('global.close')}</Button></ModalFooter>
+                </Modal>
             </div>
         );
     }
+
 }
