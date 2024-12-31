@@ -154,7 +154,7 @@
         "lbl_descriptor_groups": "Descriptor groups pt",
         "lbl_states": "States pt",
         "lbl_keywords": "Keywords pt",
-        "lbl-results": "Results pt",
+        "btn_tooltip_show_kb_details": "Show KB details pt",
         "btn_match_resources": "Match resources pt",
         "btn_match_resources_info": "Found {{numOfMatchedResources}}/{{numOfProcessedResources}} resources in '{{folder}}' folder corresponding to KB '{{kbName}}' items pt.",
         "lbl_add_as_tag": "Add as tag pt",

@@ -19,12 +19,25 @@ import {SUPPORTED_LANGUAGES} from "../i18n";
 
 const chance = new Chance();
 
+const _SearchFormContainer = styled.div`
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding-top: 10px;
+`;
+
 const _ResultsPlaceholder = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     flex-direction: column;
+`;
+
+const _ResultsContainer = styled.div`
+    overflow-y: auto;
+    height: 400px;
     border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-top: 10px;
 `;
 
 const _ResultItem = styled.div`
@@ -32,15 +45,22 @@ const _ResultItem = styled.div`
     justify-content: space-between;
     flex-direction: row;
     border-bottom: 1px solid #dee2e6;
-    padding: 10px;
+    padding: 5px 15px 5px 0px;
     width: 100%;
+    align-items: center;
 `;
 
 const _ResultItemButton = styled.div`
-    margin: 0px 10px 5px 0px;
-    width: 30px;
-    height: 30px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    width: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
     cursor: pointer;
+
     img {
         cursor: pointer;
     }
@@ -51,22 +71,28 @@ const _ResultItemDetails = styled.div`
     flex-wrap: wrap;
     justify-content: space-between;
     flex-direction: column;
-    width: 100%;
+    flex-grow: 1;
+    padding-left: 10px;
+    border-left: 1px solid #dee2e6;
+
+    h4 {
+        margin-bottom: 0;
+    }
 `;
 
 const _MatchingResultsContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    flex-direction: column;
-    width: 100%;
-    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding-top: 5px;
 `;
 
 const _MatchingResultsInfoContainer = styled.div`
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: bold;
     width: 100%;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
 `;
 
 const _KbDetailsContainer = styled.div`
@@ -75,6 +101,8 @@ const _KbDetailsContainer = styled.div`
     justify-content: space-between;
     flex-direction: column;
     width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
 `;
 
 const _KbDetailsAttribute = styled.div`
@@ -86,7 +114,7 @@ const _KbDetailsAttribute = styled.div`
 const _KbDetailsHeader = styled.div`
     padding: 5px;
     font-size: 16px;
-    background-color: bisque;
+    background-color: #eee;
     width: 100%;
 `;
 
@@ -156,8 +184,8 @@ export default class extends Component {
 
     _matchResourcesWithKBHandler = (kb) => {
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
-            if(result && this.props.xperMatchResources) {
-                this.props.xperMatchResources(this.state.folder, {kb: kb, items:result});
+            if (result && this.props.xperMatchResources) {
+                this.props.xperMatchResources(this.state.folder, {kb: kb, items: result});
             }
             this.setState({
                 tagName: this.state.searchTerm,
@@ -168,17 +196,17 @@ export default class extends Component {
 
     _onCreateXperTag = () => {
         console.log('_onCreateXperTag xperMatchedResources', this.state.xperMatchedResources.matchedResources);
-        if(!this.state.xperMatchedResources.matchedResources) {
+        if (!this.state.xperMatchedResources.matchedResources) {
             console.log('No matched resources');
             return;
         }
         const customTagName = this.state.addAsTag ? this.state.tagName : null;
         const kbTagName = this.state.addKbNameAsTag ? "KB " + this.props.xperMatchedResources.xper.kb.name : null;
         const tags = [];
-        if(customTagName) {
+        if (customTagName) {
             tags.push(customTagName);
         }
-        if(kbTagName) {
+        if (kbTagName) {
             tags.push(kbTagName);
         }
         console.log('tags = ', tags);
@@ -189,13 +217,13 @@ export default class extends Component {
             const folder = this.state.xperMatchedResources.folder;
             const xperCategory = getXperCategory(this.props.tags);
             if (kbTagName && !tagExist(this.props.tags, kbTagName)) {
-                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), kbTagName), false , xperCategory.id)
+                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), kbTagName), false, xperCategory.id)
             }
             if (customTagName && !tagExist(this.props.tags, customTagName)) {
-                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), customTagName), false , xperCategory.id)
+                this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), customTagName), false, xperCategory.id)
             }
             for (const resource of this.state.xperMatchedResources.matchedResources) {
-                if(kbTagName) {
+                if (kbTagName) {
                     this.props.tagPicture(resource.sha1, kbTagName);
                 }
                 if (customTagName) {
@@ -223,7 +251,7 @@ export default class extends Component {
             state: this.state.searchStates,
             keyword: this.state.searchKeywords
         }, (result) => {
-            if(result) {
+            if (result) {
                 this.setState({
                     kbSearchResults: result
                 });
@@ -233,9 +261,9 @@ export default class extends Component {
 
     _onShowKbDetailsHandler = (kb) => {
         console.log('onShowKbDetailsHandler kb =', kb);
-        getKnowledgeBasesDetails({kb: kb.id, lang: this.state.selectedLanguage},(result) => {
+        getKnowledgeBasesDetails({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             console.log('getKnowledgeBasesDetails result =', result);
-            if(result) {
+            if (result) {
                 this.setState({
                     kbWithDetails: result
                 });
@@ -248,6 +276,10 @@ export default class extends Component {
         this.setState({
             openKbDetailsModal: !this.state.openKbDetailsModal
         });
+    };
+
+    _openLink = (url) => {
+        require("electron").shell.openExternal(url);
     };
 
     _toggle = (tags, folder) => {
@@ -286,297 +318,296 @@ export default class extends Component {
                     <ModalHeader toggle={this._toggle}>
                         {t('folders.xper_mono_search_dialog.title')}
                     </ModalHeader>
-                    <ModalBody>
-                        <Form onSubmit={(e) => {
-                            e.preventDefault();
-                        }} className="tag-form">
-                            <Container>
-                                <Row className="xper-mono-search">
-                                    <Col sm={1} md={1} lg={1}/>
-                                    <Col sm={10} md={10} lg={10}>
-                                        <Container>
-                                            <Row>
-                                                <Col sm={10} md={10} lg={10} className="options-form-field-label">
-                                                    <Input type="text" name="searchTerm" id="search_term"
-                                                           value={this.state.searchTerm}
-                                                           placeholder={t('folders.xper_mono_search_dialog.search_terms_placeholder')}
-                                                           onChange={this._formChangeHandler}/>
-                                                </Col>
-                                                <Col sm={2} md={2} lg={2}>
-                                                    <Input type="select" name="selectedLanguage" bsSize="md"
-                                                           title={t('global.options.select_language.tooltip')}
-                                                           placeholder={t('folders.xper_mono_search_dialog.language_placeholder')}
-                                                           value={this.state.selectedLanguage}
-                                                           onChange={this._formChangeHandler}>
-                                                        {
-                                                            SUPPORTED_LANGUAGES.map(lang => {
-                                                                return (
-                                                                    <option key={lang}
-                                                                            value={lang}
-                                                                            title={t('global.languages.' + lang.toUpperCase())}>
-                                                                    {t('global.languages.' + lang.toUpperCase())}
-                                                                    </option>
-                                                                )
-                                                            })
-                                                        }
-                                                    </Input>
-                                                </Col>
-                                            </Row>
-                                            <Row className="search-options">
-                                                <Container>
-                                                    <Row>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchTaxonomy" id="search-taxonomy"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchTaxonomy}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-taxonomy"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_taxonomy')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchStratigraphy"
-                                                                       id="search-stratigraphy" type="checkbox"
-                                                                       checked={this.state.searchStratigraphy}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-stratigraphy"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_stratigraphy')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchHabitat" id="search-habitat"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchHabitat}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-habitat"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_habitat')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchGeography" id="search-geography"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchGeography}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-geography"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_geography')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchItems" id="search-items"
-                                                                       type="checkbox" checked={this.state.searchItems}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-items"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_items')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchItemGroups" id="search-item-groups"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchItemGroups}
-                                                                       onChange={this._formChangeHandler}>test</Input>
-                                                                <Label for="search-item-groups"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_item_groups')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchDescriptor" id="search-descriptor"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchDescriptor}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-descriptor"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_descriptor')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchDescriptorGroups"
-                                                                       id="search-descriptor-groups" type="checkbox"
-                                                                       checked={this.state.searchDescriptorGroups}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-descriptor-groups"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_descriptor_groups')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchStates" id="search-states"
-                                                                       type="checkbox" checked={this.state.searchStates}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-states"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_states')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                        <Col sm={3} md={3} lg={3}>
-                                                            <FormGroup>
-                                                                <Input name="searchKeywords" id="search-keywords"
-                                                                       type="checkbox"
-                                                                       checked={this.state.searchKeywords}
-                                                                       onChange={this._formChangeHandler}/>
-                                                                <Label for="search-keywords"
-                                                                       className="form-check-label pointer">
-                                                                    {t('folders.xper_mono_search_dialog.lbl_keywords')}
-                                                                </Label>
-                                                            </FormGroup>
-                                                        </Col>
-                                                    </Row>
-                                                </Container>
-                                            </Row>
-                                        </Container>
-                                    </Col>
-                                    <Col sm={1} md={1} lg={1}/>
-                                </Row>
-                                {this.state.kbSearchResults.length > 0 &&
-                                    <Row>
-                                        <Col sm={12} md={12} lg={12}>
-                                            <Row>
-                                                <Col sm={12} md={12} lg={12}>
-                                                    <h5>{t('folders.xper_mono_search_dialog.lbl-results')}</h5>
-                                                </Col>
-                                            </Row>
-                                            <Row>
-                                                <Col sm={12} md={12} lg={12}>
-                                                    <_ResultsPlaceholder>
-                                                        {
-                                                            this.state.kbSearchResults.map((kb, index) => {
-                                                                return (
-                                                                    <_ResultItem key={index}>
-                                                                        <_ResultItemButton>
-                                                                            <img alt="Select Xper KB" src={PLUS} onClick={() => this._onShowKbDetailsHandler(kb)}/>
-                                                                        </_ResultItemButton>
-                                                                        <_ResultItemDetails>
-                                                                            <div>
-                                                                                <h4>{kb.name}</h4>
-                                                                            </div>
-                                                                            <div>
-                                                                                <h6>{kb.authors}</h6>
-                                                                            </div>
-                                                                            <div>
-                                                                                {kb.detail}
-                                                                            </div>
-                                                                            {(kb.logoUrl && kb.logoUrl.length > 0) &&
-                                                                                <div>
-                                                                                    <img src={kb.logoUrl} alt={""} style={{width: '100px'}}/>
-                                                                                </div>
-                                                                            }
-                                                                        </_ResultItemDetails>
-                                                                        <Button color="primary"
-                                                                                size="sm"
-                                                                                style={{height: 40}}
-                                                                                onClick={() => this._matchResourcesWithKBHandler(kb)}>
-                                                                            {t('folders.xper_mono_search_dialog.btn_match_resources')}
-                                                                        </Button>
-                                                                    </_ResultItem>
-                                                                )
-                                                            })
-                                                        }
-                                                        {
-                                                            this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources &&
-                                                            <_MatchingResultsContainer>
-                                                                <Container>
-                                                                    <Row>
-                                                                        <Col sm={12} md={12} lg={12}>
-                                                                            <_MatchingResultsInfoContainer>
-                                                                                {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
-                                                                                    numOfMatchedResources: this.state.xperMatchedResources.matchedResources.length,
-                                                                                    numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
-                                                                                    folder: this.state.folder.path,
-                                                                                    kbName: this.state.xperMatchedResources.xper.kb.name
-                                                                                })}
-                                                                            </_MatchingResultsInfoContainer>
-                                                                        </Col>
-                                                                    </Row>
-                                                                    <Row>
-                                                                        <Col sm={3} md={3} lg={3}>
-                                                                            <Input type="text" name="tagName" id="tag-name"
-                                                                                   value={this.state.tagName}
-                                                                                   onChange={this._formChangeHandler}/>
-                                                                        </Col>
-                                                                        <Col sm={2} md={2} lg={2}>
-                                                                            <FormGroup>
-                                                                                <Input name="addAsTag" id="add-as-tag"
-                                                                                       type="checkbox"
-                                                                                       checked={this.state.addAsTag}
-                                                                                           disabled={!this.state.tagName}
-                                                                                       onChange={this._formChangeHandler}/>
-                                                                                <Label for="add-as-tag"
-                                                                                       className="form-check-label pointer">
-                                                                                    {t('folders.xper_mono_search_dialog.lbl_add_as_tag')}
-                                                                                </Label>
-                                                                            </FormGroup>
-                                                                        </Col>
-                                                                        <Col sm={3} md={3} lg={3}>
-                                                                            <FormGroup>
-                                                                                <Input name="addKbNameAsTag" id="add-kb-name-as-tag"
-                                                                                       type="checkbox"
-                                                                                       checked={this.state.addKbNameAsTag}
-                                                                                       onChange={this._formChangeHandler}/>
-                                                                                <Label for="add-kb-name-as-tag"
-                                                                                       className="form-check-label pointer">
-                                                                                    {t('folders.xper_mono_search_dialog.lbl_include_kb_name_as_tag')}
-                                                                                </Label>
-                                                                            </FormGroup>
-                                                                        </Col>
-                                                                        <Col sm={2} md={2} lg={2}>
-                                                                        </Col>
-                                                                        <Col sm={2} md={2} lg={2}>
-                                                                            <Button color="primary" disabled={
-                                                                                this.state.xperMatchedResources.matchedResources.length === 0 ||
-                                                                                (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
-                                                                                (!this.state.tagName && !this.state.addKbNameAsTag)
-                                                                            } onClick={() => this._onCreateXperTag()}>
-                                                                                {t('folders.xper_mono_search_dialog.btn_tag_images')}
-                                                                            </Button>
+                    <ModalBody className="xper-mono-search">
 
-                                                                        </Col>
-                                                                    </Row>
-                                                                </Container>
-                                                            </_MatchingResultsContainer>
-                                                        }
-                                                    </_ResultsPlaceholder>
-                                                </Col>
-                                            </Row>
+                        <_SearchFormContainer>
+                            <Form onSubmit={(e) => {
+                                e.preventDefault();
+                            }} className="tag-form">
+                                <Container>
+                                    <Row>
+                                        <Col sm={7} md={7} lg={7} className="options-form-field-label">
+                                            <Input type="text" name="searchTerm" id="search_term"
+                                                   value={this.state.searchTerm}
+                                                   placeholder={t('folders.xper_mono_search_dialog.search_terms_placeholder')}
+                                                   onChange={this._formChangeHandler}/>
+                                        </Col>
+                                        <Col sm={3} md={3} lg={3}>
+                                            <Input type="select" name="selectedLanguage" bsSize="md"
+                                                   title={t('global.options.select_language.tooltip')}
+                                                   placeholder={t('folders.xper_mono_search_dialog.language_placeholder')}
+                                                   value={this.state.selectedLanguage}
+                                                   onChange={this._formChangeHandler}>
+                                                {
+                                                    SUPPORTED_LANGUAGES.map(lang => {
+                                                        return (
+                                                            <option key={lang}
+                                                                    value={lang}
+                                                                    title={t('global.languages.' + lang.toUpperCase())}>
+                                                                {t('global.languages.' + lang.toUpperCase())}
+                                                            </option>
+                                                        )
+                                                    })
+                                                }
+                                            </Input>
+                                        </Col>
+                                        <Col sm={2} md={2} lg={2}>
+                                            <Button color="primary"
+                                                    disabled={!this.state.searchTerm || this.state.searchTerm.length === 0}
+                                                    onClick={() => this._onSearchXper()}>{t('global.search')}</Button>
                                         </Col>
                                     </Row>
-                                }
-                            </Container>
-                        </Form>
+                                    <Row className="search-options">
+                                        <Container>
+                                            <Row>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchTaxonomy" id="search-taxonomy"
+                                                               type="checkbox"
+                                                               checked={this.state.searchTaxonomy}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-taxonomy"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_taxonomy')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchStratigraphy"
+                                                               id="search-stratigraphy" type="checkbox"
+                                                               checked={this.state.searchStratigraphy}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-stratigraphy"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_stratigraphy')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchHabitat" id="search-habitat"
+                                                               type="checkbox"
+                                                               checked={this.state.searchHabitat}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-habitat"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_habitat')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchGeography" id="search-geography"
+                                                               type="checkbox"
+                                                               checked={this.state.searchGeography}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-geography"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_geography')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchItems" id="search-items"
+                                                               type="checkbox" checked={this.state.searchItems}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-items"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_items')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+
+                                            </Row>
+                                            <Row>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchItemGroups" id="search-item-groups"
+                                                               type="checkbox"
+                                                               checked={this.state.searchItemGroups}
+                                                               onChange={this._formChangeHandler}>test</Input>
+                                                        <Label for="search-item-groups"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_item_groups')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchDescriptor" id="search-descriptor"
+                                                               type="checkbox"
+                                                               checked={this.state.searchDescriptor}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-descriptor"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_descriptor')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchDescriptorGroups"
+                                                               id="search-descriptor-groups" type="checkbox"
+                                                               checked={this.state.searchDescriptorGroups}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-descriptor-groups"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_descriptor_groups')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchStates" id="search-states"
+                                                               type="checkbox" checked={this.state.searchStates}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-states"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_states')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+                                                <Col sm={2} md={2} lg={2}>
+                                                    <FormGroup>
+                                                        <Input name="searchKeywords" id="search-keywords"
+                                                               type="checkbox"
+                                                               checked={this.state.searchKeywords}
+                                                               onChange={this._formChangeHandler}/>
+                                                        <Label for="search-keywords"
+                                                               className="form-check-label pointer">
+                                                            {t('folders.xper_mono_search_dialog.lbl_keywords')}
+                                                        </Label>
+                                                    </FormGroup>
+                                                </Col>
+
+                                            </Row>
+                                            <Row>
+                                            </Row>
+                                        </Container>
+                                    </Row>
+                                </Container>
+                            </Form>
+                        </_SearchFormContainer>
+
+                        {this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources &&
+                            <_MatchingResultsContainer>
+                                <Container className="matching-results-container">
+                                    <Row>
+                                        <Col sm={12} md={12} lg={12}>
+                                            <_MatchingResultsInfoContainer>
+                                                {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
+                                                    numOfMatchedResources: this.state.xperMatchedResources.matchedResources.length,
+                                                    numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
+                                                    folder: this.state.folder.path,
+                                                    kbName: this.state.xperMatchedResources.xper.kb.name
+                                                })}
+                                            </_MatchingResultsInfoContainer>
+                                        </Col>
+                                    </Row>
+                                    {this.state.xperMatchedResources.matchedResources.length > 0 &&
+                                        <Row>
+                                            <Col sm={3} md={3} lg={3}>
+                                                <Input type="text" name="tagName" id="tag-name"
+                                                       value={this.state.tagName}
+                                                       onChange={this._formChangeHandler}/>
+                                            </Col>
+                                            <Col sm={2} md={2} lg={2}>
+                                                <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
+                                                    <Input name="addAsTag" id="add-as-tag"
+                                                           type="checkbox"
+                                                           checked={this.state.addAsTag}
+                                                           disabled={!this.state.tagName}
+                                                           onChange={this._formChangeHandler}/>
+                                                    <Label for="add-as-tag"
+                                                           className="form-check-label pointer">
+                                                        {t('folders.xper_mono_search_dialog.lbl_add_as_tag')}
+                                                    </Label>
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={3} md={3} lg={3}>
+                                                <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
+                                                    <Input name="addKbNameAsTag" id="add-kb-name-as-tag"
+                                                           type="checkbox"
+                                                           checked={this.state.addKbNameAsTag}
+                                                           onChange={this._formChangeHandler}/>
+                                                    <Label for="add-kb-name-as-tag"
+                                                           className="form-check-label pointer">
+                                                        {t('folders.xper_mono_search_dialog.lbl_include_kb_name_as_tag')}
+                                                    </Label>
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={2} md={2} lg={2}>
+                                            </Col>
+                                            <Col sm={2} md={2} lg={2}>
+                                                <Button color="primary" disabled={
+                                                    (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
+                                                    (!this.state.tagName && !this.state.addKbNameAsTag)
+                                                } onClick={() => this._onCreateXperTag()}>
+                                                    {t('folders.xper_mono_search_dialog.btn_tag_images')}
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    }
+                                </Container>
+                            </_MatchingResultsContainer>
+                        }
+
+                        {this.state.kbSearchResults.length > 0 &&
+                            <_ResultsContainer>
+                                <_ResultsPlaceholder>
+                                    {
+                                        this.state.kbSearchResults.map((kb, index) => {
+                                            return (
+                                                <_ResultItem key={index}>
+                                                    <_ResultItemButton title={t('folders.xper_mono_search_dialog.btn_tooltip_show_kb_details')}>
+                                                        <img alt="Select Xper KB" src={PLUS}
+                                                             onClick={() => this._onShowKbDetailsHandler(kb)}
+                                                             style={{width: '25px'}}/>
+                                                        {(kb.logoUrl && kb.logoUrl.length > 0) &&
+                                                            <div>
+                                                                <img src={kb.logoUrl} alt={""} style={{width: '50px'}}/>
+                                                            </div>
+                                                        }
+                                                    </_ResultItemButton>
+                                                    <_ResultItemDetails>
+                                                        <div style={{fontSize: '18px', fontWeight: "bold"}}>
+                                                            {kb.name}
+                                                        </div>
+
+                                                        {kb.authors &&
+                                                            <div style={{
+                                                                fontSize: '12px',
+                                                                fontWeight: "bold",
+                                                                marginTop: '5px'
+                                                            }}> {kb.authors}</div>
+                                                        }
+                                                        {kb.detail &&
+                                                            <div style={{
+                                                                marginTop: '5px'
+                                                            }}>{kb.detail}</div>
+                                                        }
+                                                    </_ResultItemDetails>
+                                                    <Button color="secondary"
+                                                            size="sm"
+                                                            onClick={() => this._matchResourcesWithKBHandler(kb)}>
+                                                        {t('folders.xper_mono_search_dialog.btn_match_resources')}
+                                                    </Button>
+                                                </_ResultItem>
+                                            )
+                                        })
+                                    }
+                                </_ResultsPlaceholder>
+                            </_ResultsContainer>
+                        }
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" disabled={!this.state.searchTerm || this.state.searchTerm.length === 0}
-                                onClick={() => this._onSearchXper()}>{t('global.search')}</Button>
                         <Button color="secondary" onClick={this._toggle}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
-                <Modal isOpen={this.state.openKbDetailsModal} className="myMiddleSizedModal" toggle={this._toggleKbDetails}
+                <Modal isOpen={this.state.openKbDetailsModal} className="myMiddleSizedModal"
+                       toggle={this._toggleKbDetails}
                        contentClassName="custom-modal-style" wrapClassName="bst"
                        scrollable={false}
                        autoFocus={false}>
@@ -623,13 +654,14 @@ export default class extends Component {
                             <_KbDetailsAttribute>
                                 <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_interactive_identification_key_url')} :</_KbDetailsLabel>
                                 <span>
-                                    <a href={this.state.kbWithDetails.interactiveIdentificationUrl}>{this.state.kbWithDetails.interactiveIdentificationUrl}</a>
+                                    <a href="#"
+                                       onClick={() => this._openLink(this.state.kbWithDetails.interactiveIdentificationUrl)}>{this.state.kbWithDetails.interactiveIdentificationUrl}</a>
                                 </span>
                             </_KbDetailsAttribute>
                             <_KbDetailsAttribute>
                                 <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_data_publication_url')} :</_KbDetailsLabel>
                                 <span>
-                                    <a href={this.state.kbWithDetails.dataHtmlUrl}>{this.state.kbWithDetails.dataHtmlUrl}</a>
+                                    <a onClick={() => this._openLink(this.state.kbWithDetails.dataHtmlUrl)}>{this.state.kbWithDetails.dataHtmlUrl}</a>
                                 </span>
                             </_KbDetailsAttribute>
                             <_KbDetailsAttribute>

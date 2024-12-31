@@ -139,7 +139,6 @@ export const getKnowledgeBasesDetails = (filter, callback) => {
 
 }
 
-
 const checkXperMonoSettings = () => {
     const {t} = i18next;
     let xperMonoParams = getXperMonoParams();
