@@ -167,10 +167,12 @@
         "lbl_keywords": "Keywords",
         "btn_tooltip_show_kb_details": "Show KB details",
         "btn_match_resources": "Match resources",
-        "btn_match_resources_info": "Found {{numOfMatchedResources}}/{{numOfProcessedResources}} resources in '{{folder}}' folder corresponding to KB '{{kbName}}' items.",
+        "btn_match_resources_info": "Matched {{numOfMatchedResources}} / {{numOfProcessedResources}} images with item '{{item}}'.",
         "lbl_add_as_tag": "Add as tag",
         "lbl_include_kb_name_as_tag": "Include KB name as tag",
-        "btn_tag_images": "Tag images"
+        "btn_tag_images": "Tag images & create annotations",
+        "btn_select_descriptors": "Select descriptors",
+        "lbl_create_annotations": "Create annotations"
       },
       "xper_mono_kb_details_dialog": {
         "lbl_general_information": "General information",

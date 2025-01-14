@@ -4551,7 +4551,8 @@ export default (state = {}, action) => {
             }
             const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
             let picturesInFolder = 0;
-            const matchedPictures = [];
+
+            const matchedPictures = {};
             allFolders.map(folderName => {
                 const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
                 for (const sha1 in allPictures) {
@@ -4566,13 +4567,20 @@ export default (state = {}, action) => {
                                     || itemAlternativeName === name.toLowerCase()) {
                                     const picture = allPictures[sha1];
                                     picture.sha1 = sha1;
-                                    matchedPictures.push(picture);
+                                    if(!matchedPictures[item.id]) {
+                                        matchedPictures[item.id] = []
+                                    }
+                                    matchedPictures[item.id].push(picture);
                                 }
                             }
                         }
                     }
                 }
             });
+            let matchedResources = []
+            for (const property in matchedPictures) {
+                matchedResources.push({item: +property, resources: matchedPictures[property]});
+            }
             return {
                 ...state,
                 xperMatchedResources: {
@@ -4580,7 +4588,7 @@ export default (state = {}, action) => {
                     folder: action.folder,
                     xper: action.xper,
                     numOfProcessedResources: picturesInFolder,
-                    matchedResources: matchedPictures
+                    matchedResources: matchedResources
                 },
                 counter
             };
