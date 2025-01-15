@@ -46,6 +46,8 @@
       "lbl_importing_resources_files_to_folders": "Importación de archivos de recursos en las carpetas",
       "lbl_resources_files_found": "Archivos de recursos encontrados",
       "lbl_collecting_metadata_and_generating_thumbnails": "Colecta de metadatos y generación de vistas miniaturas",
+      "btn_select_all": "Select all",
+      "btn_unselect_all": "Unselect all",
       "options": {
         "title": "Opciones",
         "lbl_select_language": "Seleccione el idioma",
@@ -190,6 +192,14 @@
         "lbl_resources": "resources",
         "lbl_created_on": "Created on",
         "lbl_last_update_on": "Last update on"
+      },
+      "xper_mono_item_details_dialog": {
+        "lbl_measurementUnit": "Measurement Unit",
+        "lbl_min": "Min",
+        "lbl_min_include": "Min Include",
+        "lbl_max_include": "Max Include",
+        "lbl_max": "Max",
+        "lbl_descriptor_value_not_provided": "Value is not provided"
       }
     },
     "tags": {

@@ -51,6 +51,8 @@
       "dropdown_item_import_images": "Image(s)",
       "dropdown_item_import_videos": "Videos(s)",
       "dropdown_item_create_event": "Create event",
+      "btn_select_all": "Select all",
+      "btn_unselect_all": "Unselect all",
       "options": {
         "title": "Options",
         "lbl_select_language": "Select language",
@@ -201,6 +203,14 @@
         "lbl_resources": "resources",
         "lbl_created_on": "Created on",
         "lbl_last_update_on": "Last update on"
+      },
+      "xper_mono_item_details_dialog": {
+        "lbl_measurementUnit": "Measurement Unit",
+        "lbl_min": "Min",
+        "lbl_min_include": "Min Include",
+        "lbl_max_include": "Max Include",
+        "lbl_max": "Max",
+        "lbl_descriptor_value_not_provided": "Value is not provided"
       }
     },
     "tags": {

@@ -9,7 +9,7 @@ import {
 
 import styled from "styled-components";
 import PLUS from "./pictures/plus.svg";
-import {getKnowledgeBasesDetails, searchItemsInKb, searchKb} from "../utils/xper_mono";
+import {getDescriptorsForItem, getKnowledgeBasesDetails, searchItemsInKb, searchKb} from "../utils/xper_mono";
 import Chance from "chance";
 import {categoryExists} from "./event/utils";
 import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils";
@@ -136,6 +136,74 @@ const _KbDetailsLabel = styled.span`
     margin-right: 10px;
 `;
 
+const _ItemDetailsScrollContainer = styled.div`
+    height: 600px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+`;
+
+const _ItemDetailsContainer = styled.div`
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+`;
+
+const _ItemDetailsValueContainer = styled.div`
+    padding: 5px 8px 5px 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+`;
+
+const _ItemDescriptorContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 5px 5px 5px 20px;
+    margin-bottom: 5px;
+    width: 100%;
+    border-bottom: 1px solid #dee2e6;
+
+    .form-check-input {
+        position: relative !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+    }
+`;
+
+const _ItemDescriptorNameContainer = styled.label`
+    height: 10px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-left: 5px;
+    margin-bottom: 0 !important;
+`;
+
+const _ItemCategoricalDescriptorContainer = styled.ul`
+    padding-top: 5px;
+    margin-bottom: 0 !important;
+    padding-left: 20px;
+`;
+
+const _ItemQuantitativeDescriptorContainer = styled.div`
+    display: flex;
+    margin-top: 10px;
+
+    div {
+        margin-left: 5px;
+        margin-right: 20px;
+    }
+`;
+
+const _ItemDescriptorValueNotProvidedContainer = styled.div`
+    color: #cd2b2b;
+    margin-top: 5px;
+    margin-left: 5px;
+`;
 
 export default class extends Component {
     constructor(props) {
@@ -162,7 +230,10 @@ export default class extends Component {
             addKbNameAsTag: true,
             createAnnotations: true,
             kbWithDetails: {},
-            openKbDetailsModal: false
+            openKbDetailsModal: false,
+            itemWithDetails: {},
+            openItemDetailsModal: false,
+            descriptorSelection: {}
         };
     }
 
@@ -197,24 +268,67 @@ export default class extends Component {
         }
     };
 
+    _descriptorSelectionChangeHandler = (event) => {
+        const {name, type, value, checked} = event.target;
+        console.log('descriptorSelectionChangeHandler', name, type, value, checked);
+        console.log('descriptorSelectionChangeHandler', this.state.descriptorSelection);
+        const item = this.state.itemWithDetails.id;
+        this.setState({
+            descriptorSelection: {
+                ...this.state.descriptorSelection,
+                [item]: {
+                    ...this.state.descriptorSelection[item],
+                    [name]: checked
+                }
+            }
+        });
+    };
+
     _matchResourcesWithKBHandler = (kb) => {
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if (result && this.props.xperMatchResources) {
                 this.props.xperMatchResources(this.state.folder, {kb: kb, items: result});
             }
+
+
             this.setState({
                 tagName: this.state.searchTerm,
-                addAsTag: false
+                addAsTag: false,
+                itemWithDetails: {},
+                openItemDetailsModal: false,
+                descriptorSelection: {
+                }
             });
         });
     }
 
     _onSelectDescriptors = (item) => {
-        alert('Select descriptors for item ' + item);
+        getDescriptorsForItem({item: item, lang: this.state.selectedLanguage}, (result) => {
+            if (result) {
+                console.log('Descriptors for item ' + item, result);
+                let descriptorSelection = {};
+                for (const descriptor of result.descriptors) {
+                    descriptorSelection[descriptor.id] = true;
+                }
+                this.setState({
+                    itemWithDetails: result,
+                });
+                if(!this.state.descriptorSelection || !this.state.descriptorSelection[item]) {
+                    this.setState({
+                        descriptorSelection: {
+                            ...this.state.descriptorSelection,
+                            [item]: descriptorSelection
+                        }
+                    });
+                }
+                this._toggleItemDetails();
+            }
+        });
     }
 
     _onCreateXperTag = () => {
         console.log('_onCreateXperTag xperMatchedResources', this.state.xperMatchedResources.matchedResources);
+        console.log('_onCreateXperTag descriptorSelection', this.state.descriptorSelection);
         if (!this.state.xperMatchedResources.matchedResources) {
             console.log('No matched resources');
             return;
@@ -299,6 +413,25 @@ export default class extends Component {
         });
     };
 
+    _toggleItemDetails = () => {
+        this.setState({
+            openItemDetailsModal: !this.state.openItemDetailsModal,
+        });
+    };
+
+    _odBulkChangeDescriptorSelection = (select) => {
+        let descriptorSelection = this.state.descriptorSelection[this.state.itemWithDetails.id];
+        for (const descriptor in descriptorSelection) {
+            descriptorSelection[descriptor] = select;
+        }
+        this.setState({
+            descriptorSelection: {
+                ...this.state.descriptorSelection,
+                [this.state.itemWithDetails.id]: descriptorSelection
+            }
+        });
+    };
+
     _openLink = (url) => {
         require("electron").shell.openExternal(url);
     };
@@ -324,7 +457,13 @@ export default class extends Component {
             kbSearchResults: [],
             tagName: '',
             addAsTag: false,
-            addKbNameAsTag: true
+            addKbNameAsTag: true,
+            createAnnotations: true,
+            kbWithDetails: {},
+            openKbDetailsModal: false,
+            itemWithDetails: {},
+            openItemDetailsModal: false,
+            descriptorSelection: {}
         });
     };
 
@@ -359,6 +498,7 @@ export default class extends Component {
                     </ModalFooter>
                 </Modal>
                 {this.renderKbDetailsModal(t)}
+                {this.renderItemDetailsModal(t)}
             </div>
         );
     }
@@ -428,7 +568,8 @@ export default class extends Component {
                                                         {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
                                                             numOfMatchedResources: matchedResource.resources.length,
                                                             numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
-                                                            item: this.findItem(matchedResource.item)})}
+                                                            item: this.findItem(matchedResource.item)
+                                                        })}
                                                     </div>
                                                     <Button color="secondary"
                                                             size="sm"
@@ -437,7 +578,8 @@ export default class extends Component {
                                                     </Button>
                                                 </_MatchedPicturesForItemContainer>
                                             </div>
-                                        )})
+                                        )
+                                    })
 
                                 }
 
@@ -490,16 +632,14 @@ export default class extends Component {
                                     </FormGroup>
                                 </Col>
                             </Row>
-                            <Row >
-                                <Col sm={8} md={8} lg={8} />
+                            <Row>
+                                <Col sm={8} md={8} lg={8}/>
                                 <Col sm={4} md={4} lg={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
                                     <Button color="primary" disabled={
                                         (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
                                         (!this.state.tagName && !this.state.addKbNameAsTag)
                                     } onClick={() => this._onCreateXperTag()}>
-                                        {
-                                            t('folders.xper_mono_search_dialog.btn_tag_images')
-                                        }
+                                        {t('folders.xper_mono_search_dialog.btn_tag_images')}
                                     </Button>
                                 </Col>
                             </Row>
@@ -671,9 +811,6 @@ export default class extends Component {
                                         </Label>
                                     </FormGroup>
                                 </Col>
-
-                            </Row>
-                            <Row>
                             </Row>
                         </Container>
                     </Row>
@@ -731,36 +868,34 @@ export default class extends Component {
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_interactive_identification_key_url')} :</_KbDetailsLabel>
                         <span>
-                                    <a href="#"
-                                       onClick={() => this._openLink(this.state.kbWithDetails.interactiveIdentificationUrl)}>{this.state.kbWithDetails.interactiveIdentificationUrl}</a>
-                                </span>
+                            <a href="#"
+                               onClick={() => this._openLink(this.state.kbWithDetails.interactiveIdentificationUrl)}>
+                                {this.state.kbWithDetails.interactiveIdentificationUrl}
+                            </a>
+                        </span>
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_data_publication_url')} :</_KbDetailsLabel>
                         <span>
-                                    <a onClick={() => this._openLink(this.state.kbWithDetails.dataHtmlUrl)}>{this.state.kbWithDetails.dataHtmlUrl}</a>
-                                </span>
+                            <a onClick={() => this._openLink(this.state.kbWithDetails.dataHtmlUrl)}>
+                                {this.state.kbWithDetails.dataHtmlUrl}
+                            </a>
+                        </span>
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_key_data_featuring_article')} :</_KbDetailsLabel>
-                        <span>
-                                    ?
-                                </span>
+                        <span>?</span>
                     </_KbDetailsAttribute>
                     <_KbDetailsHeader>
                         {t('folders.xper_mono_kb_details_dialog.lbl_taxonomic_information')}
                     </_KbDetailsHeader>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_taxa_types')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.scientificName : ''}
-                                </span>
+                        <span>{this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.scientificName : ''}</span>
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_items_taxonomic_rank')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.rank : ''}
-                                </span>
+                        <span>{this.state.kbWithDetails.taxa ? this.state.kbWithDetails.taxa.rank : ''}</span>
                     </_KbDetailsAttribute>
                     <_KbDetailsHeader>
                         {t('folders.xper_mono_kb_details_dialog.lbl_biogeographic information')}
@@ -768,14 +903,13 @@ export default class extends Component {
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_geographic_areas')} :</_KbDetailsLabel>
                         <span>
-                                    {this.state.kbWithDetails.geographies ? this.state.kbWithDetails.geographies.map(t => t.translatedName).join(', ') : ''}
-                                </span>
+                            {this.state.kbWithDetails.geographies ?
+                                this.state.kbWithDetails.geographies.map(t => t.translatedName).join(', ') : ''}
+                        </span>
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_biogeographic_area')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.biogeoInfo}
-                                </span>
+                        <span>{this.state.kbWithDetails.biogeoInfo}</span>
                     </_KbDetailsAttribute>
 
                     <_KbDetailsHeader>
@@ -783,9 +917,9 @@ export default class extends Component {
                     </_KbDetailsHeader>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_stratigraphic_distribution')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.stratigraphies ? this.state.kbWithDetails.stratigraphies.map(t => t.translatedName).join(', ') : ''}
-                                </span>
+                        <span>{this.state.kbWithDetails.stratigraphies ?
+                            this.state.kbWithDetails.stratigraphies.map(t => t.translatedName).join(', ') : ''}
+                        </span>
                     </_KbDetailsAttribute>
                     <_KbDetailsHeader>
                         {t('folders.xper_mono_kb_details_dialog.lbl_current_base_status')}
@@ -797,20 +931,83 @@ export default class extends Component {
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_created_on')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.createTime}
-                                </span>
+                        <span>{this.state.kbWithDetails.createTime}</span>
                     </_KbDetailsAttribute>
                     <_KbDetailsAttribute>
                         <_KbDetailsLabel>{t('folders.xper_mono_kb_details_dialog.lbl_last_update_on')} :</_KbDetailsLabel>
-                        <span>
-                                    {this.state.kbWithDetails.lastKbUpdate}
-                                </span>
+                        <span>{this.state.kbWithDetails.lastKbUpdate}</span>
                     </_KbDetailsAttribute>
                 </_KbDetailsContainer>
             </ModalBody>
-            <ModalFooter><Button color="secondary"
-                                 onClick={this._toggleKbDetails}>{t('global.close')}</Button></ModalFooter>
+            <ModalFooter>
+                <Button color="secondary" onClick={this._toggleKbDetails}>{t('global.close')}</Button>
+            </ModalFooter>
+        </Modal>;
+    }
+
+    renderItemDetailsModal(t) {
+        return <Modal isOpen={this.state.openItemDetailsModal} className="my45PctSizedModal"
+                      toggle={() => this._toggleItemDetails(false)}
+                      contentClassName="custom-modal-style" wrapClassName="bst"
+                      scrollable={false}
+                      autoFocus={false}>
+            <ModalHeader toggle={() => this._toggleItemDetails(false)}>
+                {this.state.itemWithDetails.name}
+            </ModalHeader>
+            <ModalBody>
+                <_ItemDetailsValueContainer>
+                    <div dangerouslySetInnerHTML={{__html: this.state.itemWithDetails.detail}}/>
+                </_ItemDetailsValueContainer>
+                <_ItemDetailsScrollContainer>
+                    <_ItemDetailsContainer>
+                        {this.state.itemWithDetails.descriptors && this.state.itemWithDetails.descriptors.map((descriptor, index) => {
+                            return (
+                                <_ItemDescriptorContainer key={index}>
+                                    <div>
+                                        <Input name={descriptor.id} id={descriptor.id}
+                                               type="checkbox"
+                                               checked={
+                                                   this.state.descriptorSelection[this.state.itemWithDetails.id] ?
+                                                       this.state.descriptorSelection[this.state.itemWithDetails.id][descriptor.id] : false
+                                               }
+                                               onChange={this._descriptorSelectionChangeHandler}/>
+                                        <_ItemDescriptorNameContainer for={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>
+                                    </div>
+                                    {(descriptor.type === "QuantitativeDescriptor" && !descriptor.values) &&
+                                        <_ItemDescriptorValueNotProvidedContainer>{t('folders.xper_mono_item_details_dialog.lbl_descriptor_value_not_provided')}</_ItemDescriptorValueNotProvidedContainer>
+                                    }
+                                    {descriptor.type === "QuantitativeDescriptor" && descriptor.values &&
+                                        <_ItemQuantitativeDescriptorContainer>
+                                            <div>{t('folders.xper_mono_item_details_dialog.lbl_measurementUnit') + ":" + (descriptor.values.measurementUnit ? descriptor.values.measurementUnit : "")}</div>
+                                            <div>{t('folders.xper_mono_item_details_dialog.lbl_min')} : {descriptor.values.min}</div>
+                                            <div>{t('folders.xper_mono_item_details_dialog.lbl_min_include')} : {descriptor.values.minInclude}</div>
+                                            <div>{t('folders.xper_mono_item_details_dialog.lbl_max')} : {descriptor.values.max}</div>
+                                            <div>{t('folders.xper_mono_item_details_dialog.lbl_max_include')} : {descriptor.values.maxInclude}</div>
+                                        </_ItemQuantitativeDescriptorContainer>
+                                    }
+                                    {(descriptor.type !== "QuantitativeDescriptor" && (!descriptor.states || descriptor.states.length === 0)) &&
+                                        <_ItemDescriptorValueNotProvidedContainer>{t('folders.xper_mono_item_details_dialog.lbl_descriptor_value_not_provided')}</_ItemDescriptorValueNotProvidedContainer>
+                                    }
+                                    {descriptor.type !== "QuantitativeDescriptor" && descriptor.states && descriptor.states.length > 0 &&
+                                        <_ItemCategoricalDescriptorContainer>
+                                            {descriptor.states && descriptor.states.map((state, index) => {
+                                                return (
+                                                    <li key={index}>{state.name}</li>
+                                                )
+                                            })}
+                                        </_ItemCategoricalDescriptorContainer>
+                                    }
+                                </_ItemDescriptorContainer>
+                            )
+                        })}
+                    </_ItemDetailsContainer>
+                </_ItemDetailsScrollContainer>
+            </ModalBody>
+            <ModalFooter>
+                <Button color="secondary" onClick={() => this._odBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
+                <Button color="secondary" onClick={() => this._odBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
+                <Button color="primary" onClick={this._toggleItemDetails}>{t('global.save')}</Button>
+            </ModalFooter>
         </Modal>;
     }
 }
