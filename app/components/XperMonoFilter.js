@@ -233,6 +233,7 @@ export default class extends Component {
             openKbDetailsModal: false,
             itemWithDetails: {},
             openItemDetailsModal: false,
+            selectedItem: null,
             descriptorSelection: {}
         };
     }
@@ -272,7 +273,7 @@ export default class extends Component {
         const {name, type, value, checked} = event.target;
         console.log('descriptorSelectionChangeHandler', name, type, value, checked);
         console.log('descriptorSelectionChangeHandler', this.state.descriptorSelection);
-        const item = this.state.itemWithDetails.id;
+        const item = this.state.selectedItem;
         this.setState({
             descriptorSelection: {
                 ...this.state.descriptorSelection,
@@ -290,14 +291,12 @@ export default class extends Component {
                 this.props.xperMatchResources(this.state.folder, {kb: kb, items: result});
             }
 
-
             this.setState({
                 tagName: this.state.searchTerm,
                 addAsTag: false,
                 itemWithDetails: {},
                 openItemDetailsModal: false,
-                descriptorSelection: {
-                }
+                descriptorSelection: {}
             });
         });
     }
@@ -311,7 +310,11 @@ export default class extends Component {
                     descriptorSelection[descriptor.id] = true;
                 }
                 this.setState({
-                    itemWithDetails: result,
+                    itemWithDetails: {
+                        ...this.state.itemWithDetails,
+                        [item]: result
+                    },
+                    selectedItem : item
                 });
                 if(!this.state.descriptorSelection || !this.state.descriptorSelection[item]) {
                     this.setState({
@@ -342,7 +345,42 @@ export default class extends Component {
         if (kbTagName) {
             tags.push(kbTagName);
         }
-        console.log('tags = ', tags);
+        console.log('_onCreateXperTag tags ', tags);
+
+        let resourcesXperData = {};
+        for (const matchedResource of this.state.xperMatchedResources.matchedResources) {
+            for (const resource of matchedResource.resources) {
+                console.log('resource = ', resource);
+                let resourceXperData = resourcesXperData[resource.sha1] ? resourcesXperData[resource.sha1] : {
+                    "kb_name": this.props.xperMatchedResources.xper.kb.name,
+                    "kb_id": this.props.xperMatchedResources.xper.kb.id,
+                    "kb_language": this.state.selectedLanguage,
+                    "items": [],
+                };
+                let itemWithDetail = this.state.itemWithDetails[matchedResource.item]
+                if(itemWithDetail) {
+                    if (itemWithDetail.descriptors) {
+                        itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => this.state.descriptorSelection[itemWithDetail.id][descriptor.id]);
+                    } else {
+                        itemWithDetail.descriptors = []
+                    }
+                    resourceXperData.items.push(this.state.itemWithDetails[matchedResource.item]);
+                } else {
+                    console.log('this.state.xperMatchedResources.xper = ', this.state.xperMatchedResources.xper);
+                    for (const item of this.state.xperMatchedResources.xper.items) {
+                        console.log('matchedResource = ', matchedResource);
+                        console.log('item = ', item);
+                        if (item.id === matchedResource.item) {
+                            resourceXperData.items.push(item);
+                            break;
+                        }
+                    }
+                }
+                resourcesXperData[resource.sha1] = resourceXperData;
+            }
+        }
+        console.log('_onCreateXperTag resourcesXperData', resourcesXperData);
+
         if (!categoryExists(this.props.tags, 'Xper')) {
             this.props.createCategory(createNewCategory(chance.guid(), 'Xper'));
         }
@@ -355,16 +393,15 @@ export default class extends Component {
             if (customTagName && !tagExist(this.props.tags, customTagName)) {
                 this.props.addSubCategory(TAG_XPER, createNewTag(chance.guid(), customTagName), false, xperCategory.id)
             }
-            let allResources = [];
-            for (const resource of this.state.xperMatchedResources.matchedResources) {
-                allResources = allResources.concat(resource.resources);
-            }
-            for (const resource of allResources) {
+            for (const resource in resourcesXperData) {
                 if (kbTagName) {
-                    this.props.tagPicture(resource.sha1, kbTagName);
+                    this.props.tagPicture(resource, kbTagName);
                 }
                 if (customTagName) {
-                    this.props.tagPicture(resource.sha1, customTagName);
+                    this.props.tagPicture(resource, customTagName);
+                }
+                if (this.state.createAnnotations) {
+                    this.props.createAnnotationXper(resource, resourcesXperData[resource]);
                 }
             }
             this._toggle(tags, folder);
@@ -420,7 +457,7 @@ export default class extends Component {
     };
 
     _odBulkChangeDescriptorSelection = (select) => {
-        let descriptorSelection = this.state.descriptorSelection[this.state.itemWithDetails.id];
+        let descriptorSelection = this.state.descriptorSelection[this.state.selectedItem];
         for (const descriptor in descriptorSelection) {
             descriptorSelection[descriptor] = select;
         }
@@ -946,29 +983,30 @@ export default class extends Component {
     }
 
     renderItemDetailsModal(t) {
+        let itemWithDetails = this.state.itemWithDetails[this.state.selectedItem] ? this.state.itemWithDetails[this.state.selectedItem]: {};
         return <Modal isOpen={this.state.openItemDetailsModal} className="my45PctSizedModal"
                       toggle={() => this._toggleItemDetails(false)}
                       contentClassName="custom-modal-style" wrapClassName="bst"
                       scrollable={false}
                       autoFocus={false}>
             <ModalHeader toggle={() => this._toggleItemDetails(false)}>
-                {this.state.itemWithDetails.name}
+                {itemWithDetails.name}
             </ModalHeader>
             <ModalBody>
                 <_ItemDetailsValueContainer>
-                    <div dangerouslySetInnerHTML={{__html: this.state.itemWithDetails.detail}}/>
+                    <div dangerouslySetInnerHTML={{__html: itemWithDetails.detail}}/>
                 </_ItemDetailsValueContainer>
                 <_ItemDetailsScrollContainer>
                     <_ItemDetailsContainer>
-                        {this.state.itemWithDetails.descriptors && this.state.itemWithDetails.descriptors.map((descriptor, index) => {
+                        {itemWithDetails.descriptors && itemWithDetails.descriptors.map((descriptor, index) => {
                             return (
                                 <_ItemDescriptorContainer key={index}>
                                     <div>
                                         <Input name={descriptor.id} id={descriptor.id}
                                                type="checkbox"
                                                checked={
-                                                   this.state.descriptorSelection[this.state.itemWithDetails.id] ?
-                                                       this.state.descriptorSelection[this.state.itemWithDetails.id][descriptor.id] : false
+                                                   this.state.descriptorSelection[itemWithDetails.id] ?
+                                                       this.state.descriptorSelection[itemWithDetails.id][descriptor.id] : false
                                                }
                                                onChange={this._descriptorSelectionChangeHandler}/>
                                         <_ItemDescriptorNameContainer for={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>

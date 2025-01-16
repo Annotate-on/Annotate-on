@@ -133,7 +133,7 @@ import {
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
     REMOVE_IMAGE_DETECT_MODEL,
-    XPER_MATCH_RESOURCES
+    XPER_MATCH_RESOURCES, CREATE_ANNOTATION_XPER
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -4584,7 +4584,7 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 xperMatchedResources: {
-                    type: "by recolnat scientificname to xper item name/alternative name",
+                    type: "by scientificname",
                     folder: action.folder,
                     xper: action.xper,
                     numOfProcessedResources: picturesInFolder,
@@ -4592,6 +4592,85 @@ export default (state = {}, action) => {
                 },
                 counter
             };
+        }
+            break;
+        case CREATE_ANNOTATION_XPER: {
+            const counter = state.counter + 1;
+            const {type, ...payload} = action;
+            const pictureId = payload.pictureId;
+            console.log('CREATE_ANNOTATION_XPER payload', payload);
+            const kbId = payload.xperData.kb_id;
+
+            let value =+ payload.xperData.kb_id + '\r\n';
+            if (payload.xperData.kb_name) {
+                value += payload.xperData.kb_name + '\r\n';
+            }
+            if (payload.xperData.kb_language) {
+                value += payload.xperData.kb_language + '\r\n';
+            }
+            if (payload.xperData.items) {
+                // value += 'items: ' + '\r\n';
+                for (const item of payload.xperData.items) {
+                    if(item.name) {
+                        value += "* " + item.name + '\r\n';
+                    }
+                    if(item.descriptors) {
+                        for (const descriptor of item.descriptors) {
+                            value += "   -- " + descriptor.name + '\r\n';
+                            if(descriptor.type === 'QuantitativeDescriptor') {
+                                if(descriptor.measurementUnit !== "undefined") {
+                                    value += "       unit: " + descriptor.measurementUnit + '\r\n';
+                                }
+                                if(descriptor.values.min !== "undefined") {
+                                    value += "       min: " + descriptor.values.min + '\r\n';
+                                }
+                                if(descriptor.values.max !== "undefined") {
+                                    value += "       max: " + descriptor.values.max + '\r\n';
+                                }
+                                if(descriptor.values.minInclude !== "undefined") {
+                                    value += "       min_include: " + descriptor.values.minInclude + '\r\n';
+                                }
+                                if(descriptor.values.maxInclude !== "undefined") {
+                                    value += "       max_include :" + descriptor.values.maxInclude + '\r\n';
+                                }
+                            } else {
+                                for (const state of descriptor.states) {
+                                    value += "       - " + state.name + '\r\n';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                annotations_categorical: {
+                    ...state.annotations_categorical,
+                    [pictureId]: [
+                        {
+                            ...payload,
+                            annotationType: ANNOTATION_CATEGORICAL,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `XPER-${kbId}`,
+                            value: value,
+                            xperData: payload.xperData
+                        },
+                        ...(state.annotations_categorical[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+
         }
             break;
         default:

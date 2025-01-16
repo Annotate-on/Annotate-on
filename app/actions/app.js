@@ -143,6 +143,7 @@ export const SAVE_SEARCH = 'SAVE_SEARCH';
 export const CREATE_ANNOTATION_CIRCLE_OF_INTEREST = 'CREATE_ANNOTATION_CIRCLE_OF_INTEREST';
 export const CREATE_ANNOTATION_POLYGON_OF_INTEREST = 'CREATE_ANNOTATION_POLYGON_OF_INTEREST';
 export const XPER_MATCH_RESOURCES = 'XPER_MATCH_RESOURCES';
+export const CREATE_ANNOTATION_XPER = 'CREATE_ANNOTATION_XPER';
 
 export const createAnnotationChronoThematique = (videoId, start, end, duration, text, id) => {
     return {
@@ -974,3 +975,10 @@ export const xperMatchResources = (folder, xper) => ({
     folder,
     xper
 });
+
+export const createAnnotationXper = (pictureId, xperData) => ({
+    type: CREATE_ANNOTATION_XPER,
+    pictureId,
+    xperData
+});
+
