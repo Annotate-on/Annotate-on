@@ -211,7 +211,8 @@ import {
     getNewTabName
 } from "../components/event/utils";
 import i18next from "i18next";
-
+import Chance from "chance";
+const chance = new Chance();
 // The 'shape' of the state is defined here
 export const createInitialState = () => ({
     app: {
@@ -4600,6 +4601,7 @@ export default (state = {}, action) => {
         case CREATE_ANNOTATION_XPER: {
             const counter = state.counter + 1;
             const {type, ...payload} = action;
+            const id = chance.guid();
             const pictureId = payload.pictureId;
             console.log('CREATE_ANNOTATION_XPER payload', payload);
             const kbId = payload.xperData.kb_id;
@@ -4654,6 +4656,7 @@ export default (state = {}, action) => {
                     [pictureId]: [
                         {
                             ...payload,
+                            id: id,
                             annotationType: ANNOTATION_CATEGORICAL,
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
