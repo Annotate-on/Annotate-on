@@ -4656,6 +4656,12 @@ export default (state = {}, action) => {
                             creationTimestamp: NOW_TIMESTAMP,
                             title: `XPER-${kbId}`,
                             value: value,
+                            vertices: [
+                                {x: 0, y: 0},
+                                {x: 0, y: 0},
+                                {x: 0, y: 0},
+                                {x: 0, y: 0}
+                            ],
                             xperData: payload.xperData
                         },
                         ...(state.annotations_categorical[payload.pictureId] || [])
