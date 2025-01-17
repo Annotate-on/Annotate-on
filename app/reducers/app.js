@@ -4558,7 +4558,10 @@ export default (state = {}, action) => {
                 for (const sha1 in allPictures) {
                     if (path.dirname(allPictures[sha1].file) === folder) {
                         ++picturesInFolder;
-                        let name = allPictures[sha1].erecolnatMetadata ? allPictures[sha1].erecolnatMetadata.scientificname : null;
+                        let name = allPictures[sha1].erecolnatMetadata ? allPictures[sha1].erecolnatMetadata.scientificname : '';
+                        if (Array.isArray(name)){
+                            name = name[0];
+                        }
                         if(name){
                             for (const item of action.xper.items) {
                                 let itemName = item.name ? item.name.toLowerCase() : '';
