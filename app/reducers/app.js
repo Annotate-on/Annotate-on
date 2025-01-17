@@ -4657,9 +4657,6 @@ export default (state = {}, action) => {
                             title: `XPER-${kbId}`,
                             value: value,
                             vertices: [
-                                {x: 0, y: 0},
-                                {x: 0, y: 0},
-                                {x: 0, y: 0},
                                 {x: 0, y: 0}
                             ],
                             xperData: payload.xperData
