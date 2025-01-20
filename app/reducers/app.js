@@ -4559,7 +4559,8 @@ export default (state = {}, action) => {
                 for (const sha1 in allPictures) {
                     if (path.dirname(allPictures[sha1].file) === folder) {
                         ++picturesInFolder;
-                        let name = allPictures[sha1].erecolnatMetadata ? allPictures[sha1].erecolnatMetadata.scientificname.toLowerCase() : '';
+                        let name = allPictures[sha1].erecolnatMetadata && allPictures[sha1].erecolnatMetadata.scientificname
+                            ? allPictures[sha1].erecolnatMetadata.scientificname.toLowerCase() : null;
                         if (Array.isArray(name)){
                             name = name[0].toLowerCase();
                         }
