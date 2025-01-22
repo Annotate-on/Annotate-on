@@ -1170,9 +1170,8 @@ class LeafletImage extends Component {
         });
 
         this._recolnatControlMenu.addTo(this.leafletMap.leafletElement);
-
-        this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement);
         this._imageDetectService.addTo(this.leafletMap.leafletElement);
+        this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement);
         this._recolnatPrint.addTo(this.leafletMap.leafletElement);
         this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         return editedLayer;
@@ -1309,10 +1308,9 @@ class LeafletImage extends Component {
             // if (this.state.enableToolBox){
                 this._recolnatControlMenu.addTo(this.leafletMap.leafletElement)
             // }
-            this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement)
             this._imageDetectService.addTo(this.leafletMap.leafletElement);
+            this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement)
             this._recolnatPrint.addTo(this.leafletMap.leafletElement);
-
             this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
         } else {
             this.editControlFirst.leafletElement.remove();
