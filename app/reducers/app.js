@@ -4606,41 +4606,38 @@ export default (state = {}, action) => {
             console.log('CREATE_ANNOTATION_XPER payload', payload);
             const kbId = payload.xperData.kb_id;
 
-            let value =+ payload.xperData.kb_id + '\r\n';
+            let value ='';
             if (payload.xperData.kb_name) {
-                value += payload.xperData.kb_name + '\r\n';
-            }
-            if (payload.xperData.kb_language) {
-                value += payload.xperData.kb_language + '\r\n';
+                value += 'KB: ' + payload.xperData.kb_name + '(' + payload.xperData.kb_id + ', ' + payload.xperData.kb_language + ')' + '\n';
             }
             if (payload.xperData.items) {
-                // value += 'items: ' + '\r\n';
                 for (const item of payload.xperData.items) {
                     if(item.name) {
-                        value += "  " + item.name + '\r\n';
+                        value += 'Item: ' + item.name + '\n';
                     }
                     if(item.descriptors) {
+                        value += 'Descriptors:';
                         for (const descriptor of item.descriptors) {
-                            value += "      " + descriptor.name + '\r\n';
+                            value += '\n#' + descriptor.name + ':';
                             if(descriptor.type === 'QuantitativeDescriptor') {
                                 if(descriptor.measurementUnit !== "undefined") {
-                                    value += "       unit: " + descriptor.measurementUnit + '\r\n';
+                                    value += "\n- unit: " + descriptor.measurementUnit ;
                                 }
                                 if(descriptor.values.min !== "undefined") {
-                                    value += "       min: " + descriptor.values.min + '\r\n';
+                                    value += "\n- min: " + descriptor.values.min ;
                                 }
                                 if(descriptor.values.max !== "undefined") {
-                                    value += "       max: " + descriptor.values.max + '\r\n';
+                                    value += "\n- max: " + descriptor.values.max ;
                                 }
                                 if(descriptor.values.minInclude !== "undefined") {
-                                    value += "       min_include: " + descriptor.values.minInclude + '\r\n';
+                                    value += "\n- min_include: " + descriptor.values.minInclude ;
                                 }
                                 if(descriptor.values.maxInclude !== "undefined") {
-                                    value += "       max_include :" + descriptor.values.maxInclude + '\r\n';
+                                    value += "\n- max_include :" + descriptor.values.maxInclude ;
                                 }
                             } else {
                                 for (const state of descriptor.states) {
-                                    value += "         " + state.name + '\r\n';
+                                    value += '\n -' + state.name ;
                                 }
                             }
                         }
