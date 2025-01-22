@@ -92,8 +92,8 @@ export const searchItemsInKb = (filter, callback) => {
                             found.push(item);
                         }
                     }
-                    // found[0].name = "Polygonatum vulgare";
-                    // found[1].name = "Ficus";
+                    found[0].name = "Polygonatum vulgare";
+                    found[1].name = "Ficus";
                     callback(found);
                 } catch (e) {
                     callback(null);
