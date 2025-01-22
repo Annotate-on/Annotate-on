@@ -661,6 +661,8 @@
         "btn_tooltip_circle_of_interest": "Círculo de interesse",
         "btn_tooltip_polygon_of_interest": "Polígono de interesse",
         "btn_tooltip_chronotematic": "Annotation chronothematic",
+        "btn_tooltip_image_detect_service": "Annotate image with Image Detect service pt",
+        "btn_tooltip_xper-match": "Annotate image with Xper service pt",
         "alert_bad_image_detect_response": "Verifique seu URL do serviço Image Detect"
       },
       "event_timeline": {

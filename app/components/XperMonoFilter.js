@@ -205,6 +205,11 @@ const _ItemDescriptorValueNotProvidedContainer = styled.div`
     margin-left: 5px;
 `;
 
+function _getScientificName(resource) {
+    return resource.erecolnatMetadata && resource.erecolnatMetadata.scientificname
+        ? resource.erecolnatMetadata.scientificname.toLowerCase().trim() : '';
+}
+
 export default class extends Component {
     constructor(props) {
         super(props);
@@ -212,13 +217,14 @@ export default class extends Component {
         this.state = {
             openModal: props.openModal,
             folder: props.folder,
-            searchTerm: '',
+            resource: props.resource,
+            searchTerm: this.props.resource ? _getScientificName(this.props.resource) : '',
             selectedLanguage: props.i18n.language,
             searchTaxonomy: false,
             searchStratigraphy: false,
             searchHabitat: false,
             searchGeography: false,
-            searchItems: false,
+            searchItems: this.props.resource ? true : false,
             searchItemGroups: false,
             searchDescriptor: false,
             searchDescriptorGroups: false,
@@ -238,7 +244,20 @@ export default class extends Component {
         };
     }
 
+    // static getDerivedStateFromProps(props, state) {
+    //     console.log('XperMonoFilter getDerivedStateFromProps props', props);
+    //     console.log('XperMonoFilter getDerivedStateFromProps props', state);
+    //     if (props.resource) {
+    //         return {
+    //             resource: props.resource,
+    //             searchTerm: _getScientificName(props.resource),
+    //             searchItems: true
+    //         };
+    //     }
+    // }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('XperMonoFilter componentDidUpdate props', this.props);
         if (prevProps.openModal !== this.props.openModal) {
             this.setState({
                 openModal: this.props.openModal
@@ -254,6 +273,10 @@ export default class extends Component {
                 xperMatchedResources: this.props.xperMatchedResources
             });
         }
+    }
+
+    _isMatchResourceMode = () => {
+        return this.state.resource && !this.state.folder;
     }
 
     _formChangeHandler = (event) => {
@@ -288,7 +311,7 @@ export default class extends Component {
     _matchResourcesWithKBHandler = (kb) => {
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if (result && this.props.xperMatchResources) {
-                this.props.xperMatchResources(this.state.folder, {kb: kb, items: result});
+                this.props.xperMatchResources(this.state.folder, {kb: kb, items: result}, this.state.resource);
             }
 
             this.setState({
@@ -410,7 +433,7 @@ export default class extends Component {
 
     _onSearchXper = () => {
         console.log('Search Xper', this.state);
-        this.props.xperMatchResources(null, null);
+        this.props.xperMatchResources(null, null, null);
         searchKb({
             q: this.state.searchTerm,
             lang: this.state.selectedLanguage,
@@ -477,7 +500,7 @@ export default class extends Component {
         if (this.props.onClose) {
             this.props.onClose(tags, folder);
         }
-        this.props.xperMatchResources(null, null);
+        this.props.xperMatchResources(null, null, null);
         this.setState({
             searchTerm: '',
             selectedLanguage: 'fr',
@@ -581,6 +604,9 @@ export default class extends Component {
                                             onClick={() => this._matchResourcesWithKBHandler(kb)}>
                                         {t('folders.xper_mono_search_dialog.btn_match_resources')}
                                     </Button>
+
+                                    {/*{ !this._isMatchResourceMode() &&*/}
+                                    {/*}*/}
                                 </_ResultItem>
                             )
                         })

@@ -970,10 +970,11 @@ export const createAnnotationPolygonOfInterest = (pictureId, vertices, id) => ({
     id
 });
 
-export const xperMatchResources = (folder, xper) => ({
+export const xperMatchResources = (folder, xper, resource) => ({
     type: XPER_MATCH_RESOURCES,
     folder,
-    xper
+    xper,
+    resource
 });
 
 export const createAnnotationXper = (pictureId, xperData) => ({

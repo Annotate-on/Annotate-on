@@ -663,6 +663,7 @@
         "btn_tooltip_polygon_of_interest": "Polygone d'intérêt",
         "btn_tooltip_chronotematic": "Annotation chronothematique",
         "btn_tooltip_image_detect_service": "Annoter l'image avec le service Image Detect",
+        "btn_tooltip_xper-match": "Annotate image with Xper service fr",
         "alert_bad_image_detect_response": "Vérifiez votre URL de service Image Detect",
         "alert_not_recolnat_image": "Le service Image Detect fonctionne uniquement avec les images eRecolnat.",
         "alert_recolnat_image_no_url": "Il y a un problème avec l'accès à la version en ligne de cette image.",

@@ -4544,43 +4544,52 @@ export default (state = {}, action) => {
         case XPER_MATCH_RESOURCES: {
             const counter = state.counter + 1;
             const allPictures = state.pictures;
-            if(!action.folder || !action.xper || !action.xper.items) {
+            if((!action.folder && !action.resource) || !action.xper || !action.xper.items) {
                 return {
                     ...state,
                     xperMatchedResources: {}
                 };
             }
-            const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
-            let picturesInFolder = 0;
-
             const matchedPictures = {};
-            allFolders.map(folderName => {
-                const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
-                for (const sha1 in allPictures) {
-                    if (path.dirname(allPictures[sha1].file) === folder) {
-                        ++picturesInFolder;
-                        let name = allPictures[sha1].erecolnatMetadata && allPictures[sha1].erecolnatMetadata.scientificname
-                            ? allPictures[sha1].erecolnatMetadata.scientificname.toLowerCase().trim() : null;
-                        if (Array.isArray(name)){
-                            name = name[0].toLowerCase().trim();
-                        }
-                        if(name){
-                            for (const item of action.xper.items) {
-                                let itemName = item.name ? item.name.toLowerCase() : '';
-                                let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
-                                if (itemName.includes(name) || itemAlternativeName.includes(name)) {
-                                    const picture = allPictures[sha1];
-                                    picture.sha1 = sha1;
-                                    if(!matchedPictures[item.id]) {
-                                        matchedPictures[item.id] = []
-                                    }
-                                    matchedPictures[item.id].push(picture);
-                                }
+            let picturesInFolder = 0;
+            const matchPicture = (picture) => {
+                let name = picture.erecolnatMetadata && picture.erecolnatMetadata.scientificname
+                    ? picture.erecolnatMetadata.scientificname.toLowerCase().trim() : null;
+                if (Array.isArray(name)) {
+                    name = name[0].toLowerCase().trim();
+                }
+                if (name) {
+                    for (const item of action.xper.items) {
+                        let itemName = item.name ? item.name.toLowerCase() : '';
+                        let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
+                        if (itemName.includes(name) || itemAlternativeName.includes(name)) {
+                            // const picture = allPictures[sha1];
+                            // picture.sha1 = sha1;
+                            if (!matchedPictures[item.id]) {
+                                matchedPictures[item.id] = []
                             }
+                            matchedPictures[item.id].push(picture);
+                            ++picturesInFolder;
                         }
                     }
                 }
-            });
+            }
+
+            if(action.folder) {
+                const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
+                allFolders.map(folderName => {
+                    const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
+                    for (const sha1 in allPictures) {
+                        if (path.dirname(allPictures[sha1].file) === folder) {
+                            let resource = allPictures[sha1];
+                            matchPicture(resource);
+                        }
+                    }
+                });
+            } else if (action.resource) {
+                matchPicture(action.resource);
+            }
+
             let matchedResources = []
             for (const property in matchedPictures) {
                 matchedResources.push({item: +property, resources: matchedPictures[property]});

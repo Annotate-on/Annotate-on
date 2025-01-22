@@ -51,7 +51,10 @@ import {
     EVENT_UPDATE_RECORDING_STATUS_IN_NAVIGATION,
     EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS,
     SHOW_EDIT_MODE_VIOLATION_MODAL,
-    EVENT_UPDATE_EVENT_RECORDING_STATUS, EVENT_UNFOCUS_ANNOTATION, EVENT_CREATE_IMAGE_DETECT_ANNOTATION
+    EVENT_UPDATE_EVENT_RECORDING_STATUS,
+    EVENT_UNFOCUS_ANNOTATION,
+    EVENT_CREATE_IMAGE_DETECT_ANNOTATION,
+    EVENT_XPER_MATCH_RESOURCE
 } from "../utils/library";
 import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
@@ -59,6 +62,7 @@ import {_checkImageType} from "../utils/js";
 import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
 import {findClosestColor} from "../utils/web-colors";
+import XperMonoFilter from "../containers/XperMonoFilter";
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
@@ -137,7 +141,8 @@ class Image extends PureComponent {
             videoAnnAddedId: null,
             isAnnotationRecording: false,
             isEventRecordingLive: false,
-            selectedImageDetectModel: this.props.selectedImageDetectModel
+            selectedImageDetectModel: this.props.selectedImageDetectModel,
+            showXperMonoFilterPopup: false,
         };
         this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
         this.makeAnnotationPointOfInterest = this.makeAnnotationPointOfInterest.bind(this);
@@ -160,12 +165,14 @@ class Image extends PureComponent {
         ee.on(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
         ee.on(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
+        ee.on(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
     }
 
     componentWillUnmount() {
         ee.removeListener(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
         ee.removeListener(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
+        ee.removeListener(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
     }
 
     _updateEventRecordingStatus = (isEventRecording) => {
@@ -208,6 +215,16 @@ class Image extends PureComponent {
         }
         return null;
     };
+
+    _xperMatchResource = (picture) => {
+        console.log("xperMatchResource ", picture);
+        console.log("xperMatchResource currentPicture", this.state.currentPicture);
+        this.setState(
+            {
+                showXperMonoFilterPopup: true,
+            }
+        );
+    }
 
     _createImageDetectAnnotation = (pictureId, vertices, confidence, name, classId, counter) => {
         const id = chance.guid();
@@ -546,6 +563,13 @@ class Image extends PureComponent {
                             <Button color="secondary" onClick={() => this._toggle(true)}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
+                    <XperMonoFilter
+                        openModal={this.state.showXperMonoFilterPopup}
+                        resource={this.state.currentPicture}
+                        onClose={(tags, folder) => {
+                            this.setState({showXperMonoFilterPopup: false});
+                        }}
+                    />
                 </div>
             </_Root>
         );

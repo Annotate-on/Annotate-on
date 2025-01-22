@@ -448,6 +448,10 @@ class LeafletImage extends Component {
                 this._imageDetectService.initialize({
                 })
             }
+            if (this._xperMatch) {
+                this._xperMatch.initialize({
+                })
+            }
         }
 
         // TODO 07.11.2023 21:51 mseslija: why two times this ????
@@ -499,6 +503,10 @@ class LeafletImage extends Component {
             }
             if (this._imageDetectService) {
                 this._imageDetectService.initialize({
+                })
+            }
+            if (this._xperMatch) {
+                this._xperMatch.initialize({
                 })
             }
         }
@@ -735,6 +743,10 @@ class LeafletImage extends Component {
                 urlImageDetect: this.props.selectedImageDetectModel,
                 leafletImage: this
             }).addTo(map);
+            this._xperMatch = L.XperMatch({
+                picture: this.props.currentPicture
+            }).addTo(map);
+
 
             // This is workaround to make recolnat control menu appear on first palace
             if (this.editControlFirst) {
@@ -820,6 +832,9 @@ class LeafletImage extends Component {
         }
         if(this._imageDetectService) {
         this._imageDetectService.remove();
+        }
+        if(this._xperMatch) {
+        this._xperMatch.remove();
         }
         if (this._recolnatZoiExport) {
             this._recolnatZoiExport.remove();
@@ -1085,6 +1100,7 @@ class LeafletImage extends Component {
         this._recolnatControlMenu.remove();
         this._recolnatPrint.remove();
         this._imageDetectService.remove();
+        this._xperMatch.remove();
         this._recolnatZoiExport.remove()
         this.props.onContextMenuEvent(selectedAnnotation.annotationId, selectedAnnotation.annotationType, EDIT_EVENT);
         selectedAnnotation = null;
@@ -1171,6 +1187,7 @@ class LeafletImage extends Component {
 
         this._recolnatControlMenu.addTo(this.leafletMap.leafletElement);
         this._imageDetectService.addTo(this.leafletMap.leafletElement);
+        this._xperMatch.addTo(this.leafletMap.leafletElement);
         this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement);
         this._recolnatPrint.addTo(this.leafletMap.leafletElement);
         this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
@@ -1309,6 +1326,7 @@ class LeafletImage extends Component {
                 this._recolnatControlMenu.addTo(this.leafletMap.leafletElement)
             // }
             this._imageDetectService.addTo(this.leafletMap.leafletElement);
+            this._xperMatch.addTo(this.leafletMap.leafletElement);
             this.editControlFirst.leafletElement.addTo(this.leafletMap.leafletElement)
             this._recolnatPrint.addTo(this.leafletMap.leafletElement);
             this._recolnatZoiExport.addTo(this.leafletMap.leafletElement);
@@ -1317,6 +1335,7 @@ class LeafletImage extends Component {
             this._recolnatControlMenu.remove();
             this._recolnatPrint.remove();
             this._imageDetectService.remove();
+            this._xperMatch.remove();
             this._recolnatZoiExport.remove();
         }
     };

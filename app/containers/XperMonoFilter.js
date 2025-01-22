@@ -18,8 +18,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        xperMatchResources: (folder, xper) => {
-            dispatch(xperMatchResources(folder, xper));
+        xperMatchResources: (folder, xper, resource) => {
+            dispatch(xperMatchResources(folder, xper, resource));
         },
         createCategory: (category) => {
             dispatch(createCategory(category));
