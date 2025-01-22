@@ -4559,7 +4559,6 @@ export default (state = {}, action) => {
                 for (const sha1 in allPictures) {
                     if (path.dirname(allPictures[sha1].file) === folder) {
                         ++picturesInFolder;
-                        debugger
                         let name = allPictures[sha1].erecolnatMetadata && allPictures[sha1].erecolnatMetadata.scientificname
                             ? allPictures[sha1].erecolnatMetadata.scientificname.toLowerCase().trim() : null;
                         if (Array.isArray(name)){
@@ -4618,11 +4617,11 @@ export default (state = {}, action) => {
                 // value += 'items: ' + '\r\n';
                 for (const item of payload.xperData.items) {
                     if(item.name) {
-                        value += "* " + item.name + '\r\n';
+                        value += "  " + item.name + '\r\n';
                     }
                     if(item.descriptors) {
                         for (const descriptor of item.descriptors) {
-                            value += "   -- " + descriptor.name + '\r\n';
+                            value += "      " + descriptor.name + '\r\n';
                             if(descriptor.type === 'QuantitativeDescriptor') {
                                 if(descriptor.measurementUnit !== "undefined") {
                                     value += "       unit: " + descriptor.measurementUnit + '\r\n';
@@ -4641,7 +4640,7 @@ export default (state = {}, action) => {
                                 }
                             } else {
                                 for (const state of descriptor.states) {
-                                    value += "       - " + state.name + '\r\n';
+                                    value += "         " + state.name + '\r\n';
                                 }
                             }
                         }
