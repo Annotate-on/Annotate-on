@@ -217,8 +217,6 @@ class Image extends PureComponent {
     };
 
     _xperMatchResource = (picture) => {
-        console.log("xperMatchResource ", picture);
-        console.log("xperMatchResource currentPicture", this.state.currentPicture);
         this.setState(
             {
                 showXperMonoFilterPopup: true,
@@ -423,13 +421,11 @@ class Image extends PureComponent {
                                                     {this.state.currentPicture.file_basename}
                                                 </div>
                                             </div>
-                                            {console.log("picture1", this.state.currentPicture, this.state.catalognumber)}
                                             {this.state.catalognumber &&
                                                 <div title={this.state.catalognumber} className="cat-number">
                                                     {this.state.catalognumber}
                                                 </div>
                                             }
-
                                             <div className="map-timeline-indicators-container">
                                                 {this.state.currentPicture.exifPlace &&
                                                     <img src={MAP_IMAGE_CONTEXT}

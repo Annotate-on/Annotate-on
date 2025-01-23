@@ -213,18 +213,17 @@ function _getScientificName(resource) {
 export default class extends Component {
     constructor(props) {
         super(props);
-        console.log('XperMonoFilter props', props);
         this.state = {
             openModal: props.openModal,
             folder: props.folder,
             resource: props.resource,
-            searchTerm: this.props.resource ? _getScientificName(this.props.resource) : '',
+            searchTerm: this._isMatchResourceMode() ? _getScientificName(this.props.resource) : '',
             selectedLanguage: props.i18n.language,
             searchTaxonomy: false,
             searchStratigraphy: false,
             searchHabitat: false,
             searchGeography: false,
-            searchItems: this.props.resource ? true : false,
+            searchItems: this._isMatchResourceMode(),
             searchItemGroups: false,
             searchDescriptor: false,
             searchDescriptorGroups: false,
@@ -244,20 +243,13 @@ export default class extends Component {
         };
     }
 
-    // static getDerivedStateFromProps(props, state) {
-    //     console.log('XperMonoFilter getDerivedStateFromProps props', props);
-    //     console.log('XperMonoFilter getDerivedStateFromProps props', state);
-    //     if (props.resource) {
-    //         return {
-    //             resource: props.resource,
-    //             searchTerm: _getScientificName(props.resource),
-    //             searchItems: true
-    //         };
-    //     }
-    // }
+    componentDidMount() {
+        if (this._isMatchResourceMode()) {
+            this._onSearchXper();
+        }
+    }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('XperMonoFilter componentDidUpdate props', this.props);
         if (prevProps.openModal !== this.props.openModal) {
             this.setState({
                 openModal: this.props.openModal
@@ -276,7 +268,7 @@ export default class extends Component {
     }
 
     _isMatchResourceMode = () => {
-        return this.state.resource && !this.state.folder;
+        return !!this.props.resource;
     }
 
     _formChangeHandler = (event) => {
@@ -337,9 +329,9 @@ export default class extends Component {
                         ...this.state.itemWithDetails,
                         [item]: result
                     },
-                    selectedItem : item
+                    selectedItem: item
                 });
-                if(!this.state.descriptorSelection || !this.state.descriptorSelection[item]) {
+                if (!this.state.descriptorSelection || !this.state.descriptorSelection[item]) {
                     this.setState({
                         descriptorSelection: {
                             ...this.state.descriptorSelection,
@@ -381,7 +373,7 @@ export default class extends Component {
                     "items": [],
                 };
                 let itemWithDetail = this.state.itemWithDetails[matchedResource.item]
-                if(itemWithDetail) {
+                if (itemWithDetail) {
                     if (itemWithDetail.descriptors) {
                         itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => this.state.descriptorSelection[itemWithDetail.id][descriptor.id]);
                     } else {
@@ -427,8 +419,48 @@ export default class extends Component {
                     this.props.createAnnotationXper(resource, resourcesXperData[resource]);
                 }
             }
+            this.props.xperMatchResources(null, null, null);
+            if (this._isMatchResourceMode()) {
+                this.setState({
+                    addAsTag: false,
+                    addKbNameAsTag: true,
+                    createAnnotations: true,
+                    kbWithDetails: {},
+                    openKbDetailsModal: false,
+                    itemWithDetails: {},
+                    openItemDetailsModal: false,
+                    descriptorSelection: {}
+                });
+            }
             this._toggle(tags, folder);
         }, 100);
+    }
+
+    resetState = () => {
+        this.setState({
+            searchTerm: '',
+            selectedLanguage: 'fr',
+            searchTaxonomy: false,
+            searchStratigraphy: false,
+            searchHabitat: false,
+            searchGeography: false,
+            searchItems: false,
+            searchItemGroups: false,
+            searchDescriptor: false,
+            searchDescriptorGroups: false,
+            searchStates: false,
+            searchKeywords: false,
+            kbSearchResults: [],
+            tagName: '',
+            addAsTag: false,
+            addKbNameAsTag: true,
+            createAnnotations: true,
+            kbWithDetails: {},
+            openKbDetailsModal: false,
+            itemWithDetails: {},
+            openItemDetailsModal: false,
+            descriptorSelection: {}
+        });
     }
 
     _onSearchXper = () => {
@@ -501,30 +533,9 @@ export default class extends Component {
             this.props.onClose(tags, folder);
         }
         this.props.xperMatchResources(null, null, null);
-        this.setState({
-            searchTerm: '',
-            selectedLanguage: 'fr',
-            searchTaxonomy: false,
-            searchStratigraphy: false,
-            searchHabitat: false,
-            searchGeography: false,
-            searchItems: false,
-            searchItemGroups: false,
-            searchDescriptor: false,
-            searchDescriptorGroups: false,
-            searchStates: false,
-            searchKeywords: false,
-            kbSearchResults: [],
-            tagName: '',
-            addAsTag: false,
-            addKbNameAsTag: true,
-            createAnnotations: true,
-            kbWithDetails: {},
-            openKbDetailsModal: false,
-            itemWithDetails: {},
-            openItemDetailsModal: false,
-            descriptorSelection: {}
-        });
+        if (!this._isMatchResourceMode()) {
+            this.resetState()
+        }
     };
 
     findItem = (item_id) => {
@@ -547,7 +558,7 @@ export default class extends Component {
                         {t('folders.xper_mono_search_dialog.title')}
                     </ModalHeader>
                     <ModalBody className="xper-mono-search">
-                        {this.renderSearchFormContainer(t)}
+                        {!this._isMatchResourceMode() && this.renderSearchFormContainer(t)}
 
                         {this.renderMatchedResultsContainer(t)}
 
@@ -1009,7 +1020,7 @@ export default class extends Component {
     }
 
     renderItemDetailsModal(t) {
-        let itemWithDetails = this.state.itemWithDetails[this.state.selectedItem] ? this.state.itemWithDetails[this.state.selectedItem]: {};
+        let itemWithDetails = this.state.itemWithDetails[this.state.selectedItem] ? this.state.itemWithDetails[this.state.selectedItem] : {};
         return <Modal isOpen={this.state.openItemDetailsModal} className="my45PctSizedModal"
                       toggle={() => this._toggleItemDetails(false)}
                       contentClassName="custom-modal-style" wrapClassName="bst"
@@ -1035,7 +1046,8 @@ export default class extends Component {
                                                        this.state.descriptorSelection[itemWithDetails.id][descriptor.id] : false
                                                }
                                                onChange={this._descriptorSelectionChangeHandler}/>
-                                        <_ItemDescriptorNameContainer for={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>
+                                        <_ItemDescriptorNameContainer
+                                            for={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>
                                     </div>
                                     {(descriptor.type === "QuantitativeDescriptor" && !descriptor.values) &&
                                         <_ItemDescriptorValueNotProvidedContainer>{t('folders.xper_mono_item_details_dialog.lbl_descriptor_value_not_provided')}</_ItemDescriptorValueNotProvidedContainer>
@@ -1068,8 +1080,10 @@ export default class extends Component {
                 </_ItemDetailsScrollContainer>
             </ModalBody>
             <ModalFooter>
-                <Button color="secondary" onClick={() => this._odBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
-                <Button color="secondary" onClick={() => this._odBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
+                <Button color="secondary"
+                        onClick={() => this._odBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
+                <Button color="secondary"
+                        onClick={() => this._odBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
                 <Button color="primary" onClick={this._toggleItemDetails}>{t('global.save')}</Button>
             </ModalFooter>
         </Modal>;

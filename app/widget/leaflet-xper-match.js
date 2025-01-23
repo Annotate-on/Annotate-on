@@ -1,11 +1,7 @@
 import L from "leaflet";
-import React, { Component } from 'react';
 import i18next from "i18next";
-import { getImageDetectAnnotations } from '../utils/imageDetectService';
 import {
     ee,
-    EVENT_CREATE_IMAGE_DETECT_ANNOTATION,
-    EVENT_GOTO_ANNOTATION,
     EVENT_XPER_MATCH_RESOURCE
 } from "../utils/library";
 
@@ -37,7 +33,6 @@ L.Control.XperMatch = L.Control.extend({
 
     _callXperMatch: function (event) {
         const { t } = i18next;
-        console.log("Xper Annotation Detect = ", this.options.picture);
         ee.emit(EVENT_XPER_MATCH_RESOURCE, this.options.picture);
     }
 });
