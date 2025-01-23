@@ -559,13 +559,15 @@ class Image extends PureComponent {
                             <Button color="secondary" onClick={() => this._toggle(true)}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
-                    <XperMonoFilter
-                        openModal={this.state.showXperMonoFilterPopup}
-                        resource={this.state.currentPicture}
-                        onClose={(tags, folder) => {
-                            this.setState({showXperMonoFilterPopup: false});
-                        }}
-                    />
+                    {this.state.showXperMonoFilterPopup &&
+                        <XperMonoFilter
+                            openModal={this.state.showXperMonoFilterPopup}
+                            resource={this.state.currentPicture}
+                            onClose={(tags, folder) => {
+                                this.setState({showXperMonoFilterPopup: false});
+                            }}
+                        />
+                    }
                 </div>
             </_Root>
         );
