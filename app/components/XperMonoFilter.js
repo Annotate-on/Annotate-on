@@ -251,7 +251,9 @@ export default class extends Component {
             openItemDetailsModal: false,
             selectedItem: null,
             descriptorSelection: {},
-            itemDetailsSelection: {}
+            itemDetailsSelection: {},
+            kbSearchDone: false,
+            matchResourceDone: false
         };
     }
 
@@ -326,6 +328,7 @@ export default class extends Component {
     };
 
     _matchResourcesWithKBHandler = (kb) => {
+        console.log('_matchResourcesWithKBHandler', kb);
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if (result && this.props.xperMatchResources) {
                 this.props.xperMatchResources(this.state.folder, {kb: kb, items: result}, this.state.resource);
@@ -337,7 +340,8 @@ export default class extends Component {
                 itemWithDetails: {},
                 openItemDetailsModal: false,
                 descriptorSelection: {},
-                itemDetailsSelection: {}
+                itemDetailsSelection: {},
+                matchResourceDone: true
             });
         });
     }
@@ -465,7 +469,9 @@ export default class extends Component {
                     itemWithDetails: {},
                     openItemDetailsModal: false,
                     descriptorSelection: {},
-                    itemDetailsSelection: {}
+                    itemDetailsSelection: {},
+                    kbSearchDone: false,
+                    matchResourceDone: false
                 });
             }
             this._toggle(tags, folder);
@@ -496,7 +502,9 @@ export default class extends Component {
             itemWithDetails: {},
             openItemDetailsModal: false,
             descriptorSelection: {},
-            itemDetailsSelection: {}
+            itemDetailsSelection: {},
+            kbSearchDone: false,
+            matchResourceDone: false
         });
     }
 
@@ -519,7 +527,8 @@ export default class extends Component {
         }, (result) => {
             if (result) {
                 this.setState({
-                    kbSearchResults: result
+                    kbSearchResults: result,
+                    kbSearchDone: true
                 });
             }
         });
@@ -754,7 +763,14 @@ export default class extends Component {
                         </Fragment>
                     }
                 </Container>
-            </_MatchingResultsContainer> : <h6>{t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}</h6>;
+            </_MatchingResultsContainer> : this._shouldDisplayNoMatchedResources() &&
+            <h6>{t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}</h6>;
+    }
+
+    _shouldDisplayNoMatchedResources() {
+        console.log('_shouldDisplayNoMatchedResources', this.state);
+        if(this.state.kbSearchResults.length === 0 && this.state.kbSearchDone && this._isMatchResourceMode()) return true;
+        return (!this.state.xperMatchedResources || !this.state.xperMatchedResources.matchedResources || this.state.xperMatchedResources.matchedResources.length === 0) && this.state.matchResourceDone;
     }
 
     renderSearchFormContainer(t) {
