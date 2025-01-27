@@ -174,7 +174,8 @@
         "lbl_include_kb_name_as_tag": "Include KB name as tag",
         "btn_tag_images": "Tag images & create annotations",
         "btn_select_descriptors": "Select descriptors",
-        "lbl_create_annotations": "Create annotations"
+        "lbl_create_annotations": "Create annotations",
+        "lbl_no_xper_matching_resource_found": "No matching resource was found!"
       },
       "xper_mono_kb_details_dialog": {
         "lbl_general_information": "General information",

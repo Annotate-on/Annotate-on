@@ -4612,7 +4612,7 @@ export default (state = {}, action) => {
             const {type, ...payload} = action;
             const id = chance.guid();
             const pictureId = payload.pictureId;
-            console.log('CREATE_ANNOTATION_XPER payload', payload);
+            // console.log('CREATE_ANNOTATION_XPER payload', payload);
             const kbId = payload.xperData.kb_id;
 
             let value ='';
@@ -4623,6 +4623,9 @@ export default (state = {}, action) => {
                 for (const item of payload.xperData.items) {
                     if(item.name) {
                         value += 'Item: ' + item.name + '\n';
+                    }
+                    if(item.detail) {
+                        value += item.detail + '\n';
                     }
                     if(item.descriptors) {
                         value += 'Descriptors:';

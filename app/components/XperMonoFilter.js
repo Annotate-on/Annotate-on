@@ -16,6 +16,7 @@ import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils"
 import {TAG_XPER} from "../constants/constants";
 import {tagExist} from "../utils/tags";
 import {SUPPORTED_LANGUAGES} from "../i18n";
+import {stripHTMLUsingTempElement, containsHTMLTags} from "../utils/js";
 
 const chance = new Chance();
 
@@ -153,11 +154,21 @@ const _ItemDetailsContainer = styled.div`
 `;
 
 const _ItemDetailsValueContainer = styled.div`
+    display: flex;
     padding: 5px 8px 5px 8px;
     margin-bottom: 10px;
     width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 5px;
+
+    .form-check-input {
+        position: relative !important;
+        margin-top: 0 !important;
+        margin-left: 0 !important;
+    }
+    .item-details-text {
+        margin-left: 5px;
+    }
 `;
 
 const _ItemDescriptorContainer = styled.div`
@@ -239,7 +250,8 @@ export default class extends Component {
             itemWithDetails: {},
             openItemDetailsModal: false,
             selectedItem: null,
-            descriptorSelection: {}
+            descriptorSelection: {},
+            itemDetailsSelection: {}
         };
     }
 
@@ -300,6 +312,19 @@ export default class extends Component {
         });
     };
 
+    _itemDetailsSelectionChangeHandler = (event) => {
+        const {name, type, value, checked} = event.target;
+        console.log('_itemDetailsSelectionChangeHandler', name, type, value, checked);
+        console.log('_itemDetailsSelectionChangeHandler', this.state.itemDetailsSelection);
+        const item = this.state.selectedItem;
+        this.setState({
+            itemDetailsSelection: {
+                ...this.state.itemDetailsSelection,
+                [item]: checked
+            }
+        });
+    };
+
     _matchResourcesWithKBHandler = (kb) => {
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if (result && this.props.xperMatchResources) {
@@ -311,7 +336,8 @@ export default class extends Component {
                 addAsTag: false,
                 itemWithDetails: {},
                 openItemDetailsModal: false,
-                descriptorSelection: {}
+                descriptorSelection: {},
+                itemDetailsSelection: {}
             });
         });
     }
@@ -373,11 +399,20 @@ export default class extends Component {
                     "items": [],
                 };
                 let itemWithDetail = this.state.itemWithDetails[matchedResource.item]
+                console.log('itemWithDetail = ', itemWithDetail);
+                console.log('itemWithDetail selected item details = ', this.state.descriptorSelection[itemWithDetail.id][itemWithDetail.id]);
                 if (itemWithDetail) {
                     if (itemWithDetail.descriptors) {
                         itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => this.state.descriptorSelection[itemWithDetail.id][descriptor.id]);
                     } else {
                         itemWithDetail.descriptors = []
+                    }
+                    if(this.state.itemDetailsSelection[itemWithDetail.id] && itemWithDetail.detail) {
+                        if(containsHTMLTags(itemWithDetail.detail)) {
+                            itemWithDetail.detail = stripHTMLUsingTempElement(itemWithDetail.detail);
+                        }
+                    } else {
+                        itemWithDetail.detail = '';
                     }
                     resourceXperData.items.push(this.state.itemWithDetails[matchedResource.item]);
                 } else {
@@ -429,7 +464,8 @@ export default class extends Component {
                     openKbDetailsModal: false,
                     itemWithDetails: {},
                     openItemDetailsModal: false,
-                    descriptorSelection: {}
+                    descriptorSelection: {},
+                    itemDetailsSelection: {}
                 });
             }
             this._toggle(tags, folder);
@@ -459,7 +495,8 @@ export default class extends Component {
             openKbDetailsModal: false,
             itemWithDetails: {},
             openItemDetailsModal: false,
-            descriptorSelection: {}
+            descriptorSelection: {},
+            itemDetailsSelection: {}
         });
     }
 
@@ -615,9 +652,6 @@ export default class extends Component {
                                             onClick={() => this._matchResourcesWithKBHandler(kb)}>
                                         {t('folders.xper_mono_search_dialog.btn_match_resources')}
                                     </Button>
-
-                                    {/*{ !this._isMatchResourceMode() &&*/}
-                                    {/*}*/}
                                 </_ResultItem>
                             )
                         })
@@ -627,7 +661,7 @@ export default class extends Component {
     }
 
     renderMatchedResultsContainer(t) {
-        return this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources &&
+        return (this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources) ?
             <_MatchingResultsContainer>
                 <Container className="matching-results-container">
                     <Row>
@@ -720,7 +754,7 @@ export default class extends Component {
                         </Fragment>
                     }
                 </Container>
-            </_MatchingResultsContainer>;
+            </_MatchingResultsContainer> : <h6>{t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}</h6>;
     }
 
     renderSearchFormContainer(t) {
@@ -1031,7 +1065,15 @@ export default class extends Component {
             </ModalHeader>
             <ModalBody>
                 <_ItemDetailsValueContainer>
-                    <div dangerouslySetInnerHTML={{__html: itemWithDetails.detail}}/>
+                    <div>
+                        <Input name={itemWithDetails.id} id={itemWithDetails.id}
+                               type="checkbox"
+                               checked={
+                                   !!this.state.itemDetailsSelection[itemWithDetails.id]
+                               }
+                               onChange={this._itemDetailsSelectionChangeHandler}/>
+                    </div>
+                    <div className="item-details-text" dangerouslySetInnerHTML={{__html: itemWithDetails.detail}}/>
                 </_ItemDetailsValueContainer>
                 <_ItemDetailsScrollContainer>
                     <_ItemDetailsContainer>
@@ -1047,7 +1089,7 @@ export default class extends Component {
                                                }
                                                onChange={this._descriptorSelectionChangeHandler}/>
                                         <_ItemDescriptorNameContainer
-                                            for={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>
+                                            htmlFor={descriptor.id}>{descriptor.name}</_ItemDescriptorNameContainer>
                                     </div>
                                     {(descriptor.type === "QuantitativeDescriptor" && !descriptor.values) &&
                                         <_ItemDescriptorValueNotProvidedContainer>{t('folders.xper_mono_item_details_dialog.lbl_descriptor_value_not_provided')}</_ItemDescriptorValueNotProvidedContainer>
