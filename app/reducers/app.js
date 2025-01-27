@@ -4625,7 +4625,7 @@ export default (state = {}, action) => {
                         value += 'Item: ' + item.name + '\n';
                     }
                     if(item.detail) {
-                        value += item.detail + '\n';
+                        value += 'Item details: ' + item.detail + '\n';
                     }
                     if(item.descriptors) {
                         value += 'Descriptors:';
