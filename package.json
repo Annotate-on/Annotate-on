@@ -86,8 +86,9 @@
       "target": ["nsis", "msi"]
     },
     "linux": {
-      "target": ["deb", "rpm", "snap", "AppImage"],
-      "category": "Development"
+      "target": ["deb"],
+      "category": "Development",
+      "asarUnpack": ["node_modules/sharp/"]
     },
     "directories": {
       "buildResources": "resources",
