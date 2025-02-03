@@ -164,7 +164,8 @@
         "btn_tag_images": "Tag images & create annotations es",
         "btn_select_descriptors": "Select descriptors es",
         "lbl_create_annotations": "Create annotations es",
-        "lbl_no_xper_matching_resource_found": "No matching resource was found! es"
+        "lbl_no_xper_matching_resource_found": "No matching resource was found! es",
+        "alert_no_selected_descriptors": "No selected descriptors. Do you want to continue? es"
       },
       "xper_mono_kb_details_dialog": {
         "lbl_general_information": "General information es",

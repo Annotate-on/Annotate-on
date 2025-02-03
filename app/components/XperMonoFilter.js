@@ -17,6 +17,7 @@ import {TAG_XPER} from "../constants/constants";
 import {tagExist} from "../utils/tags";
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {stripHTMLUsingTempElement, containsHTMLTags} from "../utils/js";
+import {remote} from "electron";
 
 const chance = new Chance();
 
@@ -381,6 +382,20 @@ export default class extends Component {
             console.log('No matched resources');
             return;
         }
+        if(!this.state.descriptorSelection || Object.keys(this.state.descriptorSelection).length === 0) {
+            console.log('No selected descriptors');
+            const {t} = this.props;
+            const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                type: 'question',
+                buttons: ['Yes', 'No'],
+                message: t('global.warning'),
+                cancelId: 1,
+                detail: t('folders.xper_mono_search_dialog.alert_no_selected_descriptors')
+            });
+            if (result === 1) {
+                return;
+            }
+        }
         const customTagName = this.state.addAsTag ? this.state.tagName : null;
         const kbTagName = this.state.addKbNameAsTag ? "KB " + this.props.xperMatchedResources.xper.kb.name : null;
         const tags = [];
@@ -390,12 +405,10 @@ export default class extends Component {
         if (kbTagName) {
             tags.push(kbTagName);
         }
-        console.log('_onCreateXperTag tags ', tags);
 
         let resourcesXperData = {};
         for (const matchedResource of this.state.xperMatchedResources.matchedResources) {
             for (const resource of matchedResource.resources) {
-                console.log('resource = ', resource);
                 let resourceXperData = resourcesXperData[resource.sha1] ? resourcesXperData[resource.sha1] : {
                     "kb_name": this.props.xperMatchedResources.xper.kb.name,
                     "kb_id": this.props.xperMatchedResources.xper.kb.id,
@@ -403,8 +416,6 @@ export default class extends Component {
                     "items": [],
                 };
                 let itemWithDetail = this.state.itemWithDetails[matchedResource.item]
-                console.log('itemWithDetail = ', itemWithDetail);
-                console.log('itemWithDetail selected item details = ', this.state.descriptorSelection[itemWithDetail.id][itemWithDetail.id]);
                 if (itemWithDetail) {
                     if (itemWithDetail.descriptors) {
                         itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => this.state.descriptorSelection[itemWithDetail.id][descriptor.id]);
@@ -420,10 +431,7 @@ export default class extends Component {
                     }
                     resourceXperData.items.push(this.state.itemWithDetails[matchedResource.item]);
                 } else {
-                    console.log('this.state.xperMatchedResources.xper = ', this.state.xperMatchedResources.xper);
                     for (const item of this.state.xperMatchedResources.xper.items) {
-                        console.log('matchedResource = ', matchedResource);
-                        console.log('item = ', item);
                         if (item.id === matchedResource.item) {
                             resourceXperData.items.push(item);
                             break;
@@ -433,7 +441,6 @@ export default class extends Component {
                 resourcesXperData[resource.sha1] = resourceXperData;
             }
         }
-        console.log('_onCreateXperTag resourcesXperData', resourcesXperData);
 
         if (!categoryExists(this.props.tags, 'Xper')) {
             this.props.createCategory(createNewCategory(chance.guid(), 'Xper'));
