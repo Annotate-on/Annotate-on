@@ -138,7 +138,7 @@ const _KbDetailsLabel = styled.span`
 `;
 
 const _ItemDetailsScrollContainer = styled.div`
-    height: 500px;
+    height: 450px;
     overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 5px;
