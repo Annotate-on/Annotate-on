@@ -47,6 +47,7 @@ import EventAnnotations from "../containers/EventAnnotations";
 import {calculateTableHeight, getXlsx} from "../utils/common";
 import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
+import XperData from "../containers/XperData";
 
 const EXPORT_COLUMNS = [
     'Name',
@@ -567,6 +568,16 @@ class Data extends PureComponent {
                                     {t('results.tab_event-annotations')}
                                 </NavLink>
                             </NavItem>
+                            <NavItem>
+                                <NavLink
+                                    className={classnames({active: this.props.tabData.activeTab === '7'})}
+                                    onClick={() => {
+                                        this.toggle('7');
+                                    }}
+                                >
+                                    {t('results.tab_xper-kb-annotations')}
+                                </NavLink>
+                            </NavItem>
                         </Nav>
                         <TabContent activeTab={this.props.tabData.activeTab}>
                             <TabPane tabId="1">
@@ -736,6 +747,11 @@ class Data extends PureComponent {
                                     tabVisible={this.props.tabData.activeTab === "6"}
                                     tabName={this.props.tabName}
                                     tagsByAnnotation={this.props.tagsByAnnotation}
+                                />
+                            </TabPane>
+                            <TabPane tabId="7">
+                                <XperData tabVisible={this.props.tabData.activeTab === "7"}
+                                             tabName={this.props.tabName}
                                 />
                             </TabPane>
                         </TabContent>

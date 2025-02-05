@@ -718,6 +718,7 @@
       "tab_metadata": "Metadatos",
       "tab_chrono_thematic": "Cronotemática",
       "tab_event-annotations": "Anotaciones de eventos",
+      "tab_xper-kb-annotations": "Xper KB annotations es",
       "dropdown_tooltip_export_the_selected_characters_to_a_csv_file": "Exportar los caracteres seleccionados a un archivo CSV",
       "dropdown_export_results": "Exportar los resultados",
       "dropdown_export_to_csv": "Exportar a CSV",
@@ -854,6 +855,32 @@
         "table_column_general_keywords": "Palabras clave generales",
         "table_column_ref": "Ref."
       },
+      "xper_kb_annotations": {
+        "table_column_catalog": "Catalog # es",
+        "table_column_file_name": "File name es",
+        "table_column_scientific_name": "Scientific name es",
+        "table_column_kb_name": "KB name es",
+        "table_column_kb_id": "KB id es",
+        "table_column_kb_language": "KB language es",
+        "table_column_item_id": "Item id es",
+        "table_column_item_name": "Item name es",
+        "table_column_item_alternative_name": "Item alternative name es",
+        "table_column_item_detail": "Detail es",
+        "table_column_descriptor_id": "Descriptor id es",
+        "table_column_descriptor_name": "Descriptor name es",
+        "table_column_descriptor_type": "Descriptor type es",
+        "table_column_descriptor_global_weight": "Descriptor global weight es",
+        "table_column_group_id": "Group id es",
+        "table_column_group_name": "Group name es",
+        "table_column_state_id": "State id es",
+        "table_column_state_name": "State name es",
+        "table_column_measurement_unit": "Measurement unit es",
+        "table_column_min": "Min es",
+        "table_column_max": "Max",
+        "table_column_min_include": "Min include es",
+        "table_column_max_include": "Max include es"
+      },
+
       "dropdown_item_export_to_sdd_file": "Exportar a un archivo Sdd"
     },
     "models": {
