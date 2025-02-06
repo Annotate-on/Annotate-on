@@ -8,7 +8,7 @@ import {
 } from 'reactstrap';
 
 import styled from "styled-components";
-import PLUS from "./pictures/plus.svg";
+import PLUS from "./pictures/xper_logo.svg";
 import {getDescriptorsForItem, getKnowledgeBasesDetails, searchItemsInKb, searchKb} from "../utils/xper_mono";
 import Chance from "chance";
 import {categoryExists} from "./event/utils";
@@ -84,7 +84,7 @@ const _ResultItemDetails = styled.div`
 
 const _MatchingResultsContainer = styled.div`
     margin-top: 10px;
-    border: 1px solid #dee2e6;
+    border: 1px solid #0188ff;
     border-radius: 5px;
     padding-top: 5px;
 `;
@@ -231,16 +231,16 @@ export default class extends Component {
             resource: props.resource,
             searchTerm: this._isMatchResourceMode() ? _getScientificName(this.props.resource) : '',
             selectedLanguage: props.i18n.language,
-            searchTaxonomy: false,
-            searchStratigraphy: false,
-            searchHabitat: false,
-            searchGeography: false,
-            searchItems: this._isMatchResourceMode(),
-            searchItemGroups: false,
-            searchDescriptor: false,
-            searchDescriptorGroups: false,
-            searchStates: false,
-            searchKeywords: false,
+            searchTaxonomy: !this._isMatchResourceMode(),
+            searchStratigraphy: !this._isMatchResourceMode(),
+            searchHabitat: !this._isMatchResourceMode(),
+            searchGeography: !this._isMatchResourceMode(),
+            searchItems: true,
+            searchItemGroups: !this._isMatchResourceMode(),
+            searchDescriptor: !this._isMatchResourceMode(),
+            searchDescriptorGroups: !this._isMatchResourceMode(),
+            searchStates: !this._isMatchResourceMode(),
+            searchKeywords: !this._isMatchResourceMode(),
             kbSearchResults: [],
             tagName: '',
             addAsTag: false,
@@ -647,24 +647,27 @@ export default class extends Component {
                                         }
                                     </_ResultItemButton>
                                     <_ResultItemDetails>
-                                        <div style={{fontSize: '18px', fontWeight: "bold"}}>
+                                        <div style={{cursor: 'pointer', fontSize: '16px', fontWeight: "bold"}} onClick={() => this._onShowKbDetailsHandler(kb)}>
                                             {kb.name}
                                         </div>
                                         {kb.authors &&
                                             <div style={{
+                                                cursor: 'pointer',
                                                 fontSize: '12px',
                                                 fontWeight: "bold",
-                                                marginTop: '5px'
-                                            }}> {kb.authors}</div>
+                                                marginTop: '5px',
+                                                color: "dimgrey"
+                                            }} onClick={() => this._onShowKbDetailsHandler(kb)}> {kb.authors}</div>
                                         }
                                         {kb.detail &&
                                             <div style={{
+                                                cursor: 'pointer',
                                                 marginTop: '5px'
-                                            }}>{kb.detail}</div>
+                                            }} onClick={() => this._onShowKbDetailsHandler(kb)}>{kb.detail}</div>
                                         }
                                     </_ResultItemDetails>
                                     <Button color="secondary"
-                                            size="sm"
+                                            size=""
                                             onClick={() => this._matchResourcesWithKBHandler(kb)}>
                                         {t('folders.xper_mono_search_dialog.btn_match_resources')}
                                     </Button>
@@ -677,88 +680,95 @@ export default class extends Component {
     }
 
     renderMatchedResultsContainer(t) {
-        return (this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources) ?
+        if (!this.state.xperMatchedResources || !this.state.xperMatchedResources.matchedResources) {
+            return (
+                <div style={{
+                    fontSize: '14px',
+                    margin: '5px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    height: '100%'
+                }}>
+                    {t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}
+                </div>
+            );
+        }
+
+
+        return (
             <_MatchingResultsContainer>
-                <Container className="matching-results-container">
-                    <Row>
-                        <Col sm={12} md={12} lg={12}>
-                            <_MatchingResultsInfoContainer>
-                                {
-                                    this.state.xperMatchedResources.matchedResources.map((matchedResource, index) => {
-                                        return (
-                                            <div key={index}>
-                                                <_MatchedPicturesForItemContainer>
-                                                    <div>
-                                                        {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
-                                                            numOfMatchedResources: matchedResource.resources.length,
-                                                            numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
-                                                            item: this.findItem(matchedResource.item)
-                                                        })}
-                                                    </div>
-                                                    <Button color="secondary"
-                                                            size="sm"
-                                                            onClick={() => this._onSelectDescriptors(matchedResource.item)}>
-                                                        {t('folders.xper_mono_search_dialog.btn_select_descriptors')}
-                                                    </Button>
-                                                </_MatchedPicturesForItemContainer>
-                                            </div>
-                                        )
-                                    })
+                {this.state.xperMatchedResources.matchedResources.length > 0 ? (
+                    <Container className="matching-results-container">
+                        <Row>
+                            <Col sm={12} md={12} lg={12}>
+                                <_MatchingResultsInfoContainer>
+                                    {this.state.xperMatchedResources.matchedResources.map((matchedResource, index) => (
+                                        <div key={index}>
+                                            <_MatchedPicturesForItemContainer>
+                                                <div style={{ fontSize: '14px' }}>
+                                                    {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
+                                                        numOfMatchedResources: matchedResource.resources.length,
+                                                        numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
+                                                        item: this.findItem(matchedResource.item),
+                                                    })}
+                                                </div>
+                                                <Button color="secondary"
+                                                        onClick={() => this._onSelectDescriptors(matchedResource.item)}>
+                                                    {t('folders.xper_mono_search_dialog.btn_select_descriptors')}
+                                                </Button>
+                                            </_MatchedPicturesForItemContainer>
+                                        </div>
+                                    ))}
+                                </_MatchingResultsInfoContainer>
+                            </Col>
+                        </Row>
 
-                                }
-
-                            </_MatchingResultsInfoContainer>
-                        </Col>
-                    </Row>
-                    {this.state.xperMatchedResources.matchedResources.length > 0 &&
                         <Fragment>
-                            <Row style={{marginTop: '5px'}}>
+                            <Row style={{ marginTop: '5px' }}>
                                 <Col sm={4} md={4} lg={4}>
                                     <Input type="text" name="tagName" id="tag-name"
                                            value={this.state.tagName}
-                                           onChange={this._formChangeHandler}/>
+                                           onChange={this._formChangeHandler} />
                                 </Col>
                                 <Col sm={2} md={2} lg={2}>
-                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
+                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
                                         <Input name="addAsTag" id="add-as-tag"
                                                type="checkbox"
                                                checked={this.state.addAsTag}
                                                disabled={!this.state.tagName}
-                                               onChange={this._formChangeHandler}/>
-                                        <Label for="add-as-tag"
-                                               className="form-check-label pointer">
+                                               onChange={this._formChangeHandler} />
+                                        <Label for="add-as-tag" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_add_as_tag')}
                                         </Label>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={3} md={3} lg={3}>
-                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
+                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
                                         <Input name="addKbNameAsTag" id="add-kb-name-as-tag"
                                                type="checkbox"
                                                checked={this.state.addKbNameAsTag}
-                                               onChange={this._formChangeHandler}/>
-                                        <Label for="add-kb-name-as-tag"
-                                               className="form-check-label pointer">
+                                               onChange={this._formChangeHandler} />
+                                        <Label for="add-kb-name-as-tag" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_include_kb_name_as_tag')}
                                         </Label>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={3} md={3} lg={3}>
-                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
+                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
                                         <Input name="createAnnotations" id="create_annotations"
                                                type="checkbox"
                                                checked={this.state.createAnnotations}
-                                               onChange={this._formChangeHandler}/>
-                                        <Label for="create_annotations"
-                                               className="form-check-label pointer">
+                                               onChange={this._formChangeHandler} />
+                                        <Label for="create_annotations" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_create_annotations')}
                                         </Label>
                                     </FormGroup>
                                 </Col>
                             </Row>
                             <Row>
-                                <Col sm={8} md={8} lg={8}/>
-                                <Col sm={4} md={4} lg={4} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <Col style={{ display: 'flex', justifyContent: 'center', marginTop: '10px'}}>
                                     <Button color="primary" disabled={
                                         (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
                                         (!this.state.tagName && !this.state.addKbNameAsTag)
@@ -768,10 +778,22 @@ export default class extends Component {
                                 </Col>
                             </Row>
                         </Fragment>
-                    }
-                </Container>
-            </_MatchingResultsContainer> : this._shouldDisplayNoMatchedResources() &&
-            <h6>{t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}</h6>;
+                    </Container>
+                ) : (
+                    <div style={{
+                        fontSize: '14px',
+                        margin: '5px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        textAlign: 'center',
+                        height: '100%'
+                    }}>
+                        {t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}
+                    </div>
+                )}
+            </_MatchingResultsContainer>
+        );
     }
 
     _shouldDisplayNoMatchedResources() {
