@@ -54,66 +54,71 @@ class XperData extends PureComponent {
             const kb_name = annotation.xperData.kb_name;
             const kb_id = annotation.xperData.kb_id;
             const kb_language = annotation.xperData.kb_language;
-            annotation.xperData.items.forEach(item => {
-                const item_id = item.id;
-                const item_name = item.name;
-                const item_detail = item.detail;
-                item.descriptors.forEach(descriptor => {
-                    const descriptor_id = descriptor.id;
-                    const descriptor_name = descriptor.name;
-                    const descriptor_type = descriptor.type;
-                    let group_id = descriptor.groups[0].id;
-                    let group_name = descriptor.groups[0].name;
-                    if(descriptor.groups && descriptor.groups.length === 0) {
-                        group_id = descriptor.groups[0].id;
-                        group_name = descriptor.groups[0].name;
-                    }
-                    if(descriptor.type === 'CategoricalDescriptor') {
-                        descriptor.states.forEach(state => {
-                            let value = {};
-                            value.catalog_number = catalog_number;
-                            value.file_name = file_name;
-                            value.scientific_name = scientific_name;
-                            value.kb_name = kb_name;
-                            value.kb_id = kb_id;
-                            value.kb_language = kb_language;
-                            value.item_id = item_id;
-                            value.item_name = item_name;
-                            value.detail = item_detail;
-                            value.descriptor_id = descriptor_id;
-                            value.descriptor_name = descriptor_name;
-                            value.descriptor_type = descriptor_type;
-                            value.group_id = group_id;
-                            value.group_name = group_name;
-                            value.state_id = state.id;
-                            value.state_name = state.name;
-                            data.push(value);
+            if(annotation.xperData.items && annotation.xperData.items.length > 0) {
+                annotation.xperData.items.forEach(item => {
+                    const item_id = item.id;
+                    const item_name = item.name;
+                    const item_detail = item.detail;
+                    if(item.descriptors && item.descriptors.length > 0) {
+                        item.descriptors.forEach(descriptor => {
+                            const descriptor_id = descriptor.id;
+                            const descriptor_name = descriptor.name;
+                            const descriptor_type = descriptor.type;
+                            let group_id = descriptor.groups[0].id;
+                            let group_name = descriptor.groups[0].name;
+                            if(descriptor.groups && descriptor.groups.length === 0) {
+                                group_id = descriptor.groups[0].id;
+                                group_name = descriptor.groups[0].name;
+                            }
+                            if(descriptor.type === 'CategoricalDescriptor') {
+                                descriptor.states.forEach(state => {
+                                    let value = {};
+                                    value.catalog_number = catalog_number;
+                                    value.file_name = file_name;
+                                    value.scientific_name = scientific_name;
+                                    value.kb_name = kb_name;
+                                    value.kb_id = kb_id;
+                                    value.kb_language = kb_language;
+                                    value.item_id = item_id;
+                                    value.item_name = item_name;
+                                    value.detail = item_detail;
+                                    value.descriptor_id = descriptor_id;
+                                    value.descriptor_name = descriptor_name;
+                                    value.descriptor_type = descriptor_type;
+                                    value.group_id = group_id;
+                                    value.group_name = group_name;
+                                    value.state_id = state.id;
+                                    value.state_name = state.name;
+                                    data.push(value);
+                                });
+                            } else if(descriptor.type === 'QuantitativeDescriptor') {
+                                let value = {};
+                                value.catalog_number = catalog_number;
+                                value.file_name = file_name;
+                                value.scientific_name = scientific_name;
+                                value.kb_name = kb_name;
+                                value.kb_id = kb_id;
+                                value.kb_language = kb_language;
+                                value.item_id = item_id;
+                                value.item_name = item_name;
+                                value.detail = item_detail;
+                                value.descriptor_id = descriptor_id;
+                                value.descriptor_name = descriptor_name;
+                                value.descriptor_type = descriptor_type;
+                                value.group_id = group_id;
+                                value.group_name = group_name;
+                                value.measurement_unit = descriptor.measurementUnit;
+                                value.min = descriptor.values.min;
+                                value.max = descriptor.values.max;
+                                value.min_include = descriptor.values.minInclude;
+                                value.max_include = descriptor.values.maxInclude;
+                                data.push(value);
+                            }
                         });
-                    } else if(descriptor.type === 'QuantitativeDescriptor') {
-                        let value = {};
-                        value.catalog_number = catalog_number;
-                        value.file_name = file_name;
-                        value.scientific_name = scientific_name;
-                        value.kb_name = kb_name;
-                        value.kb_id = kb_id;
-                        value.kb_language = kb_language;
-                        value.item_id = item_id;
-                        value.item_name = item_name;
-                        value.detail = item_detail;
-                        value.descriptor_id = descriptor_id;
-                        value.descriptor_name = descriptor_name;
-                        value.descriptor_type = descriptor_type;
-                        value.group_id = group_id;
-                        value.group_name = group_name;
-                        value.measurement_unit = descriptor.measurementUnit;
-                        value.min = descriptor.values.min;
-                        value.max = descriptor.values.max;
-                        value.min_include = descriptor.values.minInclude;
-                        value.max_include = descriptor.values.maxInclude;
-                        data.push(value);
                     }
                 });
-            });
+            }
+
         });
 
         const sortBy = 'catalog_number';
