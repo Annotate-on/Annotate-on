@@ -2,7 +2,11 @@ import React, {Component} from 'react';
 import {Button, Col, Container, Input, Row} from 'reactstrap';
 
 import {remote} from "electron";
-import {DEFAULT_IIIF_CONNECTION_URL, DEFAULT_XPER_CONNECTION_URL} from "../constants/constants";
+import {
+    DEFAULT_IIIF_CONNECTION_URL,
+    DEFAULT_XPER_CONNECTION_URL,
+    DEFAULT_XPER_MONO_CONNECTION_URL
+} from "../constants/constants";
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {
     getIIIFParams,
@@ -69,7 +73,7 @@ export default class Options extends Component {
                 },
                 xper_mono: {
                     formSaved:true,
-                    url: xperMonoParams.url ? xperMonoParams.url : ''
+                    url: xperMonoParams.url ? xperMonoParams.url : DEFAULT_XPER_MONO_CONNECTION_URL
                 },
                 IIIF: {
                     formSaved:true,
