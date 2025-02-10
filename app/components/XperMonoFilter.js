@@ -167,6 +167,7 @@ const _ItemDetailsValueContainer = styled.div`
         margin-top: 0 !important;
         margin-left: 0 !important;
     }
+
     .item-details-text {
         margin-left: 5px;
     }
@@ -384,10 +385,10 @@ export default class extends Component {
             console.log('No matched resources');
             return;
         }
-        if(!this.state.descriptorSelection || Object.keys(this.state.descriptorSelection).length === 0) {
+        if (!this.state.descriptorSelection || Object.keys(this.state.descriptorSelection).length === 0) {
             console.log('No selected descriptors');
             const {t} = this.props;
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 message: t('global.warning'),
@@ -424,8 +425,8 @@ export default class extends Component {
                     } else {
                         itemWithDetail.descriptors = []
                     }
-                    if(this.state.itemDetailsSelection[itemWithDetail.id] && itemWithDetail.detail) {
-                        if(containsHTMLTags(itemWithDetail.detail)) {
+                    if (this.state.itemDetailsSelection[itemWithDetail.id] && itemWithDetail.detail) {
+                        if (containsHTMLTags(itemWithDetail.detail)) {
                             itemWithDetail.detail = stripHTMLUsingTempElement(itemWithDetail.detail);
                         }
                     } else {
@@ -593,6 +594,14 @@ export default class extends Component {
         }
     };
 
+    _shouldDisplayNoMatchedResources() {
+        if (this.state.kbSearchResults.length === 0 && this.state.kbSearchDone) return true;
+        return this.state.matchResourceDone &&
+            (!this.state.xperMatchedResources
+                || !this.state.xperMatchedResources.matchedResources
+                || this.state.xperMatchedResources.matchedResources.length === 0);
+    }
+
     findItem = (item_id) => {
         for (const item of this.state.xperMatchedResources.xper.items) {
             if (item.id === item_id) {
@@ -649,7 +658,8 @@ export default class extends Component {
                                         }
                                     </_ResultItemButton>
                                     <_ResultItemDetails>
-                                        <div style={{cursor: 'pointer', fontSize: '16px', fontWeight: "bold"}} onClick={() => this._onShowKbDetailsHandler(kb)}>
+                                        <div style={{cursor: 'pointer', fontSize: '16px', fontWeight: "bold"}}
+                                             onClick={() => this._onShowKbDetailsHandler(kb)}>
                                             {kb.name}
                                         </div>
                                         {kb.authors &&
@@ -682,26 +692,27 @@ export default class extends Component {
     }
 
     renderMatchedResultsContainer(t) {
-        if (!this.state.xperMatchedResources || !this.state.xperMatchedResources.matchedResources) {
+        console.log('renderMatchedResultsContainer', this.state);
+
+        if (this._shouldDisplayNoMatchedResources()) {
             return (
                 <div style={{
                     fontSize: '14px',
-                    margin: '5px',
+                    margin: '10px 5px 5px 5px',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
                     textAlign: 'center',
-                    height: '100%'
+                    height: '100%',
                 }}>
                     {t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}
                 </div>
             );
         }
 
-
         return (
-            <_MatchingResultsContainer>
-                {this.state.xperMatchedResources.matchedResources.length > 0 ? (
+            this.state.xperMatchedResources && this.state.xperMatchedResources.matchedResources && this.state.xperMatchedResources.matchedResources.length > 0 ? (
+                <_MatchingResultsContainer>
                     <Container className="matching-results-container">
                         <Row>
                             <Col sm={12} md={12} lg={12}>
@@ -709,7 +720,7 @@ export default class extends Component {
                                     {this.state.xperMatchedResources.matchedResources.map((matchedResource, index) => (
                                         <div key={index}>
                                             <_MatchedPicturesForItemContainer>
-                                                <div style={{ fontSize: '14px' }}>
+                                                <div style={{fontSize: '14px'}}>
                                                     {t('folders.xper_mono_search_dialog.btn_match_resources_info', {
                                                         numOfMatchedResources: matchedResource.resources.length,
                                                         numOfProcessedResources: this.state.xperMatchedResources.numOfProcessedResources,
@@ -728,41 +739,41 @@ export default class extends Component {
                         </Row>
 
                         <Fragment>
-                            <Row style={{ marginTop: '5px' }}>
+                            <Row style={{marginTop: '5px'}}>
                                 <Col sm={4} md={4} lg={4}>
                                     <Input type="text" name="tagName" id="tag-name"
                                            value={this.state.tagName}
-                                           onChange={this._formChangeHandler} />
+                                           onChange={this._formChangeHandler}/>
                                 </Col>
                                 <Col sm={2} md={2} lg={2}>
-                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
+                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
                                         <Input name="addAsTag" id="add-as-tag"
                                                type="checkbox"
                                                checked={this.state.addAsTag}
                                                disabled={!this.state.tagName}
-                                               onChange={this._formChangeHandler} />
+                                               onChange={this._formChangeHandler}/>
                                         <Label for="add-as-tag" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_add_as_tag')}
                                         </Label>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={3} md={3} lg={3}>
-                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
+                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
                                         <Input name="addKbNameAsTag" id="add-kb-name-as-tag"
                                                type="checkbox"
                                                checked={this.state.addKbNameAsTag}
-                                               onChange={this._formChangeHandler} />
+                                               onChange={this._formChangeHandler}/>
                                         <Label for="add-kb-name-as-tag" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_include_kb_name_as_tag')}
                                         </Label>
                                     </FormGroup>
                                 </Col>
                                 <Col sm={3} md={3} lg={3}>
-                                    <FormGroup style={{ marginTop: '7px', marginBottom: '0px' }}>
+                                    <FormGroup style={{marginTop: '7px', marginBottom: '0px'}}>
                                         <Input name="createAnnotations" id="create_annotations"
                                                type="checkbox"
                                                checked={this.state.createAnnotations}
-                                               onChange={this._formChangeHandler} />
+                                               onChange={this._formChangeHandler}/>
                                         <Label for="create_annotations" className="form-check-label pointer">
                                             {t('folders.xper_mono_search_dialog.lbl_create_annotations')}
                                         </Label>
@@ -770,7 +781,7 @@ export default class extends Component {
                                 </Col>
                             </Row>
                             <Row>
-                                <Col style={{ display: 'flex', justifyContent: 'center', marginTop: '10px'}}>
+                                <Col style={{display: 'flex', justifyContent: 'center', marginTop: '10px'}}>
                                     <Button color="primary" disabled={
                                         (!this.state.addAsTag && !this.state.addKbNameAsTag) ||
                                         (!this.state.tagName && !this.state.addKbNameAsTag)
@@ -781,27 +792,9 @@ export default class extends Component {
                             </Row>
                         </Fragment>
                     </Container>
-                ) : (
-                    <div style={{
-                        fontSize: '14px',
-                        margin: '5px',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        height: '100%'
-                    }}>
-                        {t('folders.xper_mono_search_dialog.lbl_no_xper_matching_resource_found')}
-                    </div>
-                )}
-            </_MatchingResultsContainer>
+                </_MatchingResultsContainer>
+            ) : (<div/>)
         );
-    }
-
-    _shouldDisplayNoMatchedResources() {
-        console.log('_shouldDisplayNoMatchedResources', this.state);
-        if(this.state.kbSearchResults.length === 0 && this.state.kbSearchDone && this._isMatchResourceMode()) return true;
-        return (!this.state.xperMatchedResources || !this.state.xperMatchedResources.matchedResources || this.state.xperMatchedResources.matchedResources.length === 0) && this.state.matchResourceDone;
     }
 
     renderSearchFormContainer(t) {
