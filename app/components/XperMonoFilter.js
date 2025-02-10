@@ -219,7 +219,9 @@ const _ItemDescriptorValueNotProvidedContainer = styled.div`
 
 function _getScientificName(resource) {
     return resource.erecolnatMetadata && resource.erecolnatMetadata.scientificname
-        ? resource.erecolnatMetadata.scientificname.toLowerCase().trim() : '';
+        ? Array.isArray(resource.erecolnatMetadata.scientificname) ?
+            resource.erecolnatMetadata.scientificname.map(name => name.toLowerCase().trim()).join(';') :
+            resource.erecolnatMetadata.scientificname.toLowerCase().trim() : '';
 }
 
 export default class extends Component {

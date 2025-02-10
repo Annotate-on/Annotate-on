@@ -4553,28 +4553,28 @@ export default (state = {}, action) => {
             const matchedPictures = {};
             let picturesInFolder = 0;
             const matchPicture = (picture) => {
-                let name = picture.erecolnatMetadata && picture.erecolnatMetadata.scientificname
-                    ? picture.erecolnatMetadata.scientificname.toLowerCase().trim() : null;
-                if (Array.isArray(name)) {
-                    name = name[0].toLowerCase().trim();
+                if(!picture.erecolnatMetadata || !picture.erecolnatMetadata.scientificname) return;
+                let names;
+                if(Array.isArray(picture.erecolnatMetadata.scientificname)) {
+                    names = picture.erecolnatMetadata.scientificname.map(name => name.toLowerCase().trim());
+                } else {
+                    names = [picture.erecolnatMetadata.scientificname.toLowerCase().trim()];
                 }
-                if (name) {
+                names.forEach(name => {
                     for (const item of action.xper.items) {
                         let itemName = item.name ? item.name.toLowerCase() : '';
                         let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
                         if (itemName.includes(name) || itemAlternativeName.includes(name)) {
-                            // const picture = allPictures[sha1];
-                            // picture.sha1 = sha1;
                             if (!matchedPictures[item.id]) {
                                 matchedPictures[item.id] = []
                             }
                             matchedPictures[item.id].push(picture);
                             ++picturesInFolder;
+                            return;
                         }
                     }
-                }
+                })
             }
-
             if(action.folder) {
                 const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
                 allFolders.map(folderName => {
