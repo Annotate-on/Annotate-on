@@ -178,7 +178,13 @@ export default class Options extends Component {
                     }
                 }
             )
-            remote.dialog.showErrorBox(t('global.error'), t('global.options.alert_all_xper_monobase_parameters_required'));
+            let options = {
+                type: "error",
+                title: t('global.error'),
+                buttons: ["OK"],
+                message: t('global.options.alert_all_xper_monobase_parameters_required')
+            }
+            remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
         }
     };
 

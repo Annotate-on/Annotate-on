@@ -1269,7 +1269,7 @@ export const getXperParams = () => {
 };
 
 export const getXperMonoParams = () => {
-    if(!config.xper_mono) {
+    if(!config.xper_mono || config.xper_mono.url == null ) {
         updateXperMonoParams(DEFAULT_XPER_MONO_CONNECTION_URL)
     }
     return {
