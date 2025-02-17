@@ -9,7 +9,13 @@ import {
 
 import styled from "styled-components";
 import PLUS from "./pictures/xper_logo.svg";
-import {getDescriptorsForItem, getKnowledgeBasesDetails, searchItemsInKb, searchKb} from "../utils/xper_mono";
+import {
+    getDescriptorsForItem,
+    getDescriptorsForItems,
+    getKnowledgeBasesDetails,
+    searchItemsInKb,
+    searchKb
+} from "../utils/xper_mono";
 import Chance from "chance";
 import {categoryExists} from "./event/utils";
 import {createNewCategory, createNewTag, getXperCategory} from "./tags/tagUtils";
@@ -353,7 +359,6 @@ export default class extends Component {
     _onSelectDescriptors = (item) => {
         getDescriptorsForItem({item: item, lang: this.state.selectedLanguage}, (result) => {
             if (result) {
-                console.log('Descriptors for item ' + item, result);
                 let descriptorSelection = {};
                 for (const descriptor of result.descriptors) {
                     descriptorSelection[descriptor.id] = true;
@@ -379,26 +384,44 @@ export default class extends Component {
     }
 
     _onCreateXperTag = () => {
-        console.log('_onCreateXperTag xperMatchedResources', this.state.xperMatchedResources.matchedResources);
-        console.log('_onCreateXperTag descriptorSelection', this.state.descriptorSelection);
         if (!this.state.xperMatchedResources.matchedResources) {
             console.log('No matched resources');
             return;
         }
+        let missingItemDescriptors = [];
         if (!this.state.descriptorSelection || Object.keys(this.state.descriptorSelection).length === 0) {
-            console.log('No selected descriptors');
-            const {t} = this.props;
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-                type: 'question',
-                buttons: ['Yes', 'No'],
-                message: t('global.warning'),
-                cancelId: 1,
-                detail: t('folders.xper_mono_search_dialog.alert_no_selected_descriptors')
+            missingItemDescriptors = this.state.xperMatchedResources.matchedResources.map((matchedResource) => {
+                return matchedResource.item;
             });
-            if (result === 1) {
-                return;
+        } else {
+            for (const matchedResource of this.state.xperMatchedResources.matchedResources) {
+                if (!this.state.descriptorSelection[matchedResource.item]) {
+                    missingItemDescriptors.push(matchedResource.item);
+                }
             }
         }
+        let allDescriptorSelection = {...this.state.descriptorSelection};
+        let allItemsWithDetails = {...this.state.itemWithDetails};
+        if (missingItemDescriptors.length > 0) {
+            getDescriptorsForItems({items: missingItemDescriptors, lang: this.state.selectedLanguage}, (result) => {
+                if (result) {
+                    for (const item of result) {
+                        allItemsWithDetails[item.id] = item;
+                        let descriptorSelection = {};
+                        for (const descriptor of item.descriptors) {
+                            descriptorSelection[descriptor.id] = true;
+                        }
+                        allDescriptorSelection[item.id] = descriptorSelection;
+                    }
+                }
+                this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection);
+            });
+        } else {
+            this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection);
+        }
+    }
+
+    _doCreateXperTag = (itemsWithDetails, descriptorsSelection) => {
         const customTagName = this.state.addAsTag ? this.state.tagName : null;
         const kbTagName = this.state.addKbNameAsTag ? "KB " + this.props.xperMatchedResources.xper.kb.name : null;
         const tags = [];
@@ -408,7 +431,6 @@ export default class extends Component {
         if (kbTagName) {
             tags.push(kbTagName);
         }
-
         let resourcesXperData = {};
         for (const matchedResource of this.state.xperMatchedResources.matchedResources) {
             for (const resource of matchedResource.resources) {
@@ -418,10 +440,10 @@ export default class extends Component {
                     "kb_language": this.state.selectedLanguage,
                     "items": [],
                 };
-                let itemWithDetail = this.state.itemWithDetails[matchedResource.item]
+                let itemWithDetail = itemsWithDetails[matchedResource.item]
                 if (itemWithDetail) {
                     if (itemWithDetail.descriptors) {
-                        itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => this.state.descriptorSelection[itemWithDetail.id][descriptor.id]);
+                        itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => descriptorsSelection[itemWithDetail.id][descriptor.id]);
                     } else {
                         itemWithDetail.descriptors = []
                     }
@@ -432,7 +454,7 @@ export default class extends Component {
                     } else {
                         itemWithDetail.detail = '';
                     }
-                    resourceXperData.items.push(this.state.itemWithDetails[matchedResource.item]);
+                    resourceXperData.items.push(itemsWithDetails[matchedResource.item]);
                 } else {
                     for (const item of this.state.xperMatchedResources.xper.items) {
                         if (item.id === matchedResource.item) {
@@ -492,16 +514,16 @@ export default class extends Component {
         this.setState({
             searchTerm: '',
             selectedLanguage: 'fr',
-            searchTaxonomy: true,
-            searchStratigraphy: true,
-            searchHabitat: true,
-            searchGeography: true,
-            searchItems: true,
-            searchItemGroups: true,
-            searchDescriptor: true,
-            searchDescriptorGroups: true,
-            searchStates: true,
-            searchKeywords: true,
+            searchTaxonomy: false,
+            searchStratigraphy: false,
+            searchHabitat: false,
+            searchGeography: false,
+            searchItems: false,
+            searchItemGroups: false,
+            searchDescriptor: false,
+            searchDescriptorGroups: false,
+            searchStates: false,
+            searchKeywords: false,
             kbSearchResults: [],
             tagName: '',
             addAsTag: false,
@@ -519,7 +541,6 @@ export default class extends Component {
     }
 
     _onSearchXper = () => {
-        console.log('Search Xper', this.state);
         this.props.xperMatchResources(null, null, null);
         searchKb({
             q: this.state.searchTerm,
@@ -692,8 +713,6 @@ export default class extends Component {
     }
 
     renderMatchedResultsContainer(t) {
-        console.log('renderMatchedResultsContainer', this.state);
-
         if (this._shouldDisplayNoMatchedResources()) {
             return (
                 <div style={{

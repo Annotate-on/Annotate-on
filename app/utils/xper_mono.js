@@ -18,26 +18,16 @@ export const searchKb = (filter, callback) => {
         `${filter.descriptor ? '&descriptor='+ filter.descriptor : ''}` +
         `${filter.descriptor_group ? '&descriptor_group='+ filter.descriptor_group : ''}` +
         `${filter.state ? '&state='+ filter.state : ''}`);
-    console.log("url ", url);
     ee.emit(EVENT_SHOW_WAITING);
     request({
             url : url,
             timeout: 10000
         },
         function (error, response, body){
-            console.log("error ", error);
-            console.log("response ", response);
-            console.log("body ", body);
             ee.emit(EVENT_HIDE_WAITING);
             if(error || !response || response.statusCode !== 200) {
                 callback(null);
-                let options = {
-                    type: "error",
-                    title: t('global.error'),
-                    buttons: ["OK"],
-                    message: getErrorMessage(error, response, body)
-            }
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
                 console.error(getErrorMessage(error, response, body), body);
             } else {
                 try {
@@ -54,18 +44,11 @@ export const searchKb = (filter, callback) => {
                             found.push(kb);
                         }
                     }
-                    console.log("found ", found);
                     callback(found);
                 } catch (e) {
                     callback(null);
                     console.error(e);
-                    let options = {
-                        type: "error",
-                        title: t('global.error'),
-                        buttons: ["OK"],
-                        message: t('global.alert_bad_xper_3_response') + '\n' + t('global.alert_please_check_your_xper_mono_parameters')
-                    }
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
                 }
             }
         }
@@ -83,19 +66,10 @@ export const searchItemsInKb = (filter, callback) => {
             timeout: 10000
         },
         function (error, response, body){
-            console.log("error ", error);
-            console.log("response ", response);
-            console.log("body ", body);
             ee.emit(EVENT_HIDE_WAITING);
             if(error || !response || response.statusCode !== 200) {
                 callback(null);
-                let options = {
-                    type: "error",
-                    title: t('global.error'),
-                    buttons: ["OK"],
-                    message: getErrorMessage(error, response, body)
-            }
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
                 console.error(getErrorMessage(error, response, body), body);
             } else {
                 try {
@@ -114,13 +88,7 @@ export const searchItemsInKb = (filter, callback) => {
                 } catch (e) {
                     callback(null);
                     console.error(e);
-                    let options = {
-                        type: "error",
-                        title: t('global.error'),
-                        buttons: ["OK"],
-                        message: t('global.alert_bad_xper_3_response') + '\n' + t('global.alert_please_check_your_xper_mono_parameters')
-                    }
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
                 }
             }
         }
@@ -138,19 +106,10 @@ export const getKnowledgeBasesDetails = (filter, callback) => {
             timeout: 10000
         },
         function (error, response, body){
-            console.log("error ", error);
-            console.log("response ", response);
-            console.log("body ", body);
             ee.emit(EVENT_HIDE_WAITING);
             if(error || !response || response.statusCode !== 200) {
                 callback(null);
-                let options = {
-                    type: "error",
-                    title: t('global.error'),
-                    buttons: ["OK"],
-                    message: getErrorMessage(error, response, body)
-                }
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
                 console.error(getErrorMessage(error, response, body), body);
             } else {
                 try {
@@ -160,13 +119,7 @@ export const getKnowledgeBasesDetails = (filter, callback) => {
                 } catch (e) {
                     callback(null);
                     console.error(e);
-                    let options = {
-                        type: "error",
-                        title: t('global.error'),
-                        buttons: ["OK"],
-                        message: t('global.alert_bad_xper_3_response') + '\n' + t('global.alert_please_check_your_xper_mono_parameters')
-                    }
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
                 }
             }
         }
@@ -184,19 +137,10 @@ export const getDescriptorsForItem = (filter, callback) => {
             timeout: 10000
         },
         function (error, response, body){
-            console.log("error ", error);
-            console.log("response ", response);
-            console.log("body ", body);
             ee.emit(EVENT_HIDE_WAITING);
             if(error || !response || response.statusCode !== 200) {
                 callback(null);
-                let options = {
-                    type: "error",
-                    title: t('global.error'),
-                    buttons: ["OK"],
-                    message:  getErrorMessage(error, response, body)
-                }
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
                 console.error(getErrorMessage(error, response, body), body);
             } else {
                 try {
@@ -206,13 +150,38 @@ export const getDescriptorsForItem = (filter, callback) => {
                 } catch (e) {
                     callback(null);
                     console.error(e);
-                    let options = {
-                        type: "error",
-                        title: t('global.error'),
-                        buttons: ["OK"],
-                        message: t('global.alert_bad_xper_3_response') + '\n' + t('global.alert_please_check_your_xper_mono_parameters')
-                    }
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
+                }
+            }
+        }
+    );
+}
+
+export const getDescriptorsForItems = (filter, callback) => {
+    console.log("getDescriptorsForItems ", filter);
+    if(!checkXperMonoSettings()) return;
+    const {t} = i18next;
+    let url = getUrl(`/api/items/descriptors?lang=${filter.lang}&ids=${filter.items.join(',')}`);
+    ee.emit(EVENT_SHOW_WAITING);
+    request({
+            url : url,
+            timeout: 10000
+        },
+        function (error, response, body){
+            ee.emit(EVENT_HIDE_WAITING);
+            if(error || !response || response.statusCode !== 200) {
+                callback(null);
+                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error, response, body));
+                console.error(getErrorMessage(error, response, body), body);
+            } else {
+                try {
+                    let result = JSON.parse(body);
+                    console.log("result ", result);
+                    callback(result);
+                } catch (e) {
+                    callback(null);
+                    console.error(e);
+                    remote.dialog.showErrorBox(t('global.error'), `${t('global.alert_bad_xper_3_response')} ${t('global.alert_please_check_your_xper_mono_parameters')}`);
                 }
             }
         }
@@ -224,13 +193,7 @@ const checkXperMonoSettings = () => {
     let xperMonoParams = getXperMonoParams();
     const hasParams = xperMonoParams && xperMonoParams.url;
     if(!hasParams) {
-        let options = {
-            type: "error",
-            title: t('global.error'),
-            buttons: ["OK"],
-            message: t('global.options.alert_all_xper_monobase_parameters_required')
-        }
-        remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+        remote.dialog.showErrorBox(t('global.error'), t('global.options.alert_all_xper_monobase_parameters_required'));
         return false;
     }
     return true;

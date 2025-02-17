@@ -164,8 +164,7 @@
         "btn_tag_images": "Créer des annotations",
         "btn_select_descriptors": "Sélectionner des descripteurs",
         "lbl_create_annotations": "Créer des annotations",
-        "lbl_no_xper_matching_resource_found": "Aucune ressource correspondante n'a été trouvée",
-        "alert_no_selected_descriptors": "Vous n'avez pas sélectionné de descripteurs. Voulez-vous continuer?"
+        "lbl_no_xper_matching_resource_found": "Aucune ressource correspondante n'a été trouvée"
       },
       "xper_mono_kb_details_dialog": {
         "lbl_general_information": "Informations générales",
