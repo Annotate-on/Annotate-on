@@ -341,7 +341,8 @@
     "video-thumbnail-generator": "^1.1.3",
     "video.js": "^7.8.4",
     "write-yaml": "^1.0.0",
-    "xlsx": "^0.14.2"
+    "xlsx": "^0.14.2",
+    "react-markdown": "^5.0.3"
   },
   "devEngines": {
     "node": ">=7.x",
