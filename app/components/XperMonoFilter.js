@@ -64,7 +64,6 @@ const _ResultItemButton = styled.div`
     flex-direction: column;
     align-items: center;
     justify-items: center;
-    width: 50px;
     margin-left: 10px;
     margin-right: 10px;
     cursor: pointer;
@@ -674,7 +673,7 @@ export default class extends Component {
                                              style={{width: '25px'}}/>
                                         {(kb.logoUrl && kb.logoUrl.length > 0) &&
                                             <div>
-                                                <img src={kb.logoUrl} alt={""} style={{width: '50px'}}/>
+                                                <img src={kb.logoUrl} alt={""} style={{width: '25px'}}/>
                                             </div>
                                         }
                                     </_ResultItemButton>
@@ -701,6 +700,7 @@ export default class extends Component {
                                     </_ResultItemDetails>
                                     <Button color="secondary"
                                             size=""
+                                            style={{whiteSpace: 'nowrap'}}
                                             onClick={() => this._matchResourcesWithKBHandler(kb)}>
                                         {t('folders.xper_mono_search_dialog.btn_match_resources')}
                                     </Button>
