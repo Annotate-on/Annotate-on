@@ -211,7 +211,10 @@
         "lbl_min_include": "Min Include",
         "lbl_max_include": "Max Include",
         "lbl_max": "Max",
-        "lbl_descriptor_value_not_provided": "Value is not provided"
+        "lbl_descriptor_value_not_provided": "Value is not provided",
+        "btn_summarize_ai": "Summarize AI",
+        "tooltip_save_summarization": "Save summarization",
+        "tooltip_edit_summarization": "Edit summarization"
       }
     },
     "tags": {

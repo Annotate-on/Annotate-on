@@ -12,7 +12,7 @@ import PLUS from "./pictures/xper_logo.svg";
 import {
     getDescriptorsForItem,
     getDescriptorsForItems,
-    getKnowledgeBasesDetails, getUrl,
+    getKnowledgeBasesDetails,
     searchItemsInKb,
     searchKb, summarizeItem
 } from "../utils/xper_mono";
@@ -23,10 +23,10 @@ import {TAG_XPER} from "../constants/constants";
 import {tagExist} from "../utils/tags";
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {stripHTMLUsingTempElement, containsHTMLTags} from "../utils/js";
-import {remote} from "electron";
-import {updateSelectedLanguage} from "../utils/config";
-import {ee, EVENT_XPER_MATCH_RESOURCE, EVENT_XPER_SUMMARIZATION_RESPONSE} from "../utils/library";
+import {ee, EVENT_XPER_SUMMARIZATION_RESPONSE} from "../utils/library";
 import Markdown from "react-markdown";
+import EDIT_SUMMARY from "./pictures/edit-annotation.svg";
+import SAVE_SUMMARY from "./pictures/save.svg";
 
 const chance = new Chance();
 
@@ -98,8 +98,6 @@ const _MatchingResultsContainer = styled.div`
 `;
 
 const _MatchingResultsInfoContainer = styled.div`
-    //overflow-y: auto;
-    //height: 100px;
     font-size: 15px;
     font-weight: bold;
     width: 100%;
@@ -112,7 +110,6 @@ const _MatchedPicturesForItemContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    //width: 70%;
     border-bottom: 1px solid #dee2e6;
     padding-top: 3px;
     padding-bottom: 3px;
@@ -154,16 +151,17 @@ const _ItemDetailsScrollContainer = styled.div`
 `;
 
 const _ItemDetailsActions = styled.div`
+    padding: 5px 0 5px 0;
     display: flex;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
+    justify-content: space-between;
 `;
 
-const _SummarizedItemDescription = styled.div`
+const _ItemSummarizedDescription = styled.div`
     overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 5px;
     height: 200px;
+    padding: 5px;
 `;
 
 const _ItemDetailsContainer = styled.div`
@@ -277,37 +275,15 @@ export default class extends Component {
             selectedItem: null,
             descriptorSelection: {},
             itemDetailsSelection: {},
+            itemDetailsSummarization: {},
             kbSearchDone: false,
             matchResourceDone: false,
-            summarizationLanguage: props.i18n.language,
-            summarizedItemDescription: ''
+            itemSummarizationEdit: false,
+            itemDetailsSummarizationValue: ''
         };
     }
-    eventSource = null;
 
     componentDidMount() {
-        // establishing a connection to the server
-        // const url = getUrl(`/api/summarization/item`)
-        // console.log('sse url', url);
-        // this.eventSource = new EventSource(url);
-
-        // attaching a handler to receive message events
-        // this.eventSource.onmessage = (event) => {
-        //     console.log('sse event', event);
-        //     // const id = JSON.parse(event.id);
-        //     // const e = JSON.parse(event.event);
-        //     const data = JSON.parse(event.data);
-        //     this._xperSummarizationResponse(data);
-        // };
-
-        // this.eventSource.addEventListener('item-summarization', (event) => {
-        //     console.log('sse item-summarization event', event);
-        //     // const id = JSON.parse(event.id);
-        //     // const e = JSON.parse(event.event);
-        //     const data = JSON.parse(event.data);
-        //     this._xperSummarizationResponse(data);
-        // }, false);
-
         ee.on(EVENT_XPER_SUMMARIZATION_RESPONSE, this._xperSummarizationResponse);
         if (this._isMatchResourceMode()) {
             this._onSearchXper();
@@ -316,10 +292,6 @@ export default class extends Component {
 
     componentWillUnmount() {
         ee.removeListener(EVENT_XPER_SUMMARIZATION_RESPONSE, this._xperSummarizationResponse);
-        // terminating the connection on component unmount
-        if(this.eventSource) {
-            this.eventSource.close();
-        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -360,8 +332,6 @@ export default class extends Component {
 
     _descriptorSelectionChangeHandler = (event) => {
         const {name, type, value, checked} = event.target;
-        console.log('descriptorSelectionChangeHandler', name, type, value, checked);
-        console.log('descriptorSelectionChangeHandler', this.state.descriptorSelection);
         const item = this.state.selectedItem;
         this.setState({
             descriptorSelection: {
@@ -376,8 +346,6 @@ export default class extends Component {
 
     _itemDetailsSelectionChangeHandler = (event) => {
         const {name, type, value, checked} = event.target;
-        console.log('_itemDetailsSelectionChangeHandler', name, type, value, checked);
-        console.log('_itemDetailsSelectionChangeHandler', this.state.itemDetailsSelection);
         const item = this.state.selectedItem;
         this.setState({
             itemDetailsSelection: {
@@ -387,13 +355,25 @@ export default class extends Component {
         });
     };
 
+    _itemDetailsSummarizationLangChangeHandler = (event) => {
+        const {name, type, value, checked} = event.target;
+        const item = this.state.selectedItem;
+        this.setState({
+            itemDetailsSummarization: {
+                ...this.state.itemDetailsSummarization,
+                [item]: {
+                    lang: value,
+                    summary: ''
+                }
+            }
+        });
+    };
+
     _matchResourcesWithKBHandler = (kb) => {
-        console.log('_matchResourcesWithKBHandler', kb);
         searchItemsInKb({kb: kb.id, lang: this.state.selectedLanguage}, (result) => {
             if (result && this.props.xperMatchResources) {
                 this.props.xperMatchResources(this.state.folder, {kb: kb, items: result}, this.state.resource);
             }
-
             this.setState({
                 tagName: this.state.searchTerm,
                 addAsTag: false,
@@ -401,6 +381,7 @@ export default class extends Component {
                 openItemDetailsModal: false,
                 descriptorSelection: {},
                 itemDetailsSelection: {},
+                itemDetailsSummarization: {},
                 matchResourceDone: true
             });
         });
@@ -425,6 +406,14 @@ export default class extends Component {
                         descriptorSelection: {
                             ...this.state.descriptorSelection,
                             [item]: descriptorSelection
+                        }
+                    });
+                }
+                if(!this.state.itemDetailsSummarization[item]) {
+                    this.setState({
+                        itemDetailsSummarization: {
+                            ...this.state.itemDetailsSummarization,
+                            [item]: {lang: this.state.selectedLanguage, summary: ''}
                         }
                     });
                 }
@@ -552,8 +541,11 @@ export default class extends Component {
                     openItemDetailsModal: false,
                     descriptorSelection: {},
                     itemDetailsSelection: {},
+                    itemDetailsSummarization: {},
                     kbSearchDone: false,
-                    matchResourceDone: false
+                    matchResourceDone: false,
+                    itemSummarizationEdit: false,
+                    itemDetailsSummarizationValue: ''
                 });
             }
             this._toggle(tags, folder);
@@ -585,10 +577,11 @@ export default class extends Component {
             openItemDetailsModal: false,
             descriptorSelection: {},
             itemDetailsSelection: {},
+            itemDetailsSummarization: {},
             kbSearchDone: false,
             matchResourceDone: false,
-            summarizationLanguage: props.i18n.language,
-            summarizedItemDescription: ''
+            itemSummarizationEdit: false,
+            itemDetailsSummarizationValue: ''
         });
     }
 
@@ -653,7 +646,7 @@ export default class extends Component {
         });
     };
 
-    _onSummarize = () => {
+    _onSummarizeItem = () => {
         console.log('Summarize');
         let xperData =  {
             "kb_name": this.props.xperMatchedResources.xper.kb.name,
@@ -663,7 +656,7 @@ export default class extends Component {
         };
         let itemsWithDetails = {...this.state.itemWithDetails};
         let descriptorsSelection = {...this.state.descriptorSelection};
-        let itemWithDetail = itemsWithDetails[this.state.selectedItem]
+        let itemWithDetail = {...itemsWithDetails[this.state.selectedItem]}
         if (itemWithDetail) {
             if (itemWithDetail.descriptors) {
                 itemWithDetail.descriptors = itemWithDetail.descriptors.filter(descriptor => descriptorsSelection[itemWithDetail.id][descriptor.id]);
@@ -678,33 +671,63 @@ export default class extends Component {
                 itemWithDetail.detail = '';
             }
             xperData.items.push(itemWithDetail);
-        } else {
-            for (const item of this.state.xperMatchedResources.xper.items) {
-                if (item.id === matchedResource.item) {
-                    xperData.items.push(item);
-                    break;
-                }
-            }
         }
-
         const chance = new Chance();
         const requestId = chance.guid();
 
-
-        summarizeItem({ requestId: requestId, xperData: xperData, lang: this.state.summarizationLanguage}, (result) => {
-            console.log('Summarize response', result);
+        summarizeItem({
+            requestId: requestId,
+            xperData: xperData,
+            lang: this.state.itemDetailsSummarization[this.state.selectedItem].lang
+        }).then(r => {
+            console.log('Item summarization is finished');
         });
 
+        this.setState({
+            itemDetailsSummarization: {
+                ...this.state.itemDetailsSummarization,
+                [this.state.selectedItem]: {
+                    lang: this.state.itemDetailsSummarization[this.state.selectedItem].lang,
+                    summary: ''
+                }
+            }
+        });
     };
 
     _xperSummarizationResponse = (data) => {
-        // console.log('Summarization response', data);
-        let summarizedItemDescription = this.state.summarizedItemDescription + data ;
+        let summarizedItemDescription = this.state.itemDetailsSummarization[this.state.selectedItem].summary + data ;
+        let summarizedItemLang = this.state.itemDetailsSummarization[this.state.selectedItem].lang;
         this.setState(
-            {
-                summarizedItemDescription: summarizedItemDescription
+            {itemDetailsSummarization: {
+                    ...this.state.itemDetailsSummarization,
+                    [this.state.selectedItem]: {
+                        lang: summarizedItemLang,
+                        summary: summarizedItemDescription
+                    }}
             }
         );
+    }
+
+    _onEditItemSummarization = () => {
+        this.setState({
+            itemSummarizationEdit: true,
+            itemDetailsSummarizationValue: this.state.itemDetailsSummarization[this.state.selectedItem].summary
+        });
+    }
+
+    _onSaveItemSummarization = () => {
+        let summarizedItemDescription = this.state.itemDetailsSummarizationValue;
+        let summarizedItemLang = this.state.itemDetailsSummarization[this.state.selectedItem].lang;
+        this.setState({
+            itemSummarizationEdit: false,
+            itemDetailsSummarizationValue: '',
+            itemDetailsSummarization: {
+                ...this.state.itemDetailsSummarization,
+                [this.state.selectedItem]: {
+                    lang: summarizedItemLang,
+                    summary: summarizedItemDescription
+                }}
+        });
     }
 
     _openLink = (url) => {
@@ -772,7 +795,9 @@ export default class extends Component {
                     {
                         this.state.kbSearchResults.map((kb, index) => {
                             return (
-                                <_ResultItem key={index}>
+                                <_ResultItem key={index} style={(this.state.xperMatchedResources
+                                    && this.state.xperMatchedResources.xper
+                                    && this.state.xperMatchedResources.xper.kb.id === kb.id) ? {backgroundColor: '#bfdeff'} : {}}>
                                     <_ResultItemButton
                                         title={t('folders.xper_mono_search_dialog.btn_tooltip_show_kb_details')}>
                                         <img alt="Select Xper KB" src={PLUS}
@@ -1287,43 +1312,72 @@ export default class extends Component {
                     </_ItemDetailsContainer>
                 </_ItemDetailsScrollContainer>
                 <_ItemDetailsActions>
+                    <Button color="success" style={{marginRight: 5}}
+                            disabled={this.state.itemSummarizationEdit}
+                            onClick={() => this._onSummarizeItem()}>{t('folders.xper_mono_item_details_dialog.btn_summarize_ai')}</Button>
+                    <Input type="select"
+                           name="summarizationLanguage"
+                           style={{width:60}}
+                           title={t('global.options.select_language.tooltip')}
+                           disabled={this.state.itemSummarizationEdit}
+                           value={this.state.itemDetailsSummarization[this.state.selectedItem] ?
+                               this.state.itemDetailsSummarization[this.state.selectedItem].lang
+                               : this.state.selectedLanguage}
+                           onChange={this._itemDetailsSummarizationLangChangeHandler}>
+                        {
+                            SUPPORTED_LANGUAGES.map(lang => {
+                                return <option key={lang} value={lang} title={t('global.languages.'+lang.toUpperCase())}>{lang}</option>
+                            })
+                        }
+                    </Input>
+                    {
+                        this.state.itemSummarizationEdit ?
+                            <img src={SAVE_SUMMARY}
+                                 style={{width: '25px', cursor: 'pointer', marginLeft: '5px'}}
+                                 alt="save summarization"
+                                 title={t('folders.xper_mono_item_details_dialog.tooltip_save_summarization')}
+                                 onClick={event => {
+                                     event.preventDefault();
+                                     this._onSaveItemSummarization();
+                                 }}/>
+                            :
+                            this.state.itemDetailsSummarization[this.state.selectedItem] &&
+                            this.state.itemDetailsSummarization[this.state.selectedItem].summary &&
+                            <img src={EDIT_SUMMARY}
+                                 style={{width: '25px', cursor: 'pointer', marginLeft: '5px'}}
+                                 alt="edit summarization"
+                                 title={t('folders.xper_mono_item_details_dialog.tooltip_edit_summarization')}
+                                 onClick={event => {
+                                     event.preventDefault();
+                                     this._onEditItemSummarization();
+                                 }}/>
+                    }
 
-                    <Row style={{width: '100%'}}>
-                        <Col sm={2} md={2} lg={2}>
-                            <Button color="success"
-                                    onClick={() => this._onSummarize()}>Summarize AI</Button>
-                        </Col>
-                        <Col sm={2} md={2} lg={2}>
-                            <Input type="select" name="summarizationLanguage" bsSize="md" title={t('global.options.select_language.tooltip')}
-                                   value={this.state.summarizationLanguage}
-                                   onChange={this._formChangeHandler}>
-                                {
-                                    SUPPORTED_LANGUAGES.map(lang => {
-                                        return <option key={lang} value={lang} title={t('global.languages.'+lang.toUpperCase())}>{lang}</option>
-                                    })
-                                }
-                            </Input>
-                        </Col>
-                        <Col sm={4} md={4} lg={4}/>
-                        <Col sm={2} md={2} lg={2}>
-                            <Button color="secondary"
-                                    onClick={() => this._onBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
-                        </Col>
-                        <Col sm={2} md={2} lg={2}>
-                            <Button color="secondary"
-                                    onClick={() => this._onBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
-                        </Col>
-                    </Row>
+                    <div style={{flexGrow: 1}}>&nbsp;</div>
+                    <Button color="secondary"
+                            style={{marginRight: 5}}
+                            disabled={this.state.itemSummarizationEdit}
+                            onClick={() => this._onBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
+                    <Button color="secondary"
+                            disabled={this.state.itemSummarizationEdit}
+                            onClick={() => this._onBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
                 </_ItemDetailsActions>
-                <_SummarizedItemDescription>
-                    <Markdown>
-                        {this.state.summarizedItemDescription}
-                    </Markdown>
-                    {/*<div>*/}
-                    {/*    {this.state.summarizedItemDescription}*/}
-                    {/*</div>*/}
-                </_SummarizedItemDescription>
-
+                <_ItemSummarizedDescription>
+                    {
+                        this.state.itemSummarizationEdit ?
+                            <textarea name="itemDetailsSummarizationValue"
+                                value={this.state.itemDetailsSummarizationValue ?
+                                    this.state.itemDetailsSummarizationValue : ''}
+                                onChange={this._formChangeHandler}
+                                style={{width: '100%', height: '180px', border: 'none'}}
+                            />
+                            :
+                            <Markdown>
+                                {this.state.itemDetailsSummarization[this.state.selectedItem] ?
+                                    this.state.itemDetailsSummarization[this.state.selectedItem].summary : ''}
+                            </Markdown>
+                    }
+                </_ItemSummarizedDescription>
             </ModalBody>
             <ModalFooter>
                 <Button color="primary" onClick={this._toggleItemDetails}>{t('global.save')}</Button>
