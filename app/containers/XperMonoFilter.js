@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import Component from '../components/XperMonoFilter';
 import {withTranslation} from "react-i18next";
 import {
-    addSubCategory, createAnnotationXper,
+    addSubCategory, createAnnotationXper, createAnnotationXperSummary,
     createCategory,
     tagPicture,
     xperMatchResources
@@ -32,6 +32,9 @@ const mapDispatchToProps = dispatch => {
         },
         createAnnotationXper: (pictureId, xperData) => {
             dispatch(createAnnotationXper(pictureId, xperData));
+        },
+        createAnnotationXperSummary: (pictureId, xperData) => {
+            dispatch(createAnnotationXperSummary(pictureId, xperData));
         }
     };
 };

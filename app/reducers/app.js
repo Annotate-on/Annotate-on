@@ -133,7 +133,7 @@ import {
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
     REMOVE_IMAGE_DETECT_MODEL,
-    XPER_MATCH_RESOURCES, CREATE_ANNOTATION_XPER
+    XPER_MATCH_RESOURCES, CREATE_ANNOTATION_XPER, CREATE_ANNOTATION_XPER_SUMMARY
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -4612,7 +4612,6 @@ export default (state = {}, action) => {
             const {type, ...payload} = action;
             const id = chance.guid();
             const pictureId = payload.pictureId;
-            // console.log('CREATE_ANNOTATION_XPER payload', payload);
             const kbId = payload.xperData.kb_id;
 
             let value ='';
@@ -4689,6 +4688,58 @@ export default (state = {}, action) => {
                 }
             };
 
+        }
+            break;
+        case CREATE_ANNOTATION_XPER_SUMMARY: {
+            const {type, ...payload} = action;
+            let itemsWithSummary = [];
+            if (payload.xperData.items) {
+                itemsWithSummary = payload.xperData.items.filter(item => item.summary && item.summary.length > 0);
+            }
+            if(itemsWithSummary.length === 0) {
+                return state;
+            }
+            const counter = state.counter + 1;
+            const id = chance.guid();
+            const pictureId = payload.pictureId;
+            const kbId = payload.xperData.kb_id;
+            let value ='';
+            if (payload.xperData.kb_name) {
+                value += 'KB: ' + payload.xperData.kb_name + '(' + payload.xperData.kb_id + ', ' + payload.xperData.kb_language + ')' + '\n';
+            }
+            itemsWithSummary.forEach(item => {
+                value += 'Item: ' + item.name + '\n';
+                value += item.summary + '\n';
+            });
+            return {
+                ...state,
+                counter,
+                annotations_categorical: {
+                    ...state.annotations_categorical,
+                    [pictureId]: [
+                        {
+                            id: id,
+                            annotationType: ANNOTATION_CATEGORICAL,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `XPER-${kbId}-AI`,
+                            value: value,
+                            vertices: [
+                                {x: 0, y: 0}
+                            ]
+                        },
+                        ...(state.annotations_categorical[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
         }
             break;
         default:

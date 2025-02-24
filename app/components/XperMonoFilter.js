@@ -441,6 +441,7 @@ export default class extends Component {
         }
         let allDescriptorSelection = {...this.state.descriptorSelection};
         let allItemsWithDetails = {...this.state.itemWithDetails};
+        let allItemDetailsSummarization = {...this.state.itemDetailsSummarization};
         if (missingItemDescriptors.length > 0) {
             getDescriptorsForItems({items: missingItemDescriptors, lang: this.state.selectedLanguage}, (result) => {
                 if (result) {
@@ -453,14 +454,16 @@ export default class extends Component {
                         allDescriptorSelection[item.id] = descriptorSelection;
                     }
                 }
-                this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection);
+                this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection, allItemDetailsSummarization);
             });
         } else {
-            this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection);
+            this._doCreateXperTag(allItemsWithDetails, allDescriptorSelection, allItemDetailsSummarization);
         }
     }
 
-    _doCreateXperTag = (itemsWithDetails, descriptorsSelection) => {
+    _doCreateXperTag = (itemsWithDetails, descriptorsSelection, itemsSummarization) => {
+        // console.log('Creating Xper tag', this.state);
+        console.log('Creating Xper tag', itemsWithDetails, descriptorsSelection, itemsSummarization);
         const customTagName = this.state.addAsTag ? this.state.tagName : null;
         const kbTagName = this.state.addKbNameAsTag ? "KB " + this.props.xperMatchedResources.xper.kb.name : null;
         const tags = [];
@@ -492,6 +495,9 @@ export default class extends Component {
                         }
                     } else {
                         itemWithDetail.detail = '';
+                    }
+                    if(itemsSummarization[itemWithDetail.id]) {
+                        itemWithDetail.summary = itemsSummarization[itemWithDetail.id].summary;
                     }
                     resourceXperData.items.push(itemsWithDetails[matchedResource.item]);
                 } else {
@@ -527,6 +533,7 @@ export default class extends Component {
                 }
                 if (this.state.createAnnotations) {
                     this.props.createAnnotationXper(resource, resourcesXperData[resource]);
+                    this.props.createAnnotationXperSummary(resource, resourcesXperData[resource]);
                 }
             }
             this.props.xperMatchResources(null, null, null);
