@@ -188,7 +188,7 @@ export const getDescriptorsForItems = (filter, callback) => {
     );
 }
 
-export const summarizeItem = async (filter) => {
+export const summarizeItem = async (filter, callback) => {
     console.log("summarizeItem ", filter);
     if (!checkXperMonoSettings()) return;
     const {t} = i18next;
@@ -198,14 +198,11 @@ export const summarizeItem = async (filter) => {
         lang: filter.lang,
         data: describeItem(filter.xperData)
     };
-    ee.emit(EVENT_SHOW_WAITING);
     try {
         const response = await fetchStreamWithRetry(url, 3,  requestData);
         const reader = response.body.getReader();
-        await processStream(reader);
-        ee.emit(EVENT_HIDE_WAITING)
+        await processStream(reader, callback);
     } catch (error) {
-        ee.emit(EVENT_HIDE_WAITING)
         console.error('Error fetching chatbot response:', error);
     }
 }
@@ -231,10 +228,10 @@ async function fetchStreamWithRetry(url, retries, data) {
     }
 }
 
-async function processStream(reader) {
+async function processStream(reader, callback) {
     const decoder = new TextDecoder("utf-8");
     try {
-        while (true) {
+        while (callback()) {
             const {done, value} = await reader.read();
             if (done) break;
             const decodedValue = decoder.decode(value, { stream: true });

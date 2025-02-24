@@ -27,6 +27,7 @@ import {ee, EVENT_XPER_SUMMARIZATION_RESPONSE} from "../utils/library";
 import Markdown from "react-markdown";
 import EDIT_SUMMARY from "./pictures/edit-annotation.svg";
 import SAVE_SUMMARY from "./pictures/save.svg";
+import {DotLoader} from "react-spinners";
 
 const chance = new Chance();
 
@@ -232,7 +233,7 @@ const _ItemQuantitativeDescriptorContainer = styled.div`
 `;
 
 const _ItemDescriptorValueNotProvidedContainer = styled.div`
-    color: #cd2b2b;
+    color: #c84d4d;
     margin-top: 5px;
     margin-left: 5px;
 `;
@@ -278,6 +279,7 @@ export default class extends Component {
             itemDetailsSummarization: {},
             kbSearchDone: false,
             matchResourceDone: false,
+            itemSummarizationInProcess: false,
             itemSummarizationEdit: false,
             itemDetailsSummarizationValue: ''
         };
@@ -551,6 +553,7 @@ export default class extends Component {
                     itemDetailsSummarization: {},
                     kbSearchDone: false,
                     matchResourceDone: false,
+                    itemSummarizationInProcess: false,
                     itemSummarizationEdit: false,
                     itemDetailsSummarizationValue: ''
                 });
@@ -588,6 +591,7 @@ export default class extends Component {
             kbSearchDone: false,
             matchResourceDone: false,
             itemSummarizationEdit: false,
+            itemSummarizationInProcess: false,
             itemDetailsSummarizationValue: ''
         });
     }
@@ -653,8 +657,23 @@ export default class extends Component {
         });
     };
 
+    _onCancelSummarizeItem = () => {
+        let summarizedItemLang = this.state.itemDetailsSummarization[this.state.selectedItem].lang;
+        this.setState(
+            {
+                itemSummarizationInProcess: false,
+                itemDetailsSummarization: {
+                    ...this.state.itemDetailsSummarization,
+                    [this.state.selectedItem]: {
+                        lang: summarizedItemLang,
+                        summary: ''
+                    }
+                }
+            }
+        );
+    }
+
     _onSummarizeItem = () => {
-        console.log('Summarize');
         let xperData =  {
             "kb_name": this.props.xperMatchedResources.xper.kb.name,
             "kb_id": this.props.xperMatchedResources.xper.kb.id,
@@ -686,11 +705,17 @@ export default class extends Component {
             requestId: requestId,
             xperData: xperData,
             lang: this.state.itemDetailsSummarization[this.state.selectedItem].lang
-        }).then(r => {
-            console.log('Item summarization is finished');
+        }, () => {
+                return this.state.itemSummarizationInProcess;
+            }
+        ).then(r => {
+            this.setState({
+                itemSummarizationInProcess: false
+            });
         });
 
         this.setState({
+            itemSummarizationInProcess: true,
             itemDetailsSummarization: {
                 ...this.state.itemDetailsSummarization,
                 [this.state.selectedItem]: {
@@ -702,6 +727,7 @@ export default class extends Component {
     };
 
     _xperSummarizationResponse = (data) => {
+        if(!this.state.itemSummarizationInProcess) return;
         let summarizedItemDescription = this.state.itemDetailsSummarization[this.state.selectedItem].summary + data ;
         let summarizedItemLang = this.state.itemDetailsSummarization[this.state.selectedItem].lang;
         this.setState(
@@ -1266,6 +1292,7 @@ export default class extends Component {
                     <div>
                         <Input name={itemWithDetails.id} id={itemWithDetails.id}
                                type="checkbox"
+                               disabled={this.state.itemSummarizationEdit || this.state.itemSummarizationInProcess}
                                checked={
                                    !!this.state.itemDetailsSelection[itemWithDetails.id]
                                }
@@ -1281,6 +1308,7 @@ export default class extends Component {
                                     <div>
                                         <Input name={descriptor.id} id={descriptor.id}
                                                type="checkbox"
+                                               disabled={this.state.itemSummarizationEdit || this.state.itemSummarizationInProcess}
                                                checked={
                                                    this.state.descriptorSelection[itemWithDetails.id] ?
                                                        this.state.descriptorSelection[itemWithDetails.id][descriptor.id] : false
@@ -1319,24 +1347,35 @@ export default class extends Component {
                     </_ItemDetailsContainer>
                 </_ItemDetailsScrollContainer>
                 <_ItemDetailsActions>
-                    <Button color="success" style={{marginRight: 5}}
-                            disabled={this.state.itemSummarizationEdit}
-                            onClick={() => this._onSummarizeItem()}>{t('folders.xper_mono_item_details_dialog.btn_summarize_ai')}</Button>
-                    <Input type="select"
-                           name="summarizationLanguage"
-                           style={{width:60}}
-                           title={t('global.options.select_language.tooltip')}
-                           disabled={this.state.itemSummarizationEdit}
-                           value={this.state.itemDetailsSummarization[this.state.selectedItem] ?
-                               this.state.itemDetailsSummarization[this.state.selectedItem].lang
-                               : this.state.selectedLanguage}
-                           onChange={this._itemDetailsSummarizationLangChangeHandler}>
-                        {
-                            SUPPORTED_LANGUAGES.map(lang => {
-                                return <option key={lang} value={lang} title={t('global.languages.'+lang.toUpperCase())}>{lang}</option>
-                            })
-                        }
-                    </Input>
+                    {
+                        this.state.itemSummarizationInProcess ?
+                            <>
+                                <Button color="danger" style={{marginRight: 20}}
+                                        onClick={() => this._onCancelSummarizeItem()}>Cancel</Button>
+                                <DotLoader size={30} color={'#C84D4D'}/>
+                            </>
+                            :
+                            <>
+                                <Button color="success" style={{marginRight: 5}}
+                                        disabled={this.state.itemSummarizationEdit}
+                                        onClick={() => this._onSummarizeItem()}>{t('folders.xper_mono_item_details_dialog.btn_summarize_ai')}</Button>
+                                <Input type="select"
+                                       name="summarizationLanguage"
+                                       style={{width:60}}
+                                       title={t('global.options.select_language.tooltip')}
+                                       disabled={this.state.itemSummarizationEdit}
+                                       value={this.state.itemDetailsSummarization[this.state.selectedItem] ?
+                                           this.state.itemDetailsSummarization[this.state.selectedItem].lang
+                                           : this.state.selectedLanguage}
+                                       onChange={this._itemDetailsSummarizationLangChangeHandler}>
+                                    {
+                                        SUPPORTED_LANGUAGES.map(lang => {
+                                            return <option key={lang} value={lang} title={t('global.languages.'+lang.toUpperCase())}>{lang}</option>
+                                        })
+                                    }
+                                </Input>
+                            </>
+                    }
                     {
                         this.state.itemSummarizationEdit ?
                             <img src={SAVE_SUMMARY}
@@ -1348,6 +1387,7 @@ export default class extends Component {
                                      this._onSaveItemSummarization();
                                  }}/>
                             :
+                            !this.state.itemSummarizationInProcess &&
                             this.state.itemDetailsSummarization[this.state.selectedItem] &&
                             this.state.itemDetailsSummarization[this.state.selectedItem].summary &&
                             <img src={EDIT_SUMMARY}
@@ -1363,10 +1403,10 @@ export default class extends Component {
                     <div style={{flexGrow: 1}}>&nbsp;</div>
                     <Button color="secondary"
                             style={{marginRight: 5}}
-                            disabled={this.state.itemSummarizationEdit}
+                            disabled={this.state.itemSummarizationEdit || this.state.itemSummarizationInProcess}
                             onClick={() => this._onBulkChangeDescriptorSelection(true)}>{t('global.btn_select_all')}</Button>
                     <Button color="secondary"
-                            disabled={this.state.itemSummarizationEdit}
+                            disabled={this.state.itemSummarizationEdit || this.state.itemSummarizationInProcess}
                             onClick={() => this._onBulkChangeDescriptorSelection(false)}>{t('global.btn_unselect_all')}</Button>
                 </_ItemDetailsActions>
                 <_ItemSummarizedDescription>
@@ -1387,7 +1427,9 @@ export default class extends Component {
                 </_ItemSummarizedDescription>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={this._toggleItemDetails}>{t('global.save')}</Button>
+                <Button color="primary"
+                        disabled={this.state.itemSummarizationEdit || this.state.itemSummarizationInProcess}
+                        onClick={this._toggleItemDetails}>{t('global.save')}</Button>
             </ModalFooter>
         </Modal>;
     }
