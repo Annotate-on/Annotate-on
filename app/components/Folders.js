@@ -327,8 +327,21 @@ export default class extends PureComponent {
                 </Collapse>
                 <XperMonoFilter
                     openModal={this.state.showXperMonoFilterPopup}
-                    onClose={() => {
+                    folder={this.state.folderForXperMatching}
+                    onClose={(tags, folder) => {
                         this.setState({showXperMonoFilterPopup: false});
+                        if(tags.length > 0 && folder) {
+                            this.props.selectFolder(this.props.tabName, folder.path);
+                            folder.selectAll = true;
+                            if (folder.children) {
+                                this._selectFoldersRecursively(folder.children);
+                            }
+                            setTimeout(() => {
+                                tags.forEach(tag => {
+                                    this.props.addTagInFilter(tag, false, this.props.tabName);
+                                });
+                            }, 100);
+                        }
                     }}
                 />
 
@@ -411,7 +424,13 @@ export default class extends PureComponent {
                 break;
             case 'filter_xper':
                 // open xper kb search modal
-                this.setState({showXperMonoFilterPopup: true});
+                this.setState(
+                    {
+                        showXperMonoFilterPopup: true,
+                        folderForXperMatching: data.folder
+                    }
+                );
+                console.log('filter_xper' , this.state);
                 break;
         }
     };

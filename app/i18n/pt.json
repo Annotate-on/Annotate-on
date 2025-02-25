@@ -46,6 +46,8 @@
       "lbl_importing_resources_files_to_folders": "Importação de arquivos de recursos para pastas",
       "lbl_resources_files_found": "Recursos encontrados",
       "lbl_collecting_metadata_and_generating_thumbnails": "Coletando metadados e gerando miniaturas",
+      "btn_select_all": "Select all",
+      "btn_unselect_all": "Unselect all",
       "options": {
         "title": "Opções",
         "lbl_select_language": "Selecionar o idioma",
@@ -154,7 +156,54 @@
         "lbl_descriptor_groups": "Descriptor groups pt",
         "lbl_states": "States pt",
         "lbl_keywords": "Keywords pt",
-        "lbl-results": "Results pt"
+        "btn_tooltip_show_kb_details": "Show KB details pt",
+        "btn_match_resources": "Match resources pt",
+        "btn_match_resources_info": "Matched {{numOfMatchedResources}} / {{numOfProcessedResources}} images with item '{{item}} pt'.",
+        "lbl_add_as_tag": "Add as tag pt ",
+        "lbl_include_kb_name_as_tag": "Include KB name as tag pt",
+        "btn_tag_images": "Tag images & create annotations pt",
+        "btn_select_descriptors": "Select descriptors pt",
+        "lbl_create_annotations": "Create annotations pt",
+        "lbl_no_xper_matching_resource_found": "Nenhum recurso correspondente foi encontrado!"
+      },
+      "xper_mono_kb_details_dialog": {
+        "lbl_general_information": "General information pt",
+        "lbl_description": "Description",
+        "lbl_authors": "Authors",
+        "lbl_key_language": "Key language",
+        "lbl_study_field": "Study field",
+        "lbl_key_creation_context": "Key creation context",
+        "lbl_target_public": "Target public",
+        "lbl_copyrights": "Copyrights",
+        "lbl_associated_website": "Associated website",
+        "lbl_interactive_identification_key_url": "Interactive identification key URL",
+        "lbl_data_publication_url": "Data publication URL",
+        "lbl_key_data_featuring_article": "Key/data featuring article",
+        "lbl_taxonomic_information": "Taxonomic information",
+        "lbl_taxa_types": "Taxa type(s)",
+        "lbl_items_taxonomic_rank": "Items taxonomic rank",
+        "lbl_biogeographic information": "(Bio)geographic information",
+        "lbl_geographic_areas": "Geographic area(s)",
+        "lbl_biogeographic_area": "Biogeographic area",
+        "lbl_stratigraphic_information": "Stratigraphic information",
+        "lbl_stratigraphic_distribution": "Stratigraphic distribution",
+        "lbl_current_base_status": "Current base status",
+        "lbl_items": "items",
+        "lbl_descriptors": "descriptors",
+        "lbl_resources": "resources",
+        "lbl_created_on": "Created on",
+        "lbl_last_update_on": "Last update on"
+      },
+      "xper_mono_item_details_dialog": {
+        "lbl_measurementUnit": "Measurement Unit",
+        "lbl_min": "Min",
+        "lbl_min_include": "Min Include",
+        "lbl_max_include": "Max Include",
+        "lbl_max": "Max",
+        "lbl_descriptor_value_not_provided": "Value is not provided",
+        "btn_summarize_ai": "Summarize AI",
+        "tooltip_save_summarization": "Save summarization",
+        "tooltip_edit_summarization": "Edit summarization"
       }
     },
     "tags": {
@@ -616,6 +665,8 @@
         "btn_tooltip_circle_of_interest": "Círculo de interesse",
         "btn_tooltip_polygon_of_interest": "Polígono de interesse",
         "btn_tooltip_chronotematic": "Annotation chronothematic",
+        "btn_tooltip_image_detect_service": "Annotate image with Image Detect service pt",
+        "btn_tooltip_xper-match": "Annotate image with Xper service pt",
         "alert_bad_image_detect_response": "Verifique seu URL do serviço Image Detect"
       },
       "event_timeline": {
@@ -669,6 +720,7 @@
       "tab_metadata": "Metadados",
       "tab_chrono_thematic": "Crono-temático",
       "tab_event-annotations": "Anotações de eventos",
+      "tab_xper-kb-annotations": "Xper KB annotations pt",
       "dropdown_tooltip_export_the_selected_characters_to_a_csv_file": "Exportar os caracteres selecionados para um arquivo CSV",
       "dropdown_export_results": "Para exportar resultados",
       "dropdown_export_to_csv": "Exportar para CSV",
@@ -805,6 +857,30 @@
         "table_column_general_keywords": "Palavras-chave em geral",
         "table_column_ref": "Ref."
       },
+      "xper_kb_annotations": {
+        "table_column_catalog": "Catalog # pt",
+        "table_column_file_name": "File name pt",
+        "table_column_scientific_name": "Scientific name pt",
+        "table_column_kb_name": "KB name pt",
+        "table_column_kb_id": "KB id pt",
+        "table_column_kb_language": "KB language pt",
+        "table_column_item_id": "Item id pt",
+        "table_column_item_name": "Item name pt",
+        "table_column_item_detail": "Item Detail pt",
+        "table_column_descriptor_id": "Descriptor id pt",
+        "table_column_descriptor_name": "Descriptor name pt",
+        "table_column_descriptor_type": "Descriptor type pt",
+        "table_column_group_id": "Group id pt",
+        "table_column_group_name": "Group name pt",
+        "table_column_state_id": "State id pt",
+        "table_column_state_name": "State name pt",
+        "table_column_measurement_unit": "Measurement unit pt",
+        "table_column_min": "Min pt",
+        "table_column_max": "Max pt",
+        "table_column_min_include": "Min include pt",
+        "table_column_max_include": "Max include pt"
+      },
+
       "dropdown_item_export_to_sdd_file": "Exportar para arquivo Sdd."
     },
     "models": {

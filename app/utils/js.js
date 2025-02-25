@@ -137,3 +137,15 @@ export const containsSpecialCharacters = (value) => {
     const format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
     return format.test(value);
 }
+
+export function containsHTMLTags(text) {
+    const htmlTagRegex = /<\/?[a-z][\s\S]*>/i; // Matches opening or closing tags
+    return htmlTagRegex.test(text);
+}
+
+export function stripHTMLUsingTempElement(htmlString) {
+    const tempElement = document.createElement('div');
+    tempElement.innerHTML = htmlString;
+    return tempElement.textContent || "";
+}
+

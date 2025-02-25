@@ -32,8 +32,6 @@ export const getXperDatabases = (callback) => {
             }},
         function (error, response, body) {
             console.log("error ", error);
-            console.log("response ", response);
-            console.log("body ", body);
             ee.emit(EVENT_HIDE_WAITING);
             if(error || !response || response.statusCode !== 200) {
                 callback(null);
@@ -72,7 +70,6 @@ export const getXperDatabases = (callback) => {
                             found.push(database);
                         }
                     }
-                    console.log("found ", found);
                     callback(found);
                 } catch (e) {
                     callback(null);

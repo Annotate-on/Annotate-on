@@ -81,6 +81,7 @@ export const MANUAL_ORDER = "manual_order";
 export const COMMON_TAGS = "Common keywords";
 export const TAG_AUTO = "Automatic keywords";
 export const TAG_MAP_SELECTION = "Map selection";
+export const TAG_XPER = "Xper";
 export const TAG_DPI_NO = "DPI: no";
 export const TAG_MODE_LANDSCAPE = "Mode: landscape";
 export const TAG_MODE_PORTRAIT = "Mode: portrait";
@@ -128,6 +129,7 @@ export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 export const DEFAULT_XPER_CONNECTION_URL = 'http://xper3.fr/rest';
 export const DEFAULT_IIIF_CONNECTION_URL = 'http://localhost:8080/iiif-rest-api/';
+export const DEFAULT_XPER_MONO_CONNECTION_URL = 'http://staging.api.xper3.fr';
 
 export const DEFAULT_IMAGE_CONNECT_CONNECTION_URL = 'https://plantai.ummisco.fr/image';
 

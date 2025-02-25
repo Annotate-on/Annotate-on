@@ -147,6 +147,10 @@ const go = () => {
                     console.log('project from previous version , adding imageDetectAlignments');
                     tmpState.app["imageDetectAlignments"] = [];
                 }
+                if (!tmpState.app.hasOwnProperty("xperMatchedResources")){
+                    console.log('project from previous version , adding xperMatchedResources');
+                    tmpState.app["xperMatchedResources"] = {};
+                }
 
                 // Check if object structure match to expected one.
                 for (const prop in initialState.app) {

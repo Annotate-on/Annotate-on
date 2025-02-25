@@ -132,7 +132,8 @@ import {
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
-    REMOVE_IMAGE_DETECT_MODEL
+    REMOVE_IMAGE_DETECT_MODEL,
+    XPER_MATCH_RESOURCES, CREATE_ANNOTATION_XPER, CREATE_ANNOTATION_XPER_SUMMARY
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -195,7 +196,12 @@ import {
 } from "../utils/config";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import {standardDeviation} from "../utils/maths";
-import {getTagsOnly, getValidTags, lvlAutomaticTags, lvlTags,} from "../components/tags/tagUtils";
+import {
+    getTagsOnly,
+    getValidTags,
+    lvlAutomaticTags,
+    lvlTags,
+} from "../components/tags/tagUtils";
 import {EVENT_STATUS_FINISHED, TYPE_CATEGORY} from "../components/event/Constants";
 import {
     _addTagIdIfMissing,
@@ -205,7 +211,8 @@ import {
     getNewTabName
 } from "../components/event/utils";
 import i18next from "i18next";
-
+import Chance from "chance";
+const chance = new Chance();
 // The 'shape' of the state is defined here
 export const createInitialState = () => ({
     app: {
@@ -241,6 +248,7 @@ export const createInitialState = () => ({
         selected_tab: null,
         annotations_by_tag: {},
         taxonomyInstance: {},
+        xperMatchedResources: {},
         open_tabs: {
             'Selection 1': {
                 view: 'library',
@@ -4530,6 +4538,208 @@ export default (state = {}, action) => {
                 search: action.search,
                 searchResults: action.searchResults,
                 counter
+            };
+        }
+            break;
+        case XPER_MATCH_RESOURCES: {
+            const counter = state.counter + 1;
+            const allPictures = state.pictures;
+            if((!action.folder && !action.resource) || !action.xper || !action.xper.items) {
+                return {
+                    ...state,
+                    xperMatchedResources: {}
+                };
+            }
+            const matchedPictures = {};
+            let picturesInFolder = 0;
+            const matchPicture = (picture) => {
+                if(!picture.erecolnatMetadata || !picture.erecolnatMetadata.scientificname) return;
+                let names;
+                if(Array.isArray(picture.erecolnatMetadata.scientificname)) {
+                    names = picture.erecolnatMetadata.scientificname.map(name => name.toLowerCase().trim());
+                } else {
+                    names = [picture.erecolnatMetadata.scientificname.toLowerCase().trim()];
+                }
+                names.forEach(name => {
+                    for (const item of action.xper.items) {
+                        let itemName = item.name ? item.name.toLowerCase() : '';
+                        let itemAlternativeName = item.alternativeName ? item.alternativeName.toLowerCase() : '';
+                        if (itemName.includes(name) || itemAlternativeName.includes(name)) {
+                            if (!matchedPictures[item.id]) {
+                                matchedPictures[item.id] = []
+                            }
+                            matchedPictures[item.id].push(picture);
+                            ++picturesInFolder;
+                            return;
+                        }
+                    }
+                })
+            }
+            if(action.folder) {
+                const allFolders = getAllDirectoriesNameFlatten(action.folder.path);
+                allFolders.map(folderName => {
+                    const folder = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR, folderName);
+                    for (const sha1 in allPictures) {
+                        if (path.dirname(allPictures[sha1].file) === folder) {
+                            let resource = allPictures[sha1];
+                            matchPicture(resource);
+                        }
+                    }
+                });
+            } else if (action.resource) {
+                matchPicture(action.resource);
+            }
+
+            let matchedResources = []
+            for (const property in matchedPictures) {
+                matchedResources.push({item: +property, resources: matchedPictures[property]});
+            }
+            return {
+                ...state,
+                xperMatchedResources: {
+                    type: "by scientificname",
+                    folder: action.folder,
+                    xper: action.xper,
+                    numOfProcessedResources: picturesInFolder,
+                    matchedResources: matchedResources
+                },
+                counter
+            };
+        }
+            break;
+        case CREATE_ANNOTATION_XPER: {
+            const counter = state.counter + 1;
+            const {type, ...payload} = action;
+            const id = chance.guid();
+            const pictureId = payload.pictureId;
+            const kbId = payload.xperData.kb_id;
+
+            let value ='';
+            if (payload.xperData.kb_name) {
+                value += 'KB: ' + payload.xperData.kb_name + '(' + payload.xperData.kb_id + ', ' + payload.xperData.kb_language + ')' + '\n';
+            }
+            if (payload.xperData.items) {
+                for (const item of payload.xperData.items) {
+                    if(item.name) {
+                        value += 'Item: ' + item.name + '\n';
+                    }
+                    if(item.detail) {
+                        value += 'Item details: ' + item.detail + '\n';
+                    }
+                    if(item.descriptors) {
+                        value += 'Descriptors:';
+                        for (const descriptor of item.descriptors) {
+                            value += '\n#' + descriptor.name + ':';
+                            if(descriptor.type === 'QuantitativeDescriptor') {
+                                if(descriptor.measurementUnit !== "undefined") {
+                                    value += "\n- unit: " + descriptor.measurementUnit ;
+                                }
+                                if(descriptor.values.min !== "undefined") {
+                                    value += "\n- min: " + descriptor.values.min ;
+                                }
+                                if(descriptor.values.max !== "undefined") {
+                                    value += "\n- max: " + descriptor.values.max ;
+                                }
+                                if(descriptor.values.minInclude !== "undefined") {
+                                    value += "\n- min_include: " + descriptor.values.minInclude ;
+                                }
+                                if(descriptor.values.maxInclude !== "undefined") {
+                                    value += "\n- max_include :" + descriptor.values.maxInclude ;
+                                }
+                            } else {
+                                for (const state of descriptor.states) {
+                                    value += '\n -' + state.name ;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return {
+                ...state,
+                counter,
+                annotations_categorical: {
+                    ...state.annotations_categorical,
+                    [pictureId]: [
+                        {
+                            ...payload,
+                            id: id,
+                            annotationType: ANNOTATION_CATEGORICAL,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `XPER-${kbId}`,
+                            value: value,
+                            vertices: [
+                                {x: 0, y: 0}
+                            ],
+                            xperData: payload.xperData
+                        },
+                        ...(state.annotations_categorical[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+
+        }
+            break;
+        case CREATE_ANNOTATION_XPER_SUMMARY: {
+            const {type, ...payload} = action;
+            let itemsWithSummary = [];
+            if (payload.xperData.items) {
+                itemsWithSummary = payload.xperData.items.filter(item => item.summary && item.summary.length > 0);
+            }
+            if(itemsWithSummary.length === 0) {
+                return state;
+            }
+            const counter = state.counter + 1;
+            const id = chance.guid();
+            const pictureId = payload.pictureId;
+            const kbId = payload.xperData.kb_id;
+            let value ='';
+            if (payload.xperData.kb_name) {
+                value += 'KB: ' + payload.xperData.kb_name + '(' + payload.xperData.kb_id + ', ' + payload.xperData.kb_language + ')' + '\n';
+            }
+            itemsWithSummary.forEach(item => {
+                value += 'Item: ' + item.name + '\n';
+                value += item.summary + '\n';
+            });
+            return {
+                ...state,
+                counter,
+                annotations_categorical: {
+                    ...state.annotations_categorical,
+                    [pictureId]: [
+                        {
+                            id: id,
+                            pictureId: pictureId,
+                            annotationType: ANNOTATION_CATEGORICAL,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `XPER-${kbId}-AI`,
+                            value: value,
+                            vertices: [
+                                {x: 0, y: 0}
+                            ]
+                        },
+                        ...(state.annotations_categorical[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
             };
         }
             break;

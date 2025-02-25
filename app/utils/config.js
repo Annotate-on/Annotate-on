@@ -9,7 +9,12 @@ import os from 'os';
 import path from 'path';
 import yaml from 'write-yaml';
 import packageJson from '../../package.json';
-import { DEFAULT_IIIF_CONNECTION_URL, DEFAULT_XPER_CONNECTION_URL, IMAGE_STORAGE_DIR } from "../constants/constants";
+import {
+    DEFAULT_IIIF_CONNECTION_URL,
+    DEFAULT_XPER_CONNECTION_URL,
+    DEFAULT_XPER_MONO_CONNECTION_URL,
+    IMAGE_STORAGE_DIR
+} from "../constants/constants";
 import { getDefaultLanguage } from "../i18n";
 import { createInitialState } from "../reducers/app";
 import { escapePathString, formatDate, formatDateForFileName } from "./js";
@@ -343,6 +348,10 @@ export const setWorkspace = (_, label) => {
             if (!tmpState.hasOwnProperty("imageDetectAlignments")){
                 console.log('project from previous version , adding imageDetectAlignments');
                 tmpState["imageDetectAlignments"] = [];
+            }
+            if (!tmpState.hasOwnProperty("xperMatchedResources")){
+                console.log('project from previous version , adding xperMatchedResources');
+                tmpState["xperMatchedResources"] = {};
             }
 
             // Check if object structure match to expected one.
@@ -1260,8 +1269,8 @@ export const getXperParams = () => {
 };
 
 export const getXperMonoParams = () => {
-    if(!config.xper_mono) {
-        updateXperMonoParams(null, null, null)
+    if(!config.xper_mono || config.xper_mono.url == null ) {
+        updateXperMonoParams(DEFAULT_XPER_MONO_CONNECTION_URL)
     }
     return {
         url: config.xper_mono.url
