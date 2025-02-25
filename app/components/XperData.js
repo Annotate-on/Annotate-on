@@ -34,20 +34,17 @@ const EXPORT_COLUMNS = [
 class XperData extends PureComponent {
     constructor(props) {
         super(props);
-
-        const initPicturesList = this.props.tabData[this.props.tabName].pictures_selection.map(_ => this.props.pictures[_]);
+        const initPicturesList = this.props.tabData[this.props.tabName].pictures_selection.map(_ => this.props.pictures[_].sha1);
         const annotation_list = this.props.annotations_categorical;
-
         const xper_annotations = annotation_list.filter(annotation => {
             return !!annotation.xperData;
         });
-
         let data = [];
         let index = 0;
         xper_annotations.forEach(annotation => {
             index++;
             const picture = this.props.pictures[annotation.pictureId];
-            if (!picture) return;
+            if (!picture || initPicturesList.indexOf(picture.sha1) === -1) return;
             const catalog_number = picture.erecolnatMetadata ? picture.erecolnatMetadata.catalognumber : 'N/A';
             const file_name = picture.file_basename;
             const scientific_name = picture.erecolnatMetadata ? picture.erecolnatMetadata.scientificname: '';
@@ -64,12 +61,8 @@ class XperData extends PureComponent {
                             const descriptor_id = descriptor.id;
                             const descriptor_name = descriptor.name;
                             const descriptor_type = descriptor.type;
-                            let group_id = descriptor.groups[0].id;
-                            let group_name = descriptor.groups[0].name;
-                            if(descriptor.groups && descriptor.groups.length === 0) {
-                                group_id = descriptor.groups[0].id;
-                                group_name = descriptor.groups[0].name;
-                            }
+                            let group_id = descriptor.groups && descriptor.groups[0] ? descriptor.groups[0].id : '';
+                            let group_name = descriptor.groups && descriptor.groups[0] ? descriptor.groups[0].name : '';
                             if(descriptor.type === 'CategoricalDescriptor') {
                                 descriptor.states.forEach(state => {
                                     let value = {};
@@ -118,7 +111,6 @@ class XperData extends PureComponent {
                     }
                 });
             }
-
         });
 
         const sortBy = 'catalog_number';

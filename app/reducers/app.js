@@ -4719,6 +4719,7 @@ export default (state = {}, action) => {
                     [pictureId]: [
                         {
                             id: id,
+                            pictureId: pictureId,
                             annotationType: ANNOTATION_CATEGORICAL,
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
