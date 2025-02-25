@@ -181,6 +181,8 @@ const _ItemDetailsValueContainer = styled.div`
     width: 100%;
     border: 1px solid #dee2e6;
     border-radius: 5px;
+    height: 75px;
+    overflow-y: auto;
 
     .form-check-input {
         position: relative !important;
