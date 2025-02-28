@@ -46,7 +46,7 @@ const _ResultsPlaceholder = styled.div`
 
 const _ResultsContainer = styled.div`
     overflow-y: auto;
-    height: 400px;
+    height: 30vh;
     border: 1px solid #dee2e6;
     border-radius: 5px;
     margin-top: 10px;
@@ -145,7 +145,7 @@ const _KbDetailsLabel = styled.span`
 `;
 
 const _ItemDetailsScrollContainer = styled.div`
-    height: 350px;
+    height: 40vh;
     overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 5px;
