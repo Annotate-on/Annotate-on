@@ -1,6 +1,7 @@
 import {connect} from 'react-redux';
 import PureComponent from '../components/Folders';
 import {
+    addTagInFilter,
     moveFolder,
     prepareFolderForDeletion,
     renameFolder,
@@ -59,6 +60,9 @@ const mapDispatchToProps = dispatch => {
         goToImportEventWizard: (selectedFolder , tabName) => {
             dispatch(push('/importEventWizard/' + selectedFolder + '/' + tabName));
         },
+        addTagInFilter: (name, skipCheck, tabName) => {
+            dispatch(addTagInFilter(name, skipCheck, tabName));
+        }
     };
 };
 

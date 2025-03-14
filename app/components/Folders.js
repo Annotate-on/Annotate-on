@@ -18,6 +18,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPhotoVideo} from '@fortawesome/free-solid-svg-icons';
 import {containsSpecialCharacters} from "../utils/js";
 import FoldersFilter from "./FoldersFilter";
+import XperMonoFilter from "../containers/XperMonoFilter";
 
 const EDIT = require('./pictures/edit_tag.svg');
 const DELETE = require('./pictures/delete-tag.svg');
@@ -27,13 +28,18 @@ const SAVE_ICON = require('./pictures/save-tag.svg');
 const CANCEL_ICON = require('./pictures/cancel-edit.svg');
 const DOWNLOAD_ICON = require('./pictures/download.svg');
 const SELECT_ALL = require('./pictures/select_all_gray.svg');
+const FILTER_XPER = require('./pictures/filter.svg');
 const ADD_DIALOG = 'ADD_DIALOG';
 
 export default class extends PureComponent {
     constructor(props) {
         super(props);
         this.toggle = this.toggle.bind(this);
-        this.state = {collapse: true, newFolderName: '', selected: this.props.preselected};
+        this.state = {collapse: true,
+            newFolderName: '',
+            selected: this.props.preselected,
+            showXperMonoFilterPopup: false
+        };
     }
 
     handleClickOnFolder = (event, path, selected) => {
@@ -311,10 +317,34 @@ export default class extends PureComponent {
                             <MenuItem data={{action: 'delete'}} onClick={this._handleContextMenu}>
                                 <img alt="delete folder" src={DELETE}/> {t('folders.context_menu_delete_folder')}
                             </MenuItem>
+                            <MenuItem divider/>
+                            <MenuItem data={{action: 'filter_xper'}} onClick={this._handleContextMenu}>
+                                <img alt="Filter with Xper KB" src={FILTER_XPER}/> {t('folders.context_menu_filter_xper')}
+                            </MenuItem>
                         </ContextMenu>
                             : ''}
                     </div>
                 </Collapse>
+                <XperMonoFilter
+                    openModal={this.state.showXperMonoFilterPopup}
+                    folder={this.state.folderForXperMatching}
+                    onClose={(tags, folder) => {
+                        this.setState({showXperMonoFilterPopup: false});
+                        if(tags.length > 0 && folder) {
+                            this.props.selectFolder(this.props.tabName, folder.path);
+                            folder.selectAll = true;
+                            if (folder.children) {
+                                this._selectFoldersRecursively(folder.children);
+                            }
+                            setTimeout(() => {
+                                tags.forEach(tag => {
+                                    this.props.addTagInFilter(tag, false, this.props.tabName);
+                                });
+                            }, 100);
+                        }
+                    }}
+                />
+
             </Container>
         );
     }
@@ -392,6 +422,16 @@ export default class extends PureComponent {
                 }
                 toConfigFileWithoutRefresh();
                 break;
+            case 'filter_xper':
+                // open xper kb search modal
+                this.setState(
+                    {
+                        showXperMonoFilterPopup: true,
+                        folderForXperMatching: data.folder
+                    }
+                );
+                console.log('filter_xper' , this.state);
+                break;
         }
     };
 
@@ -435,4 +475,5 @@ export default class extends PureComponent {
             }
         }
     }
+
 }

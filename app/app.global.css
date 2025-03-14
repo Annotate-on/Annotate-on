@@ -336,6 +336,10 @@ textarea {
   background-image: url(components/pictures/image-detect.svg);
 }
 
+.xper-match {
+  background-image: url(components/pictures/xper_logo.svg);
+}
+
 .recolnat-zoi-export,
 .easyPrintHolder .recolnat-lf-print {
   background-image: url(components/pictures/exportZOI.svg);

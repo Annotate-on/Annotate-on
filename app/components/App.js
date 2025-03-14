@@ -287,7 +287,6 @@ export default class AppMenu extends Component {
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_300), false, newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_600), false, newCategory.id);
         this.props.addSubCategory(TAG_AUTO, createNewTag(chance.guid() , TAG_DPI_1200), false, newCategory.id);
-
         const newMapSelectionCategory = createNewCategory(chance.guid() , TAG_MAP_SELECTION);
         this.props.createCategory(newMapSelectionCategory);
     };

@@ -1,26 +1,39 @@
-import React, { Component } from 'react';
-import { Button, Col, Container, Input, Row } from 'reactstrap';
+import React, {Component} from 'react';
+import {Button, Col, Container, Input, Row} from 'reactstrap';
 
-import { remote } from "electron";
-import { DEFAULT_IIIF_CONNECTION_URL, DEFAULT_XPER_CONNECTION_URL } from "../constants/constants";
-import { SUPPORTED_LANGUAGES } from "../i18n";
+import {remote} from "electron";
+import {
+    DEFAULT_IIIF_CONNECTION_URL,
+    DEFAULT_XPER_CONNECTION_URL,
+    DEFAULT_XPER_MONO_CONNECTION_URL
+} from "../constants/constants";
+import {SUPPORTED_LANGUAGES} from "../i18n";
 import {
     getIIIFParams,
     getToolsParams,
+    getXperMonoParams,
     getXperParams,
     updateIIIFParams,
-    updateSelectedLanguage, updateToolsParams,
+    updateSelectedLanguage,
+    updateToolsParams,
+    updateXperMonoParams,
     updateXperParams
 } from "../utils/config";
 import PageTitle from "./PageTitle";
-const OPTIONS_IMAGE_CONTEXT = require('./pictures/options.svg');
 
+const OPTIONS_IMAGE_CONTEXT = require('./pictures/options.svg');
 
 export default class Options extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            xper_mono: {
+                formSaved: true,
+                url: '',
+                errors: {
+                }
+            },
             xper: {
                 formSaved: true,
                 url: '',
@@ -48,6 +61,7 @@ export default class Options extends Component {
 
     componentDidMount() {
         let xperParams = getXperParams();
+        let xperMonoParams = getXperMonoParams();
         let IIIFParams = getIIIFParams();
         let toolsParams = getToolsParams();
         this.setState({
@@ -56,6 +70,10 @@ export default class Options extends Component {
                     url: xperParams.url ? xperParams.url : DEFAULT_XPER_CONNECTION_URL,
                     email:xperParams.email ? xperParams.email : '',
                     password:xperParams.password ? xperParams.password : ''
+                },
+                xper_mono: {
+                    formSaved:true,
+                    url: xperMonoParams.url ? xperMonoParams.url : DEFAULT_XPER_MONO_CONNECTION_URL
                 },
                 IIIF: {
                     formSaved:true,
@@ -94,10 +112,9 @@ export default class Options extends Component {
         }
     };
 
-
     _handleOnSaveXperParamsForm = () => {
         const { t } = this.props;
-        const valid = this._validateForm()
+        const valid = this._validateXperForm()
         if(valid) {
             try {
                 updateXperParams(this.state.xper.url, this.state.xper.email, this.state.xper.password);
@@ -116,7 +133,7 @@ export default class Options extends Component {
                         }
                     }
                 )
-                remote.dialog.showErrorBox(t('global.error'), t('library.import_images.alert_cannot_reach_mediaphoto'));
+                console.error(e);
             }
         } else {
             this.setState({
@@ -126,7 +143,48 @@ export default class Options extends Component {
                     }
                 }
             )
-            remote.dialog.showErrorBox(t('global.error'), "All xper parameters are required!");
+            remote.dialog.showErrorBox(t('global.error'), t('global.options.alert_all_xper_parameters_required'));
+        }
+    };
+
+    _handleOnSaveXperMonoParamsForm = () => {
+        const { t } = this.props;
+        const valid = this._validateXperMonoForm();
+        if(valid) {
+            try {
+                updateXperMonoParams(this.state.xper_mono.url);
+                this.setState({
+                        xper_mono: {
+                            ...this.state.xper_mono,
+                            formSaved:true,
+                        }
+                    }
+                )
+            } catch (e) {
+                this.setState({
+                        xper_mono: {
+                            ...this.state.xper_mono,
+                            formSaved:false,
+                        }
+                    }
+                )
+                console.error(e);
+            }
+        } else {
+            this.setState({
+                    xper: {
+                        ...this.state.xper,
+                        formSaved:false,
+                    }
+                }
+            )
+            let options = {
+                type: "error",
+                title: t('global.error'),
+                buttons: ["OK"],
+                message: t('global.options.alert_all_xper_monobase_parameters_required')
+            }
+            remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
         }
     };
 
@@ -161,7 +219,7 @@ export default class Options extends Component {
                     }
                 }
             )
-            remote.dialog.showErrorBox(t('global.error'), "All IIIF parameters are required!");
+            remote.dialog.showErrorBox(t('global.error'), t('global.options.alert_all_iiif_parameters_required'));
         }
     };
     _validateToolsForm = () => {
@@ -171,14 +229,16 @@ export default class Options extends Component {
         return Number.isInteger(intValue) && intValue > 0;
     };
 
-    _validateForm = () => {
-        let valid = this.state.xper.url && this.state.xper.email && this.state.xper.password;
-        return valid;
+    _validateXperForm = () => {
+        return this.state.xper.url && this.state.xper.email && this.state.xper.password;
+    };
+
+    _validateXperMonoForm = () => {
+        return this.state.xper_mono.url;
     };
 
     _validateIIIFForm = () => {
-        let valid = this.state.IIIF.url && this.state.IIIF.username&& this.state.IIIF.password;
-        return valid;
+        return this.state.IIIF.url && this.state.IIIF.username && this.state.IIIF.password;
     };
 
     _handleOnChangeLanguage = (event) => {
@@ -196,6 +256,7 @@ export default class Options extends Component {
             tools: tools
         });
     };
+
     _xperParamsFormChangeHandler = ( event ) => {
         const { name, value } = event.target;
         const { t } = this.props;
@@ -205,6 +266,18 @@ export default class Options extends Component {
         xper.formSaved=false
         this.setState({
             xper: xper
+        });
+    };
+
+    _xperMonoParamsFormChangeHandler = ( event ) => {
+        const { name, value } = event.target;
+        const { t } = this.props;
+        let errors = this.state.errors;
+        const xper_mono = {...this.state.xper_mono};
+        xper_mono[name] = value ? value : '';
+        xper_mono.formSaved=false
+        this.setState({
+            xper_mono: xper_mono
         });
     };
 
@@ -334,6 +407,29 @@ export default class Options extends Component {
                                             </Col>
                                             <Col sm={4} md={4} lg={4}>
                                                 <Button color={this.state.xper.formSaved ? 'success' : 'danger'} onClick={() => this._handleOnSaveXperParamsForm()}>{t('global.save')}</Button>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="options-form-section">
+                                <div className="options-form-section-title">
+                                    {t('global.options.xper_mono_parameters_section_title')}
+                                </div>
+                                <div className="options-form-section-content">
+                                    <div className="options-form-item">
+                                        <Row>
+                                            <Col sm={2} md={2} lg={2}  className="options-form-field-label">
+                                                {t('global.options.lbl_xper_mono_parameters_url')}:
+                                            </Col>
+                                            <Col sm={4} md={4} lg={4}>
+                                                <Input name="url" type="text" bsSize="md"
+                                                       value={this.state.xper_mono.url}
+                                                       onChange={this._xperMonoParamsFormChangeHandler}>
+                                                </Input>
+                                            </Col>
+                                            <Col sm={4} md={4} lg={4}>
+                                                <Button color={this.state.xper_mono.formSaved ? 'success' : 'danger'} onClick={() => this._handleOnSaveXperMonoParamsForm()}>{t('global.save')}</Button>
                                             </Col>
                                         </Row>
                                     </div>

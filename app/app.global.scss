@@ -184,10 +184,30 @@
     padding: 0;
   }
 
+  .form-check-label {
+    padding-top: 2px;
+    input{
+      margin-top: 2px;
+    }
+  }
 }
 
 @media (min-width: 576px){
-  .bst .modal-dialog.myCustomModal{
+  .bst .modal-dialog.my45PctSizedModal {
+    min-height: 500px;
+    max-width: 45%;
+  }
+}
+
+@media (min-width: 576px){
+  .bst .modal-dialog.my50PctSizedModal {
+    min-height: 500px;
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 576px){
+  .bst .modal-dialog.myCustomModal {
     min-height: 500px;
     max-width: 70%;
   }
