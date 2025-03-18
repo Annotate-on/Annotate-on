@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, useRef, useState} from 'react';
 import {Container, Media} from "reactstrap";
 import MyPlaceHolderPicture from './pictures/credits/members/Logomuseumtransp.png';
 import UMPT from './pictures/credits/members/logotransparentUMTP.png';
@@ -19,6 +19,7 @@ import LOBEX from './pictures/credits/members/lobex-logo.png';
 import PRESEK from './pictures/credits/members/presek-i_logo.png';
 import {shell} from "electron";
 import pjson from "../../package";
+import {Canvas, useFrame} from "@react-three/fiber";
 const REC_LOGO = require('./pictures/annotate-on_logo.jpg');
 const NEW_LOGO = require('./pictures/Logo_indigo_vertical.png');
 const CREDIT_IMAGE_CONTEXT = require('./pictures/credit.svg');
@@ -38,6 +39,17 @@ export default class Credits extends PureComponent {
                         <img alt="logo" height="18px" src={CREDIT_IMAGE_CONTEXT} className="logo"/>
                     </a>
                 </div>
+                <section className="border-bottom">
+                    <div className="row justify-content-center -align-center no-margin">
+                        <Canvas style={{border: "1px solid black", width: "500px", height: "500px", margin: "10px"}}>
+                            <ambientLight intensity={Math.PI / 2} />
+                            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+                            <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+                            <Box position={[-1.2, 0, 0]} />
+                            <Box position={[1.2, 0, 0]} />
+                        </Canvas>
+                    </div>
+                </section>
                 <section className="border-bottom">
                     <div className="row justify-content-center -align-center no-margin">
                         <div>
@@ -331,4 +343,33 @@ export default class Credits extends PureComponent {
             </Container>
         );
     }
+
 }
+
+function Box(props) {
+    // This reference gives us direct access to the THREE.Mesh object
+    const ref = useRef()
+    // Hold state for hovered and clicked events
+    const [hovered, hover] = useState(false)
+    const [clicked, click] = useState(false)
+    // Subscribe this component to the render-loop, rotate the mesh every frame
+    useFrame((state, delta) => (ref.current.rotation.x += delta))
+    // Return the view, these are regular Threejs elements expressed in JSX
+    return (
+        <mesh
+            {...props}
+            ref={ref}
+            scale={clicked ? 1.5 : 1}
+            onClick={(event) => click(!clicked)}
+            onPointerOver={(event) => hover(true)}
+            onPointerOut={(event) => hover(false)}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+        </mesh>
+    )
+}
+
+
+
+
+
