@@ -1,12 +1,8 @@
 /* eslint global-require: off */
-
 const developmentEnvironments = ['development', 'test'];
-
 const developmentPlugins = [require('react-hot-loader/babel')];
-
 const productionPlugins = [
   require('babel-plugin-dev-expression'),
-
   // babel-preset-react-optimize
   require('@babel/plugin-transform-react-constant-elements'),
   require('@babel/plugin-transform-react-inline-elements'),
@@ -15,19 +11,14 @@ const productionPlugins = [
 
 module.exports = api => {
   // see docs about api at https://babeljs.io/docs/en/config-files#apicache
-
   const development = api.env(developmentEnvironments);
 
   return {
     presets: [
-      [
-        require('@babel/preset-env'),
-        {
-          targets: { electron: require('electron/package.json').version },
-          useBuiltIns: 'usage',
-          corejs: "2.0.0"
-        }
-      ],
+      ["@babel/preset-env", {
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }],
       require('@babel/preset-flow'),
       [require('@babel/preset-react'), { development }]
     ],
@@ -39,14 +30,8 @@ module.exports = api => {
       require('@babel/plugin-proposal-export-default-from'),
       require('@babel/plugin-proposal-logical-assignment-operators'),
       [require('@babel/plugin-proposal-optional-chaining'), { loose: false }],
-      [
-        require('@babel/plugin-proposal-pipeline-operator'),
-        { proposal: 'minimal' }
-      ],
-      [
-        require('@babel/plugin-proposal-nullish-coalescing-operator'),
-        { loose: false }
-      ],
+      [require('@babel/plugin-proposal-pipeline-operator'), { proposal: 'minimal' }],
+      [require('@babel/plugin-proposal-nullish-coalescing-operator'), { loose: false }],
       require('@babel/plugin-proposal-do-expressions'),
 
       // Stage 2
@@ -61,6 +46,9 @@ module.exports = api => {
       require('@babel/plugin-syntax-import-meta'),
       [require('@babel/plugin-proposal-class-properties'), { loose: true }],
       require('@babel/plugin-proposal-json-strings'),
+
+      // Add this to support @react-three/drei
+      require('@babel/plugin-transform-runtime'),
 
       ...(development ? developmentPlugins : productionPlugins)
     ]

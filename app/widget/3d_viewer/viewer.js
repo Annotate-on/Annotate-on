@@ -1,3 +1,5 @@
+import globalThis from "globalthis";
+globalThis.globalThis = globalThis();
 import React, {RefObject, Suspense, forwardRef, useEffect, useImperativeHandle, useRef, useState, lazy} from 'react';
 import {Canvas, useThree} from "@react-three/fiber";
 import {useEventListener, useEventTrigger} from "./lib/hooks/use-event";
@@ -38,6 +40,7 @@ import {
 import {BoxHelper, Matrix4, Vector3} from "three";
 import {getBoundingSphere, normalizeSrc} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
+import GLTF from "./gltf";
 
 function Scene({ envPreset, onLoad, src, rotationPreset }) {
     const boundsRef = useRef(null);
@@ -338,7 +341,11 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
 
 
 const Viewer = (props, ref) => {
-  const canvasRef = useRef(null);
+    const LoadingIndicator = () => (
+        <div>Loading...</div>
+    );
+
+    const canvasRef = useRef(null);
 
   const triggerDoubleClickEvent = useEventTrigger(DBL_CLICK);
   const triggerRecenterEvent = useEventTrigger(RECENTER);
@@ -359,6 +366,7 @@ const Viewer = (props, ref) => {
 
   return (
     <>
+        <Suspense fallback={<LoadingIndicator />}>
       <Canvas
         ref={canvasRef}
         camera={{ fov: 30 }}
@@ -367,7 +375,9 @@ const Viewer = (props, ref) => {
         }}>
         <Scene {...props} />
       </Canvas>
+        </Suspense>
     </>
+
   );
 };
 
