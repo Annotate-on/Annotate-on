@@ -1,8 +1,10 @@
+/**
+ * Base webpack config used across other specific configs
+ */
+
 import path from 'path';
 import webpack from 'webpack';
 import { dependencies } from '../package.json';
-// In your webpack entry point
-import 'core-js/features/global-this';
 
 export default {
   externals: [...Object.keys(dependencies || {})],
@@ -10,19 +12,8 @@ export default {
   module: {
     rules: [
       {
-        test: /\.m?js$/, // Handle ESM (ES Modules) for `three` and `drei`
-        resolve: {
-          // fullySpecified: false, // Important for ESM handling
-        },
-      },
-      {
         test: /\.jsx?$/,
-        include: [
-          path.resolve(__dirname, 'app'),
-          // Add the paths to node_modules that need to be transpiled
-          path.resolve(__dirname, 'node_modules/three'),
-          path.resolve(__dirname, 'node_modules/@react-three')
-        ],
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -35,18 +26,16 @@ export default {
 
   output: {
     path: path.join(__dirname, '..', 'app'),
-    libraryTarget: 'commonjs2',
+    // https://github.com/webpack/webpack/issues/1114
+    libraryTarget: 'commonjs2'
   },
 
+  /**
+   * Determine the array of extensions that should be used to resolve modules.
+   */
   resolve: {
-    extensions: ['.js', '.jsx', '.json'],
-    alias: {
-      'three': path.resolve('./node_modules/three'),
-    },
-    mainFields: ['main', 'module'],
-  }
-
-  ,
+    extensions: ['.js', '.jsx', '.json']
+  },
 
   plugins: [
     new webpack.EnvironmentPlugin({
