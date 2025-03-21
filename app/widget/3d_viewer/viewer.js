@@ -1,6 +1,13 @@
-import globalThis from "globalthis";
-globalThis.globalThis = globalThis();
-import React, {RefObject, Suspense, forwardRef, useEffect, useImperativeHandle, useRef, useState, lazy} from 'react';
+import React, {
+    RefObject,
+    Suspense,
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+    useCallback
+} from 'react';
 import {Canvas, useThree} from "@react-three/fiber";
 import {useEventListener, useEventTrigger} from "./lib/hooks/use-event";
 import {
@@ -26,23 +33,12 @@ import {
     useProgress,
 } from '@react-three/drei';
 
-// const CameraControls = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.CameraControls })));
-// const Environment = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.Environment })));
-// const GizmoHelper = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.GizmoHelper })));
-// const GizmoViewport = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.GizmoViewport })));
-// const Html = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.Html })));
-// const OrthographicCamera = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.OrthographicCamera })));
-// const PerspectiveCamera = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.PerspectiveCamera })));
-// const PivotControls = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.PivotControls })));
-// const useHelper = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.useHelper })));
-// const useProgress = lazy(() => import('@react-three/drei').then((mod) => ({ default: mod.useProgress })));
-
 import {BoxHelper, Matrix4, Vector3} from "three";
 import {getBoundingSphere, normalizeSrc} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
 import GLTF from "./gltf";
 
-function Scene({ envPreset, onLoad, src, rotationPreset }) {
+function Scene({envPreset, onLoad, src, rotationPreset}) {
     const boundsRef = useRef(null);
     const boundsLineRef = useRef(null);
     const boundsSphereRef = useRef(null);
@@ -56,7 +52,7 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
 
     const cameraPosition = new Vector3();
     const cameraTarget = new Vector3();
-    const { camera, gl } = useThree();
+    const {camera, gl} = useThree();
 
     const [ambientLightIntensity, setAmbientLightIntensity] = useState(0.5);
     const [axesEnabled, setAxesEnabled] = useState(true);
@@ -102,11 +98,24 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
 
     useTimeout(
         () => {
+            console.log('loading changed' + loading);
             if (!loading) {
+                window.dispatchEvent(new Event('resize'));
                 recenter(true);
             }
         },
         1,
+        [loading, cameraMode]
+    );
+
+    useTimeout(
+        () => {
+            console.log('loading changed' + loading);
+            if (loading) {
+                setLoading(false)
+            }
+        },
+        1000,
         [loading, cameraMode]
     );
 
@@ -138,6 +147,7 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
     }
 
     function recenter(instant) {
+        console.log('recenter', instant);
         if (boundsRef.current) {
             setCameraConfig();
             zoomToObject(boundsRef.current, instant);
@@ -148,7 +158,6 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
         if (boundsRef.current) {
             boundsSphereRef.current = getBoundingSphere(boundsRef.current);
             const radius = boundsSphereRef.current.radius;
-
             if (orthographicEnabled) {
                 const cameraObjectDistance = cameraRefs.controls.current.distance;
                 if (cameraObjectDistance) {
@@ -156,7 +165,6 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
                     camera.far = cameraObjectDistance + (radius * 100);
                     camera.updateProjectionMatrix();
                 }
-
                 if (cameraRefs.controls.current) {
                     if ('isOrthographicCamera' in camera && camera.isOrthographicCamera) {
                         const width = camera.right - camera.left;
@@ -184,7 +192,6 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
     function setRotationFromArray(rotation, setRotationDegrees) {
         setRotationEuler(rotationEuler.fromArray(rotation));
         rotationMatrixRef.current.makeRotationFromEuler(rotationEuler);
-
         if (setRotationDegrees) {
             setRotationXDegrees(rotationEuler.x * (180 / Math.PI));
             setRotationYDegrees(rotationEuler.y * (180 / Math.PI));
@@ -220,7 +227,7 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
         }
     }
 
-    function Bounds({ lineVisible, children }) {
+    function Bounds({lineVisible, children}) {
         useHelper(boundsLineRef, BoxHelper, 'white');
 
         const handleDoubleClickEvent = (e) => {
@@ -250,7 +257,8 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
     }
 
     function Loader() {
-        const { progress } = useProgress();
+        const {progress} = useProgress();
+        console.log('progress', progress);
         if (progress === 100) {
             setTimeout(() => {
                 if (onLoad) {
@@ -284,14 +292,11 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
         if (e.type !== 'update') {
             return;
         }
-
         cameraRefs.controls.current.getPosition(cameraPosition);
         cameraRefs.position.current = cameraPosition;
-
         cameraRefs.controls.current.getTarget(cameraTarget);
         cameraRefs.target.current = cameraTarget;
-
-        triggerCameraUpdateEvent({ cameraPosition, cameraTarget, rotationMatrix: rotationMatrixRef.current });
+        triggerCameraUpdateEvent({cameraPosition, cameraTarget, rotationMatrix: rotationMatrixRef.current});
     }
 
     // const Tools = {
@@ -302,11 +307,11 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
 
     return (
         <>
-            {orthographicEnabled ? <OrthographicCamera makeDefault position={[0, 0, 2]} /> : <PerspectiveCamera makeDefault fov={30} position={[0, 0, 2]} />}
-            <CameraControls ref={cameraRefs.controls} onChange={onCameraChange} makeDefault />
-            <ambientLight intensity={ambientLightIntensity} />
-
-            <Suspense fallback={<Loader />}>
+            {orthographicEnabled ? <OrthographicCamera makeDefault position={[0, 0, 2]}/> :
+                <PerspectiveCamera makeDefault fov={30} position={[0, 0, 2]}/>}
+            <CameraControls ref={cameraRefs.controls} onChange={onCameraChange} makeDefault/>
+            <ambientLight intensity={ambientLightIntensity}/>
+            <Suspense fallback={<Loader/>}>
                 <PivotControls
                     ref={rotationControlsRef}
                     autoTransform={false}
@@ -314,31 +319,33 @@ function Scene({ envPreset, onLoad, src, rotationPreset }) {
                     disableAxes={true}
                     disableScaling={true}
                     disableSliders={true}
-                    enabled={sceneControlsEnabled && mode === 'scene'}
+                    visible={sceneControlsEnabled && mode === 'scene'}
+                    // enabled={sceneControlsEnabled && mode === 'scene'}
                     fixed={true}
                     matrix={rotationMatrixRef.current}
                     onDrag={(local) => setRotationFromMatrix4(local)}
                     scale={300}
                 >
                     <Bounds lineVisible={boundsEnabled && mode === 'scene'}>
-                        {srcs.map((src, index) => { return (
-                            <GLTF key={index} {...src} />
-                        );})}
+                        {srcs.map((src, index) => {
+                            return (
+                                <GLTF key={index} {...src} />
+                            );
+                        })}
                     </Bounds>
                 </PivotControls>
             </Suspense>
-            <Environment preset={envPreset} />
+            <Environment preset={envPreset}/>
             {/*{Tools[mode]}*/}
-            { (gridEnabled && mode === 'scene') && <gridHelper args={getGridProperties()} />}
-            { (axesEnabled && mode === 'scene') &&
+            {(gridEnabled && mode === 'scene') && <gridHelper args={getGridProperties()}/>}
+            {(axesEnabled && mode === 'scene') &&
                 <GizmoHelper alignment="bottom-right" margin={[100, 100]}>
-                    <GizmoViewport labelColor="white" axisHeadScale={1} />
+                    <GizmoViewport labelColor="white" axisHeadScale={1}/>
                 </GizmoHelper>
             }
         </>
     );
 }
-
 
 const Viewer = (props, ref) => {
     const LoadingIndicator = () => (
@@ -346,39 +353,53 @@ const Viewer = (props, ref) => {
     );
 
     const canvasRef = useRef(null);
+    const canvasHolderRef = useRef(null);
 
-  const triggerDoubleClickEvent = useEventTrigger(DBL_CLICK);
-  const triggerRecenterEvent = useEventTrigger(RECENTER);
+    const triggerDoubleClickEvent = useEventTrigger(DBL_CLICK);
+    const triggerRecenterEvent = useEventTrigger(RECENTER);
 
-  useImperativeHandle(ref, () => ({
-    recenter: (instant) => {
-      triggerRecenterEvent(instant);
-    },
-  }));
+    const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
-  useEventListener(DRAGGING_MEASUREMENT, () => {
-    document.body.classList.add('dragging');
-  });
+    const handleResize = () => {
+        console.log('resize' + size.width + ' ' + size.height);
+        setSize({ width: window.innerWidth, height: window.innerHeight });
+        triggerRecenterEvent();
+    };
 
-  useEventListener(DROPPED_MEASUREMENT, () => {
-    document.body.classList.remove('dragging');
-  });
+    useEffect(() => {
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-  return (
-    <>
-        <Suspense fallback={<LoadingIndicator />}>
-      <Canvas
-        ref={canvasRef}
-        camera={{ fov: 30 }}
-        onDoubleClick={(e) => {
-          triggerDoubleClickEvent(e);
-        }}>
-        <Scene {...props} />
-      </Canvas>
-        </Suspense>
-    </>
+    useImperativeHandle(ref, () => ({
+        recenter: (instant) => {
+            triggerRecenterEvent(instant);
+        },
+    }));
 
-  );
+    useEventListener(DRAGGING_MEASUREMENT, () => {
+        document.body.classList.add('dragging');
+    });
+
+    useEventListener(DROPPED_MEASUREMENT, () => {
+        document.body.classList.remove('dragging');
+    });
+
+    return (
+        <>
+            <Suspense fallback={<LoadingIndicator/>}>
+                <Canvas
+                    style={{width: size.width - 368, height: size.height - 108}}
+                    ref={canvasRef}
+                    camera={{fov: 30}}
+                    onDoubleClick={(e) => {
+                        triggerDoubleClickEvent(e);
+                    }}>
+                    <Scene {...props} />
+                </Canvas>
+            </Suspense>
+        </>
+    );
 };
 
 export default forwardRef(Viewer);

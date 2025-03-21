@@ -63,6 +63,8 @@ import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
 import {findClosestColor} from "../utils/web-colors";
 import XperMonoFilter from "../containers/XperMonoFilter";
+import App from "../containers/App";
+import _3DViewer from "../containers/3DViewer";
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
@@ -487,33 +489,34 @@ class Image extends PureComponent {
                                         /> : null
                                 }
                                 {
-                                    _checkImageType(this.state.currentPicture) ?
-                                        <LeafletImage currentPicture={this.state.currentPicture} ref={this.leafletImage}
-                                                      leafletPositionByPicture={this.props.leafletPositionByPicture}
-                                                      annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
-                                                      annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
-                                                      annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
-                                                      annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
-                                                      annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
-                                                      annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
-                                                      annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
-                                                      annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
-                                                      annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
-                                                      annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
-                                                      annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
-                                                      onCreated={this._onCreated}
-                                                      onEditStop={this._onEditStop}
-                                                      onDrawStart={this._onDrawStart}
-                                                      onDrawStop={this._onDrawStop}
-                                                      calibrationMode={this.state.calibrationActive}
-                                                      fireSaveEvent={this._fireSaveEvent}
-                                                      onContextMenuEvent={this._handleLeafletContextMenu}
-                                                      targetColors={targetColors}
-                                                      taxonomyInstance={this.props.taxonomyInstance}
-                                                      repeatMode={this.props.repeatMode}
-                                                      saveLeafletSettings={this.props.saveLeafletSettings}
-                                                      selectedImageDetectModel={this.props.selectedImageDetectModel}
-                                        /> : null
+                                    <_3DViewer/>
+                                    // _checkImageType(this.state.currentPicture) ?
+                                    //     <LeafletImage currentPicture={this.state.currentPicture} ref={this.leafletImage}
+                                    //                   leafletPositionByPicture={this.props.leafletPositionByPicture}
+                                    //                   annotationsMeasuresLinear={this.props.annotationsMeasuresLinear[this.state.currentPicture.sha1]}
+                                    //                   annotationsPointsOfInterest={this.props.annotationsPointsOfInterest[this.state.currentPicture.sha1]}
+                                    //                   annotationsRectangular={this.props.annotationsRectangular[this.state.currentPicture.sha1]}
+                                    //                   annotationsPolygon={this.props.annotationsPolygon[this.state.currentPicture.sha1]}
+                                    //                   annotationsAngle={this.props.annotationsAngle[this.state.currentPicture.sha1]}
+                                    //                   annotationsColorPicker={this.props.annotationsColorPicker[this.state.currentPicture.sha1]}
+                                    //                   annotationsOccurrence={this.props.annotationsOccurrence[this.state.currentPicture.sha1]}
+                                    //                   annotationsTranscription={this.props.annotationsTranscription[this.state.currentPicture.sha1]}
+                                    //                   annotationsRichtext={this.props.annotationsRichtext[this.state.currentPicture.sha1]}
+                                    //                   annotationsCircleOfInterest={this.props.annotationsCircleOfInterest[this.state.currentPicture.sha1]}
+                                    //                   annotationsPolygonOfInterest={this.props.annotationsPolygonOfInterest[this.state.currentPicture.sha1]}
+                                    //                   onCreated={this._onCreated}
+                                    //                   onEditStop={this._onEditStop}
+                                    //                   onDrawStart={this._onDrawStart}
+                                    //                   onDrawStop={this._onDrawStop}
+                                    //                   calibrationMode={this.state.calibrationActive}
+                                    //                   fireSaveEvent={this._fireSaveEvent}
+                                    //                   onContextMenuEvent={this._handleLeafletContextMenu}
+                                    //                   targetColors={targetColors}
+                                    //                   taxonomyInstance={this.props.taxonomyInstance}
+                                    //                   repeatMode={this.props.repeatMode}
+                                    //                   saveLeafletSettings={this.props.saveLeafletSettings}
+                                    //                   selectedImageDetectModel={this.props.selectedImageDetectModel}
+                                    //     /> : null
                                 }
                                 {
                                     this.state.currentPicture.resourceType === RESOURCE_TYPE_EVENT ?
