@@ -1,4 +1,4 @@
-import React, {PureComponent, useRef, useState} from 'react';
+import React, {PureComponent} from 'react';
 import {Container, Media} from "reactstrap";
 import MyPlaceHolderPicture from './pictures/credits/members/Logomuseumtransp.png';
 import UMPT from './pictures/credits/members/logotransparentUMTP.png';
@@ -19,9 +19,6 @@ import LOBEX from './pictures/credits/members/lobex-logo.png';
 import PRESEK from './pictures/credits/members/presek-i_logo.png';
 import {shell} from "electron";
 import pjson from "../../package";
-import {Canvas, useFrame} from "@react-three/fiber";
-import Viewer from "../widget/3d_viewer/viewer";
-
 const REC_LOGO = require('./pictures/annotate-on_logo.jpg');
 const NEW_LOGO = require('./pictures/Logo_indigo_vertical.png');
 const CREDIT_IMAGE_CONTEXT = require('./pictures/credit.svg');
@@ -33,9 +30,7 @@ export default class Credits extends PureComponent {
     }
 
     render() {
-        const {t} = this.props;
-
-
+        const { t } = this.props;
         return (
             <Container className="bst rcn_credits">
                 <div className="bg">
@@ -45,35 +40,19 @@ export default class Credits extends PureComponent {
                 </div>
                 <section className="border-bottom">
                     <div className="row justify-content-center -align-center no-margin">
-                        <App></App>
-                    </div>
-                </section>
-                {/*<section className="border-bottom">*/}
-                {/*    <div className="row justify-content-center -align-center no-margin">*/}
-                {/*        <Canvas style={{border: "1px solid black", width: "500px", height: "500px", margin: "10px"}}>*/}
-                {/*            <ambientLight intensity={Math.PI / 2}/>*/}
-                {/*            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI}/>*/}
-                {/*            <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI}/>*/}
-                {/*            <Box position={[-1.2, 0, 0]}/>*/}
-                {/*            <Box position={[1.2, 0, 0]}/>*/}
-                {/*        </Canvas>*/}
-                {/*    </div>*/}
-                {/*</section>*/}
-                <section className="border-bottom">
-                    <div className="row justify-content-center -align-center no-margin">
                         <div>
-                            <a onClick={() =>
+                            <a onClick={ () =>
                                 shell.openExternal(
                                     `https://www.recolnat.org`
                                 )
                             }>
                                 <div className="logoContainer" data-toggle="tooltip" data-placement="top"
                                      title={t('global.open_link_in_external_browser')}>
-                                    <img src={NEW_LOGO} className="logo-on"/>
+                                     <img src={NEW_LOGO} className="logo-on"/>
                                     {/*<span className="version">{pjson.version}</span>*/}
                                 </div>
                                 <div className="row justify-content-center -align-center no-margin">
-                                    <h5>Annotate-on — {pjson.version}</h5>
+                                    <h5 >Annotate-on — {pjson.version}</h5>
                                 </div>
                             </a>
                         </div>
@@ -91,7 +70,7 @@ export default class Credits extends PureComponent {
                         <div className="row -align-center justify-content-center">
 
                             <div className="creditsCard">
-                                <a onClick={() =>
+                                <a onClick={ () =>
                                     shell.openExternal(
                                         `https://www.mnhn.fr`
                                     )
@@ -215,7 +194,7 @@ export default class Credits extends PureComponent {
                         </div>
 
                         <div className="creditsCard">
-                            <a onClick={() =>
+                            <a onClick={ () =>
                                 shell.openExternal(
                                     `http://www.cnrs.fr`
                                 )}>
@@ -287,13 +266,13 @@ export default class Credits extends PureComponent {
                                 <span className="btn-link inline-link"
                                       color="primary">
                                     <a title={t('global.open_link_in_external_browser')}
-                                       onClick={() => shell.openExternal('https://www.dicen-idf.org/projet-recherche-opahh-iiif/')}>OPAHH-IIIF</a>
+                                       onClick={ () => shell.openExternal('https://www.dicen-idf.org/projet-recherche-opahh-iiif/')}>OPAHH-IIIF</a>
                                 </span>
                                 <span>{t('credits.lbl_from')}</span>
                                 <span className="btn-link inline-link"
                                       color="primary">
                                     <a title={t('global.open_link_in_external_browser')}
-                                       onClick={() => shell.openExternal('http://passes-present.eu')}> Labex Les passés dans le présent</a>
+                                       onClick={ () => shell.openExternal('http://passes-present.eu')}> Labex Les passés dans le présent</a>
                                 </span>
                             </p>
                         </div>
@@ -336,7 +315,7 @@ export default class Credits extends PureComponent {
                             <h5>{t('credits.lbl_software_development')}</h5>
                         </div>
                         <div className="presek-logo">
-                            <a onClick={() =>
+                            <a onClick={ () =>
                                 shell.openExternal(
                                     `https://www.presek-i.com`
                                 )}>
@@ -352,63 +331,4 @@ export default class Credits extends PureComponent {
             </Container>
         );
     }
-
 }
-
-function Box(props) {
-    // This reference gives us direct access to the THREE.Mesh object
-    const ref = useRef()
-    // Hold state for hovered and clicked events
-    const [hovered, hover] = useState(false)
-    const [clicked, click] = useState(false)
-    // Subscribe this component to the render-loop, rotate the mesh every frame
-    useFrame((state, delta) => (ref.current.rotation.x += delta))
-    // Return the view, these are regular Threejs elements expressed in JSX
-    return (
-        <mesh
-            {...props}
-            ref={ref}
-            scale={clicked ? 1.5 : 1}
-            onClick={(event) => click(!clicked)}
-            onPointerOver={(event) => hover(true)}
-            onPointerOut={(event) => hover(false)}>
-            <boxGeometry args={[1, 1, 1]}/>
-            <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'}/>
-        </mesh>
-    )
-}
-
-function App(props) {
-    const viewerRef = useRef(undefined);
-    const loadedUrlsRef = useRef([]);
-
-    return (
-        <div id="viewer">
-            <Viewer
-                ref={viewerRef}
-                envPreset={'apartment'}
-                src={'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/FlightHelmet/glTF/FlightHelmet.gltf'}
-                rotationPreset={[0, 0, 0]}
-                onLoad={(srcs) => {
-                    console.log(`model${srcs.length > 1 ? 's' : ''} loaded`, srcs);
-                    // add loaded urls to array of already loaded urls
-                    loadedUrlsRef.current = [...loadedUrlsRef.current, ...srcs.map((src) => src.url)];
-
-                    // loop through each src and show the required statement if it exists
-                    // srcs
-                    //     .filter((srcObj) => srcObj.requiredStatement)
-                    //     .forEach((srcObj) => {
-                    //         const sanitizedHTML = DOMPurify.sanitize(srcObj.requiredStatement as string);
-                    //         toast(<div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />);
-                    //     });
-                }}
-            />
-        </div>
-    )
-}
-
-
-
-
-
-
