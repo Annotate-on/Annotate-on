@@ -37,6 +37,7 @@ import {BoxHelper, Matrix4, Vector3} from "three";
 import {getBoundingSphere, normalizeSrc} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
 import GLTF from "./gltf";
+import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../../utils/library";
 
 function Scene({envPreset, onLoad, src, rotationPreset}) {
     const boundsRef = useRef(null);
@@ -80,6 +81,7 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
         const srcs = normalizeSrc(src);
         setSrcs(srcs);
         setAnnotations([]);
+        ee.emit(EVENT_SHOW_WAITING);
     }, [src]);
 
     useEffect(() => {
@@ -113,6 +115,7 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
             console.log('loading changed' + loading);
             if (loading) {
                 setLoading(false)
+                ee.emit(EVENT_HIDE_WAITING);
             }
         },
         1000,
@@ -264,27 +267,29 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
                 if (onLoad) {
                     onLoad(srcs);
                     setLoading(false);
+                    ee.emit(EVENT_HIDE_WAITING);
                 }
             }, 1);
         }
 
         return (
-            <Html
-                wrapperClass="loading"
-                calculatePosition={() => {
-                    return [gl.domElement.clientWidth / 2, gl.domElement.clientHeight / 2];
-                }}>
-                <div className="flex justify-center">
-                    <div className="h-1 w-24 bg-black rounded-full overflow-hidden transform translate-x-[-50%]">
-                        <div
-                            className="h-full bg-white"
-                            style={{
-                                width: `${Math.ceil(progress)}%`,
-                            }}
-                        />
-                    </div>
-                </div>
-            </Html>
+            <div>Loading...</div>
+            // <Html
+            //     wrapperClass="loading"
+            //     calculatePosition={() => {
+            //         return [gl.domElement.clientWidth / 2, gl.domElement.clientHeight / 2];
+            //     }}>
+            //     <div className="flex justify-center">
+            //         <div className="h-1 w-24 bg-black rounded-full overflow-hidden transform translate-x-[-50%]">
+            //             <div
+            //                 className="h-full bg-white"
+            //                 style={{
+            //                     width: `${Math.ceil(progress)}%`,
+            //                 }}
+            //             />
+            //         </div>
+            //     </div>
+            // </Html>
         );
     }
 
