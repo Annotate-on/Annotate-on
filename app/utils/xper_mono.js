@@ -130,7 +130,7 @@ export const getDescriptorsForItem = (filter, callback) => {
     console.log("getDescriptorsForItem ", filter);
     if (!checkXperMonoSettings()) return;
     const {t} = i18next;
-    let url = getUrl(`/api/items/${filter.item}/descriptors?lang=${filter.lang}`);
+    let url = getUrl(`/api/items/${filter.item}/description?lang=${filter.lang}`);
     ee.emit(EVENT_SHOW_WAITING);
     request({
             url: url,
@@ -161,7 +161,7 @@ export const getDescriptorsForItems = (filter, callback) => {
     console.log("getDescriptorsForItems ", filter);
     if (!checkXperMonoSettings()) return;
     const {t} = i18next;
-    let url = getUrl(`/api/items/descriptors?lang=${filter.lang}&ids=${filter.items.join(',')}`);
+    let url = getUrl(`/api/items/description?lang=${filter.lang}&ids=${filter.items.join(',')}`);
     ee.emit(EVENT_SHOW_WAITING);
     request({
             url: url,
