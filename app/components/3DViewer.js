@@ -9,7 +9,7 @@ export default class _3DViewer extends PureComponent {
 
     render() {
         return (
-            <div className="bst rcn_3dviewer">
+            <div id="viewer-3d">">
                 <div className="row justify-content-center -align-center no-margin">
                     <_3DViewerWrapper/>
                 </div>

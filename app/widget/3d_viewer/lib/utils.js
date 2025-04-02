@@ -1,10 +1,11 @@
 import { Box3, Matrix4, Object3D, Sphere, Vector3 } from 'three';
-// import { clsx } from 'clsx';
+import { clsx } from 'clsx';
 // import { twMerge } from 'tailwind-merge';
 
-// export function cn(...inputs) {
-//     return twMerge(clsx(inputs));
-// }
+export function cn(...inputs) {
+    // const merged = twMerge(clsx(inputs));
+    return clsx(inputs);
+}
 
 // Apply inverse of a matrix to a vector, e.g. for reversing rotation
 export function applyMatrix4Inverse(v, m) {
@@ -24,7 +25,6 @@ export function getBoundingSphere(object) {
 
 export function normalizeSrc(src) {
     const srcs = [];
-
     if (typeof src === 'string') {
         srcs.push({
             url: src,
@@ -36,7 +36,6 @@ export function normalizeSrc(src) {
         // if it's not a string or an array, then it's a single ModelSrc object
         srcs.push(src);
     }
-
     return srcs;
 }
 
@@ -69,31 +68,26 @@ export const parseAnnotations = (value) => {
         anno.normal = new Vector3().fromArray(Object.values(anno.normal));
         anno.position = new Vector3().fromArray(Object.values(anno.position));
     });
-
     return value;
 };
 
 export function getElementTranslate(el) {
     let x;
     let y;
-
     const transformValue = el.getAttribute('transform');
     let translateValues = null;
-
     if (transformValue) {
         const match = transformValue.match(/translate\(([^)]+)\)/);
         if (match) {
             translateValues = match[1].split(', ');
         }
     }
-
     if (translateValues) {
         x = Number(translateValues[0]);
         y = Number(translateValues[1]);
 
         return [x, y];
     }
-
     return null;
 }
 

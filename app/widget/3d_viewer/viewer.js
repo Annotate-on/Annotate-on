@@ -38,6 +38,8 @@ import {getBoundingSphere, normalizeSrc} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
 import GLTF from "./gltf";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../../utils/library";
+import useStore from "./store";
+import {AnnotationTools} from "./annotation-tools";
 
 function Scene({envPreset, onLoad, src, rotationPreset}) {
     const boundsRef = useRef(null);
@@ -55,22 +57,47 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     const cameraTarget = new Vector3();
     const {camera, gl} = useThree();
 
-    const [ambientLightIntensity, setAmbientLightIntensity] = useState(0.5);
-    const [axesEnabled, setAxesEnabled] = useState(true);
-    const [boundsEnabled, setBoundsEnabled] = useState(true);
-    const [cameraMode, setCameraMode] = useState(CAMERA_MODE_PERSPECTIVE);
-    const [gridEnabled, setGridEnabled] = useState(true);
-    const [loading, setLoading] = useState(true);
-    const [mode, setMode] = useState('scene');
-    const [orthographicEnabled, setOrthographicEnabled] = useState(false);
-    const [rotationEuler, setRotationEuler] = useState(new Vector3());
-    const [rotationXDegrees, setRotationXDegrees] = useState(0);
-    const [rotationYDegrees, setRotationYDegrees] = useState(0);
-    const [rotationZDegrees, setRotationZDegrees] = useState(0);
-    const [sceneControlsEnabled, setSceneControlsEnabled] = useState(true);
-    const [srcs, setSrcs] = useState([]);
-    const [annotations, setAnnotations] = useState([]);
-    const [selectedAnnotation, setSelectedAnnotation] = useState(null);
+    // const [ambientLightIntensity, setAmbientLightIntensity] = useState(0.5);
+    // const [axesEnabled, setAxesEnabled] = useState(true);
+    // const [boundsEnabled, setBoundsEnabled] = useState(true);
+    // const [cameraMode, setCameraMode] = useState(CAMERA_MODE_PERSPECTIVE);
+    // const [gridEnabled, setGridEnabled] = useState(true);
+    // const [loading, setLoading] = useState(true);
+    // const [mode, setMode] = useState('scene');
+    // const [orthographicEnabled, setOrthographicEnabled] = useState(false);
+    // const [rotationEuler, setRotationEuler] = useState(new Vector3());
+    // const [rotationXDegrees, setRotationXDegrees] = useState(0);
+    // const [rotationYDegrees, setRotationYDegrees] = useState(0);
+    // const [rotationZDegrees, setRotationZDegrees] = useState(0);
+    // const [sceneControlsEnabled, setSceneControlsEnabled] = useState(true);
+    // const [srcs, setSrcs] = useState([]);
+    // const [annotations, setAnnotations] = useState([]);
+    // const [selectedAnnotation, setSelectedAnnotation] = useState(null);
+
+    const {
+        ambientLightIntensity,
+        axesEnabled,
+        boundsEnabled,
+        cameraMode,
+        gridEnabled,
+        loading,
+        mode,
+        orthographicEnabled,
+        rotationEuler,
+        rotationXDegrees,
+        rotationYDegrees,
+        rotationZDegrees,
+        sceneControlsEnabled,
+        setAnnotations,
+        setLoading,
+        setRotationEuler,
+        setRotationXDegrees,
+        setRotationYDegrees,
+        setRotationZDegrees,
+        setSelectedAnnotation,
+        setSrcs,
+        srcs,
+    } = useStore();
 
     const rotationMatrixRef = useRef(new Matrix4().makeRotationFromEuler(rotationEuler));
 
@@ -94,16 +121,17 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     }, [rotationEuler, rotationXDegrees, rotationYDegrees, rotationZDegrees]);
 
     useEffect(() => {
-        console.log('mode changed' + mode);
+        console.log('mode changed1' + mode);
         if (!loading && rotationPreset) setRotationFromArray(rotationPreset, true);
     }, [loading]);
 
     useTimeout(
         () => {
-            console.log('loading changed' + loading);
+            console.log('loading changed2' + loading);
             if (!loading) {
                 window.dispatchEvent(new Event('resize'));
                 recenter(true);
+                ee.emit(EVENT_HIDE_WAITING);
             }
         },
         1,
@@ -112,7 +140,7 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
 
     useTimeout(
         () => {
-            console.log('loading changed' + loading);
+            console.log('loading changed 3' + loading);
             if (loading) {
                 setLoading(false)
                 ee.emit(EVENT_HIDE_WAITING);
@@ -150,7 +178,7 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     }
 
     function recenter(instant) {
-        console.log('recenter', instant);
+        // console.log('recenter', instant);
         if (boundsRef.current) {
             setCameraConfig();
             zoomToObject(boundsRef.current, instant);
@@ -273,7 +301,10 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
         }
 
         return (
-            <div>Loading...</div>
+            <Html>
+                <div>Loading...</div>
+            </Html>
+            // <div>Loading...</div>
             // <Html
             //     wrapperClass="loading"
             //     calculatePosition={() => {
@@ -304,11 +335,11 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
         triggerCameraUpdateEvent({cameraPosition, cameraTarget, rotationMatrix: rotationMatrixRef.current});
     }
 
-    // const Tools = {
-    //   annotation: <AnnotationTools cameraRefs={cameraRefs} rotationMatrixRef={rotationMatrixRef} />,
-    //   measurement: <MeasurementTools rotationMatrixRef={rotationMatrixRef} />,
-    //   scene: <></>,
-    // };
+    const Tools = {
+      annotation: <AnnotationTools cameraRefs={cameraRefs} rotationMatrixRef={rotationMatrixRef} />,
+      // measurement: <MeasurementTools rotationMatrixRef={rotationMatrixRef} />,
+      scene: <></>,
+    };
 
     return (
         <>
@@ -341,7 +372,7 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
                 </PivotControls>
             </Suspense>
             <Environment preset={envPreset}/>
-            {/*{Tools[mode]}*/}
+            {Tools[mode]}
             {(gridEnabled && mode === 'scene') && <gridHelper args={getGridProperties()}/>}
             {(axesEnabled && mode === 'scene') &&
                 <GizmoHelper alignment="bottom-right" margin={[100, 100]}>
@@ -366,7 +397,7 @@ const Viewer = (props, ref) => {
     const [size, setSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
     const handleResize = () => {
-        console.log('resize' + size.width + ' ' + size.height);
+        // console.log('resize' + size.width + ' ' + size.height);
         setSize({ width: window.innerWidth, height: window.innerHeight });
         triggerRecenterEvent();
     };
@@ -392,7 +423,8 @@ const Viewer = (props, ref) => {
 
     return (
         <>
-            <Suspense fallback={<LoadingIndicator/>}>
+            {/*<Suspense fallback={<LoadingIndicator/>}>*/}
+            <Suspense >
                 <Canvas
                     style={{width: size.width - 368, height: size.height - 108}}
                     ref={canvasRef}

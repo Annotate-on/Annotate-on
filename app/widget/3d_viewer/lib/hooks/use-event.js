@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import {useCallback, useEffect} from 'react';
 
 function useEventListener(eventName, handler) {
     useEffect(() => {
@@ -11,17 +11,15 @@ function useEventListener(eventName, handler) {
     }, [eventName, handler]); // Re-run if eventName or handler changes
 }
 
+// Event trigger function
 function useEventTrigger(eventName) {
-    // Event trigger function
-    const triggerEvent = useCallback(
+    return useCallback(
         (detail) => {
-            const event = new CustomEvent(eventName, { detail });
+            const event = new CustomEvent(eventName, {detail});
             window.dispatchEvent(event);
         },
         [eventName]
     );
-
-    return triggerEvent;
 }
 
 export { useEventListener, useEventTrigger };

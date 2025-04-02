@@ -348,7 +348,9 @@
     "video-thumbnail-generator": "^1.1.3",
     "video.js": "^7.8.4",
     "write-yaml": "^1.0.0",
-    "xlsx": "^0.14.2"
+    "xlsx": "^0.14.2",
+    "zustand": "^4.4.7",
+    "clsx": "^2.0.0"
   },
   "devEngines": {
     "node": ">=7.x",
