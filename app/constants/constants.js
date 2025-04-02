@@ -116,9 +116,11 @@ export const IMPORT_FROM_JSON = "IMPORT_FROM_JSON";
 
 export const PATH_ESCAPE = new RegExp('\\/\\\\|\\\\', 'g');
 export const SUPPORTED_VIDEO_FORMAT_REGEXP = /matroska|webm|mov|mp4|m4a|3gp|3g2|mj2|ogg/gi;
+export const SUPPORTED_OBJECTS3D_FORMAT_REGEXP = /glb|gltf/;
 export const RESOURCE_TYPE_VIDEO = "RESOURCE_TYPE_VIDEO";
 export const RESOURCE_TYPE_PICTURE = "RESOURCE_TYPE_PICTURE";
 export const RESOURCE_TYPE_EVENT = "RESOURCE_TYPE_EVENT";
+export const RESOURCE_TYPE_OBJECT3D = "RESOURCE_TYPE_OBJECT3D";
 export const THUMBNAIL_COUNT = 5;
 export const DEFAULT_VOLUME = 0.75;
 

@@ -25,6 +25,10 @@ const mapDispatchToProps = dispatch => {
         goToImportEventWizard: (selectedFolder , tabName) => {
             dispatch(push('/importEventWizard/' + selectedFolder));
         },
+        goToImportObject3DWizard: (selectedFolder) => {
+            dispatch(push('/importObject3DWizard/' + selectedFolder));
+        },
+
     };
 };
 

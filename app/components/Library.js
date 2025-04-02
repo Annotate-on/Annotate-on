@@ -9,7 +9,7 @@ import {
     MODEL_XPER,
     MOZAIC_VIEW,
     NAV_SIZE,
-    RESOURCE_TYPE_EVENT,
+    RESOURCE_TYPE_EVENT, RESOURCE_TYPE_OBJECT3D,
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
     TABLE_DATA_BG_OVER,
@@ -297,6 +297,9 @@ export default class extends Component {
         }
         else if (type === RESOURCE_TYPE_EVENT){
             return "Event"
+        }
+        else if (type === RESOURCE_TYPE_OBJECT3D){
+            return "3D model"
         }
         else{
             return "Image"

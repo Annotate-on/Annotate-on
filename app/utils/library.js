@@ -16,9 +16,9 @@ import {
 } from './config';
 import {
     COMMON_TAGS,
-    IMAGE_STORAGE_DIR,
+    IMAGE_STORAGE_DIR, RESOURCE_TYPE_OBJECT3D,
     RESOURCE_TYPE_PICTURE,
-    RESOURCE_TYPE_VIDEO,
+    RESOURCE_TYPE_VIDEO, SUPPORTED_OBJECTS3D_FORMAT_REGEXP,
     SUPPORTED_VIDEO_FORMAT_REGEXP, TAG_AUTO,
     THUMBNAIL_COUNT
 } from "../constants/constants";
@@ -38,6 +38,8 @@ import * as sharp from "sharp";
 export const PATH_TO_EVENT_THUMBNAIL = './components/pictures/event/event-logo.png';
 export const AUTHORIZED_PICTURES_EXTENSIONS = ['.jpg', '.jpeg', '.png'];
 export const AUTHORIZED_VIDEOS_EXTENSIONS = ['.mp4', '.mov', '.3gp', '.mkv', '.ogv', '.webm'];
+
+export const AUTHORIZED_OBJECT3D_EXTENSIONS = ['glb','gltf'];
 export const ee = new EventEmitter();
 export const EVENT_DIRECTORIES_ANALYSES_COMPLETE = 'EVENT_DIRECTORIES_ANALYSES_COMPLETE';
 export const EVENT_PROCESS_IMAGE_COMPLETE = 'EVENT_PROCESS_IMAGE_COMPLETE';
@@ -135,6 +137,45 @@ export const initVideosLibrary = async (files, folders, resourcesInStore) => {
     for (const f of files) {
         try {
             const result = await makeVideoObjectFromFile(f, pictures, resourcesInStore);
+            if (result === true) {
+                addedPicturesCount++;
+            } else {
+                // TODO 12.03.2020 11:42 mseslija: display message where duplicate image can be found.
+                duplicates.push(f);
+
+                if (result.file !== f) {
+                    fs.unlinkSync(f);
+
+                    // delete metadata json file
+                    const basename = path.basename(f);
+                    const fileName = `${basename.substring(0, basename.lastIndexOf('.'))}.json`;
+                    const dir = path.dirname(f);
+                    const filePath = path.join(dir, fileName)
+                    console.log(filePath)
+                    if (fs.existsSync(filePath)) {
+                        fs.unlink(filePath);
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    if (duplicates.length > 0){
+        console.log('duplicates' , duplicates);
+    }
+    return pictures;
+};
+
+export const initObjects3DLibrary = async (files, folders, resourcesInStore) => {
+    let pictures = {};
+    const duplicates = [];
+    let addedPicturesCount = 0;
+
+    ee.emit(EVENT_DIRECTORIES_ANALYSES_COMPLETE, {files: files.length, folders});
+    for (const f of files) {
+        try {
+            const result = await makeObjects3DObjectFromFile(f, pictures, resourcesInStore);
             if (result === true) {
                 addedPicturesCount++;
             } else {
@@ -420,6 +461,40 @@ const makeVideoObjectFromFile = async (file, pictures_cache, videosInStore) => {
         }, v => lodash.isUndefined(v) || lodash.isNull(v));
     }
 
+    ee.emit(EVENT_PROCESS_IMAGE_COMPLETE, file);
+    return true;
+};
+
+const makeObjects3DObjectFromFile = async (file, pictures_cache, objects3DInStore) => {
+
+    ee.emit(EVENT_PROCESSING_IMAGE, file);
+    // We always need to compute the picture file SHA1, since it unique ID for pictures.
+    const sha1 = await getSHA1(file);
+
+    // check if same SHA1 already exist
+    if (objects3DInStore) {
+        if (sha1 in objects3DInStore)
+            return objects3DInStore[sha1];
+    }
+
+    const supportedFormat = true;
+
+    const thumbnail_default = path.join(getThumbNailsDir(), `3d-thumb.png`);
+    const exists = await fs.pathExists(thumbnail_default);
+    if (!exists) {
+        const source = path.join(__dirname, '/components/pictures/3d-thumb.png');
+        await fs.copy(source, thumbnail_default);
+    }
+    if (supportedFormat === true) {
+        pictures_cache[sha1] = lodash.omitBy({
+            file: file, // For now, we alse store the first encountered file for the current SHA1
+            file_basename: path.basename(file),
+            sha1,
+            thumbnail: thumbnail_default,
+            resourceType: RESOURCE_TYPE_OBJECT3D
+            // erecolnatMetadata
+        }, v => lodash.isUndefined(v) || lodash.isNull(v));
+    }
     ee.emit(EVENT_PROCESS_IMAGE_COMPLETE, file);
     return true;
 };
