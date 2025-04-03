@@ -31,10 +31,12 @@ const useStore = create((set) => ({
         ambientLightIntensity,
       }),
 
-  setAnnotations: (annotations) =>
+  setAnnotations: (annotations) => {
+      console.log("setAnnotations", annotations);
       set({
-        annotations,
-      }),
+          annotations,
+      })
+  },
 
   setAxesEnabled: (axesEnabled) =>
       set({

@@ -5,8 +5,10 @@ import {
 } from '../actions/app';
 import _3DViewer from "../components/3DViewer";
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
+    console.log(state, ownProps)
     return {
+        annotations: state.app,
         focusedAnnotation: state.app.focused_annotation,
     };
 };

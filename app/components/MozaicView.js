@@ -264,7 +264,7 @@ export default class extends PureComponent {
                              if (this.state.selectedPictures.length === 0) {
                                  return;
                              }
-                             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                             const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                                  type: 'question',
                                  buttons: ['Yes', 'No'],
                                  message: t('library.alert_delete_image_message'),

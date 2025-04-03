@@ -185,7 +185,7 @@ export default class extends Component {
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: false});
                                                         this.setState({showImportIIIF: false});
-                                                        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
+                                                        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{
                                                             filters: [
                                                                 {name: 'Images', extensions: ['jpg', 'png', 'jpeg']}
                                                             ],

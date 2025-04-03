@@ -173,7 +173,7 @@ export default class extends Component {
                                                                     showLoadingSpinner: true
                                                                 });
                                                                 setTimeout( () => {
-                                                                    const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+                                                                    const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
                                                                         filters: [
                                                                             {
                                                                                 name: 'Objects3D',

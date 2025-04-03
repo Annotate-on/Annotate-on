@@ -34,14 +34,14 @@ import {
 } from '@react-three/drei';
 
 import {BoxHelper, Matrix4, Vector3} from "three";
-import {getBoundingSphere, normalizeSrc} from "./lib/utils";
+import {getBoundingSphere, normalizeSrc, parseAnnotations} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
 import GLTF from "./gltf";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../../utils/library";
 import useStore from "./store";
 import {AnnotationTools} from "./annotation-tools";
 
-function Scene({envPreset, onLoad, src, rotationPreset}) {
+function Scene({envPreset, onLoad, src, rotationPreset, annotations}, ref) {
     const boundsRef = useRef(null);
     const boundsLineRef = useRef(null);
     const boundsSphereRef = useRef(null);
@@ -104,7 +104,6 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     const triggerCameraUpdateEvent = useEventTrigger(CAMERA_UPDATE);
 
     useEffect(() => {
-        console.log('src changed' + src);
         const srcs = normalizeSrc(src);
         setSrcs(srcs);
         setAnnotations([]);
@@ -112,7 +111,6 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     }, [src]);
 
     useEffect(() => {
-        console.log('rotationPreset changed' + rotationPreset);
         setRotationFromArray([
             rotationXDegrees * (Math.PI / 180),
             rotationYDegrees * (Math.PI / 180),
@@ -121,13 +119,15 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
     }, [rotationEuler, rotationXDegrees, rotationYDegrees, rotationZDegrees]);
 
     useEffect(() => {
-        console.log('mode changed1' + mode);
         if (!loading && rotationPreset) setRotationFromArray(rotationPreset, true);
+    }, [loading]);
+
+    useEffect(() => {
+        if (!loading && annotations) setAnnotations(parseAnnotations(annotations));
     }, [loading]);
 
     useTimeout(
         () => {
-            console.log('loading changed2' + loading);
             if (!loading) {
                 window.dispatchEvent(new Event('resize'));
                 recenter(true);
@@ -140,7 +140,6 @@ function Scene({envPreset, onLoad, src, rotationPreset}) {
 
     useTimeout(
         () => {
-            console.log('loading changed 3' + loading);
             if (loading) {
                 setLoading(false)
                 ee.emit(EVENT_HIDE_WAITING);
@@ -424,7 +423,7 @@ const Viewer = (props, ref) => {
     return (
         <>
             {/*<Suspense fallback={<LoadingIndicator/>}>*/}
-            <Suspense >
+            <Suspense>
                 <Canvas
                     style={{width: size.width - 368, height: size.height - 108}}
                     ref={canvasRef}
