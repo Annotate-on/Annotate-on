@@ -10,6 +10,7 @@
  *
  * @flow
  */
+import 'globalthis';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
@@ -76,7 +77,9 @@ app.on('ready', async () => {
     useContentSize: true,
     center: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   });
 
