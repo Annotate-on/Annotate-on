@@ -15,6 +15,7 @@ import CreateNewProject from "./containers/CreateNewProject";
 import ImportExistingProject from "./containers/ImportExistingProject";
 import ImportProjectAsZip from "./containers/ImportProjectAsZip";
 import ImportVideoWizard from "./containers/ImportVideoWizard";
+import ImportObject3DWizard from "./containers/ImportObject3DWizard";
 import ImportEventWizard from "./containers/ImportEventWizard";
 import TagManager from "./containers/TagManager";
 import IIIF from "./containers/IIIF";
@@ -32,6 +33,7 @@ export default () => (
             <Route path={routes.IMPORTWIZARD} component={ImportWizard}/>
             <Route path={routes.IMPORTVIDEOWIZARD} component={ImportVideoWizard}/>
             <Route path={routes.IMPORTEVENTWIZARD} component={ImportEventWizard}/>
+            <Route path={routes.IMPORTOBJECT3DWIZARD} component={ImportObject3DWizard}/>
             <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID_AND_CHARACTER_ID} component={Taxonomies}/>
             <Route path={routes.TAXONOMIES_WITH_TAXONOMY_ID} component={Taxonomies}/>
             <Route path={routes.TAXONOMIES} component={Taxonomies}/>

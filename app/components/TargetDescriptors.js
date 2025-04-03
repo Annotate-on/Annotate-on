@@ -519,7 +519,6 @@ class TargetDescriptors extends PureComponent {
                 descriptors.splice(descIndex, 1);
                 this.setState({descriptors})
                 this.props.deleteTargetDescriptor(this.props.taxonomyModel.id, data.atarget);
-                debugger
                 this._removeAlignment(data.atarget, "", "Character")
                 break;
         }

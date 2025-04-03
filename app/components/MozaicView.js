@@ -7,7 +7,7 @@ import ToggleButton from 'react-toggle-button';
 import ReactTooltip from 'react-tooltip';
 import { SortDirection } from 'react-virtualized';
 import { Input } from 'reactstrap';
-import { MANUAL_ORDER, RESOURCE_TYPE_EVENT } from "../constants/constants";
+import {MANUAL_ORDER, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_OBJECT3D, RESOURCE_TYPE_VIDEO} from "../constants/constants";
 import Inspector from "../containers/Inspector";
 import { EVENT_SHOW_ALERT, ee } from "../utils/library";
 import MozaicPlayer from "./MozaicPlayer";
@@ -314,7 +314,11 @@ export default class extends PureComponent {
                             
 
                             //TODO choose between fa-lg and fa-2x
-                            const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
+                            // const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
+                            let resourceClass = 'fa fa-2x fas fa-image'
+                            if(pic.resourceType === RESOURCE_TYPE_OBJECT3D) resourceClass = 'fa fa-2x fas fa-cubes'
+                            if(pic.resourceType === RESOURCE_TYPE_VIDEO) resourceClass = 'fa fa-2x fas fa-video-camera'
+
 
                             const dateP = moment(pic.sort_modified);
                             //rowData.sort_modified = date.valueOf();
