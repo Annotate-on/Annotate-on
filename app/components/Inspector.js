@@ -986,7 +986,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this.setState({editedAnnotation: annotation, openEditDating: true});
                                          }
@@ -1008,7 +1008,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this.setState({editedAnnotation: annotation, openEditLocation: true});
                                          }
@@ -1028,7 +1028,7 @@ export default class extends Component {
                                             buttons: ["OK"],
                                             message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                         }
-                                        remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                        remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                     } else {
                                         this.setState({editedAnnotation: annotation, openAddTag: true});
                                     }
@@ -1049,7 +1049,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this._focusAnnotation(event, annotation);
                                              this._gotoAnnotation(event, annotation, "start");
@@ -1181,7 +1181,7 @@ export default class extends Component {
                 this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1] &&
                 selectedTargetOptions.value in this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1]
             ) {
-                // remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                // remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 //     type: 'error',
                 //     message: t('inspector.alert_categorical_descriptor_already_exist'),
                 //     cancelId: 1
@@ -1220,7 +1220,7 @@ export default class extends Component {
                 this.props.setAnnotationColor(annotation.id, selectedTargetOptions.color);
             }
         } else {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'error',
                 message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1

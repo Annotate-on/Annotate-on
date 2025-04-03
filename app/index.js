@@ -169,13 +169,13 @@ const go = () => {
                     }
                 } else {
                     fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.old`)
-                    remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                    remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                         type: 'warning',
                         message: t('global.alert_selected_workspace_has_configuration_from_older_version')
                     });
                 }
             } catch (e) {
-                remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'error',
                     message: t('global.alert_selected_workspace_state_is_corrupted'),
                 });

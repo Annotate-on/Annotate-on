@@ -1070,7 +1070,7 @@ export default class extends Component {
                 this.props.createTargetInstance(NUMERICAL, this.props.tabName, annotation.id, tmpDesc.id || "-1", value);
             }
         } else {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'error',
                 message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1

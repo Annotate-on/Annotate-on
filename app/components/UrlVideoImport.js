@@ -173,7 +173,7 @@ export default class extends PureComponent {
                     });
 
                     if (invalidUrls.length > 0) {
-                        remote.dialog.showMessageBox({
+                        remote.dialog.showMessageBoxSync({
                             type: 'warning',
                             message: t('library.import_video.alert_following_urls_are_invalid'),
                             detail: invalidUrls.join('\n')

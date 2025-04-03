@@ -48,7 +48,7 @@ export default class extends PureComponent {
         let order = undefined;
         const { t } = this.props;
         if (lock) {
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 message: t('library.mozaic_view.alert_start_manual_order_message'),
@@ -161,7 +161,7 @@ export default class extends PureComponent {
     _navigationHandler = (e, callAction) => {
         const { t } = this.props;
         if (this.state.calibrationActive) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: t('global.info'),
                 detail: t('library.alert_please_close_calibration_mode'),

@@ -94,7 +94,7 @@ export default class extends Component {
                                     <Button className="btn btn-primary" color="primary"
                                             title={t('projects.import_existing_project.btn_tooltip_import_existing_project')}
                                             onClick={ () => {
-                                                const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory']});
+                                                const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{properties: ['openDirectory']});
                                                 if (!_ || _.length < 1) return;
                                                 const label = this.state.label;
                                                 const dir = _.pop();
@@ -109,7 +109,7 @@ export default class extends Component {
                                                 }
                                                 markProjectAsShared(dir);
                                                 if(!probeLockedProject(project)) {
-                                                    const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                    const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                                                         type: 'question',
                                                         buttons: ['Yes', 'No'],
                                                         message: t('global.locked'),

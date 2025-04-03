@@ -168,7 +168,7 @@ class ChronoThematicAnnotations extends PureComponent {
     exportXlsx(separator) {
         const { t } = this.props;
         const now = new Date();
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: t('results.chrono_thematic_annotations.dialog_title_save'),
             defaultPath: `chronothematic-${formatDateForFileName(now)}.csv`
         });
@@ -196,7 +196,7 @@ class ChronoThematicAnnotations extends PureComponent {
     exportToZip(separator) {
         const { t } = this.props;
         const now = new Date();
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: t('results.chrono_thematic_annotations.dialog_title_save'),
             defaultPath: `chronothematic-${formatDateForFileName(now)}.zip`
         });

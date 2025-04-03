@@ -513,7 +513,7 @@ export default class extends Component {
                 });
                 break;
             case 'delete':
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
                     message: t('tags.alert_delete_tag_message', {tag: data.tagName}),

@@ -205,7 +205,7 @@ class EventAnnotations extends Component {
     exportXlsx(separator) {
         const { t } = this.props;
         const now = new Date();
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: t('results.event_annotations.dialog_title_save'),
             defaultPath: `eventAnnotations-${formatDateForFileName(now)}.csv`
         });
@@ -226,7 +226,7 @@ class EventAnnotations extends Component {
     exportToZip(separator) {
         const now = new Date();
         const { t } = this.props;
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: t('results.event_annotations.dialog_title_save'),
             defaultPath: `eventAnnotations-${formatDateForFileName(now)}.zip`
         });

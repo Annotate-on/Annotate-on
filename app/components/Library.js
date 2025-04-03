@@ -277,7 +277,7 @@ export default class extends Component {
     _navigationHandler = (e, callAction) => {
         const { t } = this.props;
         if (this.state.calibrationActive) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: t('global.info'),
                 detail: t('library.alert_please_close_calibration_mode'),
@@ -785,7 +785,7 @@ export default class extends Component {
         console.log('deleting event with id.... -> ' , eventId)
         console.log('dest folder .... -> ' , this._getDestFolder());
         const { t } = this.props;
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
             message: t('library.alert_delete_event_message'),

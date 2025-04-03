@@ -530,7 +530,7 @@ export default class extends Component {
                                                 <Button className="btn btn-primary" color="primary"
                                                         title={t('library.import_images.btn_tooltip_open_the_json_file')}
                                                         onClick={() => {
-                                                            const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
+                                                            const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{
                                                                 properties: ['openFile'],
                                                                 filters: [{
                                                                     name: 'JSON explore file',

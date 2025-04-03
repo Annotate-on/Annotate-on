@@ -184,7 +184,7 @@ export default class Options extends Component {
                 buttons: ["OK"],
                 message: t('global.options.alert_all_xper_monobase_parameters_required')
             }
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
         }
     };
 

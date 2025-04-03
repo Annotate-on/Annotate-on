@@ -567,7 +567,7 @@ class TagManager extends Component {
                 });
                 break;
             case 'delete':
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
                     message: `${data.type}: "${data.tagName}"`,
@@ -691,7 +691,7 @@ class TagManager extends Component {
 
     _importCSV = async () => {
         const { t } = this.props;
-        const f = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+        const f = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'xlsx explore file', extensions: ['csv']}]
         });
@@ -730,7 +730,7 @@ class TagManager extends Component {
 
     _importTags = async () => {
         const { t } = this.props;
-        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'JSON explore file', extensions: ['json']}]
         });
@@ -769,7 +769,7 @@ class TagManager extends Component {
         const { t } = this.props;
 
         const now = new Date();
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: 'Keywords',
             defaultPath: `Keywords-${formatDateForFileName(now)}.json`
         });
@@ -785,7 +785,7 @@ class TagManager extends Component {
             console.error(err)
         }
 
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'info',
             detail: file,
             message: t('global.export_finished'),
