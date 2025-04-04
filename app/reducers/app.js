@@ -127,13 +127,18 @@ import {
     UPDATE_TABULAR_VIEW,
     UPDATE_TAG_EXPRESSION_OPERATOR,
     SAVE_SELECTED_CATEGORY,
-    UPDATE_TAXONOMY_VALUES, SAVE_SEARCH,
+    UPDATE_TAXONOMY_VALUES,
+    SAVE_SEARCH,
     CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
     REMOVE_IMAGE_DETECT_MODEL,
-    XPER_MATCH_RESOURCES, CREATE_ANNOTATION_XPER, CREATE_ANNOTATION_XPER_SUMMARY
+    XPER_MATCH_RESOURCES,
+    CREATE_ANNOTATION_XPER,
+    CREATE_ANNOTATION_XPER_SUMMARY,
+    CREATE_ANNOTATION_3D_POINT_OF_INTEREST,
+    DELETE_ANNOTATION_3D_POINT_OF_INTEREST
 } from '../actions/app';
 import {
     ANNOTATION_ANGLE,
@@ -165,7 +170,7 @@ import {
     SORT_ALPHABETIC_DESC,
     SORT_DATE_DESC,
     TAG_AUTO,
-    TAG_MAP_SELECTION,
+    TAG_MAP_SELECTION, ANNOTATION_3D_MARKER,
 } from '../constants/constants';
 import {
     AND,
@@ -221,6 +226,7 @@ export const createInitialState = () => ({
         annotations_chronothematique: {},
         annotations_measures_linear: {},
         annotations_points_of_interest: {},
+        annotations_3d_points_of_interest: {},
         annotations_rectangular: {},
         annotations_polygon: {},
         annotations_angle: {},
@@ -287,6 +293,7 @@ export const userDataBranches = () => ({
     annotations_chronothematique: null,
     annotations_measures_linear: null,
     annotations_points_of_interest: null,
+    annotations_3d_points_of_interest: null,
     annotations_rectangular: null,
     annotations_polygon: null,
     annotations_angle: null,
@@ -598,6 +605,41 @@ export default (state = {}, action) => {
                             title: `POI-${max}`
                         },
                         ...(state.annotations_points_of_interest[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+        }
+            break;
+        case CREATE_ANNOTATION_3D_POINT_OF_INTEREST: {
+            const counter = state.counter + 1;
+            const {type, ...payload} = action;
+
+            const patt = /POI-(\d+)/g;
+            const max = getNextAnnotationName(patt, payload.pictureId, state.annotations_3d_points_of_interest);
+
+            return {
+                ...state,
+                counter,
+                annotations_3d_points_of_interest: {
+                    ...state.annotations_3d_points_of_interest,
+                    [payload.pictureId]: [
+                        {
+                            ...payload,
+                            annotationType: ANNOTATION_3D_MARKER,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: `POI-${max}`,
+                            text: `Annotation description for POI-${max}`
+                        },
+                        ...(state.annotations_3d_points_of_interest[payload.pictureId] || [])
                     ].sort((left, right) => {
                         if (left.title > right.title) {
                             return -1;
@@ -1792,6 +1834,21 @@ export default (state = {}, action) => {
             };
         }
             break;
+        case DELETE_ANNOTATION_3D_POINT_OF_INTEREST: {
+            const counter = state.counter + 1;
+            deleteAnnotationValues(state, action.annotationId);
+            return {
+                ...state,
+                counter,
+                annotations_3d_points_of_interest: {
+                    ...state.annotations_3d_points_of_interest,
+                    [action.pictureId]: state.annotations_3d_points_of_interest[action.pictureId].filter(
+                        _ => _.id !== action.annotationId
+                    )
+                }
+            };
+        }
+            break;
         case DELETE_ANNOTATION_RECTANGULAR: {
             const counter = state.counter + 1;
             const annotations = state.annotations_rectangular[action.pictureId].filter(_ => _.id !== action.annotationId);
@@ -2370,6 +2427,9 @@ export default (state = {}, action) => {
                 case ANNOTATION_MARKER:
                     branch = 'annotations_points_of_interest';
                     break;
+                case ANNOTATION_3D_MARKER:
+                    branch = 'annotations_3d_points_of_interest';
+                    break;
                 case ANNOTATION_RECTANGLE:
                     branch = 'annotations_rectangular';
                     break;
@@ -2428,21 +2488,29 @@ export default (state = {}, action) => {
                 action.annotationType === ANNOTATION_POLYGON_OF_INTEREST
             ) {
                 annotation.value = action.annotationData.value;
-
             }
-            if (action.annotationType === ANNOTATION_CHRONOTHEMATIQUE){
+
+            if (action.annotationType === ANNOTATION_CHRONOTHEMATIQUE) {
                 annotation.value = action.annotationData.value
                 annotation.date = action.annotationData.date;
                 annotation.person = action.annotationData.person;
                 annotation.location = action.annotationData.location;
             }
 
-            if (action.annotationType === ANNOTATION_EVENT_ANNOTATION){
+            if (action.annotationType === ANNOTATION_EVENT_ANNOTATION) {
                 annotation.value = action.annotationData.value
                 annotation.date = action.annotationData.date;
                 annotation.person = action.annotationData.person;
                 annotation.location = action.annotationData.location;
                 annotation.topic = action.annotationData.topic;
+            }
+
+            if (action.annotationType === ANNOTATION_3D_MARKER) {
+                annotation.value = action.annotationData.value
+                annotation.position = action.annotationData.position
+                annotation.normal = action.annotationData.normal
+                annotation.cameraPosition = action.annotationData.cameraPosition
+                annotation.cameraTarget = action.annotationData.cameraTarget
             }
 
             if (action.annotationData.value_in_mm !== null) {
@@ -3293,6 +3361,7 @@ export default (state = {}, action) => {
             allAnnotations.push(...deleteAnnotations(state.annotations_chronothematique, sha1));
             allAnnotations.push(...deleteAnnotations(state.annotations_measures_linear, sha1));
             allAnnotations.push(...deleteAnnotations(state.annotations_points_of_interest, sha1));
+            allAnnotations.push(...deleteAnnotations(state.annotations_3d_points_of_interest, sha1));
             allAnnotations.push(...deleteAnnotations(state.annotations_rectangular, sha1));
             allAnnotations.push(...deleteAnnotations(state.annotations_polygon, sha1));
             allAnnotations.push(...deleteAnnotations(state.annotations_angle, sha1));

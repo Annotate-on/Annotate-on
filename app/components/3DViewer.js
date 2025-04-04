@@ -1,18 +1,76 @@
 import React, {PureComponent, useRef} from "react";
 import Viewer from "../widget/3d_viewer/viewer";
+import Chance from "chance";
+import {ANNOTATION_3D_MARKER} from "../constants/constants";
+
+const chance = new Chance();
 
 export default class _3DViewer extends PureComponent {
 
     constructor(props) {
         console.log(" _3DViewer", props);
         super(props);
+        this.state = {
+            currentPicture: props.currentPicture,
+            annotations:
+                [...(props.annotations && this.props.annotations[props.currentPicture.sha1] || [])]
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log("_3DViewer componentWillReceiveProps", nextProps);
+        if (nextProps.currentPicture !== this.props.currentPicture) {
+            this.setState({
+                currentPicture: nextProps.currentPicture
+            });
+        }
+        if (nextProps.annotations !== this.props.annotations) {
+            this.setState({
+                annotations:
+                [...(nextProps.annotations && nextProps.annotations[nextProps.currentPicture.sha1] || [])]
+            });
+        }
+    }
+
+    onCreateAnnotation = (annotation) => {
+        console.log("onCreateAnnotationHandler", annotation);
+        if(this.props.createAnnotation3dPointOfInterest) {
+            this.props.createAnnotation3dPointOfInterest(
+                this.state.currentPicture.sha1,
+                chance.guid(),
+                annotation.position,
+                annotation.normal,
+                annotation.cameraPosition,
+                annotation.cameraTarget
+            );
+        }
+    }
+
+    onEditAnnotation = (annotation) => {
+        console.log("onEditAnnotation", annotation);
+        if(this.props.editAnnotation) {
+            this.props.editAnnotation(
+                this.state.currentPicture.sha1,
+                ANNOTATION_3D_MARKER,
+                annotation.id,
+                annotation.title,
+                annotation.text,
+                annotation.coverage,
+                {...annotation}
+            );
+        }
     }
 
     render() {
         return (
             <div id="viewer-3d">">
                 <div className="row justify-content-center -align-center no-margin">
-                    <_3DViewerWrapper url={this.props.currentPicture.file} ann ={this.props.annotations}/>
+                    <_3DViewerWrapper
+                        url={this.state.currentPicture.file}
+                        annotations={this.state.annotations}
+                        onCreateAnnotation={this.onCreateAnnotation}
+                        onEditAnnotation={this.onEditAnnotation}
+                    />
                 </div>
             </div>
         );
@@ -101,8 +159,11 @@ function _3DViewerWrapper(props) {
                 // src={'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/FlightHelmet/glTF/FlightHelmet.gltf'}
                 // src={'https://raw.githubusercontent.com/JulieWinchester/aleph-assets/main/bunny.glb'}
                 // src={'https://cdn.glitch.global/2658666b-2aa1-4395-8dfe-44a4aaaa0b16/nmah-1981_0706_06-clemente_helmet-100k-2048_std_draco.glb?v=1729600102458'}
-                annotations ={msannotations}
+                // annotations ={msannotations}
                 // annotations ={helmetAnnotations}
+                annotations ={props.annotations}
+                onCreateAnnotation={props.onCreateAnnotation}
+                onEditAnnotation={props.onEditAnnotation}
                 rotationPreset={[0, 0, 0]}
                 onLoad={(srcs) => {
                     console.log(`model${srcs.length > 1 ? 's' : ''} loaded`, srcs);

@@ -62,6 +62,10 @@ export const downloadJsonFile = (json) => {
 }
 
 export const parseAnnotations = (value) => {
+    console.log("parseAnnotations", value);
+    if (!value) {
+        return [];
+    }
     value.forEach((anno) => {
         anno.cameraPosition = new Vector3().fromArray(Object.values(anno.cameraPosition));
         anno.cameraTarget = new Vector3().fromArray(Object.values(anno.cameraTarget));

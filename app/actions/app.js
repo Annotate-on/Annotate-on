@@ -19,6 +19,7 @@ export const CREATE_ANNOTATION_COLORPICKER = 'CREATE_ANNOTATION_COLORPICKER';
 export const CREATE_ANNOTATION_TRANSCRIPTION = 'CREATE_ANNOTATION_TRANSCRIPTION';
 export const CREATE_ANNOTATION_CATEGORICAL = 'CREATE_ANNOTATION_CATEGORICAL';
 export const CREATE_ANNOTATION_RICHTEXT = 'CREATE_ANNOTATION_RICHTEXT';
+export const CREATE_ANNOTATION_3D_POINT_OF_INTEREST = 'CREATE_ANNOTATION_3D_POINT_OF_INTEREST';
 
 export const MERGE_TM_TAGS = 'MERGE_TM_TAGS';
 export const ADD_SUB_CATEGORY = 'ADD_SUB_CATEGORY';
@@ -39,6 +40,7 @@ export const DELETE_ANNOTATION_CHRONOTHEMATIQUE = 'DELETE_ANNOTATION_CHRONOTHEMA
 export const DELETE_EVENT_ANNOTATION = 'DELETE_EVENT_ANNOTATION';
 export const DELETE_ANNOTATION_MEASURE_LINEAR = 'DELETE_ANNOTATION_MEASURE_LINEAR';
 export const DELETE_ANNOTATION_POINT_OF_INTEREST = 'DELETE_ANNOTATION_POINT_OF_INTEREST';
+export const DELETE_ANNOTATION_3D_POINT_OF_INTEREST = 'DELETE_ANNOTATION_3D_POINT_OF_INTEREST';
 export const DELETE_ANNOTATION_RECTANGULAR = 'DELETE_ANNOTATION_RECTANGULAR';
 export const DELETE_ANNOTATION_POLYGON = 'DELETE_ANNOTATION_POLYGON';
 export const DELETE_ANNOTATION_ANGLE = 'DELETE_ANNOTATION_ANGLE';
@@ -202,6 +204,18 @@ export const createAnnotationPointOfInterest = (pictureId, x, y, id, video) => {
         y,
         id,
         video
+    };
+};
+
+export const createAnnotation3dPointOfInterest = (pictureId, id, position, normal, cameraPosition, cameraTarget) => {
+    return {
+        type: CREATE_ANNOTATION_3D_POINT_OF_INTEREST,
+        pictureId,
+        id,
+        position,
+        normal,
+        cameraPosition,
+        cameraTarget
     };
 };
 
@@ -372,7 +386,6 @@ export const createTag = (name, system) => ({
     system
 });
 
-
 export const editCategoryById = (category, newName) => ({
     type: EDIT_CATEGORY_BY_ID,
     category,
@@ -420,6 +433,12 @@ export const deleteAnnotationMeasureLinear = (pictureId, annotationId) => ({
 
 export const deleteAnnotationPointOfInterest = (pictureId, annotationId) => ({
     type: DELETE_ANNOTATION_POINT_OF_INTEREST,
+    pictureId,
+    annotationId
+});
+
+export const deleteAnnotation3dPointOfInterest = (pictureId, annotationId) => ({
+    type: DELETE_ANNOTATION_3D_POINT_OF_INTEREST,
     pictureId,
     annotationId
 });

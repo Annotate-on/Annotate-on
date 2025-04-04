@@ -41,7 +41,7 @@ import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../../utils/library";
 import useStore from "./store";
 import {AnnotationTools} from "./annotation-tools";
 
-function Scene({envPreset, onLoad, src, rotationPreset, annotations}, ref) {
+function Scene({envPreset, onLoad, src, rotationPreset, annotations, onCreateAnnotation, onEditAnnotation}, ref) {
     const boundsRef = useRef(null);
     const boundsLineRef = useRef(null);
     const boundsSphereRef = useRef(null);
@@ -335,7 +335,12 @@ function Scene({envPreset, onLoad, src, rotationPreset, annotations}, ref) {
     }
 
     const Tools = {
-      annotation: <AnnotationTools cameraRefs={cameraRefs} rotationMatrixRef={rotationMatrixRef} />,
+      annotation: <AnnotationTools
+          cameraRefs={cameraRefs}
+          rotationMatrixRef={rotationMatrixRef}
+          onCreateAnnotation={onCreateAnnotation}
+          onEditAnnotation={onEditAnnotation}
+      />,
       // measurement: <MeasurementTools rotationMatrixRef={rotationMatrixRef} />,
       scene: <></>,
     };

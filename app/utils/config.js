@@ -353,6 +353,10 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding xperMatchedResources');
                 tmpState["xperMatchedResources"] = {};
             }
+            if (!tmpState.app.hasOwnProperty("annotations_3d_points_of_interest")){
+                console.log('project from previous version , adding annotations 3d_points_of_interest')
+                tmpState.app["annotations_3d_points_of_interest"] = {};
+            }
 
             // Check if object structure match to expected one.
             for (const prop in initialState) {

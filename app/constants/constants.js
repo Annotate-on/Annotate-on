@@ -19,6 +19,7 @@ export const ANNOTATION_CATEGORICAL = 'categorical';
 export const ANNOTATION_RICHTEXT = 'richtext';
 export const ANNOTATION_CIRCLE_OF_INTEREST = 'circleOfInterest';
 export const ANNOTATION_POLYGON_OF_INTEREST = 'polygonOfInterest';
+export const ANNOTATION_3D_MARKER = '3dMarker';
 
 export const CARTEL = 'cartel';
 
