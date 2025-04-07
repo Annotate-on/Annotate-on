@@ -54,7 +54,7 @@ export default class _3DViewer extends PureComponent {
                 ANNOTATION_3D_MARKER,
                 annotation.id,
                 annotation.title,
-                annotation.text,
+                annotation.value,
                 annotation.coverage,
                 {...annotation}
             );

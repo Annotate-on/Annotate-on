@@ -124,7 +124,7 @@ function Scene({envPreset, onLoad, src, rotationPreset, annotations, onCreateAnn
 
     useEffect(() => {
         if (!loading && annotations) setAnnotations(parseAnnotations(annotations));
-    }, [loading]);
+    }, [loading, annotations]);
 
     useTimeout(
         () => {

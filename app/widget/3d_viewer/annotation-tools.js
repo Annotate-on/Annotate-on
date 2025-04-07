@@ -192,10 +192,12 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
                     if (intersects.length > 0) {
                       const updated = {
                         ...anno,
-                        position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
-                        normal: intersects[0].face?.normal,
-                        cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
-                        cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
+                        _3d: {
+                          position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
+                          normal: intersects[0].face?.normal,
+                          cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
+                          cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
+                        }
                       }
                       setAnnotations(
                           annotations.map((anno, idx) => {
@@ -221,11 +223,11 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
             <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="10" fill="black">
               {anno.title}
             </text>
-            {selectedAnnotation === index && anno && anno.text && (
-                <foreignObject width="200" height={anno.text ? 80 : 38} x="18">
+            {selectedAnnotation === index && anno && anno.value && (
+                <foreignObject width="200" height={anno.value ? 80 : 38} x="18">
                   <div className="text">
                     <div className="label">{anno.title}</div>
-                    {anno.text && <div className="description">{anno.text}</div>}
+                    {anno.value && <div className="description">{anno.value}</div>}
                   </div>
                 </foreignObject>
             )}

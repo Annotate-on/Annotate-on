@@ -636,8 +636,7 @@ export default (state = {}, action) => {
                             annotationType: ANNOTATION_3D_MARKER,
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
-                            title: `POI-${max}`,
-                            text: `Annotation description for POI-${max}`
+                            title: `POI-${max}`
                         },
                         ...(state.annotations_3d_points_of_interest[payload.pictureId] || [])
                     ].sort((left, right) => {
@@ -2479,6 +2478,7 @@ export default (state = {}, action) => {
             annotation.title = action.title;
             annotation.coverage = action.coverage;
             if (action.annotationType === ANNOTATION_MARKER ||
+                action.annotationType === ANNOTATION_3D_MARKER ||
                 action.annotationType === ANNOTATION_RECTANGLE ||
                 action.annotationType === ANNOTATION_COLORPICKER ||
                 action.annotationType === ANNOTATION_TRANSCRIPTION ||
@@ -2506,43 +2506,46 @@ export default (state = {}, action) => {
             }
 
             if (action.annotationType === ANNOTATION_3D_MARKER) {
-                annotation.value = action.annotationData.value
-                annotation.position = action.annotationData.position
-                annotation.normal = action.annotationData.normal
-                annotation.cameraPosition = action.annotationData.cameraPosition
-                annotation.cameraTarget = action.annotationData.cameraTarget
-            }
-
-            if (action.annotationData.value_in_mm !== null) {
-                annotation.value_in_mm = action.annotationData.value_in_mm
-            }
-
-            if (action.annotationData.hasOwnProperty('vertices') && action.annotationData.vertices !== null) {
-                if (Array.isArray(action.annotationData.vertices)) {
-                    annotation.vertices = action.annotationData.vertices;
-                    if (action.annotationType === ANNOTATION_OCCURRENCE) {
-                        annotation.value = action.annotationData.vertices.length;
-                    }
-                } else {
-                    annotation.x = action.annotationData.vertices.x;
-                    annotation.y = action.annotationData.vertices.y;
-                    annotation.r = action.annotationData.r;
+                if(action.annotationData && action.annotationData._3d) {
+                    annotation.position = action.annotationData._3d.position
+                    annotation.normal = action.annotationData._3d.normal
+                    annotation.cameraPosition = action.annotationData._3d.cameraPosition
+                    annotation.cameraTarget = action.annotationData._3d.cameraTarget
                 }
             }
-            if (action.annotationData.area) {
-                annotation.area = action.annotationData.area
-            }
-            if (action.annotationData.x) {
-                annotation.area = action.annotationData.area
-            }
-            if (action.annotationData.value_in_deg) {
-                annotation.value_in_deg = action.annotationData.value_in_deg
-            }
-            if (action.annotationData.value1) {
-                annotation.value1 = action.annotationData.value1
-            }
-            if (action.annotationData.value2) {
-                annotation.value2 = action.annotationData.value2
+
+            if(action.annotationData) {
+                if (action.annotationData.value_in_mm) {
+                    annotation.value_in_mm = action.annotationData.value_in_mm
+                }
+
+                if (action.annotationData.hasOwnProperty('vertices') && action.annotationData.vertices !== null) {
+                    if (Array.isArray(action.annotationData.vertices)) {
+                        annotation.vertices = action.annotationData.vertices;
+                        if (action.annotationType === ANNOTATION_OCCURRENCE) {
+                            annotation.value = action.annotationData.vertices.length;
+                        }
+                    } else {
+                        annotation.x = action.annotationData.vertices.x;
+                        annotation.y = action.annotationData.vertices.y;
+                        annotation.r = action.annotationData.r;
+                    }
+                }
+                if (action.annotationData.area) {
+                    annotation.area = action.annotationData.area
+                }
+                if (action.annotationData.x) {
+                    annotation.area = action.annotationData.area
+                }
+                if (action.annotationData.value_in_deg) {
+                    annotation.value_in_deg = action.annotationData.value_in_deg
+                }
+                if (action.annotationData.value1) {
+                    annotation.value1 = action.annotationData.value1
+                }
+                if (action.annotationData.value2) {
+                    annotation.value2 = action.annotationData.value2
+                }
             }
 
             const response = {

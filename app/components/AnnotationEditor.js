@@ -17,7 +17,7 @@ import {
     ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
-    NUMERICAL
+    NUMERICAL, ANNOTATION_3D_MARKER
 } from '../constants/constants';
 import PickTag from '../containers/PickTag';
 import {
@@ -532,6 +532,7 @@ export default class extends Component {
                         <Label sm={3} for="values" className="label-for">{t('inspector.annotation_editor.lbl_title')}</Label>
                         <Col sm={9} className="align-bottom">
                             {(this.props.annotation.annotationType === ANNOTATION_MARKER ||
+                                this.props.annotation.annotationType === ANNOTATION_3D_MARKER ||
                                 this.props.annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE ||
                                 this.props.annotation.annotationType === ANNOTATION_EVENT_ANNOTATION ||
                                 this.props.annotation.annotationType === ANNOTATION_RECTANGLE ||
@@ -845,6 +846,7 @@ export default class extends Component {
                                 })}
                             </Col>
                             {(this.state.annotationType === ANNOTATION_MARKER
+                                || this.state.annotationType === ANNOTATION_3D_MARKER
                                 || this.state.annotationType === ANNOTATION_RECTANGLE
                                 || this.state.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
                                 || this.state.annotationType === ANNOTATION_POLYGON_OF_INTEREST

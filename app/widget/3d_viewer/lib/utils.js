@@ -67,10 +67,10 @@ export const parseAnnotations = (value) => {
         return [];
     }
     value.forEach((anno) => {
-        anno.cameraPosition = new Vector3().fromArray(Object.values(anno.cameraPosition));
-        anno.cameraTarget = new Vector3().fromArray(Object.values(anno.cameraTarget));
-        anno.normal = new Vector3().fromArray(Object.values(anno.normal));
-        anno.position = new Vector3().fromArray(Object.values(anno.position));
+        anno.cameraPosition = anno.cameraPosition ? new Vector3().fromArray(Object.values(anno.cameraPosition)) : anno.cameraPosition;
+        anno.cameraTarget = anno.cameraTarget ? new Vector3().fromArray(Object.values(anno.cameraTarget)) : anno.cameraTarget;
+        anno.normal = anno.normal ? new Vector3().fromArray(Object.values(anno.normal)) : anno.normal;
+        anno.position = anno.position ? new Vector3().fromArray(Object.values(anno.position)) : anno.position;
     });
     return value;
 };

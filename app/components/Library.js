@@ -598,6 +598,7 @@ export default class extends Component {
                                                 annotationsChronothematique={this.props.annotationsChronothematique}
                                                 annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                                 annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                                annotations3dPointsOfInterest={this.props.annotations3dPointsOfInterest}
                                                 annotationsRectangular={this.props.annotationsRectangular}
                                                 annotationsPolygon={this.props.annotationsPolygon}
                                                 annotationsAngle={this.props.annotationsAngle}
