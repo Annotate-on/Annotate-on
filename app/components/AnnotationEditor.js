@@ -148,6 +148,7 @@ export default class extends Component {
             case ANNOTATION_RICHTEXT:
             case ANNOTATION_CIRCLE_OF_INTEREST:
             case ANNOTATION_POLYGON_OF_INTEREST:
+            case ANNOTATION_3D_MARKER:
                 value = props.annotation.value;
                 break;
             case ANNOTATION_COLORPICKER:

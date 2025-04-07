@@ -1148,6 +1148,7 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_TRANSCRIPTION && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RECTANGLE && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_MARKER && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_3D_MARKER && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST && annotation.value ? annotation.value : ''}

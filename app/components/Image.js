@@ -1242,7 +1242,9 @@ class Image extends PureComponent {
     };
 
     _setAnnotationColor = (id, color) => {
-        this.leafletImage.current.setAnnotationColor(id, color);
+        if(this.leafletImage.current) {
+            this.leafletImage.current.setAnnotationColor(id, color);
+        }
     };
 
     _deleteAnnotationTranscription = (sha1, id) => {
