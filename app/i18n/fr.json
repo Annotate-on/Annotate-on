@@ -61,7 +61,18 @@
         "lbl_xper_mono_parameters_url": "Url",
         "alert_all_xper_parameters_required": "Tous les paramètres xper sont requis!",
         "alert_all_xper_monobase_parameters_required": "Tous les paramètres xper monobase sont requis!",
-        "alert_all_iiif_parameters_required": "Tous les paramètres IIIF sont requis!"
+        "alert_all_iiif_parameters_required": "Tous les paramètres IIIF sont requis!",
+        "iiif_parameters_section_title": "Paramètres IIIF",
+        "lbl_iiif_parameters_url": "Url",
+        "lbl_iiif_parameters_username": "Utilisateur",
+        "lbl_iiif_parameters_password": "Mot de passe",
+        "annotation_tools_title": "Outils des annotation",
+        "lbl_color_picker_radius": "Rayon du sélecteur de couleurs",
+        "lbl_select_color_chart": "Sélectionnez le nuancier",
+        "select_color_chart.tooltip": "Sélectionnez le nuancier",
+        "alert_color_picker_radius_invalid": "La valeur du rayon du sélecteur de couleurs doit être un nombre entier positif!",
+        "saint_hilaire_color_chart": "Nuancier Saint Hilaire",
+        "html_color_chart": "Nuancier HTML"
       },
       "languages": {
         "EN": "Anglais",

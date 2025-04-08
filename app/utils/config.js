@@ -1224,6 +1224,23 @@ export const updateToolsParams = (colorPickerRadius) => {
     yaml.sync(config_file_path, config);
 };
 
+export const updateColorChartSelection = (colorChart) => {
+    console.log("updateColorChartSelection ", colorChart)
+    config.colorChartSettings = {
+        colorChart
+    };
+    yaml.sync(config_file_path, config);
+};
+
+export const getColorChartSelection = () => {
+    console.log("getColorChartSelection")
+    if(!config.colorChartSettings) {
+        updateColorChartSelection('html');
+    }
+    return {
+        colorChart: config.colorChartSettings.colorChart
+    };
+};
 export const getToolsParams = () => {
     // console.log("getXperParams")
     if(!config.tools) {

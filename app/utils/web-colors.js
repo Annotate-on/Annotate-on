@@ -1,4 +1,5 @@
 import colorDiff from 'color-diff';
+import {getColorChartSelection} from "./config";
 
 export const webColors = [
    { name: "aliceblue", code: "#F0F8FF" },
@@ -143,18 +144,113 @@ export const webColors = [
    { name: "yellow", code: "#FFFF00" },
    { name: "yellowgreen", code: "#9ACD32" }
 ]
+export const saintHilaireColors = [
+   { name: "Jaune clair", code: "#cfb26b" },
+   { name: "Jaune foncé", code: "#c59543" },
+   { name: "Jaune-orangé clair", code: "#bc8649" },
+   { name: "Jaune-orangé foncé", code: "#9b6639" },
+   { name: "Orange clair", code: "#b48d62" },
+   { name: "Orange foncé", code: "#865d41" },
+   { name: "Rouge-orange clair", code: "#816353" },
+   { name: "Rouge-orange foncé", code: "#6e4e48" },
+   { name: "Rouge clair", code: "#ba988e" },
+   { name: "Rouge foncé", code: "#9c3a47" },
+   { name: "Rouge-violet clair", code: "#ad8e95" },
+   { name: "Rouge-violet foncé", code: "#784955" },
+   { name: "Violet clair", code: "#a5959c" },
+   { name: "Violet foncé", code: "#605564" },
+   { name: "Bleu-Violet clair", code: "#a49fa2" },
+   { name: "Bleu-Violet foncé", code: "#5d5a71" },
+   { name: "Bleu clair", code: "#969593" },
+   { name: "Bleu foncé", code: "#506e86" },
+   { name: "Bleu-vert clair", code: "#a7a18e" },
+   { name: "Bleu-vert foncé", code: "#747d74" },
+   { name: "Vert clair", code: "#a2a783" },
+   { name: "Vert foncé", code: "#5d6942" },
+   { name: "Jaune-vert clair", code: "#b69c63" },
+   { name: "Jaune-vert foncé", code: "#9e8648" },
+   { name: "Jaune clair altéré par le gris", code: "#d0b78a" },
+   { name: "Jaune foncé altéré par le gris", code: "#b59157" },
+   { name: "Jaune-orangé clair altéré par le gris", code: "#ceb07f" },
+   { name: "Jaune-orangé foncé altéré par le gris", code: "#ad8b5d" },
+   { name: "Orange clair altéré par le gris", code: "#c09477" },
+   { name: "Orange foncé altéré par le gris", code: "#ae725f" },
+   { name: "Rouge-orange clair altéré par le gris", code: "#af8f7e" },
+   { name: "Rouge-orange foncé altéré par le gris", code: "#ac6760" },
+   { name: "Rouge clair altéré par le gris", code: "#9c807b" },
+   { name: "Rouge foncé altéré par le gris", code: "#985c69" },
+   { name: "Rouge-violet clair altéré par le gris", code: "#857571" },
+   { name: "Rouge-violet foncé altéré par le gris", code: "#655f6a" },
+   { name: "Violet clair altéré par le gris", code: "#7a7674" },
+   { name: "Violet foncé altéré par le gris", code: "#565a65" },
+   { name: "Bleu-Violet clair altéré par le gris", code: "#81909c" },
+   { name: "Bleu-Violet foncé altéré par le gris", code: "#637484" },
+   { name: "Bleu clair altéré par le gris", code: "#8a8983" },
+   { name: "Bleu foncé altéré par le gris", code: "#456880" },
+   { name: "Bleu-vert clair altéré par le gris", code: "#8c9b94" },
+   { name: "Bleu-vert foncé altéré par le gris", code: "#51666e" },
+   { name: "Vert clair altéré par le gris", code: "#b6b298" },
+   { name: "Vert foncé altéré par le gris", code: "#79856f" },
+   { name: "Jaune-vert clair altéré par le gris", code: "#b5a97d" },
+   { name: "Jaune-vert foncé altéré par le gris", code: "#838056" },
+   { name: "Jaune clair très altéré par le gris", code: "#a89375" },
+   { name: "Jaune foncé très très altéré par le gris", code: "#74634b" },
+   { name: "Jaune-orangé clair très très altéré par le gris", code: "#a88e70" },
+   { name: "Jaune-orangé foncé très très altéré par le gris", code: "#7d6753" },
+   { name: "Orange clair très altéré par le gris", code: "#957a64" },
+   { name: "Orange foncé très altéré par le gris", code: "#756054" },
+   { name: "Rouge-orange clair très altéré par le gris", code: "#9f806b" },
+   { name: "Rouge-orange foncé très altéré par le gris", code: "#8e6e63" },
+   { name: "Rouge clair très altéré par le gris", code: "#6a5a4f" },
+   { name: "Rouge foncé très altéré par le gris", code: "#766b6a" },
+   { name: "Rouge-violet clair très altéré par le gris", code: "#7f6f62" },
+   { name: "Rouge-violet foncé très altéré par le gris", code: "#7d7b7b" },
+   { name: "Violet clair très altéré par le gris", code: "#7a6c5f" },
+   { name: "Violet foncé très altéré par le gris", code: "#767576" },
+   { name: "Bleu-Violet clair très altéré par le gris", code: "#71675e" },
+   { name: "Bleu-Violet foncé très altéré par le gris", code: "#636569" },
+   { name: "Bleu clair très altéré par le gris", code: "#747570" },
+   { name: "Bleu foncé très altéré par le gris", code: "#494b4a" },
+   { name: "Bleu-vert clair très altéré par le gris", code: "#606259" },
+   { name: "Bleu-vert foncé très altéré par le gris", code: "#5a5c5a" },
+   { name: "Vert clair très altéré par le gris", code: "#84806b" },
+   { name: "Vert foncé très altéré par le gris", code: "#525645" },
+   { name: "Jaune-vert clair très altéré par le gris", code: "#948569" },
+   { name: "Jaune-vert foncé très altéré par le gris", code: "#6d6746" },
+   { name: "Gris olivâtre", code: "#685b4a" },
+   { name: "Gris roussâtre", code: "#726052" },
+   { name: "Gris rougeâtre", code: "#6f645f" },
+   { name: "Gris violâtre", code: "#6a6967" },
+   { name: "Gris bleuâtre", code: "#686868" },
+   { name: "Gris verdâtre", code: "#757268" },
+   { name: "Blanc", code: "#a38f7b" },
+   { name: "Gris clair", code: "#907e6e" },
+   { name: "Gris", code: "#797269" },
+   { name: "Gris foncé", code: "#61605d" },
+   { name: "Noir", code: "#2c2a27" }
+]
+
 
 export function findClosestColor(hexColor) {
+   let colorsChart;
+   colorsChart = webColors;
+
+   let colorChartSelection = getColorChartSelection();
+
+   if(colorChartSelection && colorChartSelection.colorChart === 'saint_hilaire'){
+      colorsChart = saintHilaireColors;
+   }
+
    const colorLab = colorDiff.rgb_to_lab(_hexToRgb(hexColor));
    let closestColor = null;
    let minDiff = Number.MAX_VALUE;
 
-   for (let i = 0; i < webColors.length; i++) {
-      const webColorLab = colorDiff.rgb_to_lab(_hexToRgb(webColors[i].code));
+   for (let i = 0; i < colorsChart.length; i++) {
+      const webColorLab = colorDiff.rgb_to_lab(_hexToRgb(colorsChart[i].code));
       const diff = colorDiff.diff(colorLab, webColorLab);
       if (diff < minDiff) {
          minDiff = diff;
-         closestColor = webColors[i];
+         closestColor = colorsChart[i];
       }
    }
 

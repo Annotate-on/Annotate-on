@@ -9,10 +9,11 @@ import {
 } from "../constants/constants";
 import {SUPPORTED_LANGUAGES} from "../i18n";
 import {
+    getColorChartSelection,
     getIIIFParams,
     getToolsParams,
     getXperMonoParams,
-    getXperParams,
+    getXperParams, updateColorChartSelection,
     updateIIIFParams,
     updateSelectedLanguage,
     updateToolsParams,
@@ -55,6 +56,9 @@ export default class Options extends Component {
                 colorPickerRadius: '',
                 errors: {
                 }
+            },
+            colorChartSettings:{
+                colorChart: 'html'
             }
         }
     }
@@ -64,6 +68,7 @@ export default class Options extends Component {
         let xperMonoParams = getXperMonoParams();
         let IIIFParams = getIIIFParams();
         let toolsParams = getToolsParams();
+        let colorChartSelection = getColorChartSelection();
         this.setState({
                 xper: {
                     formSaved:true,
@@ -80,9 +85,13 @@ export default class Options extends Component {
                     url: IIIFParams.url ? IIIFParams.url : DEFAULT_IIIF_CONNECTION_URL,
                     username:IIIFParams.username ? IIIFParams.username : '',
                     password:IIIFParams.password ? IIIFParams.password : ''
-                }, tools : {
+                },
+                tools : {
                     formSaved:true,
                     colorPickerRadius: toolsParams.colorPickerRadius
+                },
+                colorChartSettings:{
+                    colorChart: colorChartSelection.colorChart
                 }
             }
         )
@@ -245,6 +254,9 @@ export default class Options extends Component {
         updateSelectedLanguage(event.target.value)
     };
 
+    _handleOnChangeColorChart = (event) => {
+        updateColorChartSelection(event.target.value)
+    };
     _toolsParamsFormChangeHandler = ( event ) => {
         const { name, value } = event.target;
         const { t } = this.props;
@@ -356,6 +368,22 @@ export default class Options extends Component {
                                                 <Button color={this.state.tools.formSaved ? 'success' : 'danger'} onClick={() => this._handleOnSaveToolsParamsForm()}>{t('global.save')}</Button>
                                             </Col>
                                             <Col sm={4} md={4} lg={4}/>
+                                        </Row>
+                                    </div>
+                                    <div className="options-form-item">
+                                        <Row>
+                                            <Col sm={2} md={2} lg={2}  className="options-form-field-label">
+                                                {t('global.options.lbl_select_color_chart')}:
+                                            </Col>
+                                            <Col sm={2} md={2} lg={2}>
+                                                <Input type="select" bsSize="md" title={t('global.options.select_color_chart.tooltip')}
+                                                       value={this.state.colorChartSettings.colorChart}
+                                                       onChange={this._handleOnChangeColorChart}>
+                                                    <option key="" value="html" title={t('global.options.html_color_chart')}>{t('global.options.html_color_chart')}</option>
+                                                    <option key="" value="saint_hilaire" title={t('global.options.saint_hilaire_color_chart')}>{t('global.options.saint_hilaire_color_chart')}</option>
+                                                </Input>
+                                            </Col>
+                                            <Col sm={8} md={8} lg={8}/>
                                         </Row>
                                     </div>
                                 </div>

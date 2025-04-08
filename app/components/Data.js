@@ -786,7 +786,6 @@ class Data extends PureComponent {
 
     exportXlsx(separator) {
         const now = new Date();
-        debugger
         let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: 'Annotations',
             defaultPath: `${formatDateForFileName(now)}.csv`
