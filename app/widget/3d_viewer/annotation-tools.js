@@ -195,13 +195,13 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
                 selected: selectedAnnotation === index,
               })}
               onMouseDown={() => {
-                console.log("onMouseDown")
+                // console.log("onMouseDown")
                 if (isFacingCamera(anno)) {
                   triggerCameraControlsEnabledEvent(false);
                 }
               }}
               onMouseUp={() => {
-                console.log("onMouseUp")
+                // console.log("onMouseUp")
                 if (isFacingCamera(anno)) {
                   if (dragRef.current === index) {
                     const intersects = getIntersects();

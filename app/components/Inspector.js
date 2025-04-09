@@ -918,7 +918,6 @@ export default class extends Component {
 
                 } : undefined}
                 onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
-                    console.log(" hovering annotation", annotation.id)
                     if (this.state.isAnnotateEventRecording) {
                         return false;
                     }
