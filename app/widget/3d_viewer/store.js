@@ -32,7 +32,6 @@ const useStore = create((set) => ({
       }),
 
   setAnnotations: (annotations) => {
-      console.log("setAnnotations", annotations);
       set({
           annotations,
       })

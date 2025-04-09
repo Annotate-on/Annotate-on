@@ -62,7 +62,6 @@ export const downloadJsonFile = (json) => {
 }
 
 export const parseAnnotations = (value) => {
-    console.log("parseAnnotations", value);
     if (!value) {
         return [];
     }

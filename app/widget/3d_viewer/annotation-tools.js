@@ -75,7 +75,6 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
 
   function isEditedAnnotation(anno) {
     if (!editedAnnotation) return false;
-    console.log("isEditedAnnotation", editedAnnotation, anno);
     return editedAnnotation.id === anno.id;
   }
 
