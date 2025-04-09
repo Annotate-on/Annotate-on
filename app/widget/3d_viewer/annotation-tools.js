@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import {useEffect, useRef} from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import useStore from './store';
 import { Intersection, Matrix4, Object3D, Object3DEventMap, Vector3 } from 'three';
@@ -8,6 +8,7 @@ import { Html } from '@react-three/drei';
 import { useDrag } from '@use-gesture/react';
 import {ANNO_CLICK, CAMERA_CONTROLS_ENABLED} from "./lib/constants";
 import {applyMatrix4Inverse, cn} from "./lib/utils";
+import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../../utils/library";
 
 export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotation, onEditAnnotation }) {
 
@@ -23,6 +24,21 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
   const dragRef = useRef(null);
   const v1 = new Vector3();
   const v2 = new Vector3();
+
+  useEffect(() => {
+    ee.on(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, highlightAnnotationFromInspector);
+    return () => {
+      ee.removeListener(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, highlightAnnotationFromInspector);
+    };
+  });
+
+  const highlightAnnotationFromInspector = (id, annotationType) => {
+    const annotation = annotations.find(anno => anno.id === id);
+    if (annotation) {
+      setSelectedAnnotation(annotations.indexOf(annotation));
+      zoomToAnnotation(annotation);
+    }
+  };
 
   function zoomToAnnotation(annotation) {
     v1.copy(annotation.cameraPosition).applyMatrix4(rotationMatrixRef.current);
@@ -213,6 +229,7 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
                     }
                     dragRef.current = null;
                   } else {
+                    ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotations[index].id, true);
                     setSelectedAnnotation(index);
                     triggerAnnoClick(anno);
                   }
@@ -264,6 +281,9 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
                   ...annotations,
                  ann
                 ]);
+                if(annotations.length > 0) {
+                  ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotations[annotations.length - 1].id, true);
+                }
                 setSelectedAnnotation(annotations.length);
                 if(onCreateAnnotation) {
                   onCreateAnnotation(ann);

@@ -47,7 +47,7 @@ import {
     SORT_DATE_ASC,
     SORT_DATE_DESC,
     SORT_TYPE_ASC,
-    SORT_TYPE_DESC, ANNOTATION_3D_MARKER,
+    SORT_TYPE_DESC, ANNOTATION_3D_MARKER, RESOURCE_TYPE_OBJECT3D,
 } from '../constants/constants';
 import AnnotationEditor from '../containers/AnnotationEditor';
 import classnames from "classnames";
@@ -917,7 +917,8 @@ export default class extends Component {
                     });
 
                 } : undefined}
-                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
+                    console.log(" hovering annotation", annotation.id)
                     if (this.state.isAnnotateEventRecording) {
                         return false;
                     }
