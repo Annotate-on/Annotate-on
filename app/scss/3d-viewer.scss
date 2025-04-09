@@ -45,6 +45,11 @@
     stroke: white;
   }
 
+  .point.edited {
+    fill: red !important;
+    stroke: white;
+  }
+
   .point.facing-away {
     opacity: 20%;
     transition: opacity 0.25s ease-in-out;

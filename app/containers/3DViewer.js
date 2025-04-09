@@ -9,7 +9,6 @@ const mapStateToProps = (state, ownProps) => {
     console.log(state, ownProps)
     return {
         annotations: state.app.annotations_3d_points_of_interest,
-        focusedAnnotation: state.app.focused_annotation,
     };
 };
 

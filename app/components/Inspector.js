@@ -924,7 +924,7 @@ export default class extends Component {
 
                     if (!lodash.isNil(annotation.video)) {
                         this._focusAnnotation(e, annotation);
-                        console.log(annotation.video.end)
+                        // console.log(annotation.video.end)
                         if (annotation.video.end !== -1)
                             this._gotoAnnotation(e, annotation, "start");
                     } else

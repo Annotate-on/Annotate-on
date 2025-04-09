@@ -10,7 +10,7 @@ import {ANNO_CLICK, CAMERA_CONTROLS_ENABLED} from "./lib/constants";
 import {applyMatrix4Inverse, cn} from "./lib/utils";
 import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../../utils/library";
 
-export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotation, onEditAnnotation }) {
+export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotation, onEditAnnotation, editedAnnotation }) {
 
   const {
     annotations,
@@ -36,7 +36,7 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
     const annotation = annotations.find(anno => anno.id === id);
     if (annotation) {
       setSelectedAnnotation(annotations.indexOf(annotation));
-      zoomToAnnotation(annotation);
+      // zoomToAnnotation(annotation);
     }
   };
 
@@ -55,7 +55,8 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
   }
 
   const handleAnnotationClick = (e) => {
-    zoomToAnnotation(e.detail);
+    // zoomToAnnotation(e.detail);
+    // console.log("handleAnnotationClick", e.detail);
   };
 
   useEventListener(ANNO_CLICK, handleAnnotationClick);
@@ -70,6 +71,12 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
     );
     const dotProduct = cameraDirection.dot(anno.normal.clone().applyMatrix4(rotationMatrixRef.current));
     return dotProduct >= DOT_PRODUCT_THRESHOLD;
+  }
+
+  function isEditedAnnotation(anno) {
+    if (!editedAnnotation) return false;
+    console.log("isEditedAnnotation", editedAnnotation, anno);
+    return editedAnnotation.id === anno.id;
   }
 
   function updateAnnotationPosition(idx, x, y) {
@@ -193,38 +200,42 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
               data-idx={index}
               className={cn('point', {
                 selected: selectedAnnotation === index,
+              }, {
+                edited: isEditedAnnotation(anno),
               })}
               onMouseDown={() => {
-                // console.log("onMouseDown")
                 if (isFacingCamera(anno)) {
                   triggerCameraControlsEnabledEvent(false);
                 }
               }}
               onMouseUp={() => {
-                // console.log("onMouseUp")
                 if (isFacingCamera(anno)) {
                   if (dragRef.current === index) {
                     const intersects = getIntersects();
                     if (intersects.length > 0) {
-                      const updated = {
-                        ...anno,
-                        _3d: {
-                          position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
-                          normal: intersects[0].face?.normal,
-                          cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
-                          cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
+                      if(isEditedAnnotation(anno)) {
+                        const updated = {
+                          ...anno,
+                          _3d: {
+                            position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
+                            normal: intersects[0].face?.normal,
+                            cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
+                            cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
+                          }
                         }
-                      }
-                      setAnnotations(
-                          annotations.map((anno, idx) => {
-                            if (idx === index) {
-                              return updated;
-                            }
-                            return anno;
-                          })
-                      );
-                      if(onEditAnnotation) {
-                        onEditAnnotation(updated);
+                        setAnnotations(
+                            annotations.map((anno, idx) => {
+                              if (idx === index) {
+                                return updated;
+                              }
+                              return anno;
+                            })
+                        );
+                        if(onEditAnnotation) {
+                          onEditAnnotation(updated);
+                        }
+                      } else {
+                        console.log("annotation is not focused");
                       }
                     }
                     dragRef.current = null;

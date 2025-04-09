@@ -13,7 +13,8 @@ export default class _3DViewer extends PureComponent {
         this.state = {
             currentPicture: props.currentPicture,
             annotations:
-                [...(props.annotations && this.props.annotations[props.currentPicture.sha1] || [])]
+                [...(props.annotations && this.props.annotations[props.currentPicture.sha1] || [])],
+            editedAnnotation: this.props.editedAnnotation,
         };
     }
 
@@ -28,6 +29,11 @@ export default class _3DViewer extends PureComponent {
             this.setState({
                 annotations:
                 [...(nextProps.annotations && nextProps.annotations[nextProps.currentPicture.sha1] || [])]
+            });
+        }
+        if(nextProps.editedAnnotation !== this.props.editedAnnotation) {
+            this.setState({
+                editedAnnotation: nextProps.editedAnnotation
             });
         }
     }
@@ -68,6 +74,7 @@ export default class _3DViewer extends PureComponent {
                     <_3DViewerWrapper
                         url={this.state.currentPicture.file}
                         annotations={this.state.annotations}
+                        editedAnnotation={this.state.editedAnnotation}
                         onCreateAnnotation={this.onCreateAnnotation}
                         onEditAnnotation={this.onEditAnnotation}
                     />
@@ -162,6 +169,7 @@ function _3DViewerWrapper(props) {
                 // annotations ={msannotations}
                 // annotations ={helmetAnnotations}
                 annotations ={props.annotations}
+                editedAnnotation={props.editedAnnotation}
                 onCreateAnnotation={props.onCreateAnnotation}
                 onEditAnnotation={props.onEditAnnotation}
                 rotationPreset={[0, 0, 0]}

@@ -533,6 +533,7 @@ class Image extends PureComponent {
                                     this.state.currentPicture.resourceType === RESOURCE_TYPE_OBJECT3D ?
                                         <_3DViewer
                                             currentPicture={this.state.currentPicture}
+                                            editedAnnotation={this.state.editedAnnotation}
                                         /> : null
                                 }
                             </_RightColumn>
