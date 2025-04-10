@@ -37,7 +37,7 @@ import {
     updateTaxonomyValues,
     createAnnotationCircleOfInterest, deleteAnnotationCircleOfInterest,
     createAnnotationPolygonOfInterest, deleteAnnotationPolygonOfInterest,
-    createImageDetectAnnotationRectangular, createTargetInstance
+    createImageDetectAnnotationRectangular, createTargetInstance, deleteAnnotation3dPointOfInterest
 } from '../actions/app';
 import {withTranslation} from "react-i18next";
 
@@ -53,6 +53,7 @@ const mapStateToProps = (state, ownProps) => {
         annotationsMeasuresLinear: state.app.annotations_measures_linear,
         annotationsRectangular: state.app.annotations_rectangular,
         annotationsPointsOfInterest: state.app.annotations_points_of_interest,
+        annotations3dPointsOfInterest: state.app.annotations_3d_points_of_interest,
         annotationsPolygon: state.app.annotations_polygon,
         annotationsAngle: state.app.annotations_angle,
         annotationsOccurrence: state.app.annotations_occurrence,
@@ -136,6 +137,9 @@ const mapDispatchToProps = dispatch => {
         lastPictureInSelection: (tabName) => dispatch(lastPictureInSelection(tabName)),
         deleteAnnotationPointOfInterest: (pictureId, annotationId) => {
             dispatch(deleteAnnotationPointOfInterest(pictureId, annotationId));
+        },
+        deleteAnnotation3dPointOfInterest: (pictureId, annotationId) => {
+            dispatch(deleteAnnotation3dPointOfInterest(pictureId, annotationId));
         },
         deleteAnnotationRectangular: (pictureId, annotationId) => {
             dispatch(deleteAnnotationRectangular(pictureId, annotationId));

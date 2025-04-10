@@ -47,7 +47,7 @@ import {
     SORT_DATE_ASC,
     SORT_DATE_DESC,
     SORT_TYPE_ASC,
-    SORT_TYPE_DESC,
+    SORT_TYPE_DESC, ANNOTATION_3D_MARKER, RESOURCE_TYPE_OBJECT3D,
 } from '../constants/constants';
 import AnnotationEditor from '../containers/AnnotationEditor';
 import classnames from "classnames";
@@ -135,6 +135,7 @@ export default class extends Component {
 
     constructor(props, context) {
         super(props, context);
+        console.log("inspector props", props);
         this.toggle = this.toggle.bind(this);
         const annotations = this._sortAnnotations(this._mergeAnnotations(this.props),
             this.props.tab.sortDirectionAnnotation ? this.props.tab.sortDirectionAnnotation : SORT_DATE_DESC
@@ -213,6 +214,7 @@ export default class extends Component {
                 || this._getArrayLength(nextProps.annotationsRichtext) !== this._getArrayLength(this.props.annotationsRichtext)
                 || this._getArrayLength(nextProps.annotationsCircleOfInterest) !== this._getArrayLength(this.props.annotationsCircleOfInterest)
                 || this._getArrayLength(nextProps.annotationsPolygonOfInterest) !== this._getArrayLength(this.props.annotationsPolygonOfInterest)
+                || this._getArrayLength(nextProps.annotations3dPointsOfInterest) !== this._getArrayLength(this.props.annotations3dPointsOfInterest)
             )) {
             targetUpdated = false;
             const annotations = this._sortAnnotations(this._mergeAnnotations(nextProps),
@@ -238,7 +240,8 @@ export default class extends Component {
             ...(props.annotationsCategorical && props.annotationsCategorical[props.picture.sha1] || []),
             ...(props.annotationsRichtext && props.annotationsRichtext[props.picture.sha1] || []),
             ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[props.picture.sha1] || []),
-            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || [])
+            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || []),
+            ...(props.annotations3dPointsOfInterest && props.annotations3dPointsOfInterest[props.picture.sha1] || [])
         ];
     };
 
@@ -324,7 +327,13 @@ export default class extends Component {
                 isAnnotationRecording={this.props.isAnnotationRecording}
                 cancel={() => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
-                    this.props.saveOrCancelEditAnnotation(false, null, null, this.state.editedAnnotation.annotationType === 'chronothematique');
+                    this.props.saveOrCancelEditAnnotation(
+                        false,
+                        null,
+                        null,
+                        this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                        this.state.editedAnnotation.annotationType === 'chronothematique'
+                    );
                     this.setState({
                         editedAnnotation: null,
                         openAddTag: false,
@@ -335,7 +344,16 @@ export default class extends Component {
                 save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType, person, date, location, tags, topic, coverage) => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
                     if (this.state.editedAnnotation) {
-                        const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, this.state.editedAnnotation.annotationType === 'chronothematique', person, date, location);
+                        const annotation = this.props.saveOrCancelEditAnnotation(
+                            true,
+                            title,
+                            customValue,
+                            this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                            this.state.editedAnnotation.annotationType === 'chronothematique',
+                            person,
+                            date,
+                            location
+                        );
                         if (this.state.editedAnnotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE) {
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
@@ -348,7 +366,18 @@ export default class extends Component {
                             );
                         } else if (this.state.editedAnnotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
                             console.log('edited annotation in inspector', this.state.editedAnnotation);
-                            const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, true, person, date, location, [], topic);
+                            const annotation = this.props.saveOrCancelEditAnnotation(
+                                true,
+                                title,
+                                customValue,
+                                this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                                true,
+                                person,
+                                date,
+                                location,
+                                [],
+                                topic
+                            );
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
                                 this.state.editedAnnotation.annotationType,
@@ -360,6 +389,7 @@ export default class extends Component {
                             );
                         } else if (this.state.editedAnnotation.annotationType === ANNOTATION_MARKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_RECTANGLE ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_COLORPICKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_CATEGORICAL ||
@@ -737,6 +767,9 @@ export default class extends Component {
             case ANNOTATION_POLYGON_OF_INTEREST:
                 this.props.deleteAnnotationPolygonOfInterest(sha1, annotation.id);
                 break;
+            case ANNOTATION_3D_MARKER:
+                this.props.deleteAnnotation3dPointOfInterest(sha1, annotation.id);
+                break;
         }
     };
 
@@ -884,14 +917,14 @@ export default class extends Component {
                     });
 
                 } : undefined}
-                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
                     if (this.state.isAnnotateEventRecording) {
                         return false;
                     }
 
                     if (!lodash.isNil(annotation.video)) {
                         this._focusAnnotation(e, annotation);
-                        console.log(annotation.video.end)
+                        // console.log(annotation.video.end)
                         if (annotation.video.end !== -1)
                             this._gotoAnnotation(e, annotation, "start");
                     } else
@@ -1115,6 +1148,7 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_TRANSCRIPTION && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RECTANGLE && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_MARKER && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_3D_MARKER && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST && annotation.value ? annotation.value : ''}

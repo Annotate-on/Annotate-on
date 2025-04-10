@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import {useEffect, useRef} from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import useStore from './store';
 import { Intersection, Matrix4, Object3D, Object3DEventMap, Vector3 } from 'three';
@@ -8,8 +8,9 @@ import { Html } from '@react-three/drei';
 import { useDrag } from '@use-gesture/react';
 import {ANNO_CLICK, CAMERA_CONTROLS_ENABLED} from "./lib/constants";
 import {applyMatrix4Inverse, cn} from "./lib/utils";
+import {ee, EVENT_HIGHLIGHT_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET} from "../../utils/library";
 
-export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
+export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotation, onEditAnnotation, editedAnnotation }) {
 
   const {
     annotations,
@@ -23,6 +24,21 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
   const dragRef = useRef(null);
   const v1 = new Vector3();
   const v2 = new Vector3();
+
+  useEffect(() => {
+    ee.on(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, highlightAnnotationFromInspector);
+    return () => {
+      ee.removeListener(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, highlightAnnotationFromInspector);
+    };
+  });
+
+  const highlightAnnotationFromInspector = (id, annotationType) => {
+    const annotation = annotations.find(anno => anno.id === id);
+    if (annotation) {
+      setSelectedAnnotation(annotations.indexOf(annotation));
+      zoomToAnnotation(annotation);
+    }
+  };
 
   function zoomToAnnotation(annotation) {
     v1.copy(annotation.cameraPosition).applyMatrix4(rotationMatrixRef.current);
@@ -39,7 +55,8 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
   }
 
   const handleAnnotationClick = (e) => {
-    zoomToAnnotation(e.detail);
+    // zoomToAnnotation(e.detail);
+    // console.log("handleAnnotationClick", e.detail);
   };
 
   useEventListener(ANNO_CLICK, handleAnnotationClick);
@@ -47,6 +64,8 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
   const triggerAnnoClick = useEventTrigger(ANNO_CLICK);
 
   function isFacingCamera(anno) {
+    // console.log("isFacingCamera", anno);
+    if (!anno.normal) return false;
     const cameraDirection = camera.position.clone().normalize().sub(
         anno.position.clone().normalize().applyMatrix4(rotationMatrixRef.current)
     );
@@ -54,7 +73,19 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
     return dotProduct >= DOT_PRODUCT_THRESHOLD;
   }
 
+  function isEditedAnnotation(anno) {
+    if (!editedAnnotation) return false;
+    return editedAnnotation.id === anno.id;
+  }
+
+  function isInEdit() {
+    return !!editedAnnotation;
+  }
+
   function updateAnnotationPosition(idx, x, y) {
+    if(x === undefined || y === undefined) return;
+    if(x === null || y === null) return;
+    if(isNaN(x) || isNaN(y)) return;
     const annoEl = document.getElementById(`point-${idx}`);
     if (annoEl) {
       annoEl.setAttribute('transform', `translate(${x}, ${y})`);
@@ -172,6 +203,8 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
               data-idx={index}
               className={cn('point', {
                 selected: selectedAnnotation === index,
+              }, {
+                edited: isEditedAnnotation(anno),
               })}
               onMouseDown={() => {
                 if (isFacingCamera(anno)) {
@@ -183,38 +216,49 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
                   if (dragRef.current === index) {
                     const intersects = getIntersects();
                     if (intersects.length > 0) {
-                      setAnnotations(
-                          annotations.map((anno, idx) => {
-                            if (idx === index) {
-                              return {
-                                ...anno,
-                                position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
-                                normal: intersects[0].face?.normal,
-                                cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
-                                cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
-                              };
-                            }
-                            return anno;
-                          })
-                      );
+                      if(isEditedAnnotation(anno)) {
+                        const updated = {
+                          ...anno,
+                          _3d: {
+                            position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
+                            normal: intersects[0].face?.normal,
+                            cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
+                            cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current),
+                          }
+                        }
+                        setAnnotations(
+                            annotations.map((anno, idx) => {
+                              if (idx === index) {
+                                return updated;
+                              }
+                              return anno;
+                            })
+                        );
+                        if(onEditAnnotation) {
+                          onEditAnnotation(updated);
+                        }
+                      } else {
+                        console.log("annotation is not focused");
+                      }
                     }
                     dragRef.current = null;
                   } else {
+                    ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotations[index].id, true);
                     setSelectedAnnotation(index);
                     triggerAnnoClick(anno);
                   }
                   triggerCameraControlsEnabledEvent(true);
                 }
               }}>
-            <circle r="11" />
+            <circle r="16" />
             <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="10" fill="black">
-              {index + 1}
+              {anno.title}
             </text>
-            {selectedAnnotation === index && anno && anno.label && (
-                <foreignObject width="200" height={anno.description ? 80 : 38} x="18">
+            {selectedAnnotation === index && anno && anno.value && (
+                <foreignObject width="200" height={anno.value ? 80 : 38} x="18">
                   <div className="text">
-                    <div className="label">{anno.label}</div>
-                    {anno.description && <div className="description">{anno.description}</div>}
+                    <div className="label">{anno.title}</div>
+                    {anno.value && <div className="description">{anno.value}</div>}
                   </div>
                 </foreignObject>
             )}
@@ -238,21 +282,27 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef }) {
             width="100vw"
             height="100vh"
             onDoubleClick={() => {
+              if (isInEdit()) return;
               const intersects = getIntersects();
               const position = applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current)
               if (intersects.length > 0) {
+                const ann = {
+                  position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
+                  normal: intersects[0].face?.normal,
+                  cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
+                  cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current)
+                }
                 setAnnotations([
                   ...annotations,
-                  {
-                    position: applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current),
-                    normal: intersects[0].face?.normal,
-                    cameraPosition: applyMatrix4Inverse(cameraRefs.position.current, rotationMatrixRef.current),
-                    cameraTarget: applyMatrix4Inverse(cameraRefs.target.current, rotationMatrixRef.current)
-                    ,label: 'Annotation label ' + (annotations.length + 1),
-                    description: `Annotation description position: ${position.x}, ${position.y}, ${position.z}`,
-                  },
+                 ann
                 ]);
+                if(annotations.length > 0) {
+                  ee.emit(EVENT_HIGHLIGHT_ANNOTATION, annotations[annotations.length - 1].id, true);
+                }
                 setSelectedAnnotation(annotations.length);
+                if(onCreateAnnotation) {
+                  onCreateAnnotation(ann);
+                }
               }
             }}>
           { drawAnnotations() }

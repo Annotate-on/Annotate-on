@@ -28,7 +28,7 @@ import {
     RESOURCE_TYPE_VIDEO, RESOURCE_TYPE_OBJECT3D,
     SECTION_BG,
     SECTION_FG,
-    TWO_DIMENSIONAL, CATEGORICAL, INTEREST
+    TWO_DIMENSIONAL, CATEGORICAL, INTEREST, ANNOTATION_3D_MARKER
 } from '../constants/constants';
 import {
     getAngleInDegrees,
@@ -350,6 +350,7 @@ class Image extends PureComponent {
                                     isAnnotationRecording={this.state.isAnnotationRecording}
                                     annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                     annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                    annotations3dPointsOfInterest={this.props.annotations3dPointsOfInterest}
                                     annotationsRectangular={this.props.annotationsRectangular}
                                     annotationsPolygon={this.props.annotationsPolygon}
                                     annotationsAngle={this.props.annotationsAngle}
@@ -530,7 +531,10 @@ class Image extends PureComponent {
                                 }
                                 {
                                     this.state.currentPicture.resourceType === RESOURCE_TYPE_OBJECT3D ?
-                                        <_3DViewer currentPicture={this.state.currentPicture}/> : null
+                                        <_3DViewer
+                                            currentPicture={this.state.currentPicture}
+                                            editedAnnotation={this.state.editedAnnotation}
+                                        /> : null
                                 }
                             </_RightColumn>
                         </div>
@@ -1048,7 +1052,9 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
+        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE
+            || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION
+            || annotation.annotationType === ANNOTATION_3D_MARKER) {
             this.setState({
                 editedAnnotation: annotation
             });
@@ -1064,9 +1070,20 @@ class Image extends PureComponent {
         return true;
     };
 
-    _callSaveOrCancelEdit = (save, title, value, isVideoAnnotation, person, date, location, tags, topic) => {
-
-        if (isVideoAnnotation) {
+    _callSaveOrCancelEdit = (save, title, value, is3dAnnotation , isVideoAnnotation, person, date, location, tags, topic) => {
+        if (is3dAnnotation) {
+            let annotation = {
+                value: value,
+                title: title,
+                date: date,
+                location: location
+            }
+            this.setState({
+                editedAnnotation: null
+            });
+            this.setAnnotationTool(null);
+            return annotation;
+        } else if (isVideoAnnotation) {
             let annotation = {
                 value: value,
                 person: person,
@@ -1226,7 +1243,9 @@ class Image extends PureComponent {
     };
 
     _setAnnotationColor = (id, color) => {
-        this.leafletImage.current.setAnnotationColor(id, color);
+        if(this.leafletImage.current) {
+            this.leafletImage.current.setAnnotationColor(id, color);
+        }
     };
 
     _deleteAnnotationTranscription = (sha1, id) => {
@@ -1344,7 +1363,9 @@ class Image extends PureComponent {
     }
 
     _updateAnnotation = (id, text) => {
-        this.leafletImage.current.updateAnnotation(id, text);
+        if(this.leafletImage.current) {
+            this.leafletImage.current.updateAnnotation(id, text);
+        }
     };
 
     _navigationHandler = (e, callAction) => {

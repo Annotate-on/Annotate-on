@@ -116,7 +116,7 @@ L.RichText = Rectangle.extend({
     },
 
     setStyle: function (style) {
-        console.log(style)
+        // console.log(style)
         if (style.highlight || style.edit) {
             L.Rectangle.prototype.setStyle.call(this, style);
         } else {
