@@ -236,6 +236,7 @@
       "tab_metadata": "Métadonnées",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibrage",
+      "tab_3d_settings": "Paramètres 3D",
       "tooltip_edit_annotation": "Éditer l'annotation",
       "tooltip_delete_annotation": "Effacer l'annotation",
       "tooltip_add_keyword": "Nouveau mot-clé",
@@ -387,6 +388,10 @@
         "lbl_characters": "Caractères",
         "lbl_selection_value": "Valeur de sélection"
       },
+      "3d_settings": {
+        "lbl_ambient-light": "Lumière ambiante"
+      },
+
       "tooltip_add_location": "Ajouter une localisation",
       "tooltip_add_dating": "Ajouter une datation"
     },

@@ -225,6 +225,7 @@
       "tab_metadata": "Metadados",
       "tab_annotations": "Anotações",
       "tab_calibration": "Calibração",
+      "tab_3d_settings": "Configurações 3D",
       "tooltip_edit_annotation": "Editar anotação",
       "tooltip_delete_annotation": "Excluir anotação",
       "tooltip_add_keyword": "Adicionar palavra-chave",
@@ -376,6 +377,10 @@
         "lbl_characters": "Caracteres",
         "lbl_selection_value": "Valor de seleção"
       },
+      "3d_settings": {
+        "lbl_ambient-light": "Luz ambiente"
+      },
+
       "tooltip_add_location": "Adicionar localização",
       "tooltip_add_dating": "Adicionar data"
     },

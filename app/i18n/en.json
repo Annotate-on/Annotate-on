@@ -243,6 +243,7 @@
       "tab_metadata": "Metadata",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibration",
+      "tab_3d_settings": "3D Settings",
       "tooltip_edit_annotation": "Edit annotation",
       "tooltip_delete_annotation": "Delete annotation",
       "tooltip_add_keyword": "Add keyword",
@@ -393,6 +394,9 @@
       "targets_inspector": {
         "lbl_characters": "Characters",
         "lbl_selection_value": "Selection value"
+      },
+      "3d_settings": {
+        "lbl_ambient-light": "Ambient light"
       },
       "tooltip_add_location": "Add location",
       "tooltip_add_dating": "Add dating"
