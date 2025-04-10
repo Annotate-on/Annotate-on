@@ -865,6 +865,7 @@ export default class extends Component {
                                 annotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                                 annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
                                 annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
+                                annotation.annotationType === ANNOTATION_3D_MARKER ||
                                 annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                 options.push({
                                     value: target.id,

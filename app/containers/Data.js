@@ -18,7 +18,9 @@ const mapStateToProps = (state, ownProps) => {
             ...Object.values(state.app.annotations_transcription),
             ...Object.values(state.app.annotations_circle_of_interest),
             ...Object.values(state.app.annotations_polygon_of_interest),
-            ...Object.values(state.app.annotations_richtext)]),
+            ...Object.values(state.app.annotations_richtext),
+            ...Object.values(state.app.annotations_3d_points_of_interest)
+        ]),
         pictures: state.app.pictures,
         tagsByAnnotation: state.app.tags_by_annotation,
         picturesByCalibration: state.app.pictures_by_calibration,

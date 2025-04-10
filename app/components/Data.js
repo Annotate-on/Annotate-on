@@ -36,7 +36,7 @@ import {
     ANNOTATION_CIRCLE_OF_INTEREST,
     ANNOTATION_POLYGON_OF_INTEREST,
     ANNOTATION_TRANSCRIPTION, APP_NAME,
-    MODEL_XPER
+    MODEL_XPER, ANNOTATION_3D_MARKER
 } from "../constants/constants";
 import Collections from "../containers/Collections";
 import XmpMetadata from "../containers/XmpMetadata";
@@ -217,6 +217,7 @@ class Data extends PureComponent {
                     case ANNOTATION_CIRCLE_OF_INTEREST:
                     case ANNOTATION_POLYGON_OF_INTEREST:
                     case ANNOTATION_TRANSCRIPTION:
+                    case ANNOTATION_3D_MARKER:
                         value = annotation.value ? annotation.value : '';
                         break;
                 }
@@ -285,7 +286,8 @@ class Data extends PureComponent {
                 type: annotation.annotationType,
                 pictureTags,
                 pictureMetadata,
-                coverage: annotation.coverage
+                coverage: annotation.coverage,
+                position: annotation.position
             }
 
         }).filter(_ => _ !== undefined);
@@ -406,6 +408,15 @@ class Data extends PureComponent {
             w: '',
             h: '',
         };
+        if(annotation.type === '3dMarker'){
+            result = {
+                x: 0,
+                y: 0,
+                w: 0,
+                h: 0,
+            };
+            return result;
+        }
 
         if (annotation['x'] !== null && annotation['y'] !== null) {
             const xMin = annotation['x'] - 2.5;
@@ -461,6 +472,9 @@ class Data extends PureComponent {
             })
         } else {
             output = `[${annotation.x}, ${annotation.y}]`
+            if(annotation.type === '3dMarker'){
+                output = `[${annotation.position.x}, ${annotation.position.y}, ${annotation.position.z}]`
+            }
         }
         return output;
     }

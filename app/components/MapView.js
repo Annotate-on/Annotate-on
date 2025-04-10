@@ -153,7 +153,8 @@ export default class MapView extends Component {
             ...(props.annotationsCategorical && props.annotationsCategorical[resourceId] || []),
             ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[resourceId] || []),
             ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[resourceId] || []),
-            ...(props.annotationsRichtext && props.annotationsRichtext[resourceId] || [])
+            ...(props.annotationsRichtext && props.annotationsRichtext[resourceId] || []),
+            ...(props.annotations3dPointsOfInterest && props.annotations3dPointsOfInterest[resourceId] || [])
         ];
     };
 
