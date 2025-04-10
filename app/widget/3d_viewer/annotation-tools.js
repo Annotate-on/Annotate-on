@@ -36,7 +36,7 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
     const annotation = annotations.find(anno => anno.id === id);
     if (annotation) {
       setSelectedAnnotation(annotations.indexOf(annotation));
-      // zoomToAnnotation(annotation);
+      zoomToAnnotation(annotation);
     }
   };
 
@@ -76,6 +76,10 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
   function isEditedAnnotation(anno) {
     if (!editedAnnotation) return false;
     return editedAnnotation.id === anno.id;
+  }
+
+  function isInEdit() {
+    return !!editedAnnotation;
   }
 
   function updateAnnotationPosition(idx, x, y) {
@@ -278,6 +282,7 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
             width="100vw"
             height="100vh"
             onDoubleClick={() => {
+              if (isInEdit()) return;
               const intersects = getIntersects();
               const position = applyMatrix4Inverse(intersects[0].point, rotationMatrixRef.current)
               if (intersects.length > 0) {
