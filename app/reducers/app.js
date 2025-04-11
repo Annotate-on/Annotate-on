@@ -3378,7 +3378,7 @@ export default (state = {}, action) => {
             if (fs.existsSync(pictures[sha1].file)){
                 fs.unlinkSync(pictures[sha1].file);
             }
-            if (fs.existsSync(pictures[sha1].thumbnail)){
+            if (fs.existsSync(pictures[sha1].thumbnail) && pictures[sha1].thumbnail !== '/3d-thumb.png'){
                 fs.unlinkSync(pictures[sha1].thumbnail);
             }
 
