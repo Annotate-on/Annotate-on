@@ -71,6 +71,7 @@ import {acceptedTypes} from "../utils/annotationRecording";
 import {withTranslation} from "react-i18next";
 import lodash from "lodash";
 import {findClosestColor} from "../utils/web-colors";
+import _3DSettings from "../containers/3DSettings";
 
 const EDIT_DATING = require('./pictures/clock-regular.svg');
 const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
@@ -84,6 +85,7 @@ const STOP = require('./pictures/stop.svg');
 const TAB_METADATA = 0;
 const TAB_ANNOTATIONS = 1;
 const TAB_CALIBRATION = 2;
+const TAB_3D_SETTINGS = 3;
 
 // STYLE CONSTANTS
 
@@ -479,22 +481,34 @@ export default class extends Component {
                             {t('inspector.tab_annotations')}
                         </NavLink>
                     </NavItem>
-                    <NavItem className={classnames({hidden: this.props.readOnly})}>
-                        <NavLink
-                            className={classnames({active: this.state.selectedTab === TAB_CALIBRATION})}
-                            onClick={() => {
-                                this.selectTab(TAB_CALIBRATION);
-                            }}>
-                            {t('inspector.tab_calibration')}
-                            {((this.props.picture.dpix && this.props.picture.dpiy) || this.props.picturesByCalibration[this.props.picture.sha1]) ?
-                                '' : <sup className="sup-calibration">*</sup>
-                            }
-                            {
-                                (this.props.picturesByCalibration[this.props.picture.sha1]) ?
-                                    <sup className="sup-calibration-picked">✔</sup> : ""
-                            }
-                        </NavLink>
-                    </NavItem>
+                    {
+                        this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ?
+                        <NavItem className={classnames({hidden: this.props.readOnly})}>
+                            <NavLink
+                                className={classnames({active: this.state.selectedTab === TAB_3D_SETTINGS})}
+                                onClick={() => {
+                                    this.selectTab(TAB_3D_SETTINGS);
+                                }}>
+                                {t('inspector.tab_3d_settings')}
+                            </NavLink>
+                        </NavItem> :
+                            <NavItem className={classnames({hidden: this.props.readOnly})}>
+                                <NavLink
+                                    className={classnames({active: this.state.selectedTab === TAB_CALIBRATION})}
+                                    onClick={() => {
+                                        this.selectTab(TAB_CALIBRATION);
+                                    }}>
+                                    {t('inspector.tab_calibration')}
+                                    {((this.props.picture.dpix && this.props.picture.dpiy) || this.props.picturesByCalibration[this.props.picture.sha1]) ?
+                                        '' : <sup className="sup-calibration">*</sup>
+                                    }
+                                    {
+                                        (this.props.picturesByCalibration[this.props.picture.sha1]) ?
+                                            <sup className="sup-calibration-picked">✔</sup> : ""
+                                    }
+                                </NavLink>
+                            </NavItem>
+                    }
                 </Nav>
                 <TabContent activeTab={this.state.selectedTab}>
                     <TabPane tabId={TAB_METADATA}>
@@ -713,6 +727,14 @@ export default class extends Component {
                             </_MetadataSubpanel>
                         )}
                     </TabPane>
+                    <TabPane tabId={TAB_3D_SETTINGS}>
+                        {this.state.selectedTab === TAB_3D_SETTINGS && (
+                            <_MetadataSubpanel>
+                                <_3DSettings/>
+                            </_MetadataSubpanel>
+                        )}
+                    </TabPane>
+
                 </TabContent>
             </_Root>
         );

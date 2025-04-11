@@ -38,7 +38,7 @@ import {getBoundingSphere, normalizeSrc, parseAnnotations} from "./lib/utils";
 import useTimeout from "./lib/hooks/use-timeout";
 import GLTF from "./gltf";
 import {ee, EVENT_HIDE_WAITING, EVENT_SHOW_WAITING} from "../../utils/library";
-import useStore from "./store";
+import use3DStore from "./store";
 import {AnnotationTools} from "./annotation-tools";
 
 function Scene({envPreset, onLoad, src, rotationPreset, annotations, onCreateAnnotation, onEditAnnotation, editedAnnotation}, ref) {
@@ -97,7 +97,7 @@ function Scene({envPreset, onLoad, src, rotationPreset, annotations, onCreateAnn
         setSelectedAnnotation,
         setSrcs,
         srcs,
-    } = useStore();
+    } = use3DStore();
 
     const rotationMatrixRef = useRef(new Matrix4().makeRotationFromEuler(rotationEuler));
 
