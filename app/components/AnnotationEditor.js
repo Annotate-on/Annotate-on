@@ -150,6 +150,7 @@ export default class extends Component {
             case ANNOTATION_POLYGON_OF_INTEREST:
             case ANNOTATION_3D_MARKER:
                 value = props.annotation.value;
+                vertices = this.format3DPosition(props.annotation);
                 break;
             case ANNOTATION_COLORPICKER:
                 vertices = `(x1:${formatValue(props.annotation.x, 2)}, y1:${formatValue(props.annotation.y, 2)})`;
@@ -218,6 +219,15 @@ export default class extends Component {
             tagStartTime: 0,
             coverage: coverage
         };
+    }
+
+    format3DPosition(annotation) {
+        let position = '';
+        position += `position (x:${formatValue(annotation.position.x, 3)}, y:${formatValue(annotation.position.y, 3)}, z:${formatValue(annotation.position.z, 3)}), `;
+        position += `normal (x:${formatValue(annotation.normal.x, 3)}, y:${formatValue(annotation.normal.y, 3)}, z:${formatValue(annotation.normal.z, 3)}), `;
+        position += `camera_position (x:${formatValue(annotation.cameraPosition.x, 3)}, y:${formatValue(annotation.cameraPosition.y, 3)}, z:${formatValue(annotation.cameraPosition.z, 3)}), `;
+        position += `camera_target (x:${formatValue(annotation.cameraTarget.x, 3)}, y:${formatValue(annotation.cameraTarget.y, 3)}, z:${formatValue(annotation.cameraTarget.z, 3)}), `;
+        return position;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -794,7 +804,7 @@ export default class extends Component {
                                               aria-haspopup='true'
                                               role='example'>
                                 <pre>
-                                    {this.state.vertices.replace(/\)\, /g, ')\n')}
+                                    {this.state.vertices.replace(/\), /g, ')\n')}
                                 </pre>
                                 </ReactTooltip>
                             </Col>
