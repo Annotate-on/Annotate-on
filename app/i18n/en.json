@@ -396,7 +396,8 @@
         "lbl_selection_value": "Selection value"
       },
       "3d_settings": {
-        "lbl_ambient-light": "Ambient light"
+        "lbl_ambient-light": "Ambient light",
+        "lbl_environment_lighting": "Environment lighting"
       },
       "tooltip_add_location": "Add location",
       "tooltip_add_dating": "Add dating"

@@ -1,7 +1,9 @@
-import React, {PureComponent, useRef} from "react";
+import React, {PureComponent, useEffect, useRef} from "react";
 import Viewer from "../widget/3d_viewer/viewer";
 import Chance from "chance";
 import {ANNOTATION_3D_MARKER} from "../constants/constants";
+import use3DStore from "../widget/3d_viewer/store";
+import {ENVIRONMENT_APARTMENT} from "../widget/3d_viewer/lib/constants";
 
 const chance = new Chance();
 
@@ -29,8 +31,7 @@ export default class _3DViewer extends PureComponent {
                     [...(nextProps.annotations && nextProps.annotations[nextProps.currentPicture.sha1] || [])]
             });
         }
-
-        if(nextProps.editedAnnotation !== this.props.editedAnnotation) {
+        if (nextProps.editedAnnotation !== this.props.editedAnnotation) {
             this.setState({
                 editedAnnotation: nextProps.editedAnnotation
             });
@@ -39,7 +40,7 @@ export default class _3DViewer extends PureComponent {
 
     onCreateAnnotation = (annotation) => {
         console.log("onCreateAnnotationHandler", annotation);
-        if(this.props.createAnnotation3dPointOfInterest) {
+        if (this.props.createAnnotation3dPointOfInterest) {
             this.props.createAnnotation3dPointOfInterest(
                 this.state.currentPicture.sha1,
                 chance.guid(),
@@ -53,7 +54,7 @@ export default class _3DViewer extends PureComponent {
 
     onEditAnnotation = (annotation) => {
         console.log("onEditAnnotation", annotation);
-        if(this.props.editAnnotation) {
+        if (this.props.editAnnotation) {
             this.props.editAnnotation(
                 this.state.currentPicture.sha1,
                 ANNOTATION_3D_MARKER,
@@ -67,6 +68,7 @@ export default class _3DViewer extends PureComponent {
     }
 
     render() {
+        console.log("3DViewer render", this.state.currentPicture);
         return (
             <div id="viewer-3d">">
                 <div className="row justify-content-center -align-center no-margin">
@@ -76,6 +78,7 @@ export default class _3DViewer extends PureComponent {
                         editedAnnotation={this.state.editedAnnotation}
                         onCreateAnnotation={this.onCreateAnnotation}
                         onEditAnnotation={this.onEditAnnotation}
+                        resetSceneSettings={this.state.resetSceneSettings}
                     />
                 </div>
             </div>
@@ -88,13 +91,27 @@ function _3DViewerWrapper(props) {
     const loadedUrlsRef = useRef([]);
     const model_url = props.url;
 
+    const {
+        environmentMap,
+        setEnvironmentMap,
+        setAmbientLightIntensity,
+    } = use3DStore();
+
+    useEffect(() => {
+        // Reset the environment map and ambient light intensity when the component mounts
+        // or when the model_url changes
+        setEnvironmentMap(ENVIRONMENT_APARTMENT);
+        setAmbientLightIntensity(0);
+    }, [props.url]);
+
+
     return (
-            model_url ?
+        model_url ?
             <Viewer
                 ref={viewerRef}
-                envPreset={'apartment'}
+                envPreset={environmentMap}
                 src={model_url}
-                annotations ={props.annotations}
+                annotations={props.annotations}
                 editedAnnotation={props.editedAnnotation}
                 onCreateAnnotation={props.onCreateAnnotation}
                 onEditAnnotation={props.onEditAnnotation}
@@ -103,7 +120,6 @@ function _3DViewerWrapper(props) {
                     console.log(`model${srcs.length > 1 ? 's' : ''} loaded`, srcs);
                     // add loaded urls to array of already loaded urls
                     loadedUrlsRef.current = [...loadedUrlsRef.current, ...srcs.map((src) => src.url)];
-
                     // loop through each src and show the required statement if it exists
                     // srcs
                     //     .filter((srcObj) => srcObj.requiredStatement)

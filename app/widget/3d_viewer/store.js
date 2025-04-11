@@ -1,8 +1,7 @@
 import { Euler } from 'three';
-// import { PresetsType } from '@react-three/drei/helpers/environment-assets';
 import {create} from "zustand";
 
-const useStore = create((set) => ({
+const use3DStore = create((set) => ({
   ambientLightIntensity: 0,
   annotations: [],
   axesEnabled: true,
@@ -144,4 +143,4 @@ const useStore = create((set) => ({
       }),
 }));
 
-export default useStore;
+export default use3DStore;

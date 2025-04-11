@@ -97,3 +97,7 @@ export function getElementTranslate(el) {
 export function setElementTranslate(el, x, y) {
     el?.setAttribute('transform', `translate(${x}, ${y})`);
 }
+
+export function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}

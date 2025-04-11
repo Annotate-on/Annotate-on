@@ -1,6 +1,6 @@
 import {useEffect, useRef} from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import useStore from './store';
+import use3DStore from './store';
 import { Intersection, Matrix4, Object3D, Object3DEventMap, Vector3 } from 'three';
 import { useEventListener, useEventTrigger } from './lib/hooks/use-event';
 import React from 'react';
@@ -17,7 +17,7 @@ export function AnnotationTools({ cameraRefs, rotationMatrixRef, onCreateAnnotat
     setAnnotations,
     selectedAnnotation,
     setSelectedAnnotation
-  } = useStore();
+  } = use3DStore();
 
   const { scene, camera, pointer, raycaster, size } = useThree();
   const DOT_PRODUCT_THRESHOLD = Math.PI * -0.1;
