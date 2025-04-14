@@ -16,15 +16,26 @@ export default class MenuBuilder {
       this.setupDevelopmentEnvironment();
     }
 
-    const template =
-    process.platform === 'darwin'
-      ? this.buildDarwinTemplate()
-      : null;
+  //   const template =
+  //   process.platform === 'darwin'
+  //     ? this.buildDarwinTemplate()
+  //     : null;
+  //
+  // const menu = Menu.buildFromTemplate(template);
+  // Menu.setApplicationMenu(menu);
 
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
+    // Disable app menu completely for Windows and Linux
+    if (process.platform !== 'darwin') {
+      Menu.setApplicationMenu(null); // 🔥 disables the menu bar
+      return;
+    }
 
-  return menu;
+    const template = this.buildDarwinTemplate(); // Only used on macOS
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+
+
+    return menu;
 }
 
   setupDevelopmentEnvironment() {

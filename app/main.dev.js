@@ -98,6 +98,7 @@ app.on('ready', async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
   });
 
   mainWindow.on('close', (e) => {
