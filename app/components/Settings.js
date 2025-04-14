@@ -274,7 +274,7 @@ export default class extends PureComponent {
 
     _zipDirectory(source) {
         const { t } = this.props;
-        let saverPath = remote.dialog.showSaveDialog( remote.getCurrentWindow() , {
+        let saverPath = remote.dialog.showSaveDialogSync( remote.getCurrentWindow() , {
             title: t('projects.dialog_save_project_to'),
             defaultPath: path.join(getUserWorkspace(), `${this.state.workspace}.annotate`)
         });
@@ -303,7 +303,7 @@ export default class extends PureComponent {
 
             stream.on('close', () => {
                 ee.emit(EVENT_HIDE_WAITING);
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: saverPath,
                     message: t('projects.dialog_message_export_finished'),
@@ -332,7 +332,7 @@ export default class extends PureComponent {
                 projects: sortedProjects
             });
         }
-        remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+        remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
             type: 'info',
             detail: t('projects.alert_import_projects_from_1x_version_message', {numberOfImportedProjects: numberOfImportedProjects}),
             message: t('projects.alert_import_projects_from_1x_version_is_finished'),
@@ -450,7 +450,7 @@ export default class extends PureComponent {
                                                              }
                                                              const path_to_project = path.join(project.path, PROJECT_INFO_DESCRIPTOR);
                                                              if(!fs.existsSync(path.join(project.path, 'project-info.json'))) {
-                                                                 remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                 remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                                                                      type: 'error',
                                                                      message: t('global.error'),
                                                                      detail: t('projects.alert_there_is_no_project_on_path', {file_path: project.path}),
@@ -464,7 +464,7 @@ export default class extends PureComponent {
                                                                  lockUnlockProject(project.path);
                                                                  this._setWorkspace(project.path);
                                                              } else {
-                                                                 const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                                                                 const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                                                                      type: 'question',
                                                                      buttons: ['Yes', 'No'],
                                                                      message: t('global.locked'),

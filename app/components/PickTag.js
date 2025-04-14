@@ -111,7 +111,7 @@ export default class extends Component {
                               className='delete-tag'
                               onClick={e => {
                                   e.stopPropagation();
-                                  const result = remote.dialog.showMessageBox({
+                                  const result = remote.dialog.showMessageBoxSync({
                                       type: 'question',
                                       buttons: ['Yes', 'No'],
                                       message: t('tags.alert_delete_tag_message', {tag: _.name}),

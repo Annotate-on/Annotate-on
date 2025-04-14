@@ -17,7 +17,7 @@ import {
     ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
-    NUMERICAL
+    NUMERICAL, ANNOTATION_3D_MARKER
 } from '../constants/constants';
 import PickTag from '../containers/PickTag';
 import {
@@ -148,7 +148,9 @@ export default class extends Component {
             case ANNOTATION_RICHTEXT:
             case ANNOTATION_CIRCLE_OF_INTEREST:
             case ANNOTATION_POLYGON_OF_INTEREST:
+            case ANNOTATION_3D_MARKER:
                 value = props.annotation.value;
+                vertices = this.format3DPosition(props.annotation);
                 break;
             case ANNOTATION_COLORPICKER:
                 vertices = `(x1:${formatValue(props.annotation.x, 2)}, y1:${formatValue(props.annotation.y, 2)})`;
@@ -217,6 +219,15 @@ export default class extends Component {
             tagStartTime: 0,
             coverage: coverage
         };
+    }
+
+    format3DPosition(annotation) {
+        let position = '';
+        position += `position (x:${formatValue(annotation.position.x, 3)}, y:${formatValue(annotation.position.y, 3)}, z:${formatValue(annotation.position.z, 3)}), `;
+        position += `normal (x:${formatValue(annotation.normal.x, 3)}, y:${formatValue(annotation.normal.y, 3)}, z:${formatValue(annotation.normal.z, 3)}), `;
+        position += `camera_position (x:${formatValue(annotation.cameraPosition.x, 3)}, y:${formatValue(annotation.cameraPosition.y, 3)}, z:${formatValue(annotation.cameraPosition.z, 3)}), `;
+        position += `camera_target (x:${formatValue(annotation.cameraTarget.x, 3)}, y:${formatValue(annotation.cameraTarget.y, 3)}, z:${formatValue(annotation.cameraTarget.z, 3)}), `;
+        return position;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -532,6 +543,7 @@ export default class extends Component {
                         <Label sm={3} for="values" className="label-for">{t('inspector.annotation_editor.lbl_title')}</Label>
                         <Col sm={9} className="align-bottom">
                             {(this.props.annotation.annotationType === ANNOTATION_MARKER ||
+                                this.props.annotation.annotationType === ANNOTATION_3D_MARKER ||
                                 this.props.annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE ||
                                 this.props.annotation.annotationType === ANNOTATION_EVENT_ANNOTATION ||
                                 this.props.annotation.annotationType === ANNOTATION_RECTANGLE ||
@@ -792,7 +804,7 @@ export default class extends Component {
                                               aria-haspopup='true'
                                               role='example'>
                                 <pre>
-                                    {this.state.vertices.replace(/\)\, /g, ')\n')}
+                                    {this.state.vertices.replace(/\), /g, ')\n')}
                                 </pre>
                                 </ReactTooltip>
                             </Col>
@@ -845,6 +857,7 @@ export default class extends Component {
                                 })}
                             </Col>
                             {(this.state.annotationType === ANNOTATION_MARKER
+                                || this.state.annotationType === ANNOTATION_3D_MARKER
                                 || this.state.annotationType === ANNOTATION_RECTANGLE
                                 || this.state.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
                                 || this.state.annotationType === ANNOTATION_POLYGON_OF_INTEREST
@@ -1070,7 +1083,7 @@ export default class extends Component {
                 this.props.createTargetInstance(NUMERICAL, this.props.tabName, annotation.id, tmpDesc.id || "-1", value);
             }
         } else {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'error',
                 message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1
@@ -1174,6 +1187,7 @@ export default class extends Component {
                                     annotation.annotationType === ANNOTATION_RICHTEXT ||
                                     annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
                                     annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
+                                    annotation.annotationType === ANNOTATION_3D_MARKER ||
                                     annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                     options.push({
                                         value: target.id,

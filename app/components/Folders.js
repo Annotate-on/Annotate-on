@@ -378,7 +378,7 @@ export default class extends PureComponent {
                 });
                 break;
             case 'delete':
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'question',
                     buttons: ['Yes', 'No'],
                     message: t('folders.alert_delete_folder_message', {folder: data.folder.alias}),

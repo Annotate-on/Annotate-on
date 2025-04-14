@@ -261,7 +261,7 @@ startDownload = (imageUrls) => {
                 });
 
                 if (invalidUrls.length > 0) {
-                    remote.dialog.showMessageBox({
+                    remote.dialog.showMessageBoxSync({
                         type: 'warning',
                         message: t('library.import_images.alert_following_urls_are_invalid'),
                         detail: invalidUrls.join('\n')

@@ -19,6 +19,7 @@ const mapStateToProps = (state, ownProps) => {
         annotationsMeasuresLinear: state.app.annotations_measures_linear,
         annotationsRectangular: state.app.annotations_rectangular,
         annotationsPointsOfInterest: state.app.annotations_points_of_interest,
+        annotations3dPointsOfInterest: state.app.annotations_3d_points_of_interest,
         annotationsPolygon: state.app.annotations_polygon,
         annotationsAngle: state.app.annotations_angle,
         annotationsOccurrence: state.app.annotations_occurrence,

@@ -167,7 +167,7 @@ export default class extends Component {
     _onSelectDatabase = () => {
         const {t} = i18next;
         if(!this.state.selected) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'warning',
                 message: t('models.import_from_xper.alert_select_xper_database'),
                 cancelId: 1

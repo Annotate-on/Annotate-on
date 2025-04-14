@@ -61,7 +61,18 @@
         "lbl_xper_mono_parameters_url": "Url",
         "alert_all_xper_parameters_required": "Tous les paramètres xper sont requis!",
         "alert_all_xper_monobase_parameters_required": "Tous les paramètres xper monobase sont requis!",
-        "alert_all_iiif_parameters_required": "Tous les paramètres IIIF sont requis!"
+        "alert_all_iiif_parameters_required": "Tous les paramètres IIIF sont requis!",
+        "iiif_parameters_section_title": "Paramètres IIIF",
+        "lbl_iiif_parameters_url": "Url",
+        "lbl_iiif_parameters_username": "Utilisateur",
+        "lbl_iiif_parameters_password": "Mot de passe",
+        "annotation_tools_title": "Outils des annotation",
+        "lbl_color_picker_radius": "Rayon du sélecteur de couleurs",
+        "lbl_select_color_chart": "Sélectionnez le nuancier",
+        "select_color_chart.tooltip": "Sélectionnez le nuancier",
+        "alert_color_picker_radius_invalid": "La valeur du rayon du sélecteur de couleurs doit être un nombre entier positif!",
+        "saint_hilaire_color_chart": "Nuancier Saint Hilaire",
+        "html_color_chart": "Nuancier HTML"
       },
       "languages": {
         "EN": "Anglais",
@@ -225,6 +236,7 @@
       "tab_metadata": "Métadonnées",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibrage",
+      "tab_3d_settings": "Paramètres 3D",
       "tooltip_edit_annotation": "Éditer l'annotation",
       "tooltip_delete_annotation": "Effacer l'annotation",
       "tooltip_add_keyword": "Nouveau mot-clé",
@@ -376,6 +388,11 @@
         "lbl_characters": "Caractères",
         "lbl_selection_value": "Valeur de sélection"
       },
+      "3d_settings": {
+        "lbl_ambient-light": "Lumière ambiante",
+        "lbl_environment_lighting": "Éclairage d'ambiance"
+      },
+
       "tooltip_add_location": "Ajouter une localisation",
       "tooltip_add_dating": "Ajouter une datation"
     },

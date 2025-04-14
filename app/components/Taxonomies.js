@@ -324,7 +324,7 @@ export default class extends Component {
     _exportTaxonomy = (taxonomy) => {
         console.log('exporting ... ' , taxonomy)
         const { t } = this.props;
-        let saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let saverPath = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: t('models.dialog_export_model.title_save_taxonomy'),
             defaultPath: path.join(getUserWorkspace(), `${taxonomy.name}.json`)
         });
@@ -347,7 +347,7 @@ export default class extends Component {
             }
             fs.writeFileSync(saverPath, JSON.stringify({taxonomy, descriptors}));
             ee.emit(EVENT_HIDE_WAITING);
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 detail: saverPath,
                 message: t('global.export_finished'),
@@ -365,7 +365,7 @@ export default class extends Component {
 
     _importTaxonomy = () => {
         const { t } = this.props;
-        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {
+        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {
             properties: ['openFile'],
             filters: [{name: 'JSON explore file', extensions: ['json']}]
         });
@@ -397,7 +397,7 @@ export default class extends Component {
                 this._viewTaxonomy(data.taxonomy);
                 break;
             case 'delete':
-                const result = remote.dialog.showMessageBox({
+                const result = remote.dialog.showMessageBoxSync({
                     type: 'question',
                     buttons: ['Yes', 'No'],
                     message: t('models.delete_taxonomy_message', { taxonomy: data.taxonomy.name}),
@@ -408,7 +408,7 @@ export default class extends Component {
                 break;
             case 'export':
                 if (data.taxonomy.model === MODEL_XPER) {
-                    remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                    remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                         type: 'info',
                         detail: t('models.alert.cannot_export_taxonomy'),
                         message: t('global.error')
@@ -439,7 +439,7 @@ export default class extends Component {
                 this._viewImageDetectModel(data.imageDetectModel);
                 break;
             case 'delete_imageDetect':
-                const answer = remote.dialog.showMessageBox({
+                const answer = remote.dialog.showMessageBoxSync({
                     type: 'question',
                     buttons: ['Yes', 'No'],
                     message: data.imageDetectModel.name,

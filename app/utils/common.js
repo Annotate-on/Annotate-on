@@ -28,7 +28,7 @@ export const getXlsx = (worksheet , separator , file) => {
     const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
     stream.pipe(fs.createWriteStream(file));
 
-    const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+    const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
         type: 'info',
         detail: file,
         message: `Export finished`,
@@ -56,7 +56,7 @@ export const exportZipForChronoOrEventAnnotations = (data, file , separator , ta
     zip.generateNodeStream({type: 'nodebuffer', streamFiles: true})
         .pipe(fs.createWriteStream(file));
 
-    const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+    const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
         type: 'info',
         detail: file,
         message: `Export finished`,

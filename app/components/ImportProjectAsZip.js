@@ -161,7 +161,7 @@ export default class extends Component {
                             <Button disabled={!this.state.isEnabled} className="btn btn-primary" color="primary"
                                     title={t('projects.import_project_as_zip.btn_tooltip_select_empty_folder')}
                                     onClick={() => {
-                                        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow(), {properties: ['openDirectory', 'createDirectory']});
+                                        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow(), {properties: ['openDirectory', 'createDirectory']});
                                         if (!_ || _.length < 1) return;
 
                                         const folderPath = _.pop();

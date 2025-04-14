@@ -25,10 +25,10 @@ import {
     EDIT_EVENT,
     MODEL_XPER,
     ONE_DIMENSIONAL, RESOURCE_TYPE_EVENT,
-    RESOURCE_TYPE_VIDEO,
+    RESOURCE_TYPE_VIDEO, RESOURCE_TYPE_OBJECT3D,
     SECTION_BG,
     SECTION_FG,
-    TWO_DIMENSIONAL, CATEGORICAL, INTEREST
+    TWO_DIMENSIONAL, CATEGORICAL, INTEREST, ANNOTATION_3D_MARKER
 } from '../constants/constants';
 import {
     getAngleInDegrees,
@@ -63,6 +63,8 @@ import LibraryTabs from "../containers/LibraryTabs";
 import PageTitle from "./PageTitle";
 import {findClosestColor} from "../utils/web-colors";
 import XperMonoFilter from "../containers/XperMonoFilter";
+import App from "../containers/App";
+import _3DViewer from "../containers/3DViewer";
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
@@ -315,7 +317,7 @@ class Image extends PureComponent {
         && this.props.selectedTaxonomy.descriptors.map(target => {
             targetColors[target.id] = target.targetColor;
         });
-
+        console.log("this.state.currentPicture", this.state);
         return (
             <_Root className="rcn_image">
                 <PageTitle
@@ -348,6 +350,7 @@ class Image extends PureComponent {
                                     isAnnotationRecording={this.state.isAnnotationRecording}
                                     annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                     annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                    annotations3dPointsOfInterest={this.props.annotations3dPointsOfInterest}
                                     annotationsRectangular={this.props.annotationsRectangular}
                                     annotationsPolygon={this.props.annotationsPolygon}
                                     annotationsAngle={this.props.annotationsAngle}
@@ -524,6 +527,13 @@ class Image extends PureComponent {
                                             editedAnnotation={this.state.editedAnnotation}
                                             openEditPanelonAnnotationCreate={this.openEditPanelonVideoAnnotationCreate}
 
+                                        /> : null
+                                }
+                                {
+                                    this.state.currentPicture.resourceType === RESOURCE_TYPE_OBJECT3D ?
+                                        <_3DViewer
+                                            currentPicture={this.state.currentPicture}
+                                            editedAnnotation={this.state.editedAnnotation}
                                         /> : null
                                 }
                             </_RightColumn>
@@ -1042,7 +1052,9 @@ class Image extends PureComponent {
         if (this.state.currentAnnotationTool)
             return null;
         this.setAnnotationTool(annotation.annotationType);
-        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
+        if (annotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE
+            || annotation.annotationType === ANNOTATION_EVENT_ANNOTATION
+            || annotation.annotationType === ANNOTATION_3D_MARKER) {
             this.setState({
                 editedAnnotation: annotation
             });
@@ -1058,9 +1070,20 @@ class Image extends PureComponent {
         return true;
     };
 
-    _callSaveOrCancelEdit = (save, title, value, isVideoAnnotation, person, date, location, tags, topic) => {
-
-        if (isVideoAnnotation) {
+    _callSaveOrCancelEdit = (save, title, value, is3dAnnotation , isVideoAnnotation, person, date, location, tags, topic) => {
+        if (is3dAnnotation) {
+            let annotation = {
+                value: value,
+                title: title,
+                date: date,
+                location: location
+            }
+            this.setState({
+                editedAnnotation: null
+            });
+            this.setAnnotationTool(null);
+            return annotation;
+        } else if (isVideoAnnotation) {
             let annotation = {
                 value: value,
                 person: person,
@@ -1220,7 +1243,9 @@ class Image extends PureComponent {
     };
 
     _setAnnotationColor = (id, color) => {
-        this.leafletImage.current.setAnnotationColor(id, color);
+        if(this.leafletImage.current) {
+            this.leafletImage.current.setAnnotationColor(id, color);
+        }
     };
 
     _deleteAnnotationTranscription = (sha1, id) => {
@@ -1338,13 +1363,15 @@ class Image extends PureComponent {
     }
 
     _updateAnnotation = (id, text) => {
-        this.leafletImage.current.updateAnnotation(id, text);
+        if(this.leafletImage.current) {
+            this.leafletImage.current.updateAnnotation(id, text);
+        }
     };
 
     _navigationHandler = (e, callAction) => {
         const {t} = this.props;
         if (this.state.calibrationActive) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: t('global.info'),
                 detail: t('library.alert_please_close_calibration_mode'),

@@ -8,6 +8,7 @@
   "IMPORTWIZARD": "/importwizard/:folderName",
   "IMPORTVIDEOWIZARD": "/importVideoWizard/:folderName",
   "IMPORTEVENTWIZARD": "/importEventWizard/:folderName/:tabName?",
+  "IMPORTOBJECT3DWIZARD": "/importObject3DWizard/:folderName",
   "XPER": "/xper",
   "TAXONOMIES": "/taxonomies",
   "TAXONOMIES_WITH_TAXONOMY_ID": "/taxonomies/:taxonomyId",

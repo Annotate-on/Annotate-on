@@ -23,6 +23,7 @@ const mapStateToProps = state => {
         annotationsRichtext: state.app.annotations_richtext,
         annotationsCircleOfInterest: state.app.annotations_circle_of_interest,
         annotationsPolygonOfInterest: state.app.annotations_polygon_of_interest,
+        annotations3dPointsOfInterest: state.app.annotations_3d_points_of_interest
     };
 };
 

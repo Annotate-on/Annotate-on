@@ -237,7 +237,7 @@ class Collections extends PureComponent {
             const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
 
             if (action === 'csv_with_images') {
-                const saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+                const saverPath = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
                     title: t('results.collections.dialog_title_save'),
                     defaultPath: `${formatDateForFileName(now)}`,
                 });
@@ -247,7 +247,7 @@ class Collections extends PureComponent {
                 zip.generateNodeStream({type: 'nodebuffer', streamFiles: true})
                     .pipe(fs.createWriteStream(saverPath + '.zip'));
 
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: saverPath,
                     message: t('global.export_finished'),
@@ -260,14 +260,14 @@ class Collections extends PureComponent {
 
 
             } else {
-                let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+                let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
                     title: t('results.collections.dialog_title_save'),
                     defaultPath: `${formatDateForFileName(now)}`
                 });
                 if (!file || file.length < 1) return;
 
                 stream.pipe(fs.createWriteStream(file + '.csv'));
-                const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                     type: 'info',
                     detail: file,
                     message: t('global.export_finished'),

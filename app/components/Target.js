@@ -185,7 +185,7 @@ class Target extends PureComponent {
     _exportDataToSddFile = () => {
         const now = new Date();
         const { t } = this.props;
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
             title: t('results.characters.dialog_title_save_in_sdd'),
             defaultPath: `Characters-${formatDateForFileName(now)}.sdd.xml`
         });
@@ -199,7 +199,7 @@ class Target extends PureComponent {
 
     _exportDataToSddXperDatabase = (database) => {
         const { t } = this.props;
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'warning',
             buttons: ['Yes', 'No'],
             message: t('global.confirmation'),
@@ -215,7 +215,7 @@ class Target extends PureComponent {
                 database,
                 () => {
                     console.log("on export ssd completed")
-                    const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                    const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                         type: 'info',
                         detail: "",
                         message: t('results.characters.alert_message_data_exported_successfully_to_xper_database'),
@@ -229,7 +229,7 @@ class Target extends PureComponent {
     _exportData = (separator) => {
         const now = new Date();
         const { t } = this.props;
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
             title: t('results.characters.dialog_title_save'),
             defaultPath: `Characters-${formatDateForFileName(now)}.csv`
         });

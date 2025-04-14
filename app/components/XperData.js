@@ -157,7 +157,7 @@ class XperData extends PureComponent {
 
     exportXlsx = (separator) => {
         const now = new Date();
-        let file = remote.dialog.showSaveDialog(remote.getCurrentWindow(), {
+        let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow(), {
             title: 'Xper KB Data',
             defaultPath: `${formatDateForFileName(now)}.csv`
         });

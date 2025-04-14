@@ -79,7 +79,7 @@ export default class extends PureComponent {
         const { t } = this.props;
         console.log("saveCalibration")
         if (this.state.measureName.length === 0) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                 type: 'error',
                 message: t('inspector.calibration.alert_save_message_empty_name'),
                 buttons: ['OK'],
@@ -88,7 +88,7 @@ export default class extends PureComponent {
             return;
         }
         if (applyToAll) {
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 message: t('inspector.calibration.alert_save_confirmation_title'),
@@ -544,7 +544,7 @@ export default class extends PureComponent {
                                                  onClick={e => {
                                                      e.preventDefault();
                                                      e.stopPropagation();
-                                                     const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                                                     const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                                                          type: 'question',
                                                          buttons: ['Yes', 'No'],
                                                          message: t('inspector.calibration.alert_delete_message', {calibration: calibration.name}),

@@ -51,6 +51,7 @@
       "dropdown_item_import_images": "Image(s)",
       "dropdown_item_import_videos": "Videos(s)",
       "dropdown_item_create_event": "Create event",
+      "dropdown_item_create_Object3D": "3D Model(s)",
       "btn_select_all": "Select all",
       "btn_unselect_all": "Unselect all",
       "options": {
@@ -70,6 +71,10 @@
         "lbl_iiif_parameters_password": "Password",
         "annotation_tools_title": "Annotation tools",
         "lbl_color_picker_radius": "Color picker radius",
+        "lbl_select_color_chart": "Select color chart",
+        "select_color_chart.tooltip": "Select color chart",
+        "saint_hilaire_color_chart": "Saint Hilaire color chart",
+        "html_color_chart": "HTML color chart",
         "alert_color_picker_radius_invalid": "Color picker radius value must be positive integer number!",
         "alert_all_xper_parameters_required": "All xper parameters are required!",
         "alert_all_xper_monobase_parameters_required": "All xper monobase parameters are required!",
@@ -238,6 +243,7 @@
       "tab_metadata": "Metadata",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibration",
+      "tab_3d_settings": "3D Settings",
       "tooltip_edit_annotation": "Edit annotation",
       "tooltip_delete_annotation": "Delete annotation",
       "tooltip_add_keyword": "Add keyword",
@@ -389,6 +395,10 @@
         "lbl_characters": "Characters",
         "lbl_selection_value": "Selection value"
       },
+      "3d_settings": {
+        "lbl_ambient-light": "Ambient light",
+        "lbl_environment_lighting": "Environment lighting"
+      },
       "tooltip_add_location": "Add location",
       "tooltip_add_dating": "Add dating"
     },
@@ -517,6 +527,18 @@
         "lbl_import_local_videos_by_dnd": "Import local videos by drag and drop",
         "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper video.",
         "text_area_placeholder_paste_video_urls_separated_with_new_line": "Paste video URLs separated with new line."
+      },
+      "import_objects3D": {
+        "title": "Import 3D objects",
+        "loading_preparing_files_to_import": "Preparing files to import...",
+        "lbl_import_local_objects3D": "Import from local storage",
+        "btn_select_objects3D": "Select 3D objects",
+        "btn_tooltip_select_objects3D": "Import 3D objects from local storage",
+        "btn_paste_urls": "Paste URLs list",
+        "btn_tooltip_paste_urls": "Import 3D objects from urls",
+        "lbl_import_local_objects3D_by_dnd": "Import local 3D objects by drag and drop",
+        "alert_following_urls_are_invalid": "Following URLs are invalid or don't contain proper 3D objects.",
+        "text_area_placeholder_paste_objects3D_urls_separated_with_new_line": "Paste 3D objects URLs separated with new line."
       },
       "map-view": {
         "switch_to_map_view_tooltip": "Switch to map view",

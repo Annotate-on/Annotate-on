@@ -92,7 +92,7 @@
 
   .folders-collapse {
     overflow: hidden;
-    height: 100%;
+    height: calc(100% - 40px);
   }
 
   .folders-collapse.more-space {
@@ -101,7 +101,7 @@
 
   .folders {
     overflow-y: scroll;
-    height: calc(100% - 60px);
+    height: 100%;
     &::-webkit-scrollbar {
       width: 0;
       background: transparent;

@@ -132,7 +132,7 @@ export default class extends Component {
 
     _createNewProjectHandler = () => {
         const { t } = this.props;
-        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
+        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
         if (!_ || _.length < 1) return;
         const label = this.state.label;
         const dir = _.pop();

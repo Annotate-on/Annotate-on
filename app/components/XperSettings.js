@@ -77,7 +77,7 @@ export default class extends Component {
                                         &nbsp;&nbsp;
                                         <Button className="btn btn-primary" color="primary"
                                                 onClick={() => {
-                                                    const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
+                                                    const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{
                                                         properties: ['openFile'],
                                                         filters: [{name: 'XML explore file', extensions: ['xml']}]
                                                     });

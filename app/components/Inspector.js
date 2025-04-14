@@ -47,7 +47,7 @@ import {
     SORT_DATE_ASC,
     SORT_DATE_DESC,
     SORT_TYPE_ASC,
-    SORT_TYPE_DESC,
+    SORT_TYPE_DESC, ANNOTATION_3D_MARKER, RESOURCE_TYPE_OBJECT3D,
 } from '../constants/constants';
 import AnnotationEditor from '../containers/AnnotationEditor';
 import classnames from "classnames";
@@ -71,6 +71,7 @@ import {acceptedTypes} from "../utils/annotationRecording";
 import {withTranslation} from "react-i18next";
 import lodash from "lodash";
 import {findClosestColor} from "../utils/web-colors";
+import _3DSettings from "../containers/3DSettings";
 
 const EDIT_DATING = require('./pictures/clock-regular.svg');
 const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
@@ -84,6 +85,7 @@ const STOP = require('./pictures/stop.svg');
 const TAB_METADATA = 0;
 const TAB_ANNOTATIONS = 1;
 const TAB_CALIBRATION = 2;
+const TAB_3D_SETTINGS = 3;
 
 // STYLE CONSTANTS
 
@@ -135,6 +137,7 @@ export default class extends Component {
 
     constructor(props, context) {
         super(props, context);
+        console.log("inspector props", props);
         this.toggle = this.toggle.bind(this);
         const annotations = this._sortAnnotations(this._mergeAnnotations(this.props),
             this.props.tab.sortDirectionAnnotation ? this.props.tab.sortDirectionAnnotation : SORT_DATE_DESC
@@ -213,6 +216,7 @@ export default class extends Component {
                 || this._getArrayLength(nextProps.annotationsRichtext) !== this._getArrayLength(this.props.annotationsRichtext)
                 || this._getArrayLength(nextProps.annotationsCircleOfInterest) !== this._getArrayLength(this.props.annotationsCircleOfInterest)
                 || this._getArrayLength(nextProps.annotationsPolygonOfInterest) !== this._getArrayLength(this.props.annotationsPolygonOfInterest)
+                || this._getArrayLength(nextProps.annotations3dPointsOfInterest) !== this._getArrayLength(this.props.annotations3dPointsOfInterest)
             )) {
             targetUpdated = false;
             const annotations = this._sortAnnotations(this._mergeAnnotations(nextProps),
@@ -238,7 +242,8 @@ export default class extends Component {
             ...(props.annotationsCategorical && props.annotationsCategorical[props.picture.sha1] || []),
             ...(props.annotationsRichtext && props.annotationsRichtext[props.picture.sha1] || []),
             ...(props.annotationsCircleOfInterest && props.annotationsCircleOfInterest[props.picture.sha1] || []),
-            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || [])
+            ...(props.annotationsPolygonOfInterest && props.annotationsPolygonOfInterest[props.picture.sha1] || []),
+            ...(props.annotations3dPointsOfInterest && props.annotations3dPointsOfInterest[props.picture.sha1] || [])
         ];
     };
 
@@ -324,7 +329,13 @@ export default class extends Component {
                 isAnnotationRecording={this.props.isAnnotationRecording}
                 cancel={() => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
-                    this.props.saveOrCancelEditAnnotation(false, null, null, this.state.editedAnnotation.annotationType === 'chronothematique');
+                    this.props.saveOrCancelEditAnnotation(
+                        false,
+                        null,
+                        null,
+                        this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                        this.state.editedAnnotation.annotationType === 'chronothematique'
+                    );
                     this.setState({
                         editedAnnotation: null,
                         openAddTag: false,
@@ -335,7 +346,16 @@ export default class extends Component {
                 save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType, person, date, location, tags, topic, coverage) => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);
                     if (this.state.editedAnnotation) {
-                        const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, this.state.editedAnnotation.annotationType === 'chronothematique', person, date, location);
+                        const annotation = this.props.saveOrCancelEditAnnotation(
+                            true,
+                            title,
+                            customValue,
+                            this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                            this.state.editedAnnotation.annotationType === 'chronothematique',
+                            person,
+                            date,
+                            location
+                        );
                         if (this.state.editedAnnotation.annotationType === ANNOTATION_CHRONOTHEMATIQUE) {
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
@@ -348,7 +368,18 @@ export default class extends Component {
                             );
                         } else if (this.state.editedAnnotation.annotationType === ANNOTATION_EVENT_ANNOTATION) {
                             console.log('edited annotation in inspector', this.state.editedAnnotation);
-                            const annotation = this.props.saveOrCancelEditAnnotation(true, title, customValue, true, person, date, location, [], topic);
+                            const annotation = this.props.saveOrCancelEditAnnotation(
+                                true,
+                                title,
+                                customValue,
+                                this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER,
+                                true,
+                                person,
+                                date,
+                                location,
+                                [],
+                                topic
+                            );
                             this.props.editAnnotation(
                                 this.props.picture.sha1,
                                 this.state.editedAnnotation.annotationType,
@@ -360,6 +391,7 @@ export default class extends Component {
                             );
                         } else if (this.state.editedAnnotation.annotationType === ANNOTATION_MARKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_RECTANGLE ||
+                            this.state.editedAnnotation.annotationType === ANNOTATION_3D_MARKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_COLORPICKER ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_CATEGORICAL ||
@@ -449,22 +481,34 @@ export default class extends Component {
                             {t('inspector.tab_annotations')}
                         </NavLink>
                     </NavItem>
-                    <NavItem className={classnames({hidden: this.props.readOnly})}>
-                        <NavLink
-                            className={classnames({active: this.state.selectedTab === TAB_CALIBRATION})}
-                            onClick={() => {
-                                this.selectTab(TAB_CALIBRATION);
-                            }}>
-                            {t('inspector.tab_calibration')}
-                            {((this.props.picture.dpix && this.props.picture.dpiy) || this.props.picturesByCalibration[this.props.picture.sha1]) ?
-                                '' : <sup className="sup-calibration">*</sup>
-                            }
-                            {
-                                (this.props.picturesByCalibration[this.props.picture.sha1]) ?
-                                    <sup className="sup-calibration-picked">✔</sup> : ""
-                            }
-                        </NavLink>
-                    </NavItem>
+                    {
+                        this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ?
+                        <NavItem className={classnames({hidden: this.props.readOnly})}>
+                            <NavLink
+                                className={classnames({active: this.state.selectedTab === TAB_3D_SETTINGS})}
+                                onClick={() => {
+                                    this.selectTab(TAB_3D_SETTINGS);
+                                }}>
+                                {t('inspector.tab_3d_settings')}
+                            </NavLink>
+                        </NavItem> :
+                            <NavItem className={classnames({hidden: this.props.readOnly})}>
+                                <NavLink
+                                    className={classnames({active: this.state.selectedTab === TAB_CALIBRATION})}
+                                    onClick={() => {
+                                        this.selectTab(TAB_CALIBRATION);
+                                    }}>
+                                    {t('inspector.tab_calibration')}
+                                    {((this.props.picture.dpix && this.props.picture.dpiy) || this.props.picturesByCalibration[this.props.picture.sha1]) ?
+                                        '' : <sup className="sup-calibration">*</sup>
+                                    }
+                                    {
+                                        (this.props.picturesByCalibration[this.props.picture.sha1]) ?
+                                            <sup className="sup-calibration-picked">✔</sup> : ""
+                                    }
+                                </NavLink>
+                            </NavItem>
+                    }
                 </Nav>
                 <TabContent activeTab={this.state.selectedTab}>
                     <TabPane tabId={TAB_METADATA}>
@@ -683,6 +727,14 @@ export default class extends Component {
                             </_MetadataSubpanel>
                         )}
                     </TabPane>
+                    <TabPane tabId={TAB_3D_SETTINGS}>
+                        {this.state.selectedTab === TAB_3D_SETTINGS && (
+                            <_MetadataSubpanel>
+                                <_3DSettings/>
+                            </_MetadataSubpanel>
+                        )}
+                    </TabPane>
+
                 </TabContent>
             </_Root>
         );
@@ -736,6 +788,9 @@ export default class extends Component {
                 break;
             case ANNOTATION_POLYGON_OF_INTEREST:
                 this.props.deleteAnnotationPolygonOfInterest(sha1, annotation.id);
+                break;
+            case ANNOTATION_3D_MARKER:
+                this.props.deleteAnnotation3dPointOfInterest(sha1, annotation.id);
                 break;
         }
     };
@@ -832,6 +887,7 @@ export default class extends Component {
                                 annotation.annotationType === ANNOTATION_TRANSCRIPTION ||
                                 annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
                                 annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
+                                annotation.annotationType === ANNOTATION_3D_MARKER ||
                                 annotation.annotationType === ANNOTATION_CATEGORICAL) && (target.annotationType === CATEGORICAL || target.annotationType === INTEREST)) {
                                 options.push({
                                     value: target.id,
@@ -884,14 +940,14 @@ export default class extends Component {
                     });
 
                 } : undefined}
-                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE ? e => {
+                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
                     if (this.state.isAnnotateEventRecording) {
                         return false;
                     }
 
                     if (!lodash.isNil(annotation.video)) {
                         this._focusAnnotation(e, annotation);
-                        console.log(annotation.video.end)
+                        // console.log(annotation.video.end)
                         if (annotation.video.end !== -1)
                             this._gotoAnnotation(e, annotation, "start");
                     } else
@@ -986,7 +1042,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this.setState({editedAnnotation: annotation, openEditDating: true});
                                          }
@@ -1008,7 +1064,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this.setState({editedAnnotation: annotation, openEditLocation: true});
                                          }
@@ -1028,7 +1084,7 @@ export default class extends Component {
                                             buttons: ["OK"],
                                             message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                         }
-                                        remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                        remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                     } else {
                                         this.setState({editedAnnotation: annotation, openAddTag: true});
                                     }
@@ -1049,7 +1105,7 @@ export default class extends Component {
                                                  buttons: ["OK"],
                                                  message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
                                              }
-                                             remote.dialog.showMessageBox(remote.getCurrentWindow(), options);
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
                                          } else {
                                              this._focusAnnotation(event, annotation);
                                              this._gotoAnnotation(event, annotation, "start");
@@ -1115,6 +1171,7 @@ export default class extends Component {
                                 {annotation.annotationType === ANNOTATION_TRANSCRIPTION && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RECTANGLE && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_MARKER && annotation.value ? annotation.value : ''}
+                                {annotation.annotationType === ANNOTATION_3D_MARKER && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CATEGORICAL && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_RICHTEXT && annotation.value ? annotation.value : ''}
                                 {annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST && annotation.value ? annotation.value : ''}
@@ -1181,7 +1238,7 @@ export default class extends Component {
                 this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1] &&
                 selectedTargetOptions.value in this.props.taxonomyInstance.taxonomyByPicture[this.props.picture.sha1]
             ) {
-                // remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                // remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 //     type: 'error',
                 //     message: t('inspector.alert_categorical_descriptor_already_exist'),
                 //     cancelId: 1
@@ -1220,7 +1277,7 @@ export default class extends Component {
                 this.props.setAnnotationColor(annotation.id, selectedTargetOptions.color);
             }
         } else {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'error',
                 message: t('inspector.alert_wrong_target_type'),
                 cancelId: 1

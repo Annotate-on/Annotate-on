@@ -114,7 +114,7 @@ class XmpMetadata extends PureComponent {
 
         if (pictures) {
             const now = new Date();
-            let file = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+            let file = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
                 title:  t('results.metadata.dialog_title_save_xmp_metadata'),
                 defaultPath: `${formatDateForFileName(now)}`
             });
@@ -163,7 +163,7 @@ class XmpMetadata extends PureComponent {
             const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
             const stream = XLSX.stream.to_csv(worksheet, {FS: separator});
             stream.pipe(fs.createWriteStream(file + '.csv'));
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                 type: 'info',
                 detail: file,
                 message: t('global.export_finished'),
@@ -259,7 +259,7 @@ class XmpMetadata extends PureComponent {
                     });
 
                     Promise.all(exifWriteJobs).then(result => {
-                        const saverPath = remote.dialog.showSaveDialog(remote.getCurrentWindow () ,{
+                        const saverPath = remote.dialog.showSaveDialogSync(remote.getCurrentWindow () ,{
                             title: t('results.metadata'),
                             defaultPath: `xmp_${formatDateForFileName(now)}`
                         });
@@ -270,7 +270,7 @@ class XmpMetadata extends PureComponent {
                             .on('finish', () => {
                             });
 
-                        const resultDialog = remote.dialog.showMessageBox(remote.getCurrentWindow () ,{
+                        const resultDialog = remote.dialog.showMessageBoxSync(remote.getCurrentWindow () ,{
                             type: 'info',
                             detail: saverPath,
                             message: t('global.export_finished'),

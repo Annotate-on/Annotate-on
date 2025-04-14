@@ -4,8 +4,9 @@ import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row} from "reactst
 import {getAllPicturesDirectories} from "../utils/config";
 
 const IMAGE = require('./pictures/image.svg');
-const VIDEO = require('./pictures/box.svg');
+const VIDEO = require('./pictures/video.svg');
 const EVENT = require('./pictures/event.svg');
+const ICON3D = require('./pictures/3d.svg');
 export default class extends Component {
 
     constructor(props) {
@@ -38,6 +39,12 @@ export default class extends Component {
         this.props.goToImportEventWizard(folders.length ? folders[0].path : null , null);
     }
 
+    _onImportObject3DClick = (e) => {
+        console.log("_onImportObject3DClick")
+        const folders = getAllPicturesDirectories();
+        this.props.goToImportObject3DWizard(folders.length ? folders[0].path : null);
+    }
+
     render() {
         const { t } = i18next;
         return (
@@ -56,6 +63,9 @@ export default class extends Component {
                         </DropdownItem>
                         <DropdownItem onClick={this._onCreateNewEventClick}>
                             <img className="import-menu-item" src={EVENT}/>{t('global.dropdown_item_create_event')}
+                        </DropdownItem>
+                        <DropdownItem onClick={this._onImportObject3DClick}>
+                            <img className="import-menu-item" src={ICON3D}/>{t('global.dropdown_item_create_Object3D')}
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>

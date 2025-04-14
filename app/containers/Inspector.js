@@ -11,7 +11,7 @@ import {
     saveAnnotationSort,
     createTargetInstance,
     createAnnotationCategorical,
-    deleteAnnotationCategorical, editCartel, unfocusAnnotation
+    deleteAnnotationCategorical, editCartel, unfocusAnnotation, deleteAnnotation3dPointOfInterest
 } from '../actions/app';
 import {push} from "connected-react-router";
 import {withTranslation} from "react-i18next";
@@ -75,6 +75,9 @@ const mapDispatchToProps = dispatch => {
         editCartel: (pictureId, id, value) => {
             dispatch(editCartel(pictureId, id, value));
         },
+        deleteAnnotation3dPointOfInterest: (pictureId, annotationId) => {
+            dispatch(deleteAnnotation3dPointOfInterest(pictureId, annotationId));
+        }
     };
 };
 

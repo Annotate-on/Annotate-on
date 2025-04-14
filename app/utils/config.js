@@ -353,6 +353,10 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding xperMatchedResources');
                 tmpState["xperMatchedResources"] = {};
             }
+            if (!tmpState.hasOwnProperty("annotations_3d_points_of_interest")){
+                console.log('project from previous version , adding annotations 3d_points_of_interest')
+                tmpState["annotations_3d_points_of_interest"] = {};
+            }
 
             // Check if object structure match to expected one.
             for (const prop in initialState) {
@@ -366,14 +370,14 @@ export const setWorkspace = (_, label) => {
                 return tmpState;
             } else {
                 fs.renameSync(file, `${file}.${formatDateForFileName(new Date())}.old`);
-                remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                     type: 'warning',
                     message: t('projects.alert_selected_workspace_has_configuration_from_older_version')
                 });
             }
         } catch (e) {
             console.log(e)
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'error',
                 message: t('projects.alert_selected_workspace_state_is_corrupted'),
             });
@@ -440,7 +444,7 @@ const checkOldConfig = () => {
             projects.forEach(project => {
                 detail += project.path + "\n"
             });
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: message,
                 buttons: [t('global.continue'), t('global.delete_this_file_for_me')],
@@ -567,7 +571,7 @@ export const doInitConfig = () => {
             return;
         }
 
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
             message: t('global.locked'),
@@ -607,7 +611,7 @@ export const doInitConfig = () => {
             console.log(' There is no project to switch, go with demo!');
             setBackupProject();
         }
-        remote.dialog.showMessageBox({
+        remote.dialog.showMessageBoxSync({
             type: 'info',
             detail: t('projects.alert_workspace_will_be_switched_to', {workspace: config.workspace}),
             message: t('global.locked'),
@@ -617,7 +621,7 @@ export const doInitConfig = () => {
     } catch (e) {
         console.error(e);
         setBackupProject();
-        remote.dialog.showMessageBox({
+        remote.dialog.showMessageBoxSync({
             type: 'error',
             detail: t('projects.alert_fatal_error_while_init_config', {workspace: config.workspace}),
             message: t('global.locked'),
@@ -1224,6 +1228,23 @@ export const updateToolsParams = (colorPickerRadius) => {
     yaml.sync(config_file_path, config);
 };
 
+export const updateColorChartSelection = (colorChart) => {
+    console.log("updateColorChartSelection ", colorChart)
+    config.colorChartSettings = {
+        colorChart
+    };
+    yaml.sync(config_file_path, config);
+};
+
+export const getColorChartSelection = () => {
+    console.log("getColorChartSelection")
+    if(!config.colorChartSettings) {
+        updateColorChartSelection('html');
+    }
+    return {
+        colorChart: config.colorChartSettings.colorChart
+    };
+};
 export const getToolsParams = () => {
     // console.log("getXperParams")
     if(!config.tools) {

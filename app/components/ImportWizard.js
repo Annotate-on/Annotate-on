@@ -185,7 +185,7 @@ export default class extends Component {
                                                     onClick={ () => {
                                                         this.setState({showImportRemoteUrl: false});
                                                         this.setState({showImportIIIF: false});
-                                                        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{
+                                                        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{
                                                             filters: [
                                                                 {name: 'Images', extensions: ['jpg', 'png', 'jpeg']}
                                                             ],
@@ -217,7 +217,7 @@ export default class extends Component {
                                                     className="btn btn-secondary btn_import"
                                                     title={t('library.import_images.btn_tooltip_select_directory')}
                                                     onClick={ () => {
-                                                        const _ = remote.dialog.showOpenDialog(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
+                                                        const _ = remote.dialog.showOpenDialogSync(remote.getCurrentWindow () ,{properties: ['openDirectory', 'createDirectory']});
                                                         if (!_ || _.length < 1) return;
 
                                                         this._saveFolder(_.pop());

@@ -7,7 +7,7 @@ import ToggleButton from 'react-toggle-button';
 import ReactTooltip from 'react-tooltip';
 import { SortDirection } from 'react-virtualized';
 import { Input } from 'reactstrap';
-import { MANUAL_ORDER, RESOURCE_TYPE_EVENT } from "../constants/constants";
+import {MANUAL_ORDER, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_OBJECT3D, RESOURCE_TYPE_VIDEO} from "../constants/constants";
 import Inspector from "../containers/Inspector";
 import { EVENT_SHOW_ALERT, ee } from "../utils/library";
 import MozaicPlayer from "./MozaicPlayer";
@@ -48,7 +48,7 @@ export default class extends PureComponent {
         let order = undefined;
         const { t } = this.props;
         if (lock) {
-            const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'question',
                 buttons: ['Yes', 'No'],
                 message: t('library.mozaic_view.alert_start_manual_order_message'),
@@ -161,7 +161,7 @@ export default class extends PureComponent {
     _navigationHandler = (e, callAction) => {
         const { t } = this.props;
         if (this.state.calibrationActive) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: t('global.info'),
                 detail: t('library.alert_please_close_calibration_mode'),
@@ -264,7 +264,7 @@ export default class extends PureComponent {
                              if (this.state.selectedPictures.length === 0) {
                                  return;
                              }
-                             const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                             const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                                  type: 'question',
                                  buttons: ['Yes', 'No'],
                                  message: t('library.alert_delete_image_message'),
@@ -314,7 +314,11 @@ export default class extends PureComponent {
                             
 
                             //TODO choose between fa-lg and fa-2x
-                            const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
+                            // const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
+                            let resourceClass = 'fa fa-2x fas fa-image'
+                            if(pic.resourceType === RESOURCE_TYPE_OBJECT3D) resourceClass = 'fa fa-2x fas fa-cubes'
+                            if(pic.resourceType === RESOURCE_TYPE_VIDEO) resourceClass = 'fa fa-2x fas fa-video-camera'
+
 
                             const dateP = moment(pic.sort_modified);
                             //rowData.sort_modified = date.valueOf();
@@ -446,6 +450,7 @@ export default class extends PureComponent {
                                 annotationsChronothematique={this.props.annotationsChronothematique}
                                 annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                 annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                annotations3dPointsOfInterest={this.props.annotations3dPointsOfInterest}
                                 annotationsRectangular={this.props.annotationsRectangular}
                                 annotationsPolygon={this.props.annotationsPolygon}
                                 annotationsAngle={this.props.annotationsAngle}

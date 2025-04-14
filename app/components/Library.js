@@ -9,7 +9,7 @@ import {
     MODEL_XPER,
     MOZAIC_VIEW,
     NAV_SIZE,
-    RESOURCE_TYPE_EVENT,
+    RESOURCE_TYPE_EVENT, RESOURCE_TYPE_OBJECT3D,
     RESOURCE_TYPE_PICTURE,
     RESOURCE_TYPE_VIDEO,
     TABLE_DATA_BG_OVER,
@@ -277,7 +277,7 @@ export default class extends Component {
     _navigationHandler = (e, callAction) => {
         const { t } = this.props;
         if (this.state.calibrationActive) {
-            remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
                 message: t('global.info'),
                 detail: t('library.alert_please_close_calibration_mode'),
@@ -297,6 +297,9 @@ export default class extends Component {
         }
         else if (type === RESOURCE_TYPE_EVENT){
             return "Event"
+        }
+        else if (type === RESOURCE_TYPE_OBJECT3D){
+            return "3D model"
         }
         else{
             return "Image"
@@ -595,6 +598,7 @@ export default class extends Component {
                                                 annotationsChronothematique={this.props.annotationsChronothematique}
                                                 annotationsMeasuresLinear={this.props.annotationsMeasuresLinear}
                                                 annotationsPointsOfInterest={this.props.annotationsPointsOfInterest}
+                                                annotations3dPointsOfInterest={this.props.annotations3dPointsOfInterest}
                                                 annotationsRectangular={this.props.annotationsRectangular}
                                                 annotationsPolygon={this.props.annotationsPolygon}
                                                 annotationsAngle={this.props.annotationsAngle}
@@ -782,7 +786,7 @@ export default class extends Component {
         console.log('deleting event with id.... -> ' , eventId)
         console.log('dest folder .... -> ' , this._getDestFolder());
         const { t } = this.props;
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
             message: t('library.alert_delete_event_message'),
@@ -809,7 +813,7 @@ export default class extends Component {
         if (selectedPictures.length === 0) {
             return;
         }
-        const result = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+        const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
             type: 'question',
             buttons: ['Yes', 'No'],
             message: t('library.alert_delete_image_message'),
