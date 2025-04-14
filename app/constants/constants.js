@@ -132,7 +132,7 @@ export const MARKER_TYPE_ANNOTATION = "MARKER_TYPE_ANNOTATION";
 
 export const DEFAULT_XPER_CONNECTION_URL = 'http://xper3.fr/rest';
 export const DEFAULT_IIIF_CONNECTION_URL = 'http://localhost:8080/iiif-rest-api/';
-export const DEFAULT_XPER_MONO_CONNECTION_URL = 'http://staging.api.xper3.fr';
+export const DEFAULT_XPER_MONO_CONNECTION_URL = 'http://demo.api.xper3.fr';
 
 export const DEFAULT_IMAGE_CONNECT_CONNECTION_URL = 'https://plantai.ummisco.fr/image';
 
