@@ -148,16 +148,16 @@ export default class extends Component {
             case ANNOTATION_RICHTEXT:
             case ANNOTATION_CIRCLE_OF_INTEREST:
             case ANNOTATION_POLYGON_OF_INTEREST:
-            case ANNOTATION_3D_MARKER:
-                value = props.annotation.value;
-                vertices = this.format3DPosition(props.annotation);
-                break;
             case ANNOTATION_COLORPICKER:
                 vertices = `(x1:${formatValue(props.annotation.x, 2)}, y1:${formatValue(props.annotation.y, 2)})`;
                 value = props.annotation.value;
                 break;
             case ANNOTATION_OCCURRENCE:
                 value = props.annotation.value;
+                break;
+            case ANNOTATION_3D_MARKER:
+                value = props.annotation.value;
+                vertices = this.format3DPosition(props.annotation);
                 break;
         }
 
