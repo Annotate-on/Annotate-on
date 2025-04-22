@@ -18,7 +18,15 @@ import TableHeader from "./TableHeader";
 import XperSettings from "../containers/XperSettings";
 import lodash from "lodash";
 import moment from "moment";
-import {APP_NAME, MODEL_ANNOTATE, MODEL_XPER, MODEL_IMAGE_DETECT, CATEGORICAL, NUMERICAL} from "../constants/constants";
+import {
+    APP_NAME,
+    MODEL_ANNOTATE,
+    MODEL_XPER,
+    MODEL_IMAGE_DETECT,
+    CATEGORICAL,
+    NUMERICAL,
+    INTEREST, TEXTUAL, PREDICT_CLASS_TYPE, IMAGE_DETECT_TYPE
+} from "../constants/constants";
 import TargetDescriptors from "../containers/TargetDescriptors";
 import {get} from '../utils/js';
 import fs from "fs-extra";
@@ -84,7 +92,8 @@ export default class extends Component {
                 modelImageDetectPwd: '',
                 modelImageDetectDesc: '',
                 modelImageDetectConfidence: '',
-                modelClasses: []
+                modelClasses: [],
+                detectionType: ''
             },
 
         };
@@ -210,7 +219,8 @@ export default class extends Component {
                     modelImageDetectPwd: '',
                     modelImageDetectDesc: '',
                     modelImageDetectConfidence: '',
-                    modelClasses: []
+                    modelClasses: [],
+                    detectionType: ''
                 }
             })
         }
@@ -253,7 +263,8 @@ export default class extends Component {
                     password: this.state.form.modelImageDetectPwd,
                     description: this.state.form.modelImageDetectDesc,
                     confidence: this.state.form.modelImageDetectConfidence,
-                    modelClasses: this.state.form.modelClasses
+                    modelClasses: this.state.form.modelClasses,
+                    detectionType: this.state.form.detectionType
                 }).then(_ => {
                     this.setState({
                         form: {
@@ -264,7 +275,8 @@ export default class extends Component {
                             modelImageDetectPwd: '',
                             modelImageDetectDesc: '',
                             modelImageDetectConfidence: '',
-                            modelClasses: []
+                            modelClasses: [],
+                            detectionType: ''
                         },
                         showView: LIST
                     });
@@ -287,7 +299,8 @@ export default class extends Component {
                     this.state.form.modelImageDetectPwd,
                     this.state.form.modelImageDetectDesc,
                     this.state.form.modelImageDetectConfidence,
-                    this.state.form.modelClasses
+                    this.state.form.modelClasses,
+                    this.state.form.detectionType
                 ).then(_ => {
                     this.setState({
                         form: {
@@ -298,7 +311,8 @@ export default class extends Component {
                             modelImageDetectPwd: '',
                             modelImageDetectDesc: '',
                             modelImageDetectConfidence: '',
-                            modelClasses: []
+                            modelClasses: [],
+                            detectionType: ''
                         },
                         showView: LIST
                     });
@@ -430,7 +444,8 @@ export default class extends Component {
                         modelImageDetectPwd: imageDetectModel.password,
                         modelImageDetectDesc: imageDetectModel.description,
                         modelImageDetectConfidence: imageDetectModel.confidence,
-                        modelClasses: imageDetectModel.modelClasses
+                        modelClasses: imageDetectModel.modelClasses,
+                        detectionType: imageDetectModel.detectionType
                     }}
                 );
                 this._toggleImageDetect();
@@ -570,7 +585,7 @@ export default class extends Component {
         const value = target.value;
         const name = target.name;
         let form = this.state.form;
-        if (target.type === 'select-one' || target.type === 'select-multiple') {
+        if ((target.type === 'select-one' || target.type === 'select-multiple') && name !== "detectionType" ) {
             form[name] = target.selectedOptions[0].dataset[name];
         } else {
             form[name] = value;
@@ -850,7 +865,7 @@ export default class extends Component {
                                                         };
                                                     }}>
                                                     <td width={40} style={{textAlign: 'center'}}>
-                                                        <Input type="radio"
+                                                        <Input type="checkbox"
                                                                name="isActive2"
                                                                checked={imageDetectModel.isActive}
                                                                onChange={() => {
@@ -858,11 +873,11 @@ export default class extends Component {
                                                                    this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)
                                                                }}
                                                         />
-                                                        <div className="check"
-                                                             onClick={() => {
-                                                                 console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)
-                                                                 this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)
-                                                             }}/>
+                                                        {/*<div className="check"*/}
+                                                        {/*     onClick={() => {*/}
+                                                        {/*         console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)*/}
+                                                        {/*         this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)*/}
+                                                        {/*     }}/>*/}
                                                     </td>
                                                     <td/>
                                                     <td onClick={() => {
@@ -1040,7 +1055,13 @@ export default class extends Component {
                                     <FormGroup row>
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
-                                            <Input plaintext readOnly value="Image Detect IRD service"/>
+                                            <Input type="select" name="detectionType" id="detectionType"
+                                                   value={this.state.form.detectionType || ''}
+                                                   onChange={this.handleInputChange} disabled="">
+                                                <option value=''></option>
+                                                <option value={IMAGE_DETECT_TYPE}>Image detect</option>
+                                                <option value={PREDICT_CLASS_TYPE}>Predict classification</option>
+                                            </Input>
                                         </Col>
                                     </FormGroup>
                                 </Form>
@@ -1127,7 +1148,11 @@ export default class extends Component {
                                     <FormGroup row>
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
-                                            <Label plaintext readOnly>{t('Image Detect IRD service')}</Label>
+                                            {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
+                                                <Label>Image detect</Label>
+                                                :
+                                                <Label>Predict classification</Label>
+                                            }
                                         </Col>
                                     </FormGroup>
                                 </Form>

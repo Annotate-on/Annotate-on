@@ -796,9 +796,9 @@ export const saveTaxonomy = (id, name, path, model, version) => ({
     id, name, path, model, version
 });
 
-export const saveImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({
+export const saveImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType) => ({
     type: SAVE_IMAGE_DETECT_MODEL,
-    id, name, model, version, url_service, user, password, description, confidence, modelClasses
+    id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType
 });
 
 // export const editImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({

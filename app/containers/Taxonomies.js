@@ -34,15 +34,15 @@ const mapDispatchToProps = dispatch => {
                 resolve();
             })
         },
-        saveImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => {
+        saveImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType) => {
             return new Promise(resolve => {
-                dispatch(saveImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses));
+                dispatch(saveImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType));
                 resolve();
             })
         },
-        editImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => {
+        editImageDetectModel: (id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType) => {
             return new Promise(resolve => {
-                dispatch(editImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses));
+                dispatch(editImageDetectModel(id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType));
                 resolve();
             })
         },

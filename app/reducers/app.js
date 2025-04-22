@@ -3550,7 +3550,8 @@ export default (state = {}, action) => {
                     password: action.password,
                     description: action.description,
                     confidence: action.confidence,
-                    modelClasses: action.modelClasses
+                    modelClasses: action.modelClasses,
+                    detectionType: action.detectionType
                 }]
             };
         }
@@ -3585,10 +3586,11 @@ export default (state = {}, action) => {
                         selectedImageDetectModel.user = element.user;
                         selectedImageDetectModel.password = element.password;
                         selectedImageDetectModel.confidence = element.confidence;
+                        selectedImageDetectModel.detectionType = element.detectionType;
                     } else
                         selectedImageDetectModel = null;
                 } else {
-                    element.isActive = false;
+                   // element.isActive = false;
                 }
             });
             return {...state, counter, imageDetectModels, selectedImageDetectModel};
