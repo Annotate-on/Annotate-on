@@ -52,8 +52,10 @@ L.Control.ImageDetectService = L.Control.extend({
         if(!imageUrl){
             remote.dialog.showErrorBox(t('global.info'),t('annotate.editor.alert_recolnat_image_no_url'));
         }
+        let activeServices = 0;
         imageDetectModels.forEach(i => {
             if(i.isActive === true){
+                activeServices += 1;
                 if(i.detectionType === "IMAGE_DETECT_TYPE"){
                     getImageDetectAnnotations(i.url_service, imageUrl, (result) => {
                         if(result != null){
@@ -76,18 +78,19 @@ L.Control.ImageDetectService = L.Control.extend({
                 }
                 if(i.detectionType === "PREDICT_CLASS_TYPE"){
                     getPredictCLassAnnotations(i.url_service, imageUrl, (result) => {
-                        console.log(result);
+                        // console.log(result);
                         const classId = result.class_id;
                         const confidence = result.confidence;
                         const className = result.class_name;
                         const serviceName = i.name;
                         ee.emit(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this.options.picture.sha1, confidence, className, classId, serviceName)
                     })
-
-
                 }
             }
         })
+        if(activeServices === 0){
+            remote.dialog.showErrorBox(t('global.info'), t('annotate.editor.alert_not_active_image_detect_service'));
+        }
     },
 });
 

@@ -50,9 +50,9 @@ export const getImageDetectAnnotations = (service_url, param, callback) => {
 };
 export const getPredictCLassAnnotations = (service_url, image_url, callback) => {
     const { t } = i18next;
-    const url = service_url; // No need to append query params anymore
+    const url = service_url;
     const payload = {
-        image_url: image_url, // param is now just the image URL
+        image_url: image_url,
     };
 
     ee.emit(EVENT_SHOW_WAITING);

@@ -64,8 +64,8 @@ const mapDispatchToProps = dispatch => {
         updateTaxonomiesStatus: (id, isActive, model) => {
             dispatch(updateTaxonomiesStatus(id, isActive, model));
         },
-        updateImageDetectModelStatus: (id, isActive, model) => {
-            dispatch(updateImageDetectModelStatus(id, isActive, model));
+        updateImageDetectModelStatus: (id, isActive, model, isAligned) => {
+            dispatch(updateImageDetectModelStatus(id, isActive, model, isAligned));
         },
 
         goTo: (path) => {

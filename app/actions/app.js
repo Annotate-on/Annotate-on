@@ -824,11 +824,12 @@ export const editImageDetectModel = (payload) => ({
     type: EDIT_IMAGE_DETECT_MODEL,
     payload
 });
-export const updateImageDetectModelStatus = (id, isActive, model) => ({
+export const updateImageDetectModelStatus = (id, isActive, model, isAligned) => ({
     type: CHANGE_IMAGE_DETECT_MODEL_STATUS,
     id,
     isActive,
-    model
+    model,
+    isAligned
 });
 
 export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targetTypes) => ({

@@ -3612,13 +3612,17 @@ export default (state = {}, action) => {
         }
 
         case CHANGE_IMAGE_DETECT_MODEL_STATUS: {
+            // debugger
             const counter = state.counter + 1;
             const imageDetectModels = [...state.imageDetectModels];
             let selectedImageDetectModel = {};
             imageDetectModels.forEach(element => {
                 if (element.id === action.id) {
                     element.isActive = action.isActive;
-                    if (action.isActive) {
+                    if(action.isAligned != null){
+                        element.isAligned = action.isAligned;
+                    }
+                    if (action.isAligned) {
                         selectedImageDetectModel.id = element.id;
                         selectedImageDetectModel.name = element.name;
                         selectedImageDetectModel.model = element.model;
@@ -3631,7 +3635,9 @@ export default (state = {}, action) => {
                     } else
                         selectedImageDetectModel = null;
                 } else {
-                   // element.isActive = false;
+                   if(action.isAligned != null){
+                       element.isAligned = false;
+                   }
                 }
             });
             return {...state, counter, imageDetectModels, selectedImageDetectModel};
