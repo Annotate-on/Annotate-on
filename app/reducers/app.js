@@ -24,6 +24,7 @@ import {
     CREATE_ANNOTATION_RATIO,
     CREATE_ANNOTATION_RECTANGULAR,
     CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR,
+    CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL,
     CREATE_ANNOTATION_RICHTEXT,
     CREATE_ANNOTATION_TRANSCRIPTION,
     CREATE_CARTEL,
@@ -954,6 +955,46 @@ export default (state = {}, action) => {
                 }
             };
         }
+        break;
+        case CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL: {
+            const {type, ...payload} = action;
+            const existingAnnotations = state.annotations_categorical[payload.pictureId] || [];
+            const currentAnnotationValue = `${payload.className} (${payload.confidence})`;
+            const isDuplicate = existingAnnotations.some((annotation) =>
+                annotation.value === currentAnnotationValue
+            );
+            if (isDuplicate) {
+                return state;
+            }
+            return {
+                ...state,
+                annotations_categorical: {
+                    ...state.annotations_categorical,
+                    [payload.pictureId]: [
+                        {
+                            id: payload.id,
+                            pictureId: payload.pictureId,
+                            annotationType: ANNOTATION_CATEGORICAL,
+                            creationDate: NOW_DATE,
+                            creationTimestamp: NOW_TIMESTAMP,
+                            title: payload.serviceName,
+                            value: `${payload.className} (${payload.confidence})`,
+                            color: "",
+                        },
+                        ...(state.annotations_categorical[payload.pictureId] || [])
+                    ].sort((left, right) => {
+                        if (left.title > right.title) {
+                            return -1;
+                        }
+                        if (left.title < right.title) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                }
+            };
+        }
+        break;
         case CREATE_ANNOTATION_RICHTEXT: {
             const counter = state.counter + 1;
             const {type, ...payload} = action;

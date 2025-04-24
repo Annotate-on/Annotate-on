@@ -3,6 +3,7 @@ pictureId refers to a picture SHA1
 */
 
 import {ANNOTATION_POLYGON_OF_INTEREST, ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
+import {EVENT_CREATE_PREDICT_CLASS_ANNOTATION} from "../utils/library";
 
 export const CREATE_ANNOTATION_CHRONOTHEMATIQUE = 'CREATE_ANNOTATION_CHRONOTHEMATIQUE';
 export const CREATE_EVENT_ANNOTATION = 'CREATE_EVENT_ANNOTATION';
@@ -12,6 +13,7 @@ export const CREATE_ANNOTATION_MEASURE_POLYLINE = 'CREATE_ANNOTATION_MEASURE_POL
 export const CREATE_ANNOTATION_POINT_OF_INTEREST = 'CREATE_ANNOTATION_POINT_OF_INTEREST';
 export const CREATE_ANNOTATION_RECTANGULAR = 'CREATE_ANNOTATION_RECTANGULAR';
 export const CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR = 'CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR';
+export const CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL = 'CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL';
 export const CREATE_ANNOTATION_POLYGON = 'CREATE_ANNOTATION_POLYGON';
 export const CREATE_ANNOTATION_ANGLE = 'CREATE_ANNOTATION_ANGLE';
 export const CREATE_ANNOTATION_OCCURRENCE = 'CREATE_ANNOTATION_OCCURRENCE';
@@ -238,6 +240,18 @@ export const createImageDetectAnnotationRectangular = (pictureId, vertices, id, 
         confidence,
         name,
         counter
+    };
+};
+
+export const createPredictClassAnnotationCategorical = (pictureId, id, confidence, className, classId, serviceName) => {
+    return {
+        type: CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL,
+        pictureId,
+        id,
+        confidence,
+        className,
+        classId,
+        serviceName
     };
 };
 
