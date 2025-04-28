@@ -18,7 +18,15 @@ import TableHeader from "./TableHeader";
 import XperSettings from "../containers/XperSettings";
 import lodash from "lodash";
 import moment from "moment";
-import {APP_NAME, MODEL_ANNOTATE, MODEL_XPER, MODEL_IMAGE_DETECT, CATEGORICAL, NUMERICAL} from "../constants/constants";
+import {
+    APP_NAME,
+    MODEL_ANNOTATE,
+    MODEL_XPER,
+    MODEL_IMAGE_DETECT,
+    CATEGORICAL,
+    NUMERICAL,
+    INTEREST, TEXTUAL, PREDICT_CLASS_TYPE, IMAGE_DETECT_TYPE
+} from "../constants/constants";
 import TargetDescriptors from "../containers/TargetDescriptors";
 import {get} from '../utils/js';
 import fs from "fs-extra";
@@ -84,53 +92,143 @@ export default class extends Component {
                 modelImageDetectPwd: '',
                 modelImageDetectDesc: '',
                 modelImageDetectConfidence: '',
-                modelClasses: []
+                modelClasses: [],
+                detectionType: ''
             },
 
         };
         this.handleModelClassNameInputChangeForEdit = this.handleModelClassNameInputChangeForEdit.bind(this);
         this.handleModelClassIdInputChangeForEdit = this.handleModelClassIdInputChangeForEdit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        //     id, 'IRD Image Detect', MODEL_IMAGE_DETECT, 0, 'https://plantai.ummisco.fr/image', '', '', 'Default service IRD', '50', [{"id":"0", "name":"leaf"}, {"id":"1", "name":"root"}, {"id":"2", "name":"stem"}, {"id":"3", "name":"flower"}, {"id":"4", "name":"fruit"}, {"id":"5", "name":"seed"}], 'IMAGE_DETECT_TYPE'
 
-        if(this.props.imageDetectModels.length == 0){
-            const id = chance.guid();
+        const models = [
+            {
+                "id": "1116e545-6517-5d03-95f3-2dd4c32c1b9c",
+                "name": "IRD Image Detect",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "https://plantai.ummisco.fr/image",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    {"id":"0", "name":"leaf"}, {"id":"1", "name":"root"}, {"id":"2", "name":"stem"}, {"id":"3", "name":"flower"}, {"id":"4", "name":"fruit"}, {"id":"5", "name":"seed"}
+                ],
+                "detectionType": "IMAGE_DETECT_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "8316e545-6517-5d03-95f3-2dd4c32c1b9c",
+                "name": "Edge",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/edge/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Dente" },
+                    { "id": "1", "name": "Lisse" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "d5d858b4-043a-5fd8-9e09-100e06a5863d",
+                "name": "Stem",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/stem/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Herbacée" },
+                    { "id": "1", "name": "Ligneuse" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "e8044158-78d9-5194-b8c3-3fb1c028e8f3",
+                "name": "Thorns",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/thorns/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Non" },
+                    { "id": "1", "name": "Oui" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "ff1f1008-07ab-51a4-b3ff-6193c6372a5c",
+                "name": "Obove",
+                "isActive": true,
+                "isAligned": false,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/obove/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Obovée" },
+                    { "id": "1", "name": "Autre" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE"
+            },
+            {
+                "id": "6a31dce5-cf70-5563-8d49-5dc9806a3537",
+                "name": "Phyllotaxy",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/phyllotaxy/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Alterné" },
+                    { "id": "1", "name": "Opposée" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false,
+            }
+        ];
+        const createModel = (model) => {
             this.props.saveImageDetectModel(
-                id,
-                'IRD Image Detect',
-                MODEL_IMAGE_DETECT,
-                0,
-                'https://plantai.ummisco.fr/image',
-                '',
-                '',
-                'Default service IRD',
-                '50',
-                [
-                    {
-                        "id":"0",
-                        "name":"leaf"
-                    },
-                    {
-                        "id":"1",
-                        "name":"root"
-                    },
-                    {
-                        "id":"2",
-                        "name":"stem"
-                    },
-                    {
-                        "id":"3",
-                        "name":"flower"
-                    },
-                    {
-                        "id":"4",
-                        "name":"fruit"
-                    },
-                    {
-                        "id":"5",
-                        "name":"seed"
-                    }
-                ]
-            )
+                model.id,
+                model.name,
+                model.model,
+                model.version,
+                model.url_service,
+                model.user || '',
+                model.password || '',
+                model.description || '',
+                model.confidence,
+                model.modelClasses,
+                model.detectionType
+            );
+        };
+
+        if(this.props.imageDetectModels.length === 0){
+            models.forEach(model => createModel(model));
         }
     }
 
@@ -210,7 +308,8 @@ export default class extends Component {
                     modelImageDetectPwd: '',
                     modelImageDetectDesc: '',
                     modelImageDetectConfidence: '',
-                    modelClasses: []
+                    modelClasses: [],
+                    detectionType: ''
                 }
             })
         }
@@ -253,7 +352,8 @@ export default class extends Component {
                     password: this.state.form.modelImageDetectPwd,
                     description: this.state.form.modelImageDetectDesc,
                     confidence: this.state.form.modelImageDetectConfidence,
-                    modelClasses: this.state.form.modelClasses
+                    modelClasses: this.state.form.modelClasses,
+                    detectionType: this.state.form.detectionType
                 }).then(_ => {
                     this.setState({
                         form: {
@@ -264,7 +364,8 @@ export default class extends Component {
                             modelImageDetectPwd: '',
                             modelImageDetectDesc: '',
                             modelImageDetectConfidence: '',
-                            modelClasses: []
+                            modelClasses: [],
+                            detectionType: ''
                         },
                         showView: LIST
                     });
@@ -287,7 +388,8 @@ export default class extends Component {
                     this.state.form.modelImageDetectPwd,
                     this.state.form.modelImageDetectDesc,
                     this.state.form.modelImageDetectConfidence,
-                    this.state.form.modelClasses
+                    this.state.form.modelClasses,
+                    this.state.form.detectionType
                 ).then(_ => {
                     this.setState({
                         form: {
@@ -298,7 +400,8 @@ export default class extends Component {
                             modelImageDetectPwd: '',
                             modelImageDetectDesc: '',
                             modelImageDetectConfidence: '',
-                            modelClasses: []
+                            modelClasses: [],
+                            detectionType: ''
                         },
                         showView: LIST
                     });
@@ -430,7 +533,8 @@ export default class extends Component {
                         modelImageDetectPwd: imageDetectModel.password,
                         modelImageDetectDesc: imageDetectModel.description,
                         modelImageDetectConfidence: imageDetectModel.confidence,
-                        modelClasses: imageDetectModel.modelClasses
+                        modelClasses: imageDetectModel.modelClasses,
+                        detectionType: imageDetectModel.detectionType
                     }}
                 );
                 this._toggleImageDetect();
@@ -570,7 +674,7 @@ export default class extends Component {
         const value = target.value;
         const name = target.name;
         let form = this.state.form;
-        if (target.type === 'select-one' || target.type === 'select-multiple') {
+        if ((target.type === 'select-one' || target.type === 'select-multiple') && name !== "detectionType" ) {
             form[name] = target.selectedOptions[0].dataset[name];
         } else {
             form[name] = value;
@@ -794,25 +898,25 @@ export default class extends Component {
                                 >{t('models.btn_new_model')}</Button>
                             </Col>
                             <Col sm={4} md={4} className="text-md-right">
-                                {this.state.imageDetectModels.map((imageDetectModel) => {
-                                    if (imageDetectModel.isActive) {
-                                        let i = 1;
-                                        return (
-                                            <div key={i++}>
-                                                    <span>{t('models.lbl_active_model')}:<span
-                                                        className="lead"> {imageDetectModel.name}</span>&nbsp;</span>
+                                {/*{this.state.imageDetectModels.map((imageDetectModel) => {*/}
+                                {/*    if (imageDetectModel.isActive) {*/}
+                                {/*        let i = 1;*/}
+                                {/*        return (*/}
+                                {/*            <div key={i++}>*/}
+                                {/*                    <span>{t('models.lbl_active_model')}:<span*/}
+                                {/*                        className="lead"> {imageDetectModel.name}</span>&nbsp;</span>*/}
 
-                                                <Button className="btn btn-secondary mrg" color="secondary"
-                                                        onClick={() => {
-                                                            this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive)
+                                {/*                <Button className="btn btn-secondary mrg" color="secondary"*/}
+                                {/*                        onClick={() => {*/}
+                                {/*                            this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive)*/}
 
-                                                        }}
-                                                >{t('models.btn_deactivate')}</Button>
-                                            </div>
-                                        )
-                                    }
-                                })
-                                }
+                                {/*                        }}*/}
+                                {/*                >{t('models.btn_deactivate')}</Button>*/}
+                                {/*            </div>*/}
+                                {/*        )*/}
+                                {/*    }*/}
+                                {/*})*/}
+                                {/*}*/}
                             </Col>
                         </Row>
                         <br/>
@@ -824,8 +928,9 @@ export default class extends Component {
                                         <tr>
                                             <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
-                                            <th/>
                                             <TableHeader title={t('models.table_column_model_name')} sortKey="name"
+                                                         sortedBy={this.state.sortBy} sort={this._sort}/>
+                                            <TableHeader title={t('models.table_column_model_detection_type')} sortKey="name"
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                             <TableHeader title={t('models.dialog_create_model.lbl_model_image_detect_url')} sortKey="url_service"
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
@@ -833,6 +938,8 @@ export default class extends Component {
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                             <TableHeader title={t('models.table_column_date_imported_created')}
                                                          sortKey="creationDate"
+                                                         sortedBy={this.state.sortBy} sort={this._sort}/>
+                                            <TableHeader title={t('models.table_column_align')} sortKey=""
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                         </tr>
                                         </thead>
@@ -849,26 +956,35 @@ export default class extends Component {
                                                             imageDetectModel: imageDetectModel
                                                         };
                                                     }}>
+
                                                     <td width={40} style={{textAlign: 'center'}}>
-                                                        <Input type="radio"
+                                                        <Input type="checkbox"
                                                                name="isActive2"
+                                                               className="custom-checkbox"
                                                                checked={imageDetectModel.isActive}
                                                                onChange={() => {
                                                                    console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)
-                                                                   this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)
+                                                                   this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model, null)
                                                                }}
                                                         />
-                                                        <div className="check"
-                                                             onClick={() => {
-                                                                 console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)
-                                                                 this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)
-                                                             }}/>
+                                                        {/*<div className="check"*/}
+                                                        {/*     onClick={() => {*/}
+                                                        {/*         console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)*/}
+                                                        {/*         this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)*/}
+                                                        {/*     }}/>*/}
                                                     </td>
-                                                    <td/>
-                                                    <td onClick={() => {
+                                                    <td style={{cursor:'pointer'}}
+                                                        onClick={() => {
                                                         this._viewImageDetectModel(imageDetectModel);
                                                      }}>
                                                         {imageDetectModel.name}
+                                                    </td>
+                                                    <td>
+                                                        {imageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
+                                                            <Label>Image detect</Label>
+                                                            :
+                                                            <Label>Predict classification</Label>
+                                                        }
                                                     </td>
                                                     <td>
                                                         {imageDetectModel.url_service}
@@ -878,6 +994,26 @@ export default class extends Component {
                                                     </td>
                                                     <td>
                                                         {date.format('DD/MM/YYYY')}
+                                                    </td>
+                                                    <td width={40} style={{textAlign: 'center'}}>
+                                                        {imageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
+                                                            <div>
+                                                            <Input type="radio"
+                                                                   name="isAligned"
+                                                                   checked={imageDetectModel.isAligned}
+                                                                   onChange={() => {
+                                                                       this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
+                                                                   }}
+                                                            />
+                                                            <div className="check"
+                                                                 onClick={() => {
+                                                                     this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
+                                                                 }}/>
+                                                            </div>
+                                                            :
+                                                            ''
+                                                        }
+
                                                     </td>
                                                 </ContextMenuTrigger>
                                             );
@@ -1040,7 +1176,13 @@ export default class extends Component {
                                     <FormGroup row>
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
-                                            <Input plaintext readOnly value="Image Detect IRD service"/>
+                                            <Input type="select" name="detectionType" id="detectionType"
+                                                   value={this.state.form.detectionType || ''}
+                                                   onChange={this.handleInputChange} disabled="">
+                                                <option value=''></option>
+                                                <option value={IMAGE_DETECT_TYPE}>Image detect</option>
+                                                <option value={PREDICT_CLASS_TYPE}>Predict classification</option>
+                                            </Input>
                                         </Col>
                                     </FormGroup>
                                 </Form>
@@ -1127,7 +1269,11 @@ export default class extends Component {
                                     <FormGroup row>
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
-                                            <Label plaintext readOnly>{t('Image Detect IRD service')}</Label>
+                                            {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
+                                                <Label>Image detect</Label>
+                                                :
+                                                <Label>Predict classification</Label>
+                                            }
                                         </Col>
                                     </FormGroup>
                                 </Form>

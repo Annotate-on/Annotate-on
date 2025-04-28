@@ -37,7 +37,7 @@ import {
     updateTaxonomyValues,
     createAnnotationCircleOfInterest, deleteAnnotationCircleOfInterest,
     createAnnotationPolygonOfInterest, deleteAnnotationPolygonOfInterest,
-    createImageDetectAnnotationRectangular, createTargetInstance, deleteAnnotation3dPointOfInterest
+    createImageDetectAnnotationRectangular, createTargetInstance, deleteAnnotation3dPointOfInterest, createPredictClassAnnotationCategorical
 } from '../actions/app';
 import {withTranslation} from "react-i18next";
 
@@ -77,6 +77,7 @@ const mapStateToProps = (state, ownProps) => {
         repeatMode: state.app.leafletSettings.repeatMode,
         taxonomyInstance,
         projectName: state.app.selectedProjectName,
+        imageDetectModels: state.app.imageDetectModels,
         selectedImageDetectModel: state.app.selectedImageDetectModel,
         imageDetectAlignments: state.app.imageDetectAlignments
     };
@@ -98,6 +99,9 @@ const mapDispatchToProps = dispatch => {
         },
         createImageDetectAnnotationRectangular: (pictureId, vertices, id, confidence, name, counter) => {
             dispatch(createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter));
+        },
+        createPredictClassAnnotationCategorical: (pictureId, id, confidence, className, classId, serviceName) => {
+            dispatch(createPredictClassAnnotationCategorical(pictureId, id, confidence, className, classId, serviceName));
         },
         createTargetInstance: (ofType, tabName, annotationId, descriptorId, value, oldDescriptorId) => {
             dispatch(createTargetInstance(ofType, tabName, annotationId, descriptorId, value, oldDescriptorId));

@@ -54,6 +54,7 @@ import {
     EVENT_UPDATE_EVENT_RECORDING_STATUS,
     EVENT_UNFOCUS_ANNOTATION,
     EVENT_CREATE_IMAGE_DETECT_ANNOTATION,
+    EVENT_CREATE_PREDICT_CLASS_ANNOTATION,
     EVENT_XPER_MATCH_RESOURCE
 } from "../utils/library";
 import VideoPlayer from "../containers/VideoPlayer";
@@ -125,7 +126,6 @@ class Image extends PureComponent {
         if (currentPicture && currentPicture.sha1 in this.props.picturesByCalibration) {
             imageCalibration = this.props.picturesByCalibration[currentPicture.sha1]
         }
-
         this.state = {
             currentAnnotationTool: null,
             currentPicture: currentPicture,
@@ -143,7 +143,7 @@ class Image extends PureComponent {
             videoAnnAddedId: null,
             isAnnotationRecording: false,
             isEventRecordingLive: false,
-            selectedImageDetectModel: this.props.selectedImageDetectModel,
+            imageDetectModels: this.props.imageDetectModels,
             showXperMonoFilterPopup: false,
         };
         this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
@@ -167,6 +167,7 @@ class Image extends PureComponent {
         ee.on(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.on(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
         ee.on(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
+        ee.on(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this._createPredictClassAnnotation);
         ee.on(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
     }
 
@@ -174,6 +175,7 @@ class Image extends PureComponent {
         ee.removeListener(EVENT_UPDATE_RECORDING_STATUS, this._updateIsRecordingStatus);
         ee.removeListener(EVENT_UPDATE_EVENT_RECORDING_STATUS, this._updateEventRecordingStatus);
         ee.removeListener(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
+        ee.removeListener(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this._createPredictClassAnnotation);
         ee.removeListener(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
     }
 
@@ -229,21 +231,26 @@ class Image extends PureComponent {
     _createImageDetectAnnotation = (pictureId, vertices, confidence, name, classId, counter) => {
         const id = chance.guid();
         this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter);
-
         const character =  this.getAlignedCharacter(classId);
         if(character != null){
             const characterId = character.characterId;
             const characterTargetColor = character.targetColor;
-            // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, "DataUnavailable", null);
             this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, null, null);
-
-            // this.props.setAnnotationColor(id, characterTargetColor);
-
             this._setAnnotationColor(id, characterTargetColor);
         }
-        // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, "-1");
-        // this.props.createTargetInstance(INTEREST, this.props.tabName, id, "18152fb6-e385-544c-9396-8518c267ec25", null, null);
-        // this.props.createTargetInstance(CATEGORICAL, this.props.tabName, this.state.categoricalAnnotation.id, this.state.targetId, this.state.categoricalIds, this.state.oldDescriptorId);
+    }
+    _createPredictClassAnnotation = (pictureId, confidence, className, classId, serviceName) => {
+        const id = chance.guid();
+
+        this.props.createPredictClassAnnotationCategorical(pictureId, id, confidence, className, classId, serviceName);
+
+        // const character =  this.getAlignedCharacter(classId);
+        // if(character != null){
+        //     const characterId = character.characterId;
+        //     const characterTargetColor = character.targetColor;
+        //     this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, null, null);
+        //     this._setAnnotationColor(id, characterTargetColor);
+        // }
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS) {
@@ -515,7 +522,7 @@ class Image extends PureComponent {
                                                       taxonomyInstance={this.props.taxonomyInstance}
                                                       repeatMode={this.props.repeatMode}
                                                       saveLeafletSettings={this.props.saveLeafletSettings}
-                                                      selectedImageDetectModel={this.props.selectedImageDetectModel}
+                                                      imageDetectModels={this.props.imageDetectModels}
                                         /> : null
                                 }
                                 {

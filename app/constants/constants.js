@@ -137,4 +137,6 @@ export const DEFAULT_XPER_MONO_CONNECTION_URL = 'http://demo.api.xper3.fr';
 export const DEFAULT_IMAGE_CONNECT_CONNECTION_URL = 'https://plantai.ummisco.fr/image';
 
 export const SYSTEM_CATEGORIES = [TAG_AUTO, TAG_MAP_SELECTION];
+export const IMAGE_DETECT_TYPE = "IMAGE_DETECT_TYPE";
+export const PREDICT_CLASS_TYPE = "PREDICT_CLASS_TYPE";
 

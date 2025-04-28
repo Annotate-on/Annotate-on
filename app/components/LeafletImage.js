@@ -269,7 +269,7 @@ class LeafletImage extends Component {
             sha1: props.currentPicture.sha1,
             control: null,
             enableToolBox: true,
-            selectedImageDetectModel: props.selectedImageDetectModel
+            imageDetectModels: props.imageDetectModels
         };
 
         SIMPLELINE_OPTIONS.repeatMode = props.repeatMode;
@@ -740,7 +740,7 @@ class LeafletImage extends Component {
                 this._recolnatControlMenu.addTo(map);
             this._imageDetectService = L.ImageDetectService({
                 picture: this.props.currentPicture,
-                urlImageDetect: this.props.selectedImageDetectModel,
+                urlImageDetect: this.props.imageDetectModels,
                 leafletImage: this
             }).addTo(map);
             this._xperMatch = L.XperMatch({

@@ -3,6 +3,7 @@ pictureId refers to a picture SHA1
 */
 
 import {ANNOTATION_POLYGON_OF_INTEREST, ANNOTATION_SIMPLELINE, NUMERICAL} from "../constants/constants";
+import {EVENT_CREATE_PREDICT_CLASS_ANNOTATION} from "../utils/library";
 
 export const CREATE_ANNOTATION_CHRONOTHEMATIQUE = 'CREATE_ANNOTATION_CHRONOTHEMATIQUE';
 export const CREATE_EVENT_ANNOTATION = 'CREATE_EVENT_ANNOTATION';
@@ -12,6 +13,7 @@ export const CREATE_ANNOTATION_MEASURE_POLYLINE = 'CREATE_ANNOTATION_MEASURE_POL
 export const CREATE_ANNOTATION_POINT_OF_INTEREST = 'CREATE_ANNOTATION_POINT_OF_INTEREST';
 export const CREATE_ANNOTATION_RECTANGULAR = 'CREATE_ANNOTATION_RECTANGULAR';
 export const CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR = 'CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR';
+export const CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL = 'CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL';
 export const CREATE_ANNOTATION_POLYGON = 'CREATE_ANNOTATION_POLYGON';
 export const CREATE_ANNOTATION_ANGLE = 'CREATE_ANNOTATION_ANGLE';
 export const CREATE_ANNOTATION_OCCURRENCE = 'CREATE_ANNOTATION_OCCURRENCE';
@@ -238,6 +240,18 @@ export const createImageDetectAnnotationRectangular = (pictureId, vertices, id, 
         confidence,
         name,
         counter
+    };
+};
+
+export const createPredictClassAnnotationCategorical = (pictureId, id, confidence, className, classId, serviceName) => {
+    return {
+        type: CREATE_PREDICT_CLASS_ANNOTATION_CATEGORICAL,
+        pictureId,
+        id,
+        confidence,
+        className,
+        classId,
+        serviceName
     };
 };
 
@@ -796,9 +810,9 @@ export const saveTaxonomy = (id, name, path, model, version) => ({
     id, name, path, model, version
 });
 
-export const saveImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({
+export const saveImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType) => ({
     type: SAVE_IMAGE_DETECT_MODEL,
-    id, name, model, version, url_service, user, password, description, confidence, modelClasses
+    id, name, model, version, url_service, user, password, description, confidence, modelClasses, detectionType
 });
 
 // export const editImageDetectModel = (id, name, model, version, url_service, user, password, description, confidence, modelClasses) => ({
@@ -810,11 +824,12 @@ export const editImageDetectModel = (payload) => ({
     type: EDIT_IMAGE_DETECT_MODEL,
     payload
 });
-export const updateImageDetectModelStatus = (id, isActive, model) => ({
+export const updateImageDetectModelStatus = (id, isActive, model, isAligned) => ({
     type: CHANGE_IMAGE_DETECT_MODEL_STATUS,
     id,
     isActive,
-    model
+    model,
+    isAligned
 });
 
 export const importTaxonomy = (id, name, path, version, taxonomyDefinition, targetTypes) => ({
