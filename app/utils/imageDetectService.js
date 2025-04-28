@@ -54,9 +54,7 @@ export const getPredictCLassAnnotations = (service_url, image_url, callback) => 
     const payload = {
         image_url: image_url,
     };
-
     ee.emit(EVENT_SHOW_WAITING);
-
     request(
         {
             method: 'POST',
@@ -65,17 +63,19 @@ export const getPredictCLassAnnotations = (service_url, image_url, callback) => 
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(payload),
-            timeout: 10000,
+            timeout: 120000,
         },
         function (error, response, body) {
-            ee.emit(EVENT_HIDE_WAITING);
+
             if (error) {
                 console.error(error);
                 callback(null);
                 remote.dialog.showErrorBox(t('global.error'), getErrorMessage(error));
             } else if (!response || response.statusCode !== 200) {
                 console.error(getErrorMessage(null, response, body), body);
-                remote.dialog.showErrorBox(t('global.error'), getErrorMessage(null, response, body));
+                const full_error = service_url + " error: " + getErrorMessage(null, response, body)
+                ee.emit(EVENT_HIDE_WAITING);
+                remote.dialog.showErrorBox(t('global.error'), full_error);
                 callback(null);
             } else {
                 try {
@@ -85,12 +85,17 @@ export const getPredictCLassAnnotations = (service_url, image_url, callback) => 
                 } catch (e) {
                     console.error(e);
                     callback(null);
+                    ee.emit(EVENT_HIDE_WAITING);
                     remote.dialog.showErrorBox(
                         t('global.error'),
                         `${t('annotate.editor.alert_bad_image_detect_response')}`
                     );
                 }
+
+
             }
+
         }
     );
+
 };

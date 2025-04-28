@@ -2,7 +2,13 @@ import L from "leaflet";
 import React, { Component } from 'react';
 import i18next from "i18next";
 import {getImageDetectAnnotations, getPredictCLassAnnotations} from '../utils/imageDetectService';
-import {ee, EVENT_CREATE_IMAGE_DETECT_ANNOTATION, EVENT_GOTO_ANNOTATION, EVENT_CREATE_PREDICT_CLASS_ANNOTATION} from "../utils/library";
+import {
+    ee,
+    EVENT_CREATE_IMAGE_DETECT_ANNOTATION,
+    EVENT_GOTO_ANNOTATION,
+    EVENT_CREATE_PREDICT_CLASS_ANNOTATION,
+    EVENT_HIDE_WAITING, EVENT_SHOW_WAITING
+} from "../utils/library";
 import {convertBoundingBoxToVertices} from "../utils/maths"
 import {remote} from "electron";
 import {loadMetadata} from "../utils/config";
@@ -77,6 +83,7 @@ L.Control.ImageDetectService = L.Control.extend({
                     });
                 }
                 if(i.detectionType === "PREDICT_CLASS_TYPE"){
+                    ee.emit(EVENT_SHOW_WAITING);
                     getPredictCLassAnnotations(i.url_service, imageUrl, (result) => {
                         // console.log(result);
                         const classId = result.class_id;
@@ -84,6 +91,7 @@ L.Control.ImageDetectService = L.Control.extend({
                         const className = result.class_name;
                         const serviceName = i.name;
                         ee.emit(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this.options.picture.sha1, confidence, className, classId, serviceName)
+                        ee.emit(EVENT_HIDE_WAITING);
                     })
                 }
             }

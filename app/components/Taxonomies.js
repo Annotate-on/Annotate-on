@@ -100,46 +100,135 @@ export default class extends Component {
         this.handleModelClassNameInputChangeForEdit = this.handleModelClassNameInputChangeForEdit.bind(this);
         this.handleModelClassIdInputChangeForEdit = this.handleModelClassIdInputChangeForEdit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        //     id, 'IRD Image Detect', MODEL_IMAGE_DETECT, 0, 'https://plantai.ummisco.fr/image', '', '', 'Default service IRD', '50', [{"id":"0", "name":"leaf"}, {"id":"1", "name":"root"}, {"id":"2", "name":"stem"}, {"id":"3", "name":"flower"}, {"id":"4", "name":"fruit"}, {"id":"5", "name":"seed"}], 'IMAGE_DETECT_TYPE'
 
-        if(this.props.imageDetectModels.length == 0){
-            const id = chance.guid();
+        const models = [
+            {
+                "id": "1116e545-6517-5d03-95f3-2dd4c32c1b9c",
+                "name": "IRD Image Detect",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "https://plantai.ummisco.fr/image",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    {"id":"0", "name":"leaf"}, {"id":"1", "name":"root"}, {"id":"2", "name":"stem"}, {"id":"3", "name":"flower"}, {"id":"4", "name":"fruit"}, {"id":"5", "name":"seed"}
+                ],
+                "detectionType": "IMAGE_DETECT_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "8316e545-6517-5d03-95f3-2dd4c32c1b9c",
+                "name": "Edge",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/edge/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Dente" },
+                    { "id": "1", "name": "Lisse" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "d5d858b4-043a-5fd8-9e09-100e06a5863d",
+                "name": "Stem",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/stem/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Herbacée" },
+                    { "id": "1", "name": "Ligneuse" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "e8044158-78d9-5194-b8c3-3fb1c028e8f3",
+                "name": "Thorns",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/thorns/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Non" },
+                    { "id": "1", "name": "Oui" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false
+            },
+            {
+                "id": "ff1f1008-07ab-51a4-b3ff-6193c6372a5c",
+                "name": "Obove",
+                "isActive": true,
+                "isAligned": false,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/obove/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Obovée" },
+                    { "id": "1", "name": "Autre" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE"
+            },
+            {
+                "id": "6a31dce5-cf70-5563-8d49-5dc9806a3537",
+                "name": "Phyllotaxy",
+                "isActive": true,
+                "model": "MODEL_IMAGE_DETECT",
+                "version": 0,
+                "url_service": "http://imagedetect.presek-i.com:5666/predictClassification/phyllotaxy/",
+                "user": "",
+                "password": "",
+                "description": "",
+                "confidence": "50",
+                "modelClasses": [
+                    { "id": "0", "name": "Alterné" },
+                    { "id": "1", "name": "Opposée" }
+                ],
+                "detectionType": "PREDICT_CLASS_TYPE",
+                "isAligned": false,
+            }
+        ];
+        const createModel = (model) => {
             this.props.saveImageDetectModel(
-                id,
-                'IRD Image Detect',
-                MODEL_IMAGE_DETECT,
-                0,
-                'https://plantai.ummisco.fr/image',
-                '',
-                '',
-                'Default service IRD',
-                '50',
-                [
-                    {
-                        "id":"0",
-                        "name":"leaf"
-                    },
-                    {
-                        "id":"1",
-                        "name":"root"
-                    },
-                    {
-                        "id":"2",
-                        "name":"stem"
-                    },
-                    {
-                        "id":"3",
-                        "name":"flower"
-                    },
-                    {
-                        "id":"4",
-                        "name":"fruit"
-                    },
-                    {
-                        "id":"5",
-                        "name":"seed"
-                    }
-                ]
-            )
+                model.id,
+                model.name,
+                model.model,
+                model.version,
+                model.url_service,
+                model.user || '',
+                model.password || '',
+                model.description || '',
+                model.confidence,
+                model.modelClasses,
+                model.detectionType
+            );
+        };
+
+        if(this.props.imageDetectModels.length === 0){
+            models.forEach(model => createModel(model));
         }
     }
 
