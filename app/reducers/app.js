@@ -980,6 +980,12 @@ export default (state = {}, action) => {
                             title: payload.serviceName,
                             value: `${payload.className} (${payload.confidence})`,
                             color: "",
+                            vertices:[
+                                {
+                                    "x": 0,
+                                    "y": 0
+                                }
+                            ],
                         },
                         ...(state.annotations_categorical[payload.pictureId] || [])
                     ].sort((left, right) => {
