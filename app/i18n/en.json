@@ -949,7 +949,7 @@
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_date_imported_created": "Date imported/created",
-      "table_column_align": "Active alignment",
+      "table_column_align": "Alignment",
       "dialog_create_model": {
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
@@ -980,7 +980,7 @@
         "table_column_character_group": "Character group",
         "table_column_annotation_type": "Annotation type",
         "table_column_color": "Color",
-        "table_column_pairing": "Image Detect alignment",
+        "table_column_pairing": "Alignment with",
         "button_pairing": "Add alignment",
         "button_remove_alignement": "Remove alignment",
         "dialog_edit": {

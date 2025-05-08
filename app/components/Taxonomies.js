@@ -898,25 +898,6 @@ export default class extends Component {
                                 >{t('models.btn_new_model')}</Button>
                             </Col>
                             <Col sm={4} md={4} className="text-md-right">
-                                {/*{this.state.imageDetectModels.map((imageDetectModel) => {*/}
-                                {/*    if (imageDetectModel.isActive) {*/}
-                                {/*        let i = 1;*/}
-                                {/*        return (*/}
-                                {/*            <div key={i++}>*/}
-                                {/*                    <span>{t('models.lbl_active_model')}:<span*/}
-                                {/*                        className="lead"> {imageDetectModel.name}</span>&nbsp;</span>*/}
-
-                                {/*                <Button className="btn btn-secondary mrg" color="secondary"*/}
-                                {/*                        onClick={() => {*/}
-                                {/*                            this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive)*/}
-
-                                {/*                        }}*/}
-                                {/*                >{t('models.btn_deactivate')}</Button>*/}
-                                {/*            </div>*/}
-                                {/*        )*/}
-                                {/*    }*/}
-                                {/*})*/}
-                                {/*}*/}
                             </Col>
                         </Row>
                         <br/>
@@ -928,6 +909,8 @@ export default class extends Component {
                                         <tr>
                                             <TableHeader title={t('models.table_column_select')} sortKey="isActive"
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
+                                            <TableHeader title={t('models.table_column_align')} sortKey=""
+                                                         sortedBy={this.state.sortBy} sort={this._sort}/>
                                             <TableHeader title={t('models.table_column_model_name')} sortKey="name"
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                             <TableHeader title={t('models.table_column_model_detection_type')} sortKey="name"
@@ -938,8 +921,6 @@ export default class extends Component {
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                             <TableHeader title={t('models.table_column_date_imported_created')}
                                                          sortKey="creationDate"
-                                                         sortedBy={this.state.sortBy} sort={this._sort}/>
-                                            <TableHeader title={t('models.table_column_align')} sortKey=""
                                                          sortedBy={this.state.sortBy} sort={this._sort}/>
                                         </tr>
                                         </thead>
@@ -967,11 +948,26 @@ export default class extends Component {
                                                                    this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model, null)
                                                                }}
                                                         />
-                                                        {/*<div className="check"*/}
-                                                        {/*     onClick={() => {*/}
-                                                        {/*         console.log(imageDetectModel.id + ' ' + !imageDetectModel.isActive)*/}
-                                                        {/*         this.props.updateImageDetectModelStatus(imageDetectModel.id, !imageDetectModel.isActive, imageDetectModel.model)*/}
-                                                        {/*     }}/>*/}
+                                                    </td>
+                                                    <td width={40} style={{textAlign: 'center'}}>
+                                                        {imageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
+                                                            <div>
+                                                                <Input type="radio"
+                                                                       name="isAligned"
+                                                                       checked={imageDetectModel.isAligned}
+                                                                       onChange={() => {
+                                                                           this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
+                                                                       }}
+                                                                />
+                                                                <div className="check"
+                                                                     onClick={() => {
+                                                                         this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
+                                                                     }}/>
+                                                            </div>
+                                                            :
+                                                            ''
+                                                        }
+
                                                     </td>
                                                     <td style={{cursor:'pointer'}}
                                                         onClick={() => {
@@ -994,26 +990,6 @@ export default class extends Component {
                                                     </td>
                                                     <td>
                                                         {date.format('DD/MM/YYYY')}
-                                                    </td>
-                                                    <td width={40} style={{textAlign: 'center'}}>
-                                                        {imageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
-                                                            <div>
-                                                            <Input type="radio"
-                                                                   name="isAligned"
-                                                                   checked={imageDetectModel.isAligned}
-                                                                   onChange={() => {
-                                                                       this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
-                                                                   }}
-                                                            />
-                                                            <div className="check"
-                                                                 onClick={() => {
-                                                                     this.props.updateImageDetectModelStatus(imageDetectModel.id, imageDetectModel.isActive, imageDetectModel.model, !imageDetectModel.isAligned)
-                                                                 }}/>
-                                                            </div>
-                                                            :
-                                                            ''
-                                                        }
-
                                                     </td>
                                                 </ContextMenuTrigger>
                                             );

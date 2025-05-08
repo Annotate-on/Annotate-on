@@ -622,14 +622,16 @@ class TargetDescriptors extends PureComponent {
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    {this.state.imageDetectModel.length !== 0 &&(
                                     <TableHeader title={`${t('models.target_descriptors.table_column_pairing')}: ${(this.state.imageDetectModel)?this.state.imageDetectModel.name:"none"}`} sortKey="pairing"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    )}
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {this.state.sortedTargets.map(target => {
                                     const alignObject= this.characterIdExists(target.id, target.targetType);
-
+debugger
                                     return (
                                         <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
                                             <th scope="row" >&nbsp;</th>
@@ -658,6 +660,7 @@ class TargetDescriptors extends PureComponent {
                                             <td>{target.annotationType}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
+                                            {this.state.imageDetectModel.length !== 0 && (
                                             <td>
                                                 {(!alignObject && (!this.state.imageDetectModel || this.state.imageDetectModel.length!=0)) &&(
                                                     <Button color="primary" onClick={() => this.setAlignment(target.id, target.name, target.targetType)}>
@@ -679,6 +682,7 @@ class TargetDescriptors extends PureComponent {
                                                     </div>
                                                 )}
                                             </td>
+                                            )}
                                         </tr>
                                     );
                                 })}

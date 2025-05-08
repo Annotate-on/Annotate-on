@@ -917,7 +917,7 @@
       "table_column_model_detectyon_type": "Type de modèle",
       "table_column_type": "Type",
       "table_column_version": "Version",
-      "table_column_align": "Alignement actif ",
+      "table_column_align": "Alignement",
       "table_column_date_imported_created": "Date d'import ou de création",
       "dialog_create_model": {
         "title_create_model": "Créer un modèle",
@@ -949,7 +949,7 @@
         "table_column_character_group": "Groupe de caractères",
         "table_column_annotation_type": "Type d'annotation",
         "table_column_color": "Couleur",
-        "table_column_pairing": "Image Detect couplage",
+        "table_column_pairing": "Alignement avec:",
         "button_pairing": "Ajouter couplage",
         "button_remove_alignement": "Supprimer couplage",
         "dialog_edit": {
