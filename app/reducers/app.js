@@ -35,6 +35,7 @@ import {
     CREATE_TAG,
     CREATE_TAG_EXPRESSION,
     CREATE_TARGET_DESCRIPTOR,
+    CREATE_TAXONOMY_RELATIONS,
     CREATE_TARGET_INSTANCE,
     DELETE_ANNOTATE_EVENT,
     DELETE_ANNOTATION_ANGLE,
@@ -4057,6 +4058,27 @@ export default (state = {}, action) => {
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}
             }
+        }
+
+        case CREATE_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations } = action;
+            const taxonomies = state.taxonomies.map(taxon =>
+                taxon.id === taxonomyId
+                    ? { ...taxon, relations: relations }
+                    : taxon
+            );
+
+            const selectedTaxonomy = {
+                ...state.selectedTaxonomy,
+                relations: relations
+            };
+
+            return {
+                ...state, counter,
+                taxonomies,
+                selectedTaxonomy
+            };
         }
 
         case EDIT_TARGET_DESCRIPTOR: {

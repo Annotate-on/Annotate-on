@@ -10,7 +10,8 @@ import {
     saveTargetType,
     setSelectedTaxonomy,
     saveAlignmentObject,
-    removeAlignmentObject
+    removeAlignmentObject,
+    createTaxonomyRelations
 } from "../actions/app";
 import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
@@ -27,6 +28,9 @@ const mapDispatchToProps = dispatch => {
     return {
         createTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => {
             dispatch(createTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states));
+        },
+        createTaxonomyRelations: (taxonomyId, relations) => {
+            dispatch(createTaxonomyRelations(taxonomyId, relations));
         },
         editTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => {
             dispatch(editTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states));

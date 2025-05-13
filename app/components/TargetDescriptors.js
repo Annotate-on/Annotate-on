@@ -46,6 +46,8 @@ class TargetDescriptors extends PureComponent {
             modalTitle: 'New character',
             modalTitleEdit: 'Edit character group',
             categoricalStateItemModal: false,
+            relationsModal: false,
+            relationItemModal: false,
             imageDetectAlignmentModal: false,
             selectedImageDetectClass: null,
             selectedImageDetectClassGroup: null,
@@ -54,8 +56,9 @@ class TargetDescriptors extends PureComponent {
                 targetName: null,
                 targetType: null
             },
-            categoricalStateItemModalInEdit: false,
-            categoricalStateItemInput: '',
+            relationsModalInEdit: false,
+            relationItemModalInEdit: false,
+            relationItemEditInput: '',
             form: {
                 id: '',
                 targetName: '',
@@ -67,13 +70,18 @@ class TargetDescriptors extends PureComponent {
                 categoricalStateItem: '',
                 categoryStates: []
             },
+            formRelations: {
+                relations: [],
+                relationItem: ''
+            },
             descriptors: sorted.descriptors,
             sortBy,
             sortDirection,
             sortedTargets: sorted.sortedTargets,
             model,
             imageDetectModel: this.props.imageDetectModel || [],
-            errorAlignment: false
+            errorAlignment: false,
+            selectedTaxonomy: this.props.taxonomyModel
         };
         this.toggle = this.toggle.bind(this);
         this.toggleTargetType = this.toggleTargetType.bind(this);
@@ -81,11 +89,14 @@ class TargetDescriptors extends PureComponent {
         this._saveTargetType = this._saveTargetType.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleRelationsInputChange = this.handleRelationsInputChange.bind(this);
         this.handleTargetTypeInputChange = this.handleTargetTypeInputChange.bind(this);
         this.handleTargetTypeInputChangeForEdit = this.handleTargetTypeInputChangeForEdit.bind(this);
         this.handleCategoricalStateInputChangeForEdit = this.handleCategoricalStateInputChangeForEdit.bind(this);
+        this.handleRelationInputChangeForEdit = this.handleRelationInputChangeForEdit.bind(this);
         this.saveAlignment = this.saveAlignment.bind(this);
         this._removeAlignment = this._removeAlignment.bind(this);
+        this.saveTaxonomyRelations = this.saveTaxonomyRelations.bind(this);
     }
 
     componentDidMount() {
@@ -206,6 +217,30 @@ class TargetDescriptors extends PureComponent {
         });
     };
 
+    toggleRelationItemModal = () => {
+        this.setState({
+            relationItemModal: !this.state.relationItemModal,
+            relationItemModalInEdit: false
+        });
+    };
+
+    toggleRelationsModal = () => {
+        this.setState({
+            relationsModal: !this.state.relationsModal,
+            relationsModalInEdit: false,
+        });
+    };
+
+    openRelationsModal = () => {
+        const relations = this.state.selectedTaxonomy.relations || [];
+        this.setState({
+            formRelations: {
+                relations: relations
+            },
+            relationsModal: true
+        });
+    };
+
     toggleImageDetectAlignmentModal = () => {
         this.setState({
             imageDetectAlignmentModal: false,
@@ -300,6 +335,19 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
+    saveTaxonomyRelations = () => {
+        let taxonomyId = this.props.taxonomyModel.id;
+        let relations = this.state.formRelations.relations;
+        this.props.createTaxonomyRelations(taxonomyId, relations)
+        this.setState({
+            selectedTaxonomy: {
+                relations: relations
+            },
+            relationsModal: false
+        })
+
+    };
+
     toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -311,6 +359,20 @@ class TargetDescriptors extends PureComponent {
             categoricalStateItemModal: !this.state.categoricalStateItemModal,
             categoricalStateItemInput: stateItem.name,
             categoricalStateItemModalInEdit: true,
+        }));
+    };
+
+    toggleRelationItemEdit = () => {
+        const { t } = this.props;
+        if (!this.state.formRelations.relationItem){
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_select_relation_item_to_edit'));
+            return;
+        }
+        const relationItem = this.state.formRelations.relations.find(value => value.id === this.state.formRelations.relationItem);
+        this.setState(prevState => ({
+            relationItemModal: !this.state.relationItemModal,
+            relationItemInput: relationItem.name,
+            relationItemModalInEdit: true,
         }));
     };
 
@@ -351,6 +413,43 @@ class TargetDescriptors extends PureComponent {
         this.toggleCategoricalStateItemModal();
     };
 
+    _saveRelationItem = () => {
+        const { t } = this.props;
+        if(!this.state.relationItemInput) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_is_empty'));
+            return;
+        }
+        if (this.state.formRelations.relations.some(value => value.name === this.state.relationItemInput)) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_already_exist'));
+            return;
+        }
+        if (this.state.relationItemModalInEdit) {
+            const relationItem = this.state.formRelations.relations.find(value => value.id === this.state.formRelations.relationItem);
+            relationItem.name = this.state.relationItemInput;
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: [...prevState.formRelations.relations]
+                },
+                relationItemInput: ''
+            }));
+        } else {
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: [...prevState.formRelations.relations,
+                        {
+                            id: chance.guid(),
+                            name: prevState.relationItemInput
+                        }
+                    ]
+                },
+                relationItemInput: ''
+            }));
+        }
+        this.toggleRelationItemModal();
+    };
+
     _deleteCategoricalStateItem = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -361,6 +460,21 @@ class TargetDescriptors extends PureComponent {
                     ...prevState.form,
                     categoryStates: prevState.form.categoryStates.filter(value => value.id !== this.state.form.categoricalStateItem),
                     categoricalStateItem: ''
+                }
+            }));
+        }
+    };
+
+    _deleteRelationItem = () => {
+        const { t } = this.props;
+        if (!this.state.formRelations.relationItem){
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_select_relation_item_to_delete'));
+        } else {
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: prevState.formRelations.relations.filter(value => value.id !== this.state.formRelations.relationItem),
+                    relationItem: ''
                 }
             }));
         }
@@ -462,6 +576,12 @@ class TargetDescriptors extends PureComponent {
         });
     }
 
+    handleRelationInputChangeForEdit(event) {
+        this.setState({
+            relationItemInput: event.target.value
+        });
+    }
+
     handleInputChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -483,6 +603,16 @@ class TargetDescriptors extends PureComponent {
         }
         this.setState({
             form
+        });
+        this.forceUpdate();
+    }
+
+    handleRelationsInputChange(event) {
+        const target = event.target;
+        let formRelations = this.state.formRelations;
+        formRelations.relationItem = target.selectedOptions[0].dataset["relationId"];
+        this.setState({
+            formRelations
         });
         this.forceUpdate();
     }
@@ -540,13 +670,6 @@ class TargetDescriptors extends PureComponent {
                         type: "Character"
                     };
                 }
-
-                // if (item.groupId === groupId && groupId !== undefined) {
-                //     return {
-                //         imageDetectClassId: item.imageDetectClassId,
-                //         type: "Group"
-                //     };
-                // }
             }
         }
 
@@ -596,7 +719,7 @@ class TargetDescriptors extends PureComponent {
                                      disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}
                                      onClick={this.toggle}
                             >{t('models.target_descriptors.btn_add_new_character')}</Button>
-
+                        <Button className="btn btn-primary mr-md-3" color="primary" onClick={this.openRelationsModal}>{t('models.target_descriptors.dialog_edit.btn_relations')}</Button>
                         <Button  className="btn btn-primary mr-md-3" color="secondary"
                                  onClick={() => {
                                      this.props.goBack();
@@ -631,7 +754,6 @@ class TargetDescriptors extends PureComponent {
                                 <tbody>
                                 {this.state.sortedTargets.map(target => {
                                     const alignObject= this.characterIdExists(target.id, target.targetType);
-debugger
                                     return (
                                         <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
                                             <th scope="row" >&nbsp;</th>
@@ -790,6 +912,16 @@ debugger
                                         <option data-unit="#">#</option>
                                     </Input>
                                 </FormGroup>
+                                <FormGroup className="selected-relations-container">
+                                    <Label for="selectedRelations">{t('models.target_descriptors.dialog_edit.lbl_relations')}</Label>
+                                    <Row>
+                                        <Col md={8}>
+links
+                                        </Col>
+                                        <Col md={4} className='crud-icons-wrapper'>
+                                        </Col>
+                                    </Row>
+                                </FormGroup>
                                 <FormGroup>
                                     <Label for="targetColor">{t('models.target_descriptors.dialog_edit.lbl_color')}</Label>
                                     <Row>
@@ -942,6 +1074,58 @@ debugger
                         <ModalFooter>
                             <Button color="primary" onClick={this.saveAlignment}>{t('global.save')}</Button>
                             <Button color="secondary" onClick={this.toggleImageDetectAlignmentModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.relationsModal} toggle={this.toggleRelationsModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleRelationsModal}>{t('models.target_descriptors.dialog_model_relations.title')}</ModalHeader>
+                        <ModalBody>
+                            <FormGroup className="relations-container">
+                                <Label for="relationItem">{t('models.target_descriptors.dialog_edit.lbl_relations')}</Label>
+                                <Row>
+                                    <Col md={8}>
+                                        <Input type="select" multiple="multiple" name="relationItem" id="relationItem"
+                                               onChange={this.handleRelationsInputChange}>
+                                            {
+                                                this.state.formRelations.relations && this.state.formRelations.relations.length > 0
+                                                    ? this.state.formRelations.relations.map((type, index) => (
+                                                        <option key={`td_${index}`} data-relation-id={type.id}>{type.name}</option>
+                                                    ))
+                                                    : <option disabled>{t('models.target_descriptors.dialog_model_relations.lbl_add_relation')}</option>
+                                            }
+                                        </Input>
+                                    </Col>
+                                    <Col md={4} className='crud-icons-wrapper'>
+                                        <i className="fa fa-plus-square fa-lg crud-icons" aria-hidden="true" onClick={this.toggleRelationItemModal}/>
+                                        <i className="fa fa-pencil fa-lg  crud-icons" aria-hidden="true"  onClick={this.toggleRelationItemEdit} disabled={!this.state.formRelations.relationItem}/>
+                                        <i className="fa fa-trash fa-lg crud-icons" aria-hidden="true" onClick={this._deleteRelationItem} disabled={!this.state.formRelations.relationItem}/>
+                                    </Col>
+                                </Row>
+                            </FormGroup>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this.saveTaxonomyRelations}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleRelationsModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.relationItemModal} toggle={this.toggleRelationItemModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleRelationItemModal}>{t('models.target_descriptors.dialog_edit_relation_item.title')}</ModalHeader>
+                        <ModalBody>
+                            <Form onSubmit={(e) => {
+                                e.preventDefault();
+                            }}>
+                                <FormGroup>
+                                    <Label for="relationItemEdit">{t('models.target_descriptors.dialog_edit_relation_item.lbl_relation_name')}</Label>
+                                    <Input type="text" name="relationItemEdit" id="relationItemEdit" value={this.state.relationItemInput}
+                                           onChange={this.handleRelationInputChangeForEdit}
+                                    />
+                                </FormGroup>
+                            </Form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this._saveRelationItem}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleRelationItemModal}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>

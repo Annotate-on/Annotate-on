@@ -965,7 +965,10 @@
           "alert_select_target_group_to_delete": "SVP, choisir le groupe cible que vous voulez effacer",
           "alert_select_target_group_to_edit": "SVP, choisir le groupe cible que vous voulez éditer",
           "alert_select_categorical_state_item_to_delete": "Sélectioner la valuer d'énumération que vous voulez supprimer",
-          "alert_select_categorical_state_item_to_edit": "Sélectionner la valeur d'énumération que vous souhaitez modifier."
+          "alert_select_categorical_state_item_to_edit": "Sélectionner la valeur d'énumération que vous souhaitez modifier.",
+          "lbl_enum_states": "Enumeration états",
+          "lbl_relations": "Liaison(s)",
+          "btn_relations": "Gestion des liaisons"
         },
         "dialog_create_new_character_group": {
           "title": "Nouveau groupe de caractères",
@@ -979,6 +982,19 @@
           "title": "Aligner la classe de Image Detect",
           "select_class_combo": "Sélectionner la classe Image Detect",
           "msg_duplicate_alignment": "Couplage pour cette classe existe déjà"
+        },
+        "dialog_model_relations": {
+          "title": "Gestion des liaisons de modèle",
+          "lbl_add_relation": "Pas des liaisons définis"
+        },
+        "dialog_edit_relation_item": {
+          "title": "Edition liaison",
+          "lbl_relation_name": "Nom de liaison",
+          "alert_relation_item_is_empty": "Le nom de la relation ne peut pas être vide!",
+          "alert_relation_item_already_exist": "Une relation avec le même nom existe déjà!",
+          "alert_select_relation_item_to_edit": "Veuillez sélectionner la liaison que vous souhaitez modifier",
+          "alert_select_relation_item_to_delete": "Veuillez sélectionner la liaison que vous souhaitez supprimer"
+
         }
       },
       "import_from_xper": {

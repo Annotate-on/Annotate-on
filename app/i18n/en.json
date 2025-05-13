@@ -997,7 +997,9 @@
           "alert_select_target_group_to_edit": "Please select target group you want to edit.",
           "alert_select_categorical_state_item_to_delete": "Please select enumeration value you want to delete.",
           "alert_select_categorical_state_item_to_edit": "Please select enumeration value you want to edit.",
-          "lbl_enum_states": "Enumeration states"
+          "lbl_enum_states": "Enumeration states",
+          "lbl_relations": "Relation(s)",
+          "btn_relations": "Relation(s) management"
         },
         "dialog_create_new_character_group": {
           "title": "Create new character group",
@@ -1017,6 +1019,18 @@
           "title": "Align Image Detect class",
           "select_class_combo": "Select Image Detect Class",
           "msg_duplicate_alignment": "Alignment for this class exists already"
+        },
+        "dialog_model_relations": {
+          "title": "Model relations management",
+          "lbl_add_relation": "No defined relations"
+        },
+        "dialog_edit_relation_item": {
+          "title": "Edit relation",
+          "lbl_relation_name": "Relation name",
+          "alert_relation_item_is_empty": "Relation name can't be empty!",
+          "alert_relation_already_exist": "Relation with the same name already exist!",
+          "alert_select_relation_item_to_edit": "Please select relation you want to edit",
+          "alert_select_relation_item_to_delete": "Veuillez sélectionner la liaison que vous souhaitez supprimer"
         }
       },
       "import_from_xper": {
