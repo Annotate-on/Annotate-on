@@ -870,9 +870,9 @@ export const createTaxonomyRelations = (taxonomyId, relations) => ({
     taxonomyId, relations
 });
 
-export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
+export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => ({
     type: EDIT_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
 });
 
 export const deleteTargetDescriptor = (taxonomyId, id) => ({

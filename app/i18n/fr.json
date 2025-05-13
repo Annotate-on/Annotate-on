@@ -760,6 +760,7 @@
         "table_column_annotation_type": "Type d'annotation",
         "table_column_number_of_measures": "Nombre de mesures",
         "table_column_color": "Couleur",
+        "table_column_relations": "Liaisons",
         "dialog_title_save_in_sdd": "Enregistrer en SDD",
         "dialog_title_save": "Caractères",
         "alert_message_data_exported_successfully_to_xper_database": "Les données ont été exportées vers la base Xper avec succès."
@@ -949,6 +950,7 @@
         "table_column_character_group": "Groupe de caractères",
         "table_column_annotation_type": "Type d'annotation",
         "table_column_color": "Couleur",
+        "table_column_relations": "Liaisons",
         "table_column_pairing": "Alignement avec:",
         "button_pairing": "Ajouter couplage",
         "button_remove_alignement": "Supprimer couplage",

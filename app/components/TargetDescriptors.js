@@ -68,7 +68,8 @@ class TargetDescriptors extends PureComponent {
                 annotationType: '',
                 includeInCalculation: true,
                 categoricalStateItem: '',
-                categoryStates: []
+                categoryStates: [],
+                selectedRelations: []
             },
             formRelations: {
                 relations: [],
@@ -131,12 +132,14 @@ class TargetDescriptors extends PureComponent {
             }
         }
         const unsortedTargets = descriptors ? descriptors.map(target => {
+            const relationNames = target.selectedRelations.map(r => r.name).join(', ');
             return {
                 id: target.id,
                 name: target.targetName,
                 targetType: target.targetType,
                 color: target.targetColor,
-                annotationType: target.annotationType
+                annotationType: target.annotationType,
+                selectedRelations: relationNames
             }
         }) : [];
 
@@ -492,7 +495,9 @@ class TargetDescriptors extends PureComponent {
                     this.state.form.unit,
                     this.state.form.annotationType,
                     this.state.form.includeInCalculation,
-                    this.state.form.categoryStates);
+                    this.state.form.categoryStates,
+                    this.state.form.selectedRelations
+                    );
 
                 const descriptors = [...this.state.descriptors];
                 const desc = descriptors.find(target => target.id === this.state.form.id);
@@ -503,6 +508,7 @@ class TargetDescriptors extends PureComponent {
                 desc.annotationType = this.state.form.annotationType;
                 desc.includeInCalculation = this.state.form.includeInCalculation;
                 desc.states = this.state.form.categoryStates;
+                desc.selectedRelations = this.state.form.selectedRelations
                 this.setState({descriptors})
                 this.toggle();
                 this._cancel();
@@ -521,7 +527,8 @@ class TargetDescriptors extends PureComponent {
                         this.state.form.unit,
                         this.state.form.annotationType,
                         this.state.form.includeInCalculation,
-                        this.state.form.categoryStates
+                        this.state.form.categoryStates,
+                        this.state.form.selectedRelations
                     );
                     this.state.descriptors.push({
                         id: id,
@@ -531,7 +538,8 @@ class TargetDescriptors extends PureComponent {
                         unit: this.state.form.unit,
                         annotationType: this.state.form.annotationType,
                         includeInCalculation: this.state.form.includeInCalculation,
-                        states: this.state.form.categoryStates
+                        states: this.state.form.categoryStates,
+                        selectedRelations: this.state.form.selectedRelations
                     });
                     this.toggle();
                     this._cancel();
@@ -632,7 +640,8 @@ class TargetDescriptors extends PureComponent {
                         unit: target.unit,
                         annotationType: target.annotationType,
                         includeInCalculation: target.includeInCalculation,
-                        categoryStates: target.states
+                        categoryStates: target.states,
+                        selectedRelations: target.selectedRelations
                     }
                 });
                 this.toggle();
@@ -691,6 +700,35 @@ class TargetDescriptors extends PureComponent {
         this.props.removeAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, objectToDelete);
     };
 
+    handleSelectedRelationsChange = (event) => {
+        const { checked, value } = event.target;
+        const name = event.target.getAttribute('data-relation-name');
+
+        const newRelation = { id: value, name };
+
+        this.setState((prevState) => {
+            const currentRelations = prevState.form.selectedRelations || [];
+
+            let updatedRelations;
+            if (checked) {
+                if (!currentRelations.some(rel => rel.id === value)) {
+                    updatedRelations = [...currentRelations, newRelation];
+                } else {
+                    updatedRelations = currentRelations;
+                }
+            } else {
+                updatedRelations = currentRelations.filter(rel => rel.id !== value);
+            }
+
+            return {
+                form: {
+                    ...prevState.form,
+                    selectedRelations: updatedRelations
+                }
+            };
+        });
+    };
+
     render() {
         let key = 0;
         const { t } = this.props;
@@ -743,6 +781,8 @@ class TargetDescriptors extends PureComponent {
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_annotation_type')} sortKey="annotationType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    <TableHeader title={t('models.target_descriptors.table_column_relations')} sortKey="relations"
+                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     {this.state.imageDetectModel.length !== 0 &&(
@@ -780,6 +820,7 @@ class TargetDescriptors extends PureComponent {
                                                 </ContextMenuTrigger>
                                             </td>
                                             <td>{target.annotationType}</td>
+                                            <td>{target.selectedRelations}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
                                             {this.state.imageDetectModel.length !== 0 && (
@@ -882,7 +923,7 @@ class TargetDescriptors extends PureComponent {
                                         <Label for="categoricalStateItem">{t('models.target_descriptors.dialog_edit.lbl_enum_states')}</Label>
                                         <Row>
                                             <Col md={8}>
-                                                <Input type="select" multiple='multiple' name="categoricalStateItem" id="categoricalStateItem"
+                                                <Input type="select" size={4} name="categoricalStateItem" id="categoricalStateItem"
                                                        onChange={this.handleInputChange}>
                                                     {
                                                         this.state.form.categoryStates.map((type, index) => {
@@ -899,29 +940,60 @@ class TargetDescriptors extends PureComponent {
                                         </Row>
                                     </FormGroup>
                                 }
-                                <FormGroup>
-                                    <Label for="unit">{t('models.target_descriptors.dialog_edit.lbl_unit')}</Label>
-                                    <Input type="select" name="unit" id="unit"
-                                           value={this.state.form.unit}
-                                           disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
-                                           onChange={this.handleInputChange}>
-                                        <option data-unit=""/>
-                                        <option data-unit="mm">mm</option>
-                                        <option data-unit="mm²">mm²</option>
-                                        <option data-unit="°">°</option>
-                                        <option data-unit="#">#</option>
-                                    </Input>
-                                </FormGroup>
+                                {!(this.state.form.id || this.state.form.annotationType !== NUMERICAL) && (
+                                    <FormGroup>
+                                        <Label for="unit">
+                                            {t('models.target_descriptors.dialog_edit.lbl_unit')}
+                                        </Label>
+                                        <Input
+                                            type="select"
+                                            name="unit"
+                                            id="unit"
+                                            value={this.state.form.unit}
+                                            onChange={this.handleInputChange}
+                                        >
+                                            <option data-unit="" />
+                                            <option data-unit="mm">mm</option>
+                                            <option data-unit="mm²">mm²</option>
+                                            <option data-unit="°">°</option>
+                                            <option data-unit="#">#</option>
+                                        </Input>
+                                    </FormGroup>
+                                )}
                                 <FormGroup className="selected-relations-container">
-                                    <Label for="selectedRelations">{t('models.target_descriptors.dialog_edit.lbl_relations')}</Label>
-                                    <Row>
-                                        <Col md={8}>
-links
-                                        </Col>
-                                        <Col md={4} className='crud-icons-wrapper'>
-                                        </Col>
-                                    </Row>
+                                    <Label for="selectedRelations">
+                                        {t('models.target_descriptors.dialog_edit.lbl_relations')}
+                                    </Label>
+
+                                    <div className="relation-list-wrapper">
+                                        {
+                                            this.state.selectedTaxonomy.relations &&
+                                            this.state.selectedTaxonomy.relations.length > 0 &&
+                                            this.state.selectedTaxonomy.relations.map((relation, index) => (
+                                                <Row key={`rel_row_${index}`} className="relation-list-item">
+                                                    <Col md={1} className="d-flex justify-content-center align-items-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="selectedRelations"
+                                                            value={relation.id}
+                                                            data-relation-name={relation.name}
+                                                            checked={
+                                                                (this.state.form.selectedRelations || []).some(
+                                                                    (r) => r.id === relation.id
+                                                                )
+                                                            }
+                                                            onChange={this.handleSelectedRelationsChange}
+                                                        />
+                                                    </Col>
+                                                    <Col md={11} className="d-flex align-items-center">
+                                                        {relation.name}
+                                                    </Col>
+                                                </Row>
+                                            ))
+                                        }
+                                    </div>
                                 </FormGroup>
+
                                 <FormGroup>
                                     <Label for="targetColor">{t('models.target_descriptors.dialog_edit.lbl_color')}</Label>
                                     <Row>
@@ -1084,7 +1156,7 @@ links
                                 <Label for="relationItem">{t('models.target_descriptors.dialog_edit.lbl_relations')}</Label>
                                 <Row>
                                     <Col md={8}>
-                                        <Input type="select" multiple="multiple" name="relationItem" id="relationItem"
+                                        <Input type="select" size={10}  name="relationItem" id="relationItem"
                                                onChange={this.handleRelationsInputChange}>
                                             {
                                                 this.state.formRelations.relations && this.state.formRelations.relations.length > 0

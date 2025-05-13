@@ -4085,7 +4085,7 @@ export default (state = {}, action) => {
             const counter = state.counter + 1;
             if (!state.selectedTaxonomy)
                 return state;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 const target = selectedTaxonomy.descriptors.find((target, index) => target.id === id);
@@ -4097,6 +4097,7 @@ export default (state = {}, action) => {
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
                     target.states = states;
+                    target.selectedRelations = selectedRelations;
                 }
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -4111,6 +4112,7 @@ export default (state = {}, action) => {
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
                     target.states = states;
+                    target.selectedRelations = selectedRelations;
                 }
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}

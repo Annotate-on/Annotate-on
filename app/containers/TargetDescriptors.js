@@ -32,8 +32,8 @@ const mapDispatchToProps = dispatch => {
         createTaxonomyRelations: (taxonomyId, relations) => {
             dispatch(createTaxonomyRelations(taxonomyId, relations));
         },
-        editTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => {
-            dispatch(editTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states));
+        editTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => {
+            dispatch(editTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations));
         },
         deleteTargetDescriptor: (taxonomyId, id) => {
             dispatch(deleteTargetDescriptor(taxonomyId, id));
