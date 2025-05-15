@@ -122,6 +122,8 @@ export const SET_SELECTED_TAXONOMY = 'SET_SELECTED_TAXONOMY';
 export const CREATE_EDIT_TAXONOMY_DESCRIPTION = 'CREATE_EDIT_TAXONOMY_DESCRIPTION';
 export const CREATE_TARGET_DESCRIPTOR = 'CREATE_TARGET_DESCRIPTOR';
 export const CREATE_TAXONOMY_RELATIONS = 'CREATE_TAXONOMY_RELATIONS';
+export const DELETE_TAXONOMY_RELATIONS = 'DELETE_TAXONOMY_RELATIONS';
+export const MODIFY_TAXONOMY_RELATIONS = 'MODIFY_TAXONOMY_RELATIONS';
 export const EDIT_TARGET_DESCRIPTOR = 'EDIT_TARGET_DESCRIPTOR';
 export const DELETE_TARGET_DESCRIPTOR = 'DELETE_TARGET_DESCRIPTOR';
 export const SAVE_TARGET_TYPE = 'SAVE_TARGET_TYPE';
@@ -860,13 +862,23 @@ export const setSelectedTaxonomy = (id) => ({
     id
 });
 
-export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
+export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => ({
     type: CREATE_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
 });
 
 export const createTaxonomyRelations = (taxonomyId, relations) => ({
     type: CREATE_TAXONOMY_RELATIONS,
+    taxonomyId, relations
+});
+
+export const deleteTaxonomyRelations = (taxonomyId, relations) => ({
+    type: DELETE_TAXONOMY_RELATIONS,
+    taxonomyId, relations
+});
+
+export const modifyTaxonomyRelations = (taxonomyId, relations) => ({
+    type: MODIFY_TAXONOMY_RELATIONS,
     taxonomyId, relations
 });
 

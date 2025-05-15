@@ -36,6 +36,8 @@ import {
     CREATE_TAG_EXPRESSION,
     CREATE_TARGET_DESCRIPTOR,
     CREATE_TAXONOMY_RELATIONS,
+    DELETE_TAXONOMY_RELATIONS,
+    MODIFY_TAXONOMY_RELATIONS,
     CREATE_TARGET_INSTANCE,
     DELETE_ANNOTATE_EVENT,
     DELETE_ANNOTATION_ANGLE,
@@ -4041,11 +4043,11 @@ export default (state = {}, action) => {
 
         case CREATE_TARGET_DESCRIPTOR: {
             const counter = state.counter + 1;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 selectedTaxonomy.descriptors.push({
-                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
                 });
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -4053,7 +4055,7 @@ export default (state = {}, action) => {
             } else {
                 const descriptors = loadTaxonomy(taxonomyId);
                 descriptors.push({
-                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation
+                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, selectedRelations
                 });
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}
@@ -4062,24 +4064,125 @@ export default (state = {}, action) => {
 
         case CREATE_TAXONOMY_RELATIONS: {
             const counter = state.counter + 1;
-            const { taxonomyId, relations } = action;
+            const { taxonomyId, relations: newRelations } = action;
+
+            const taxonomies = state.taxonomies.map(taxon => {
+                if (taxon.id !== taxonomyId) return taxon;
+
+                const existingRelations = taxon.relations || [];
+                const updatedRelations = [
+                    ...existingRelations,
+                    ...newRelations.filter(r => !existingRelations.some(e => e.id === r.id))
+                ];
+
+                return { ...taxon, relations: updatedRelations };
+            });
+
+            const selectedTaxonomyRelations = state.selectedTaxonomy.relations || [];
+            const updatedSelectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: [
+                            ...selectedTaxonomyRelations,
+                            ...newRelations.filter(
+                                r => !selectedTaxonomyRelations.some(e => e.id === r.id)
+                            )
+                        ]
+                    }
+                    : state.selectedTaxonomy;
+
+            return {
+                ...state,
+                counter,
+                taxonomies,
+                selectedTaxonomy: updatedSelectedTaxonomy
+            };
+        }
+
+        case DELETE_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations: deletedRelations } = action;
+            const deletedIds = deletedRelations.map(r => r.id);
+
+            const filterOutDeleted = (relations) =>
+                (relations || []).filter(r => !deletedIds.includes(r.id));
+
+            const updateDescriptors = (descriptors = []) =>
+                descriptors.map(descriptor => ({
+                    ...descriptor,
+                    selectedRelations: filterOutDeleted(descriptor.selectedRelations)
+                }));
+
             const taxonomies = state.taxonomies.map(taxon =>
                 taxon.id === taxonomyId
-                    ? { ...taxon, relations: relations }
+                    ? {
+                        ...taxon,
+                        relations: filterOutDeleted(taxon.relations)
+                    }
                     : taxon
             );
 
-            const selectedTaxonomy = {
-                ...state.selectedTaxonomy,
-                relations: relations
-            };
+            const selectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: filterOutDeleted(state.selectedTaxonomy.relations),
+                        descriptors: updateDescriptors(state.selectedTaxonomy.descriptors)
+                    }
+                    : state.selectedTaxonomy;
 
             return {
-                ...state, counter,
+                ...state,
+                counter,
                 taxonomies,
                 selectedTaxonomy
             };
         }
+
+        case MODIFY_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations: modifiedRelations } = action;
+
+            const updateById = (targetList = []) =>
+                targetList.map(item => {
+                    const modified = modifiedRelations.find(r => r.id === item.id);
+                    return modified ? { ...item, ...modified } : item;
+                });
+
+            const updateDescriptors = (descriptors = []) =>
+                descriptors.map(descriptor => ({
+                    ...descriptor,
+                    selectedRelations: updateById(descriptor.selectedRelations)
+                }));
+
+            const taxonomies = state.taxonomies.map(taxon =>
+                taxon.id === taxonomyId
+                    ? {
+                        ...taxon,
+                        relations: updateById(taxon.relations)
+                    }
+                    : taxon
+            );
+
+            const selectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: updateById(state.selectedTaxonomy.relations),
+                        descriptors: updateDescriptors(state.selectedTaxonomy.descriptors)
+                    }
+                    : state.selectedTaxonomy;
+
+            return {
+                ...state,
+                counter,
+                taxonomies,
+                selectedTaxonomy
+            };
+        }
+
+
 
         case EDIT_TARGET_DESCRIPTOR: {
             const counter = state.counter + 1;

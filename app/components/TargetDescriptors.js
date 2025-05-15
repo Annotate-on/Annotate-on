@@ -17,7 +17,7 @@ import {
 import lodash from 'lodash';
 import Chance from 'chance';
 import TableHeader from "./TableHeader";
-import {getTaxonomyDir, loadTaxonomy} from "../utils/config";
+import {getTaxonomyDir, loadTaxonomy, saveTaxonomy} from "../utils/config";
 import {CATEGORICAL, INTEREST, MODEL_ANNOTATE, MODEL_XPER, NUMERICAL, TEXTUAL} from "../constants/constants";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import path from 'path';
@@ -132,7 +132,7 @@ class TargetDescriptors extends PureComponent {
             }
         }
         const unsortedTargets = descriptors ? descriptors.map(target => {
-            const relationNames = target.selectedRelations.map(r => r.name).join(', ');
+            const relationNames = target.selectedRelations?.map(r => r.name).join(', ') || '';
             return {
                 id: target.id,
                 name: target.targetName,
@@ -338,18 +338,58 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
-    saveTaxonomyRelations = () => {
-        let taxonomyId = this.props.taxonomyModel.id;
-        let relations = this.state.formRelations.relations;
-        this.props.createTaxonomyRelations(taxonomyId, relations)
-        this.setState({
+       saveTaxonomyRelations = () => {
+        const taxonomyId = this.props.taxonomyModel.id;
+        const newRelations = this.state.formRelations.relations;
+        const oldRelations = this.state.selectedTaxonomy.relations || [];
+
+        const oldMap = new Map(oldRelations.map(r => [r.id, r]));
+        const newMap = new Map(newRelations.map(r => [r.id, r]));
+
+        const added = newRelations.filter(r => !oldMap.has(r.id));
+
+        const deleted = oldRelations.filter(r => !newMap.has(r.id));
+
+        const modified = newRelations.filter(r => {
+            const old = oldMap.get(r.id);
+            return old && r.name !== old.name;
+        });
+
+        if (added.length > 0) {
+            this.props.createTaxonomyRelations(taxonomyId, added);
+        }
+        if (deleted.length > 0) {
+            this.props.deleteTaxonomyRelations(taxonomyId, deleted);
+
+            setTimeout(() => {
+                saveTaxonomy(this.props.taxonomy.id, this.props.taxonomy.descriptors);
+                this.setState(
+                    {descriptors: this.props.taxonomy.descriptors}
+                )
+                this._resortTable();
+            }, 0);
+
+        }
+        if (modified.length > 0) {
+            this.props.modifyTaxonomyRelations(taxonomyId, modified);
+            setTimeout(() => {
+                saveTaxonomy(this.props.taxonomy.id, this.props.taxonomy.descriptors);
+                this.setState(
+                    {descriptors: this.props.taxonomy.descriptors}
+                )
+                this._resortTable();
+            }, 0);
+        }
+
+         this.setState({
             selectedTaxonomy: {
-                relations: relations
+                ...this.state.selectedTaxonomy,
+                relations: newRelations
             },
             relationsModal: false
-        })
-
+        });
     };
+
 
     toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
@@ -367,17 +407,28 @@ class TargetDescriptors extends PureComponent {
 
     toggleRelationItemEdit = () => {
         const { t } = this.props;
-        if (!this.state.formRelations.relationItem){
+        const { formRelations, relationItemModal } = this.state;
+
+        const selectedRelationId = formRelations.relationItem;
+        if (!selectedRelationId) {
             alert(t('models.target_descriptors.dialog_edit_relation_item.alert_select_relation_item_to_edit'));
             return;
         }
-        const relationItem = this.state.formRelations.relations.find(value => value.id === this.state.formRelations.relationItem);
-        this.setState(prevState => ({
-            relationItemModal: !this.state.relationItemModal,
+
+        const relationItem = formRelations.relations.find(rel => rel.id === selectedRelationId);
+        if (!relationItem) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_not_found'));
+            return;
+        }
+
+        this.setState({
+            relationItemModal: !relationItemModal,
             relationItemInput: relationItem.name,
+            relationItemOriginalName: relationItem.name, // <-- store original
             relationItemModalInEdit: true,
-        }));
+        });
     };
+
 
     _saveCategoricalStateItem = () => {
         const { t } = this.props;
@@ -427,16 +478,24 @@ class TargetDescriptors extends PureComponent {
             return;
         }
         if (this.state.relationItemModalInEdit) {
-            const relationItem = this.state.formRelations.relations.find(value => value.id === this.state.formRelations.relationItem);
-            relationItem.name = this.state.relationItemInput;
+            const updatedRelations = this.state.formRelations.relations.map(rel => {
+                if (rel.id === this.state.formRelations.relationItem) {
+                    return {
+                        ...rel,
+                        name: this.state.relationItemInput
+                    };
+                }
+                return rel;
+            });
+
             this.setState(prevState => ({
                 formRelations: {
                     ...prevState.formRelations,
-                    relations: [...prevState.formRelations.relations]
+                    relations: updatedRelations
                 },
                 relationItemInput: ''
             }));
-        } else {
+        }else {
             this.setState(prevState => ({
                 formRelations: {
                     ...prevState.formRelations,
@@ -663,6 +722,26 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
+    handleEditButton = (targetId) => {
+        const { t } = this.props;
+        const target = this.state.descriptors.find(target => targetId === target.id);
+        this.setState({
+            modalTitle: t('models.target_descriptors.dialog_edit.title_edit_character'),
+            form: {
+                id: target.id,
+                targetName: target.targetName,
+                targetType: target.targetType,
+                targetColor: target.targetColor,
+                unit: target.unit,
+                annotationType: target.annotationType,
+                includeInCalculation: target.includeInCalculation,
+                categoryStates: target.states,
+                selectedRelations: target.selectedRelations
+            }
+        });
+        this.toggle();
+    }
+
     getImageDetectAlignments = () => this.props.imageDetectAlignments || [];
 
     characterIdExists = (characterId, groupId) => {
@@ -757,7 +836,7 @@ class TargetDescriptors extends PureComponent {
                                      disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}
                                      onClick={this.toggle}
                             >{t('models.target_descriptors.btn_add_new_character')}</Button>
-                        <Button className="btn btn-primary mr-md-3" color="primary" onClick={this.openRelationsModal}>{t('models.target_descriptors.dialog_edit.btn_relations')}</Button>
+                        <Button className="btn btn-primary mr-md-3" color="primary" onClick={this.openRelationsModal} disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}>{t('models.target_descriptors.dialog_edit.btn_relations')}</Button>
                         <Button  className="btn btn-primary mr-md-3" color="secondary"
                                  onClick={() => {
                                      this.props.goBack();
@@ -775,6 +854,7 @@ class TargetDescriptors extends PureComponent {
                                 <thead title={t('models.thead_tooltip_sort_order')}>
                                 <tr>
                                     <th>&nbsp;</th>
+                                    <TableHeader title="Actions" />
                                     <TableHeader title={t('models.target_descriptors.table_column_character_name')} sortKey="name"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_character_group')} sortKey="targetType"
@@ -797,6 +877,11 @@ class TargetDescriptors extends PureComponent {
                                     return (
                                         <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
                                             <th scope="row" >&nbsp;</th>
+                                            <td>
+                                            <Button className="btn-sm" onClick={() => this.handleEditButton(target.id)} disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}>
+                                                <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}
+                                            </Button>
+                                            </td>
                                             <td>
                                                 <ContextMenuTrigger id="target_context_menu"
                                                                     disable={this.state.model === MODEL_XPER}
@@ -964,11 +1049,10 @@ class TargetDescriptors extends PureComponent {
                                     <Label for="selectedRelations">
                                         {t('models.target_descriptors.dialog_edit.lbl_relations')}
                                     </Label>
-
                                     <div className="relation-list-wrapper">
                                         {
                                             this.state.selectedTaxonomy.relations &&
-                                            this.state.selectedTaxonomy.relations.length > 0 &&
+                                            this.state.selectedTaxonomy.relations.length > 0 ?
                                             this.state.selectedTaxonomy.relations.map((relation, index) => (
                                                 <Row key={`rel_row_${index}`} className="relation-list-item">
                                                     <Col md={1} className="d-flex justify-content-center align-items-center">
@@ -989,7 +1073,8 @@ class TargetDescriptors extends PureComponent {
                                                         {relation.name}
                                                     </Col>
                                                 </Row>
-                                            ))
+                                            )):<div>{t('models.target_descriptors.dialog_model_relations.lbl_add_relation')}</div>
+
                                         }
                                     </div>
                                 </FormGroup>
