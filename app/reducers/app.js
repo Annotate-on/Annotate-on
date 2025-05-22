@@ -132,6 +132,7 @@ import {
     UPDATE_TAG_EXPRESSION_OPERATOR,
     SAVE_SELECTED_CATEGORY,
     UPDATE_TAXONOMY_VALUES,
+    SAVE_RELATIONS_ANNOTATIONS,
     SAVE_SEARCH,
     CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
@@ -3748,9 +3749,10 @@ export default (state = {}, action) => {
                             selectedTaxonomy.descriptors = convertSDDtoJson(path.join(getTaxonomyDir(), element.sddPath)).items;
                         else if (action.model === MODEL_ANNOTATE)
                             selectedTaxonomy.descriptors = loadTaxonomy(element.id);
-                        selectedTaxonomy.id = element.id;
-                        selectedTaxonomy.name = element.name;
-                        selectedTaxonomy.model = element.model;
+                            selectedTaxonomy.id = element.id;
+                            selectedTaxonomy.name = element.name;
+                            selectedTaxonomy.model = element.model;
+                            selectedTaxonomy.relations = element.relations;
                     } else
                         selectedTaxonomy = null;
                 } else {
@@ -4574,6 +4576,61 @@ export default (state = {}, action) => {
                 }
             };
         }
+
+        case SAVE_RELATIONS_ANNOTATIONS: {
+            const counter = state.counter + 1;
+            const { relationAnnotations, annotationId, annotationName, taxonomyId } = action;
+
+            const existingTaxonomy = state.relationsByAnnotations[taxonomyId] || {};
+            let newTaxonomy = { ...existingTaxonomy };
+
+            newTaxonomy[annotationId] = [...relationAnnotations];
+
+            Object.keys(newTaxonomy).forEach(key => {
+                if (key !== annotationId) {
+                    // Filter out any reversed relations pointing to annotationId
+                    newTaxonomy[key] = newTaxonomy[key].filter(
+                        rel => rel.annotation.id !== annotationId
+                    );
+                    // Remove key if no relations left (optional cleanup)
+                    if (newTaxonomy[key].length === 0) {
+                        delete newTaxonomy[key];
+                    }
+                }
+            });
+
+            relationAnnotations.forEach(({ relation, annotation }) => {
+                const reversed = {
+                    relation,
+                    annotation: { id: annotationId, name: annotationName }
+                };
+
+                if (!newTaxonomy[annotation.id]) {
+                    newTaxonomy[annotation.id] = [reversed];
+                } else {
+                    // Avoid duplicates
+                    const exists = newTaxonomy[annotation.id].some(
+                        r =>
+                            r.relation.id === reversed.relation.id &&
+                            r.annotation.id === reversed.annotation.id
+                    );
+                    if (!exists) {
+                        newTaxonomy[annotation.id] = [...newTaxonomy[annotation.id], reversed];
+                    }
+                }
+            });
+
+            return {
+                ...state,
+                counter,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: newTaxonomy
+                }
+            };
+        }
+
+
 
         case UPDATE_PICTURE_DATE: {
             const counter = state.counter + 1;

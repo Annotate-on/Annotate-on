@@ -5,7 +5,8 @@ import {
     tagAnnotation,
     tagEventAnnotation,
     untagAnnotation,
-    untagEventAnnotation
+    untagEventAnnotation,
+    saveRelationsAnnotations
 } from '../actions/app';
 import {withTranslation} from "react-i18next";
 
@@ -19,7 +20,8 @@ const mapStateToProps = (state, ownProps) => {
         currentResource: state.app.pictures[ownProps.sha1],
         tags: state.app.tags_by_annotation[ownProps.annotation.id],
         selectedTaxonomy: state.app.selectedTaxonomy,
-        taxonomyInstance
+        taxonomyInstance,
+        relationsByAnnotations: state.app.relationsByAnnotations
     };
 };
 
@@ -31,7 +33,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(createTargetInstance(ofType, tabName, annotationId, descriptorId, value, oldDescriptorId));
         },
         tagEventAnnotation: (tagName , inputGroup ) => dispatch(tagEventAnnotation(ownProps.annotation.id , tagName , inputGroup , ownProps.sha1)),
-        untagEventAnnotation: (tagName , inputGroup) => dispatch(untagEventAnnotation(ownProps.annotation.id , tagName , inputGroup , ownProps.sha1))
+        untagEventAnnotation: (tagName , inputGroup) => dispatch(untagEventAnnotation(ownProps.annotation.id , tagName , inputGroup , ownProps.sha1)),
+        saveRelationsAnnotations: (relationAnnotations, annotationId, annotationName, taxonomyId) => {
+            dispatch(saveRelationsAnnotations(relationAnnotations, annotationId, annotationName, taxonomyId));
+        }
     };
 };
 

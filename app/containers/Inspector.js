@@ -30,6 +30,7 @@ const mapStateToProps = (state, ownProps) => {
         picturesByCalibration: state.app.pictures_by_calibration,
         cartels: state.app.cartel_by_picture,
         taxonomyInstance,
+        relationsByAnnotations: state.app.relationsByAnnotations
     };
 };
 

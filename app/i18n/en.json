@@ -281,7 +281,9 @@
         "dialog_title_edit_text": "Edit text",
         "lbl_coverage": "Coverage",
         "lbl_temporal": "Temporal",
-        "lbl_spatial": "Spatial"
+        "lbl_spatial": "Spatial",
+        "lbl_relations": "Relations",
+        "lbl_relations_modal_title": "Related links management"
       },
       "metadata": {
         "title_keywords": "Keywords",

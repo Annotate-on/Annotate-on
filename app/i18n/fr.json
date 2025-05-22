@@ -236,7 +236,7 @@
       "tab_metadata": "Métadonnées",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibrage",
-      "tab_3d_settings": "Paramètres 3D",
+      "tab_3d_settings": "Params 3D",
       "tooltip_edit_annotation": "Éditer l'annotation",
       "tooltip_delete_annotation": "Effacer l'annotation",
       "tooltip_add_keyword": "Nouveau mot-clé",
@@ -274,7 +274,9 @@
         "dialog_title_edit_text": "Éditer le texte",
         "lbl_coverage": "Couverture",
         "lbl_temporal": "Temporel",
-        "lbl_spatial": "Spatial"
+        "lbl_spatial": "Spatial",
+        "lbl_relations": "Liaisons",
+        "lbl_relations_modal_title": "Gestion des liaisons"
       },
       "metadata": {
         "title_keywords": "Mots-clés",

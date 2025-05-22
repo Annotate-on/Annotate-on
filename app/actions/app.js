@@ -131,6 +131,7 @@ export const SAVE_ALIGNMENT_OBJECT = 'SAVE_ALIGNMENT_OBJECT';
 export const REMOVE_ALIGNMENT_OBJECT = 'REMOVE_ALIGNMENT_OBJECT';
 export const CREATE_TARGET_INSTANCE = 'CREATE_TARGET_INSTANCE';
 export const UPDATE_TAXONOMY_VALUES = 'UPDATE_TAXONOMY_VALUES';
+export const SAVE_RELATIONS_ANNOTATIONS = 'SAVE_RELATIONS_ANNOTATIONS';
 export const CREATE_CATEGORICAL_TARGET_INSTANCE = 'CREATE_CATEGORICAL_TARGET_INSTANCE';
 export const UPDATE_PICTURE_DATE = 'UPDATE_PICTURE_DATE';
 export const CREATE_CARTEL = 'CREATE_CARTEL';
@@ -928,6 +929,11 @@ export const editTargetType = (taxonomyId, name, newName) => ({
 export const createTargetInstance = (ofType, tabName, annotationId, descriptorId, value, oldDescriptorId) => ({
     type: ofType === NUMERICAL ? CREATE_TARGET_INSTANCE : CREATE_CATEGORICAL_TARGET_INSTANCE,
     tabName, annotationId, descriptorId, value, ofType, oldDescriptorId
+});
+
+export const saveRelationsAnnotations = (relationAnnotations, annotationId, annotationName, taxonomyId) => ({
+    type: SAVE_RELATIONS_ANNOTATIONS,
+    relationAnnotations, annotationId, annotationName, taxonomyId
 });
 
 export const updateTaxonomyValues = (tabName) => ({

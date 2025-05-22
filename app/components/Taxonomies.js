@@ -328,6 +328,7 @@ export default class extends Component {
             this.props.saveTaxonomy(id, this.state.modelName, null, MODEL_ANNOTATE, 0).then(_ => {
                 const taxonomy = this.state.taxonomies.find(taxonomy => taxonomy.id === id);
                 if (taxonomy !== undefined && taxonomy !== null) {
+                    this.props.updateTaxonomiesStatus(taxonomy.id, true, taxonomy.model)
                     this._viewTaxonomy(taxonomy);
                 }
             })

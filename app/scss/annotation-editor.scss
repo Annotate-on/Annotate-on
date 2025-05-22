@@ -56,9 +56,9 @@
   .tagDropZone{
     //border-right: 2px dashed transparent;
     //border-left: 2px dashed transparent;
-    border-top: 1px dashed transparent;
-    border-bottom: 1px solid #ddd;
-    padding: 5px 0px;
+    //border-top: 1px dashed transparent;
+    //border-bottom: 1px solid #ddd;
+    //padding: 5px 0px;
 
   }
 
@@ -67,7 +67,7 @@
   }
 
   .tags-panel {
-    margin-top: 10px;
+    margin-bottom: 10px;
     display: flex;
     flex-wrap: wrap;
   }
@@ -114,9 +114,12 @@
     grid-template-columns: 50% 50%;
   }
   .local-title {
-    color: #999999;
-    font-size: 14pt;
-
+    color: #5d5d5d;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
+    margin: 5px 0 5px 0;
   }
   .label-for{
     opacity: 0.7;
@@ -134,32 +137,32 @@
 
   }
 }
-  input.form-control{
-    width: 140px;
-  }
-
-  input.form-control:hover{
-
-    background-image: url(components/pictures/edit_tag.svg);
-    background-repeat: no-repeat;
-    -webkit-background-size: 14px 14px;
-    background-size: 14px 14px;
-    background-position: right;
-    background-color: #eee;
-    cursor: pointer;
-  }
-
-  input.form-control.selected {
-
-    border: 1px solid #1d70f7 !important;
-    background-image: url(components/pictures/edit_tag.svg);
-    background-repeat: no-repeat;
-    -webkit-background-size: 14px 14px;
-    background-size: 14px 14px;
-    background-position: right;
-    background-color: white;
-
-  }
+  //input.form-control{
+  //  //width: 140px;
+  //}
+  //
+  //input.form-control:hover{
+  //
+  //  background-image: url(components/pictures/edit_tag.svg);
+  //  background-repeat: no-repeat;
+  //  -webkit-background-size: 14px 14px;
+  //  background-size: 14px 14px;
+  //  background-position: right;
+  //  background-color: #eee;
+  //  cursor: pointer;
+  //}
+  //
+  //input.form-control.selected {
+  //
+  //  border: 1px solid #1d70f7 !important;
+  //  background-image: url(components/pictures/edit_tag.svg);
+  //  background-repeat: no-repeat;
+  //  -webkit-background-size: 14px 14px;
+  //  background-size: 14px 14px;
+  //  background-position: right;
+  //  background-color: white;
+  //
+  //}
 }
 .comboUnknownValues{
   margin: 0px 0px 10px 0px;

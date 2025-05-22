@@ -17,7 +17,7 @@ import {
     ANNOTATION_POLYGON_OF_INTEREST,
     CATEGORICAL,
     INTEREST,
-    NUMERICAL, ANNOTATION_3D_MARKER
+    NUMERICAL, ANNOTATION_3D_MARKER, SORT_DATE_DESC
 } from '../constants/constants';
 import PickTag from '../containers/PickTag';
 import {
@@ -32,7 +32,7 @@ import {
     ModalBody,
     ModalFooter,
     ModalHeader,
-    Row
+    Row, Table
 } from 'reactstrap';
 import {remote} from "electron";
 import ReactTooltip from "react-tooltip";
@@ -176,6 +176,7 @@ export default class extends Component {
             if (taxDesc) {
                 descriptor.color = taxDesc ? taxDesc.targetColor : '#333';
                 descriptor.descriptorGroup = taxDesc.targetType;
+                descriptor.selectedRelations = taxDesc.selectedRelations;
             } else {
                 descriptor.color = '#ff0000';
             }
@@ -183,9 +184,11 @@ export default class extends Component {
             descriptor.color = '#ff0000';
         }
 
+        const relationAnnotations = props.relationsByAnnotations?.[this.props.selectedTaxonomy?.id]?.[this.props.annotation.id] || [];
+
+
 
         console.log('annotation to edit...' , props.annotation)
-
         this.state = {
             person: person ? person : '',
             location: location ? location : '',
@@ -217,7 +220,13 @@ export default class extends Component {
             noteTags : noteTags,
             activeDropZone: null,
             tagStartTime: 0,
-            coverage: coverage
+            coverage: coverage,
+            relationsModal: props.openEditRelations,
+            selectedRelation: null,
+            selectedAnnotation: null,
+            formRelations: {
+                relationAnnotations: relationAnnotations
+            }
         };
     }
 
@@ -451,46 +460,11 @@ export default class extends Component {
                                             this.state.targetColor, this.state.descriptor.value, this.state.value,
                                             this.state.descriptor.type , this.state.person , this.state.videoDate, this.state.location , null , this.state.topic, this.state.coverage);
                                     }}>{t('global.save')}</Button>
-                                    <Button disabled={this.state.title.length < 3} color="primary"
+                                    <Button disabled={this.state.title.length < 3} className="btn btn-gray btn-md"
                                             onClick={this.cancel}>{t('global.cancel')}</Button>
                                 </div>
-                                // <Row>
-                                //     <Col sm={{ size: 3, offset: 5 }}>
-                                //     </Col>
-                                //     <Col sm={{ size: 3, offset: 1 }}>
-                                //     </Col>
-                                // </Row>
                         }
                     </FormGroup>
-
-                    {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
-                        <Row>
-                            <Label sm={3} for="note" className="label-for">{t('inspector.annotation_editor.lbl_keywords')}</Label>
-                            {/*<Col sm={3} md={3} lg={3} className="tag-title">Tags</Col>*/}
-                            <Col sm={9} md={9} lg={9} className="title-button">
-                                <Button className="btn btn-secondary" color="gray" onClick={ () => {
-                                    this.setState({pickTagForAnnotation: true});
-                                }}>{t('inspector.annotation_editor.btn_edit_keywords')}</Button>
-                            </Col>
-                        </Row> : null
-                    }
-                    {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
-                        <Row>
-                            <Label sm={1} md={1} lg={1} className="label-for"/>
-                            <Col sm={11} md={11} lg={11}>
-                                <div className="tags-panel">
-                                    {this.props.tags && this.props.tags.map(name => {
-                                        return <span key={name} className="annotation-tag">{name}&nbsp;
-                                            <img src={REMOVE_TAG} className='delete-tag'
-                                                 alt="delete-tag"
-                                                 tagname={name}
-                                                 onClick={this.handleUnTagAnnotation}/>
-                                        </span>
-                                    })}
-                                </div>
-                            </Col>
-                        </Row> : null
-                    }
                     <FormGroup row>
                         <Label sm={3} for="type" className="label-for">{t('inspector.annotation_editor.lbl_type')}</Label>
                         <Col sm={9} className="align-bottom">
@@ -507,7 +481,7 @@ export default class extends Component {
                     >
                         <Label sm={3} for="name" className="label-for">{t('inspector.annotation_editor.lbl_name')}</Label>
                         <Col sm={9}>
-                            <Input bsSize="sm" name="name" id="name" autoFocus
+                            <Input className="form-control-md form-control" bsSize="md" name="name" id="name" autoFocus
                                    value={this.state.title}
                                    onChange={e =>
                                        this.setState({
@@ -552,7 +526,7 @@ export default class extends Component {
                                 this.props.annotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
                                 this.props.annotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST ||
                                 this.props.annotation.annotationType === ANNOTATION_CATEGORICAL) ?
-                                <Input bsSize="sm" type="textarea" name="value" id="value" rows={2}
+                                <Input bsSize="sm" type="textarea" name="value" id="value" rows={3}
                                        onChange={e => this.setState({value: e.target.value})}
                                        value={this.state.value}
                                 />
@@ -810,13 +784,49 @@ export default class extends Component {
                             </Col>
                         </FormGroup>
                     }
+
+                    {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
+                        <Row>
+                            <Col md={{size: 10}} className="local-title">
+                                {t('inspector.annotation_editor.lbl_keywords')}
+                            </Col>
+                            <Col md={{size: 2}} className="local-title">
+                                <img className="btn_menu"
+                                     src={EDIT_ANNOTATION}
+                                     title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
+                                     onClick={_ => {
+                                         this.setState({
+                                             pickTagForAnnotation: true
+                                         });
+                                     }
+                                     }
+                                />
+                            </Col>
+                        </Row> : null
+                    }
+                    {this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
+                        <Row>
+                            <Label sm={1} md={1} lg={1} className="label-for"/>
+                            <Col sm={11} md={11} lg={11}>
+                                <div className="tags-panel">
+                                    {this.props.tags && this.props.tags.map(name => {
+                                        return <span key={name} className="annotation-tag">{name}&nbsp;
+                                            <img src={REMOVE_TAG} className='delete-tag'
+                                                 alt="delete-tag"
+                                                 tagname={name}
+                                                 onClick={this.handleUnTagAnnotation}/>
+                                        </span>
+                                    })}
+                                </div>
+                            </Col>
+                        </Row> : null
+                    }
                     {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ? <Fragment>
                         <FormGroup row>
-                            <Col md={{size: 9, offset: 0}} className="local-title">
+                            <Col md={{size: 12, offset: 0}} className="local-title">
                                 {t('inspector.annotation_editor.lbl_character')}
                             </Col>
                         </FormGroup>
-                        <hr/>
                         <FormGroup row>
                             <Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_character')}</Label>
                             <Col sm={9}>
@@ -824,10 +834,10 @@ export default class extends Component {
                             </Col>
                         </FormGroup>
                     </Fragment> : ''}
-                    {this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
+                    {this.state.descriptor.descriptorId !== '-1' && this.props.selectedTaxonomy && this.state.annotationType !== ANNOTATION_CHRONOTHEMATIQUE && this.state.annotationType !== ANNOTATION_EVENT_ANNOTATION ?
                         <Row>
                             <Label sm={3} className="label-for">{t('inspector.annotation_editor.lbl_values')}</Label>
-                            <Col sm={8} className="align-bottom">
+                            <Col sm={7} className="align-bottom">
                                 {this.props.selectedTaxonomy.descriptors.map(_ => {
                                     if (_.id === this.state.descriptor.descriptorId && _.targetType === this.state.descriptorGroup) {
                                         const taxonomyByDescriptor = this.props.taxonomyInstance.taxonomyByDescriptor[this.state.descriptor.descriptorId];
@@ -862,7 +872,7 @@ export default class extends Component {
                                 || this.state.annotationType === ANNOTATION_CIRCLE_OF_INTEREST
                                 || this.state.annotationType === ANNOTATION_POLYGON_OF_INTEREST
                                 || this.state.annotationType === ANNOTATION_CATEGORICAL) ?
-                                <Col sm={1} className="no-padding">
+                                <Col sm={2} className="">
                                     <img className="btn_menu"
                                          src={EDIT_ANNOTATION}
                                          title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
@@ -883,12 +893,12 @@ export default class extends Component {
                                 <div className="tags-panel">
                                     {this.props.tags && this.props.tags.map(tag => {
                                         return <span key={tag} className="annotation-tag">{tag}&nbsp;
-                                                    <img
-                                                        alt="delete a tag"
-                                                        src={REMOVE_TAG}
-                                                        className='delete-tag'
-                                                        tagname={tag}
-                                                        onClick={this.handleUnTagAnnotation}/>
+                                            <img
+                                                alt="delete a tag"
+                                                src={REMOVE_TAG}
+                                                className='delete-tag'
+                                                tagname={tag}
+                                                onClick={this.handleUnTagAnnotation}/>
                                         </span>
                                     })}
                                 </div>
@@ -896,11 +906,10 @@ export default class extends Component {
                         </FormGroup> : null
                     }
                     <FormGroup row>
-                        <Col md={{size: 9, offset: 0}} className="local-title">
+                        <Col md={{size: 12, offset: 0}} className="local-title">
                             {t('inspector.annotation_editor.lbl_coverage')}
                         </Col>
                     </FormGroup>
-                    <hr/>
                     <FormGroup row>
                         {/*<Label sm={3} for="target" className="label-for">{t('inspector.annotation_editor.lbl_temporal')}</Label>*/}
                         <Col sm={12} className="coverage-editor-holder">
@@ -923,6 +932,41 @@ export default class extends Component {
                                                openEdit={this.props.openEditLocation}
                                                onValueChange={this.handleSpatialLocationChange}/>
                         </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        <Col md={{size: 10}} className="local-title">
+                            {t('inspector.annotation_editor.lbl_relations')}
+                        </Col>
+                        <Col md={{size: 2}} className="local-title">
+                            <img className="btn_menu"
+                                 src={EDIT_ANNOTATION}
+                                 title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
+                                 onClick={_ => {
+                                     this.setState({
+                                         relationsModal: !this.state.modal
+                                     });
+                                 }
+                                 }
+                            />
+                        </Col>
+                    </FormGroup>
+                    <FormGroup row>
+                        {this.state.formRelations.relationAnnotations.length > 0 && (
+                            <Col sm={12} className="">
+                                {/*<h6>Selected Relation-Annotation Pairs:</h6>*/}
+                                <Table bordered responsive>
+                                    <tbody>
+                                    {this.state.formRelations.relationAnnotations.map((item, index) => (
+                                        <tr>
+                                            <td>{item.relation.name}</td>
+                                            <td>{item.annotation.name}</td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </Table>
+                            </Col>
+                        )}
+
                     </FormGroup>
                 </Form>
 
@@ -966,37 +1010,37 @@ export default class extends Component {
                                                    }}/> Unknown values
                                         </div>
                                         {this.props.selectedTaxonomy && this.props.selectedTaxonomy.descriptors
-                                        && this.props.selectedTaxonomy.descriptors.map(target => {
-                                            if (target.id === this.state.descriptor.descriptorId && this.state.descriptor.type === CATEGORICAL && target.targetType === this.state.descriptorGroup) {
-                                                return target.states.map((state, index) => {
-                                                    return <div key={`option_${index}`}>
-                                                        <Input type="checkbox" value={state.id}
-                                                               onChange={_ => {
-                                                               }}
-                                                               disabled={this.state.disableCategoricalValues}
-                                                               checked={!this.state.disableCategoricalValues && this.state.descriptor.value.indexOf(state.id) !== -1}
-                                                               defaultChecked={this.state.descriptor.value.indexOf(state.id) !== -1}
-                                                               onClick={_ => {
-                                                                   const values = [...this.state.descriptor.value];
-                                                                   const index = values.indexOf(state.id);
-                                                                   if (index !== -1) {
-                                                                       values.splice(index, 1);
-                                                                   } else if (_.target.checked) {
-                                                                       values.push(state.id);
-                                                                   }
-                                                                   this.setState(prevState => ({
-                                                                       descriptor: {
-                                                                           ...prevState.descriptor,
-                                                                           value: values
+                                            && this.props.selectedTaxonomy.descriptors.map(target => {
+                                                if (target.id === this.state.descriptor.descriptorId && this.state.descriptor.type === CATEGORICAL && target.targetType === this.state.descriptorGroup) {
+                                                    return target.states.map((state, index) => {
+                                                        return <div key={`option_${index}`}>
+                                                            <Input type="checkbox" value={state.id}
+                                                                   onChange={_ => {
+                                                                   }}
+                                                                   disabled={this.state.disableCategoricalValues}
+                                                                   checked={!this.state.disableCategoricalValues && this.state.descriptor.value.indexOf(state.id) !== -1}
+                                                                   defaultChecked={this.state.descriptor.value.indexOf(state.id) !== -1}
+                                                                   onClick={_ => {
+                                                                       const values = [...this.state.descriptor.value];
+                                                                       const index = values.indexOf(state.id);
+                                                                       if (index !== -1) {
+                                                                           values.splice(index, 1);
+                                                                       } else if (_.target.checked) {
+                                                                           values.push(state.id);
                                                                        }
-                                                                   }));
-                                                               }}
-                                                        /> <span
-                                                        className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
-                                                    </div>
-                                                })
-                                            }
-                                        })}
+                                                                       this.setState(prevState => ({
+                                                                           descriptor: {
+                                                                               ...prevState.descriptor,
+                                                                               value: values
+                                                                           }
+                                                                       }));
+                                                                   }}
+                                                            /> <span
+                                                            className={classnames({'disabled-text': this.state.disableCategoricalValues})}>{state.name}</span>
+                                                        </div>
+                                                    })
+                                                }
+                                            })}
                                     </div>
                                 </Col>
                             </Row>
@@ -1035,6 +1079,115 @@ export default class extends Component {
                         </ModalFooter>
                     </Modal>
                 </div>
+                <div>
+                    <Modal isOpen={this.state.relationsModal}
+                           size="lg"
+                           scrollable={false}
+                           toggle={this._toggleRelationsModal} wrapClassName="bst" autoFocus={false}>
+                        <ModalHeader toggle={this._toggleRelationsModal}>{t('inspector.annotation_editor.lbl_relations_modal_title')}</ModalHeader>
+                        <ModalBody>
+                            <FormGroup row>
+                                <Col sm={4}>
+                                    <div>
+                                        <Input
+                                            type="select"
+                                            name="relationItem"
+                                            id="relationItem"
+                                            onChange={this.handleRelationsInputChange}
+                                            value={this.state.selectedRelation?.id || ''}
+                                        >
+                                            <option value="" disabled>Select a relation</option>
+                                            {
+                                                (
+                                                    this.state.descriptor?.selectedRelations?.length > 0
+                                                        ? this.state.descriptor.selectedRelations
+                                                        : (this.props.selectedTaxonomy?.relations || [])
+                                                ).map((type, index) => (
+                                                    <option
+                                                        key={`rel_${index}`}
+                                                        value={type.id}
+                                                        data-relation-id={type.id}
+                                                    >
+                                                        {type.name}
+                                                    </option>
+                                                ))
+                                            }
+                                        </Input>
+
+
+                                    </div>
+                                </Col>
+                                <Col sm={4} className="">
+                                    <Input
+                                        type="select"
+                                        name="annotationItem"
+                                        id="annotationItem"
+                                        onChange={this.handleRelationsInputChange}
+                                        value={this.state.selectedAnnotation?.id || ''}
+                                    >
+                                        <option value="" disabled>Select an annotation</option>
+                                        {
+                                            this.props.annotations && this.props.annotations.length > 0
+                                                ? this.props.annotations
+                                                    .filter(type => type.id !== this.props.annotation.id)
+                                                    .map((type, index) => (
+                                                        <option
+                                                            key={`ann_${index}`}
+                                                            value={type.id}
+                                                            data-annotation-id={type.id}
+                                                        >
+                                                            {type.title}
+                                                        </option>
+                                                    ))
+                                                : <option disabled>No annotations available</option>
+                                        }
+                                    </Input>
+                                </Col>
+                                <Col sm={4} className="">
+                                    <Button color="primary" onClick={this._addRelationAnnotation}>Add</Button>
+                                </Col>
+                            </FormGroup>
+                            {this.state.formRelations.relationAnnotations.length > 0 && (
+                                <div style={{ marginTop: '1rem' }}>
+                                    {/*<h5>Selected Relation-Annotation Pairs:</h5>*/}
+                                    <Table bordered hover responsive>
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Relation</th>
+                                            <th>Annotation</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {this.state.formRelations.relationAnnotations.map((item, index) => (
+                                            <tr key={index}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{item.relation.name}</td>
+                                                <td>{item.annotation.name}</td>
+                                                <td>
+                                                    <Button
+                                                        color="danger"
+                                                        size="sm"
+                                                        onClick={() => this._removeRelationAnnotation(index)}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            )}
+
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this._saveRelationsAnnotations}>Save</Button>
+                            <Button color="secondary" onClick={this._toggleRelationsModal}>Cancel</Button>
+                        </ModalFooter>
+                    </Modal>
+                </div>
             </Container>
         );
     };
@@ -1052,6 +1205,7 @@ export default class extends Component {
                 type: tmpDesc.annotationType,
                 descriptorId: tmpDesc.id || "-1",
                 targetType: tmpDesc.targetType,
+                selectedRelations: tmpDesc.selectedRelations,
                 value: []
             };
             this.setState({
@@ -1065,9 +1219,9 @@ export default class extends Component {
             if (selectedTargetOptions.targetType === CATEGORICAL) {
                 if (this.props.taxonomyInstance && this.props.taxonomyInstance.taxonomyByPicture[this.props.sha1] &&
                     selectedTargetOptions.value in this.props.taxonomyInstance.taxonomyByPicture[this.props.sha1]) {
-                     this._catToggle(descriptor)
-                   } else if (selectedTargetOptions.value !== "-1") {
-                        this._catToggle(descriptor)
+                    this._catToggle(descriptor)
+                } else if (selectedTargetOptions.value !== "-1") {
+                    this._catToggle(descriptor)
                 }
             } else if (selectedTargetOptions.targetType === INTEREST) {
                 this.props.createTargetInstance(INTEREST, this.props.tabName, annotation.id, selectedTargetOptions.value, this.state.value ? [this.state.value] : null, oldDescriptorId);
@@ -1124,6 +1278,14 @@ export default class extends Component {
         });
     };
 
+    _toggleRelationsModal = () => {
+        this.setState({
+            relationsModal: !this.state.relationsModal,
+            selectedRelation: '',
+            selectedAnnotation: ''
+        });
+    };
+
     richTextOnChange = (richTextValue) => {
         this.setState({richTextValue});
     };
@@ -1136,6 +1298,7 @@ export default class extends Component {
             measure: "-1",
             color: "-1",
             targetType: this.state.descriptor.type,
+            selectedRelations: this.state.descriptor.selectedRelations,
             group: this.state.descriptor.targetType,
             label: t('inspector.select_character_label')
         }];
@@ -1233,5 +1396,66 @@ export default class extends Component {
         this.props.annotation.start = this.state.start;
         this.props.annotation.end = this.state.end;
         this.props.annotation.duration = this.state.end - this.state.start;
+    }
+
+    handleRelationsInputChange = (e) => {
+        const { name, options, selectedIndex } = e.target;
+        const selectedOption = options[selectedIndex];
+
+        if (name === "relationItem") {
+            this.setState({
+                selectedRelation: {
+                    id: selectedOption.getAttribute("data-relation-id"),
+                    name: selectedOption.text
+                }
+            });
+        } else if (name === "annotationItem") {
+            this.setState({
+                selectedAnnotation: {
+                    id: selectedOption.getAttribute("data-annotation-id"),
+                    name: selectedOption.text
+                }
+            });
+        }
+    };
+
+
+    _addRelationAnnotation = () => {
+        const { selectedRelation, selectedAnnotation } = this.state;
+
+        if (selectedRelation && selectedAnnotation) {
+            const structuredData = {
+                relation: selectedRelation,
+                annotation: selectedAnnotation
+            };
+
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relationAnnotations: [...prevState.formRelations.relationAnnotations, structuredData]
+                },
+                selectedRelation: null,
+                selectedAnnotation: null
+            }));
+        }
+    };
+
+    _removeRelationAnnotation = (indexToRemove) => {
+        this.setState(prevState => ({
+            formRelations: {
+                ...prevState.formRelations,
+                relationAnnotations: prevState.formRelations.relationAnnotations.filter((_, index) => index !== indexToRemove)
+            }
+        }));
+    };
+
+    _saveRelationsAnnotations = () => {
+        const annotationId = this.props.annotation.id;
+        const annotationName = this.props.annotation.title;
+        const taxonomyId = this.props.selectedTaxonomy.id;
+        const relationAnnotations = this.state.formRelations.relationAnnotations;
+        this.props.saveRelationsAnnotations(relationAnnotations, annotationId, annotationName, taxonomyId);
+        this._toggleRelationsModal();
+
     }
 }

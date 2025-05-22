@@ -74,6 +74,8 @@ import {findClosestColor} from "../utils/web-colors";
 import _3DSettings from "../containers/3DSettings";
 
 const EDIT_DATING = require('./pictures/clock-regular.svg');
+const EDIT_RELATIONS = require('./pictures/chain.svg');
+const EDIT_RELATIONS_ACTIVE = require('./pictures/chain_green.svg');
 const MAP_LOCATION = require('./pictures/location-dot-solid-blue.svg');
 const ADD_TAG = require('./pictures/add-tag-annotation.svg');
 const EDIT_ANNOTATION = require('./pictures/edit-annotation.svg');
@@ -267,7 +269,7 @@ export default class extends Component {
         if (nextProps.editedAnnotation && nextProps.editedAnnotation !== this.state.editedAnnotation && canEdit) {
             this.setState({editedAnnotation: nextProps.editedAnnotation});
         } else if (!canEdit) {
-            this.setState({editedAnnotation: null, openAddTag: false, openEditLocation: false, openEditDating: false});
+            this.setState({editedAnnotation: null, openAddTag: false, openEditLocation: false, openEditDating: false, openEditRelations: false});
         }
 
         // Open edit of event annotation on annotation record start.
@@ -318,12 +320,14 @@ export default class extends Component {
         return this.state.editedAnnotation ? (
 
             <AnnotationEditor
+                annotations={this.state.annotations}
                 isAnnotateEventRecording={this.state.isAnnotateEventRecording}
                 fireSaveEvent={this.props.fireSaveEvent}
                 annotation={this.state.editedAnnotation}
                 openAddTag={this.state.openAddTag}
                 openEditLocation={this.state.openEditLocation}
                 openEditDating={this.state.openEditDating}
+                openEditRelations={this.state.openEditRelations}
                 tabName={this.props.tabName}
                 sha1={this.props.picture.sha1}
                 isAnnotationRecording={this.props.isAnnotationRecording}
@@ -340,7 +344,8 @@ export default class extends Component {
                         editedAnnotation: null,
                         openAddTag: false,
                         openEditLocation: false,
-                        openEditDating: false
+                        openEditDating: false,
+                        openEditRelations: false
                     });
                 }}
                 save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType, person, date, location, tags, topic, coverage) => {
@@ -455,7 +460,8 @@ export default class extends Component {
                             editedAnnotation: null,
                             openAddTag: false,
                             openEditLocation: false,
-                            openEditDating: false
+                            openEditDating: false,
+                            openEditRelations: false
                         });
                     }
                 }}
@@ -908,7 +914,7 @@ export default class extends Component {
         if (!defaultValue) {
             defaultValue = options[0]
         }
-
+        const relationAnnotations = this.props.relationsByAnnotations?.[this.props.selectedTaxonomy?.id]?.[annotation.id] || [];
         // console.log("props", this.props)
         return (
             <div
@@ -1026,7 +1032,27 @@ export default class extends Component {
 
                                         ee.emit(STOP_ANNOTATION_RECORDING, annotation);
                                     }}/> : ''}
-
+                                <img alt="Links" className="btn_menu" src={relationAnnotations.length > 0 ? EDIT_RELATIONS_ACTIVE : EDIT_RELATIONS}
+                                     title={t('inspector.tooltip_add_relations')} height="16px"
+                                     onClick={event => {
+                                         event.preventDefault();
+                                         event.stopPropagation();
+                                         if (this.state.isAnnotateEventRecording) {
+                                             return false;
+                                         }
+                                         if (this.props.currentAnnotationTool) {
+                                             let options = {
+                                                 type: "info",
+                                                 title: t('global.attention'),
+                                                 buttons: ["OK"],
+                                                 message: t('inspector.alert_fast_measurement_mode_can_not_change_the_annotation')
+                                             }
+                                             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
+                                         } else {
+                                             this.setState({editedAnnotation: annotation, openEditRelations: true});
+                                         }
+                                     }
+                                     }/>
                                 <img alt="add dating " className="btn_menu" src={EDIT_DATING}
                                      title={t('inspector.tooltip_add_dating')} height="16px"
                                      onClick={event => {
@@ -1048,7 +1074,6 @@ export default class extends Component {
                                          }
                                      }
                                      }/>
-
                                 <img alt="add location " className="btn_menu" src={MAP_LOCATION}
                                      title={t('inspector.tooltip_add_location')} height="16px"
                                      onClick={event => {
