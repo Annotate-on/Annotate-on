@@ -4134,13 +4134,34 @@ export default (state = {}, action) => {
                     }
                     : state.selectedTaxonomy;
 
+            const updatedRelationsByAnnotations = { ...state.relationsByAnnotations };
+            const taxonomyAnnotations = updatedRelationsByAnnotations[taxonomyId];
+
+            if (taxonomyAnnotations) {
+                const newAnnotations = {};
+
+                Object.entries(taxonomyAnnotations).forEach(([annotationId, pairs]) => {
+                    const cleanedPairs = pairs.filter(pair =>
+                        !deletedIds.includes(pair.relation.id)
+                    );
+
+                    if (cleanedPairs.length > 0) {
+                        newAnnotations[annotationId] = cleanedPairs;
+                    }
+                });
+
+                updatedRelationsByAnnotations[taxonomyId] = newAnnotations;
+            }
+
             return {
                 ...state,
                 counter,
                 taxonomies,
-                selectedTaxonomy
+                selectedTaxonomy,
+                relationsByAnnotations: updatedRelationsByAnnotations
             };
         }
+
 
         case MODIFY_TAXONOMY_RELATIONS: {
             const counter = state.counter + 1;
@@ -4176,13 +4197,37 @@ export default (state = {}, action) => {
                     }
                     : state.selectedTaxonomy;
 
+            const existingAnnotations = state.relationsByAnnotations?.[taxonomyId] || {};
+            const updatedAnnotations = {};
+
+            Object.entries(existingAnnotations).forEach(([annotationId, pairs]) => {
+                updatedAnnotations[annotationId] = pairs.map(pair => {
+                    const modifiedRelation = modifiedRelations.find(r => r.id === pair.relation.id);
+                    if (modifiedRelation) {
+                        return {
+                            ...pair,
+                            relation: {
+                                ...pair.relation,
+                                ...modifiedRelation
+                            }
+                        };
+                    }
+                    return pair;
+                });
+            });
+
             return {
                 ...state,
                 counter,
                 taxonomies,
-                selectedTaxonomy
+                selectedTaxonomy,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: updatedAnnotations
+                }
             };
         }
+
 
 
 

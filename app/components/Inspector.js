@@ -1033,7 +1033,7 @@ export default class extends Component {
                                         ee.emit(STOP_ANNOTATION_RECORDING, annotation);
                                     }}/> : ''}
                                 <img alt="Links" className="btn_menu" src={relationAnnotations.length > 0 ? EDIT_RELATIONS_ACTIVE : EDIT_RELATIONS}
-                                     title={t('inspector.tooltip_add_relations')} height="16px"
+                                     title={t('inspector.annotation_editor.lbl_relations_modal_title')} height="16px"
                                      onClick={event => {
                                          event.preventDefault();
                                          event.stopPropagation();

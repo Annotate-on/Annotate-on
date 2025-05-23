@@ -276,7 +276,15 @@
         "lbl_temporal": "Temporel",
         "lbl_spatial": "Spatial",
         "lbl_relations": "Liaisons",
-        "lbl_relations_modal_title": "Gestion des liaisons"
+        "lbl_relations_modal_title": "Gestion des liaisons",
+        "lbl_relations_modal_combo_relation": "Sélectionner une liaison",
+        "lbl_relations_modal_combo_annotation": "Sélectionner une annotation",
+        "lbl_relations_modal_btn_add": "Ajouter",
+        "lbl_relations_modal_msg_duplicate": "Cette liaison existe déjà",
+        "lbl_relations_modal_tbl_relation": "Liaison",
+        "lbl_relations_modal_tbl_annotation": "Annotation",
+        "lbl_relations_modal_tbl_action": "Action",
+        "lbl_relations_modal_btn_remove": "Enlever"
       },
       "metadata": {
         "title_keywords": "Mots-clés",

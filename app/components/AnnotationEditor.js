@@ -186,9 +186,6 @@ export default class extends Component {
 
         const relationAnnotations = props.relationsByAnnotations?.[this.props.selectedTaxonomy?.id]?.[this.props.annotation.id] || [];
 
-
-
-        console.log('annotation to edit...' , props.annotation)
         this.state = {
             person: person ? person : '',
             location: location ? location : '',
@@ -226,7 +223,8 @@ export default class extends Component {
             selectedAnnotation: null,
             formRelations: {
                 relationAnnotations: relationAnnotations
-            }
+            },
+            duplicateWarning: false
         };
     }
 
@@ -1096,7 +1094,7 @@ export default class extends Component {
                                             onChange={this.handleRelationsInputChange}
                                             value={this.state.selectedRelation?.id || ''}
                                         >
-                                            <option value="" disabled>Select a relation</option>
+                                            <option value="" disabled>{t('inspector.annotation_editor.lbl_relations_modal_combo_relation')}</option>
                                             {
                                                 (
                                                     this.state.descriptor?.selectedRelations?.length > 0
@@ -1125,7 +1123,7 @@ export default class extends Component {
                                         onChange={this.handleRelationsInputChange}
                                         value={this.state.selectedAnnotation?.id || ''}
                                     >
-                                        <option value="" disabled>Select an annotation</option>
+                                        <option value="" disabled>{t('inspector.annotation_editor.lbl_relations_modal_combo_annotation')}</option>
                                         {
                                             this.props.annotations && this.props.annotations.length > 0
                                                 ? this.props.annotations
@@ -1144,7 +1142,10 @@ export default class extends Component {
                                     </Input>
                                 </Col>
                                 <Col sm={4} className="">
-                                    <Button color="primary" onClick={this._addRelationAnnotation}>Add</Button>
+                                    <Button color="primary" onClick={this._addRelationAnnotation}>{t('inspector.annotation_editor.lbl_relations_modal_btn_add')}</Button>
+                                    {this.state.duplicateWarning && (
+                                        <span className="text-danger ml-2">{t('inspector.annotation_editor.lbl_relations_modal_msg_duplicate')}</span>
+                                    )}
                                 </Col>
                             </FormGroup>
                             {this.state.formRelations.relationAnnotations.length > 0 && (
@@ -1154,9 +1155,9 @@ export default class extends Component {
                                         <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Relation</th>
-                                            <th>Annotation</th>
-                                            <th>Actions</th>
+                                            <th>{t('inspector.annotation_editor.lbl_relations_modal_tbl_relation')}</th>
+                                            <th>{t('inspector.annotation_editor.lbl_relations_modal_tbl_annotation')}</th>
+                                            <th>{t('inspector.annotation_editor.lbl_relations_modal_tbl_action')}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -1171,7 +1172,7 @@ export default class extends Component {
                                                         size="sm"
                                                         onClick={() => this._removeRelationAnnotation(index)}
                                                     >
-                                                        Remove
+                                                        {t('inspector.annotation_editor.lbl_relations_modal_btn_remove')}
                                                     </Button>
                                                 </td>
                                             </tr>
@@ -1183,8 +1184,8 @@ export default class extends Component {
 
                         </ModalBody>
                         <ModalFooter>
-                            <Button color="primary" onClick={this._saveRelationsAnnotations}>Save</Button>
-                            <Button color="secondary" onClick={this._toggleRelationsModal}>Cancel</Button>
+                            <Button color="primary" onClick={this._saveRelationsAnnotations}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this._toggleRelationsModal}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>
@@ -1402,6 +1403,8 @@ export default class extends Component {
         const { name, options, selectedIndex } = e.target;
         const selectedOption = options[selectedIndex];
 
+        this.setState({ duplicateWarning: false });
+
         if (name === "relationItem") {
             this.setState({
                 selectedRelation: {
@@ -1429,16 +1432,34 @@ export default class extends Component {
                 annotation: selectedAnnotation
             };
 
-            this.setState(prevState => ({
-                formRelations: {
-                    ...prevState.formRelations,
-                    relationAnnotations: [...prevState.formRelations.relationAnnotations, structuredData]
-                },
-                selectedRelation: null,
-                selectedAnnotation: null
-            }));
+            this.setState(prevState => {
+                const alreadyExists = prevState.formRelations.relationAnnotations.some(
+                    item =>
+                        item.relation.id === selectedRelation.id &&
+                        item.annotation.id === selectedAnnotation.id
+                );
+
+                if (alreadyExists) {
+                    return { duplicateWarning: true };
+                }
+
+                return {
+                    formRelations: {
+                        ...prevState.formRelations,
+                        relationAnnotations: [
+                            ...prevState.formRelations.relationAnnotations,
+                            structuredData
+                        ]
+                    },
+                    selectedRelation: null,
+                    selectedAnnotation: null,
+                    duplicateWarning: false
+                };
+            });
         }
     };
+
+
 
     _removeRelationAnnotation = (indexToRemove) => {
         this.setState(prevState => ({
