@@ -276,7 +276,7 @@
         "lbl_temporal": "Temporel",
         "lbl_spatial": "Spatial",
         "lbl_relations": "Liaisons",
-        "lbl_relations_modal_title": "Gestion des liaisons",
+        "lbl_relations_modal_title": "liaisons",
         "lbl_relations_modal_combo_relation": "Sélectionner une liaison",
         "lbl_relations_modal_combo_annotation": "Sélectionner une annotation",
         "lbl_relations_modal_btn_add": "Ajouter",

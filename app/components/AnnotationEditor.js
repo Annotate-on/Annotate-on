@@ -931,23 +931,25 @@ export default class extends Component {
                                                onValueChange={this.handleSpatialLocationChange}/>
                         </Col>
                     </FormGroup>
-                    <FormGroup row>
-                        <Col md={{size: 10}} className="local-title">
-                            {t('inspector.annotation_editor.lbl_relations')}
-                        </Col>
-                        <Col md={{size: 2}} className="local-title">
-                            <img className="btn_menu"
-                                 src={EDIT_ANNOTATION}
-                                 title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
-                                 onClick={_ => {
-                                     this.setState({
-                                         relationsModal: !this.state.modal
-                                     });
-                                 }
-                                 }
-                            />
-                        </Col>
-                    </FormGroup>
+                    {this.props.selectedTaxonomy && (
+                        <FormGroup row>
+                            <Col md={{size: 10}} className="local-title">
+                                {t('inspector.annotation_editor.lbl_relations')}
+                            </Col>
+                            <Col md={{size: 2}} className="local-title">
+                                <img className="btn_menu"
+                                     src={EDIT_ANNOTATION}
+                                     title={t('inspector.annotation_editor.tooltip_pick_a_value')} alt="pick a value"
+                                     onClick={_ => {
+                                         this.setState({
+                                             relationsModal: !this.state.modal
+                                         });
+                                     }
+                                     }
+                                />
+                            </Col>
+                        </FormGroup>
+                    )}
                     <FormGroup row>
                         {this.state.formRelations.relationAnnotations.length > 0 && (
                             <Col sm={12} className="">
@@ -964,7 +966,6 @@ export default class extends Component {
                                 </Table>
                             </Col>
                         )}
-
                     </FormGroup>
                 </Form>
 
@@ -1078,11 +1079,12 @@ export default class extends Component {
                     </Modal>
                 </div>
                 <div>
-                    <Modal isOpen={this.state.relationsModal}
+                    {this.props.selectedTaxonomy && (
+                        <Modal isOpen={this.state.relationsModal}
                            size="lg"
                            scrollable={false}
                            toggle={this._toggleRelationsModal} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggleRelationsModal}>{t('inspector.annotation_editor.lbl_relations_modal_title')}</ModalHeader>
+                        <ModalHeader toggle={this._toggleRelationsModal}><strong>{this.props.annotation.title}</strong> {t('inspector.annotation_editor.lbl_relations_modal_title')} ({this.props.selectedTaxonomy.name})</ModalHeader>
                         <ModalBody>
                             <FormGroup row>
                                 <Col sm={4}>
@@ -1188,6 +1190,7 @@ export default class extends Component {
                             <Button color="secondary" onClick={this._toggleRelationsModal}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
+                    )}
                 </div>
             </Container>
         );

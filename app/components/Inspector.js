@@ -1032,6 +1032,7 @@ export default class extends Component {
 
                                         ee.emit(STOP_ANNOTATION_RECORDING, annotation);
                                     }}/> : ''}
+                                {this.props.selectedTaxonomy && (
                                 <img alt="Links" className="btn_menu" src={relationAnnotations.length > 0 ? EDIT_RELATIONS_ACTIVE : EDIT_RELATIONS}
                                      title={t('inspector.annotation_editor.lbl_relations_modal_title')} height="16px"
                                      onClick={event => {
@@ -1053,6 +1054,7 @@ export default class extends Component {
                                          }
                                      }
                                      }/>
+                                )}
                                 <img alt="add dating " className="btn_menu" src={EDIT_DATING}
                                      title={t('inspector.tooltip_add_dating')} height="16px"
                                      onClick={event => {
