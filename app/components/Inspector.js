@@ -799,6 +799,9 @@ export default class extends Component {
                 this.props.deleteAnnotation3dPointOfInterest(sha1, annotation.id);
                 break;
         }
+        if(this.props.selectedTaxonomy){
+            this.props.deleteRelationAnnotationsByAnnotation(this.props.selectedTaxonomy.id, annotation.id)
+        }
     };
 
     _changeCalibration = (applyToAll, edit) => {

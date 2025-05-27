@@ -17,6 +17,7 @@ import {exportSddToDatabase} from "../utils/xper";
 const COLUMN_CHARACTER_NAME = 'Character name';
 const COLUMN_NUMBER_OF_MEASURES = 'Number of measures';
 const COLUMN_CHARACTER_TYPE = 'Character type';
+const COLUMN_RELATIONS = 'Relations';
 const COLUMN_CATALOG_NUMBER = 'Item';
 const COLUMN_ANNOTATION_TYPE = 'Annotation type';
 const COLUMN_VALUE = 'Value';
@@ -28,6 +29,7 @@ const COLUMN_COLOR = 'Color';
 const EXPORT_COLUMNS = [
     COLUMN_CHARACTER_NAME,
     COLUMN_CHARACTER_TYPE,
+    COLUMN_RELATIONS,
     COLUMN_CATALOG_NUMBER,
     COLUMN_ANNOTATION_TYPE,
     COLUMN_NUMBER_OF_MEASURES,
@@ -81,6 +83,7 @@ class Target extends PureComponent {
                         }
                     }
 
+                    const relations = this.getRelationsByDescriptorId(descriptor.id, sha1)
                     unsortedTargets.push({
                         catalogNumber,
                         targetType: descriptor.targetType,
@@ -89,7 +92,8 @@ class Target extends PureComponent {
                         value: itemValue,
                         count: count,
                         color: descriptor.targetColor,
-                        segregated
+                        segregated,
+                        relations: relations
                     });
                 }
             }
@@ -117,6 +121,7 @@ class Target extends PureComponent {
                         }
                     });
                 }
+                const relations = this.formatRelationAnnotationPairs(annId, annotation.sha1);
                 unsortedTargets.push({
                     catalogNumber,
                     targetType: descriptor.targetType,
@@ -124,7 +129,8 @@ class Target extends PureComponent {
                     annotationType: descriptor.annotationType,
                     value: satesValues.join(',\n '),
                     count: 1,
-                    color: descriptor.targetColor
+                    color: descriptor.targetColor,
+                    relations: relations
                 });
             }
         }
@@ -257,6 +263,7 @@ class Target extends PureComponent {
             return [
                 target.targetName,
                 target.targetType,
+                target.relations,
                 target.catalogNumber,
                 target.annotationType,
                 target.count,
@@ -271,6 +278,48 @@ class Target extends PureComponent {
         const worksheet = XLSX.utils.aoa_to_sheet([EXPORT_COLUMNS, ...data]);
         getXlsx(worksheet , separator , file);
     };
+
+    formatRelationAnnotationPairs = (annotationId, pictureId) => {
+        const { selectedTaxonomy, relationsByAnnotations, annotations } = this.props;
+
+        if (!selectedTaxonomy || !annotationId || !pictureId) return '';
+
+        const pictureAnnotations = annotations.filter(a => a.pictureId === pictureId);
+
+        const sourceAnnotation = pictureAnnotations.find(a => a.id === annotationId);
+        const sourceTitle = sourceAnnotation?.title || '';
+
+        const pairs = relationsByAnnotations?.[selectedTaxonomy.id]?.[annotationId] || [];
+
+        return pairs
+            .map(pair => `${sourceTitle} : ${pair.relation.name} -> ${pair.annotation.name}`)
+            .join('\n');
+    };
+
+    getRelationsByDescriptorId = (descriptorId, pictureId) => {
+        const { taxonomyInstance } = this.props;
+        const taxonomyByAnnotation = taxonomyInstance?.taxonomyByAnnotation || {};
+        const matchingAnnotationIds = [];
+
+        Object.entries(taxonomyByAnnotation).forEach(([annotationId, descriptor]) => {
+            const matchesDescriptor = descriptor?.descriptorId === descriptorId;
+            const matchesPicture = descriptor?.sha1 === pictureId;
+
+            if (matchesDescriptor && matchesPicture) {
+                matchingAnnotationIds.push(annotationId);
+            }
+        });
+
+        return matchingAnnotationIds
+            .map(annotationId => this.formatRelationAnnotationPairs(annotationId, pictureId))
+            .filter(Boolean)
+            .join('\n\n');
+    };
+
+
+
+
+
 
     render() {
         let key = 0;
@@ -342,6 +391,7 @@ class Target extends PureComponent {
                                     <TableHeader title={t('results.characters.table_column_character_type')} sortKey="targetType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <th>{t('results.characters.table_column_value')}</th>
+                                    <th>{t('results.characters.table_column_relations')}</th>
                                     <TableHeader title={t('results.characters.table_column_item')} sortKey="catalogNumber"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('results.characters.table_column_annotation_type')} sortKey="annotationType"
@@ -363,6 +413,7 @@ class Target extends PureComponent {
                                                 </td>
                                                 <td>{target.targetType}</td>
                                                 <td>{target.value}</td>
+                                                <td>{target.relations}</td>
                                                 <td>{target.catalogNumber}</td>
                                                 <td>{target.annotationType}</td>
                                                 <td>{target.count}</td>

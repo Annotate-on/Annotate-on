@@ -783,6 +783,7 @@
         "table_column_value": "Valeur",
         "table_column_character": "Caractère",
         "table_column_character_type": "Type de caractère",
+        "table_column_relations": "Liaisons",
         "table_column_reference": "Référence",
         "table_column_tags": "Mots-clés",
         "table_column_dpix": "dpi horizontal",

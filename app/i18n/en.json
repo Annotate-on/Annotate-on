@@ -800,6 +800,7 @@
         "table_column_value": "Value",
         "table_column_character": "Character",
         "table_column_character_type": "Character type",
+        "table_column_relations": "Relations",
         "table_column_reference": "Reference",
         "table_column_tags": "Tags",
         "table_column_dpix": "dpiX",

@@ -53,7 +53,7 @@ export const DELETE_ANNOTATION_CATEGORICAL = 'DELETE_ANNOTATION_CATEGORICAL';
 export const DELETE_ANNOTATION_RICHTEXT = 'DELETE_ANNOTATION_RICHTEXT';
 export const DELETE_ANNOTATION_CIRCLE_OF_INTEREST = 'DELETE_ANNOTATION_CIRCLE_OF_INTEREST';
 export const DELETE_ANNOTATION_POLYGON_OF_INTEREST = 'DELETE_ANNOTATION_POLYGON_OF_INTEREST';
-
+export const DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION = 'DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION';
 export const DELETE_TARGET_TYPE = 'DELETE_TARGET_TYPE';
 export const EDIT_TARGET_TYPE = 'EDIT_TARGET_TYPE';
 
@@ -523,6 +523,11 @@ export const deleteAnnotationCircleOfInterest = (pictureId, annotationId) => ({
 export const deleteAnnotationPolygonOfInterest = (pictureId, annotationId) => ({
     type: DELETE_ANNOTATION_POLYGON_OF_INTEREST,
     pictureId,
+    annotationId
+});
+export const deleteRelationAnnotationsByAnnotation = (taxonomyId, annotationId) => ({
+    type: DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION,
+    taxonomyId,
     annotationId
 });
 

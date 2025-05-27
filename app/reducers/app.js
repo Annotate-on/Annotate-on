@@ -138,6 +138,7 @@ import {
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
+    DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION,
     REMOVE_IMAGE_DETECT_MODEL,
     XPER_MATCH_RESOURCES,
     CREATE_ANNOTATION_XPER,
@@ -2058,6 +2059,43 @@ export default (state = {}, action) => {
             };
         }
             break;
+
+        case DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION: {
+            const counter = state.counter + 1;
+            const { taxonomyId, annotationId } = action;
+
+            const updatedRelations = { ...state.relationsByAnnotations };
+
+            if (!updatedRelations[taxonomyId]) {
+                return state;
+            }
+
+            const taxonomyBlock = { ...updatedRelations[taxonomyId] };
+
+            delete taxonomyBlock[annotationId];
+
+            Object.keys(taxonomyBlock).forEach(sourceId => {
+                const filteredPairs = taxonomyBlock[sourceId].filter(
+                    pair => pair.annotation.id !== annotationId
+                );
+
+                if (filteredPairs.length > 0) {
+                    taxonomyBlock[sourceId] = filteredPairs;
+                } else {
+                    delete taxonomyBlock[sourceId];
+                }
+            });
+
+            return {
+                ...state,
+                counter,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: taxonomyBlock
+                }
+            };
+        }
+
 // ---------------------------------------------------------------------------------------------------------------------
         case DELETE_TAG: {
             const new_tags_by_picture = {...state.tags_by_picture};
