@@ -313,7 +313,7 @@ class Target extends PureComponent {
         return matchingAnnotationIds
             .map(annotationId => this.formatRelationAnnotationPairs(annotationId, pictureId))
             .filter(Boolean)
-            .join('\n\n');
+            .join('\n');
     };
 
 
@@ -413,7 +413,7 @@ class Target extends PureComponent {
                                                 </td>
                                                 <td>{target.targetType}</td>
                                                 <td>{target.value}</td>
-                                                <td>{target.relations}</td>
+                                                <td style={{whiteSpace: 'pre'}}>{target.relations}</td>
                                                 <td>{target.catalogNumber}</td>
                                                 <td>{target.annotationType}</td>
                                                 <td>{target.count}</td>

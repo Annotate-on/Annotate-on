@@ -42,7 +42,7 @@ import RichTextEditor from "react-rte";
 import Select from "react-select";
 import {
     ee, EVENT_GET_EVENT_TIMELINE_CURRENT_TIME,
-    EVENT_GOTO_ANNOTATION, EVENT_ON_TAG_DROP,
+    EVENT_GOTO_ANNOTATION, EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, EVENT_ON_TAG_DROP,
     EVENT_SAVE_EVENT_ANNOTATION_FROM_EDIT_PANEL,
     EVENT_SET_ANNOTATION_POSITION,
     EVENT_UPDATE_RECORDING_STATUS, NOTIFY_CURRENT_TIME, STOP_ANNOTATION_RECORDING,
@@ -224,7 +224,8 @@ export default class extends Component {
             formRelations: {
                 relationAnnotations: relationAnnotations
             },
-            duplicateWarning: false
+            duplicateWarning: false,
+            hoveredRowIndex: null
         };
     }
 
@@ -957,9 +958,24 @@ export default class extends Component {
                                 <Table bordered responsive>
                                     <tbody>
                                     {this.state.formRelations.relationAnnotations.map((item, index) => (
-                                        <tr>
+                                        <tr
+                                            key={index}
+                                            onMouseEnter={() => {
+                                                this.setState({ hoveredRowIndex: index });
+                                                this._highlightRelationAnnotation(item.annotation.id, item.annotation.type);
+                                            }}
+                                            onMouseLeave={() => {
+                                                this.setState({ hoveredRowIndex: null });
+                                                this._highlightRelationAnnotation(this.props.annotation.id, '');
+                                            }}
+                                            style={{
+                                                backgroundColor: this.state.hoveredRowIndex === index ? '#fffd1e4d' : 'transparent',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
                                             <td>{item.relation.name}</td>
                                             <td>{item.annotation.name}</td>
+
                                         </tr>
                                     ))}
                                     </tbody>
@@ -1481,5 +1497,10 @@ export default class extends Component {
         this.props.saveRelationsAnnotations(relationAnnotations, annotationId, annotationName, taxonomyId);
         this._toggleRelationsModal();
 
+    }
+
+    _highlightRelationAnnotation = (id, type) => {
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id, 'line');
+        // this.state.targetColor = "#FF0000";
     }
 }
