@@ -347,7 +347,8 @@ export default class extends Component {
                         openEditDating: false,
                         openEditRelations: false
                     });
-                    this.props.setAnnotationColor(this.state.editedAnnotation.id, "#FF0000");
+                    let colorAnn = this.state.editedAnnotation.color || "#FF0000";
+                    this.props.setAnnotationColor(this.state.editedAnnotation.id, colorAnn);
                 }}
                 save={(title, targetId, text, targetColor, categoricalIds, customValue, targetType, person, date, location, tags, topic, coverage) => {
                     ee.emit(EVENT_UPDATE_IS_EDIT_MODE_OPEN_IN_NAVIGATION_AND_TABS, false);

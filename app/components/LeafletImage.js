@@ -1211,7 +1211,7 @@ class LeafletImage extends Component {
     highlightAnnotation = (annotation) => {
         const annotationId = annotation.annotationId;
         //Skip if same annotation is already focused.
-        if ((this.focusedAnnotation && this.focusedAnnotation.annotationId === annotationId) ||
+        if ((this.focusedAnnotation && this.focusedAnnotation.annotationId === annotationId && annotation.annotationType !== 'relation') ||
             this.ratioFocused === annotationId)
             return;
 

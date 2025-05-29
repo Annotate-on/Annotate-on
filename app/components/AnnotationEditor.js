@@ -966,7 +966,7 @@ export default class extends Component {
                                             }}
                                             onMouseLeave={() => {
                                                 this.setState({ hoveredRowIndex: null });
-                                                this._highlightRelationAnnotation(this.props.annotation.id, '');
+                                                this._unHighlightRelationAnnotation(this.props.annotation.id, '');
                                             }}
                                             style={{
                                                 backgroundColor: this.state.hoveredRowIndex === index ? '#fffd1e4d' : 'transparent',
@@ -1500,7 +1500,10 @@ export default class extends Component {
     }
 
     _highlightRelationAnnotation = (id, type) => {
-        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id, 'line');
-        // this.state.targetColor = "#FF0000";
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id, 'relation');
+    }
+
+    _unHighlightRelationAnnotation = (id, type) => {
+        ee.emit(EVENT_HIGHLIGHT_ANNOTATION_ON_LEAFLET, id, 'relation');
     }
 }
