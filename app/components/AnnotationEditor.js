@@ -441,6 +441,16 @@ export default class extends Component {
                 {label: 'OL', style: 'ordered-list-item'}
             ]
         };
+        let descName = '';
+
+        if (this.props.selectedTaxonomy?.descriptors && this.state.descriptor?.descriptorId) {
+            const match = this.props.selectedTaxonomy.descriptors.find(
+                target => target.id === this.state.descriptor.descriptorId
+            );
+            if (match) {
+                descName = match.targetName;
+            }
+        }
 
         return (
             <Container className="bst rcn_edit_annotation">
@@ -839,7 +849,7 @@ export default class extends Component {
                             <Col sm={7} className="align-bottom">
                                 {this.props.selectedTaxonomy.descriptors.map(_ => {
                                     if (_.id === this.state.descriptor.descriptorId && _.targetType === this.state.descriptorGroup) {
-                                        const taxonomyByDescriptor = this.props.taxonomyInstance.taxonomyByDescriptor[this.state.descriptor.descriptorId];
+                                        const taxonomyByDescriptor = this.props.taxonomyInstance?.taxonomyByDescriptor?.[this.state.descriptor?.descriptorId];
                                         return <Fragment key={key++}>
                                             {this.state.descriptor.type === CATEGORICAL && _.states.map(state => {
                                                 if (this.state.descriptor.value.indexOf(state.id) !== -1) {
@@ -1100,10 +1110,16 @@ export default class extends Component {
                            size="lg"
                            scrollable={false}
                            toggle={this._toggleRelationsModal} wrapClassName="bst" autoFocus={false}>
-                        <ModalHeader toggle={this._toggleRelationsModal}><strong>{this.props.annotation.title}</strong> {t('inspector.annotation_editor.lbl_relations_modal_title')} ({this.props.selectedTaxonomy.name})</ModalHeader>
+                        <ModalHeader toggle={this._toggleRelationsModal}>
+                            <strong>{this.props.annotation.title}</strong>
+                            {' '}
+                            {t('inspector.annotation_editor.lbl_relations_modal_title')}
+                            {' '}
+                            ({this.props.selectedTaxonomy?.name}{descName ? ` - ${descName}` : ''})
+                        </ModalHeader>
                         <ModalBody>
                             <FormGroup row>
-                                <Col sm={4}>
+                                <Col sm={5}>
                                     <div>
                                         <Input
                                             type="select"
@@ -1115,7 +1131,7 @@ export default class extends Component {
                                             <option value="" disabled>{t('inspector.annotation_editor.lbl_relations_modal_combo_relation')}</option>
                                             {
                                                 (
-                                                    this.state.descriptor?.selectedRelations?.length > 0
+                                                    this.state.descriptor?.selectedRelations
                                                         ? this.state.descriptor.selectedRelations
                                                         : (this.props.selectedTaxonomy?.relations || [])
                                                 ).map((type, index) => (
@@ -1133,7 +1149,7 @@ export default class extends Component {
 
                                     </div>
                                 </Col>
-                                <Col sm={4} className="">
+                                <Col sm={5} className="">
                                     <Input
                                         type="select"
                                         name="annotationItem"
@@ -1159,7 +1175,7 @@ export default class extends Component {
                                         }
                                     </Input>
                                 </Col>
-                                <Col sm={4} className="">
+                                <Col sm={2} className="">
                                     <Button color="primary" onClick={this._addRelationAnnotation}>{t('inspector.annotation_editor.lbl_relations_modal_btn_add')}</Button>
                                     {this.state.duplicateWarning && (
                                         <span className="text-danger ml-2">{t('inspector.annotation_editor.lbl_relations_modal_msg_duplicate')}</span>

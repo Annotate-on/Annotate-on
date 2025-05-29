@@ -157,7 +157,8 @@ export default class extends Component {
             showSortDialog: false,
             richTextValue: RichTextEditor.createEmptyValue(),
             isFromLeaflet: false,
-            isAnnotateEventRecording: false
+            isAnnotateEventRecording: false,
+            highlightAnn: ''
         };
 
         this.toggleCategorical = this.toggleCategorical.bind(this);
@@ -951,7 +952,7 @@ export default class extends Component {
                     });
 
                 } : undefined}
-                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
+                onMouseOver={this.props.picture.resourceType === RESOURCE_TYPE_PICTURE || this.props.picture.type === 'image' || this.props.picture.resourceType === RESOURCE_TYPE_OBJECT3D ? e => {
                     if (this.state.isAnnotateEventRecording) {
                         return false;
                     }
