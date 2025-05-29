@@ -56,6 +56,7 @@ const EXPORT_COLUMNS = [
     'Units',
     'Character',
     'Character type',
+    'Relations',
     'Reference',
     'Tags',
     'Author',
@@ -500,6 +501,18 @@ class Data extends PureComponent {
         return outputX + ", " + outputY;
     }
 
+    formatRelationAnnotationPairs = (annotationId) => {
+        const { selectedTaxonomy, relationsByAnnotations } = this.props;
+
+        if (!selectedTaxonomy || !annotationId) return '';
+
+        const pairs = relationsByAnnotations?.[selectedTaxonomy.id]?.[annotationId] || [];
+
+        return pairs
+            .map(pair => `${pair.relation.name} -> ${pair.annotation.name}`)
+            .join('\n');
+    };
+
     render() {
         let key = 0;
         const { t } = this.props;
@@ -673,6 +686,8 @@ class Data extends PureComponent {
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                                     <TableHeader title={t('results.annotations.table_column_character_type')} sortKey="character_type"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
+                                                    <TableHeader title={t('results.annotations.table_column_relations')} sortKey="relations"
+                                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
                                                     <TableHeader title={t('results.annotations.table_column_reference')} sortKey="catalogNumber"
                                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                                     <TableHeader title={t('results.annotations.table_column_tags')} sortKey="tags"
@@ -711,6 +726,7 @@ class Data extends PureComponent {
                                                                 <td>{annotation.value}</td>
                                                                 <td>{annotation.targets}</td>
                                                                 <td>{annotation.targetsType}</td>
+                                                                <td style={{whiteSpace: 'pre'}}>{this.formatRelationAnnotationPairs(annotation.id)}</td>
                                                                 <td>{annotation.catalogNumber}</td>
                                                                 <td>{annotation.tags}</td>
                                                                 <td>{annotation.dpix}</td>
@@ -828,6 +844,7 @@ class Data extends PureComponent {
                     annotation.units,
                     annotation.targets,
                     annotation.targetsType,
+                    this.formatRelationAnnotationPairs(annotation.id),
                     annotation.catalogNumber,
                     annotation.tags,
                     annotation.author,
@@ -857,6 +874,7 @@ class Data extends PureComponent {
                     annotation.units,
                     annotation.targets,
                     annotation.targetsType,
+                    this.formatRelationAnnotationPairs(annotation.id),
                     annotation.catalogNumber,
                     annotation.tags,
                     annotation.author,

@@ -235,7 +235,7 @@ export default class extends PureComponent {
     };
 
     _deleteSelectedProject(projectPath) {
-        const config_file_path = path.join(remote.app.getPath('home'), 'annotate-config.yml');
+        const config_file_path = path.join(remote.app.getPath('home'), 'Annotate-on/annotate-config.yml');
         const readYml = configYaml(config_file_path);
 
         if (readYml.workspace === projectPath) {

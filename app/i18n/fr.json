@@ -236,7 +236,7 @@
       "tab_metadata": "Métadonnées",
       "tab_annotations": "Annotations",
       "tab_calibration": "Calibrage",
-      "tab_3d_settings": "Paramètres 3D",
+      "tab_3d_settings": "Params 3D",
       "tooltip_edit_annotation": "Éditer l'annotation",
       "tooltip_delete_annotation": "Effacer l'annotation",
       "tooltip_add_keyword": "Nouveau mot-clé",
@@ -274,7 +274,17 @@
         "dialog_title_edit_text": "Éditer le texte",
         "lbl_coverage": "Couverture",
         "lbl_temporal": "Temporel",
-        "lbl_spatial": "Spatial"
+        "lbl_spatial": "Spatial",
+        "lbl_relations": "Liaisons",
+        "lbl_relations_modal_title": "liaisons",
+        "lbl_relations_modal_combo_relation": "Sélectionner une liaison",
+        "lbl_relations_modal_combo_annotation": "Sélectionner une annotation",
+        "lbl_relations_modal_btn_add": "Ajouter",
+        "lbl_relations_modal_msg_duplicate": "Cette liaison existe déjà",
+        "lbl_relations_modal_tbl_relation": "Liaison",
+        "lbl_relations_modal_tbl_annotation": "Annotation",
+        "lbl_relations_modal_tbl_action": "Action",
+        "lbl_relations_modal_btn_remove": "Enlever"
       },
       "metadata": {
         "title_keywords": "Mots-clés",
@@ -760,6 +770,7 @@
         "table_column_annotation_type": "Type d'annotation",
         "table_column_number_of_measures": "Nombre de mesures",
         "table_column_color": "Couleur",
+        "table_column_relations": "Liaisons",
         "dialog_title_save_in_sdd": "Enregistrer en SDD",
         "dialog_title_save": "Caractères",
         "alert_message_data_exported_successfully_to_xper_database": "Les données ont été exportées vers la base Xper avec succès."
@@ -772,6 +783,7 @@
         "table_column_value": "Valeur",
         "table_column_character": "Caractère",
         "table_column_character_type": "Type de caractère",
+        "table_column_relations": "Liaisons",
         "table_column_reference": "Référence",
         "table_column_tags": "Mots-clés",
         "table_column_dpix": "dpi horizontal",
@@ -949,6 +961,7 @@
         "table_column_character_group": "Groupe de caractères",
         "table_column_annotation_type": "Type d'annotation",
         "table_column_color": "Couleur",
+        "table_column_relations": "Liaisons",
         "table_column_pairing": "Alignement avec:",
         "button_pairing": "Ajouter couplage",
         "button_remove_alignement": "Supprimer couplage",
@@ -965,7 +978,10 @@
           "alert_select_target_group_to_delete": "SVP, choisir le groupe cible que vous voulez effacer",
           "alert_select_target_group_to_edit": "SVP, choisir le groupe cible que vous voulez éditer",
           "alert_select_categorical_state_item_to_delete": "Sélectioner la valuer d'énumération que vous voulez supprimer",
-          "alert_select_categorical_state_item_to_edit": "Sélectionner la valeur d'énumération que vous souhaitez modifier."
+          "alert_select_categorical_state_item_to_edit": "Sélectionner la valeur d'énumération que vous souhaitez modifier.",
+          "lbl_enum_states": "Enumeration états",
+          "lbl_relations": "Liaison(s)",
+          "btn_relations": "Gestion des liaisons"
         },
         "dialog_create_new_character_group": {
           "title": "Nouveau groupe de caractères",
@@ -979,6 +995,19 @@
           "title": "Aligner la classe de Image Detect",
           "select_class_combo": "Sélectionner la classe Image Detect",
           "msg_duplicate_alignment": "Couplage pour cette classe existe déjà"
+        },
+        "dialog_model_relations": {
+          "title": "Gestion des liaisons de modèle",
+          "lbl_add_relation": "Pas des liaisons définis"
+        },
+        "dialog_edit_relation_item": {
+          "title": "Edition liaison",
+          "lbl_relation_name": "Nom de liaison",
+          "alert_relation_item_is_empty": "Le nom de la relation ne peut pas être vide!",
+          "alert_relation_item_already_exist": "Une relation avec le même nom existe déjà!",
+          "alert_select_relation_item_to_edit": "Veuillez sélectionner la liaison que vous souhaitez modifier",
+          "alert_select_relation_item_to_delete": "Veuillez sélectionner la liaison que vous souhaitez supprimer"
+
         }
       },
       "import_from_xper": {

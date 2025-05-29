@@ -35,6 +35,9 @@ import {
     CREATE_TAG,
     CREATE_TAG_EXPRESSION,
     CREATE_TARGET_DESCRIPTOR,
+    CREATE_TAXONOMY_RELATIONS,
+    DELETE_TAXONOMY_RELATIONS,
+    MODIFY_TAXONOMY_RELATIONS,
     CREATE_TARGET_INSTANCE,
     DELETE_ANNOTATE_EVENT,
     DELETE_ANNOTATION_ANGLE,
@@ -129,11 +132,13 @@ import {
     UPDATE_TAG_EXPRESSION_OPERATOR,
     SAVE_SELECTED_CATEGORY,
     UPDATE_TAXONOMY_VALUES,
+    SAVE_RELATIONS_ANNOTATIONS,
     SAVE_SEARCH,
     CREATE_ANNOTATION_CIRCLE_OF_INTEREST,
     DELETE_ANNOTATION_CIRCLE_OF_INTEREST,
     CREATE_ANNOTATION_POLYGON_OF_INTEREST,
     DELETE_ANNOTATION_POLYGON_OF_INTEREST,
+    DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION,
     REMOVE_IMAGE_DETECT_MODEL,
     XPER_MATCH_RESOURCES,
     CREATE_ANNOTATION_XPER,
@@ -2054,6 +2059,43 @@ export default (state = {}, action) => {
             };
         }
             break;
+
+        case DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION: {
+            const counter = state.counter + 1;
+            const { taxonomyId, annotationId } = action;
+
+            const updatedRelations = { ...state.relationsByAnnotations };
+
+            if (!updatedRelations[taxonomyId]) {
+                return state;
+            }
+
+            const taxonomyBlock = { ...updatedRelations[taxonomyId] };
+
+            delete taxonomyBlock[annotationId];
+
+            Object.keys(taxonomyBlock).forEach(sourceId => {
+                const filteredPairs = taxonomyBlock[sourceId].filter(
+                    pair => pair.annotation.id !== annotationId
+                );
+
+                if (filteredPairs.length > 0) {
+                    taxonomyBlock[sourceId] = filteredPairs;
+                } else {
+                    delete taxonomyBlock[sourceId];
+                }
+            });
+
+            return {
+                ...state,
+                counter,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: taxonomyBlock
+                }
+            };
+        }
+
 // ---------------------------------------------------------------------------------------------------------------------
         case DELETE_TAG: {
             const new_tags_by_picture = {...state.tags_by_picture};
@@ -3745,9 +3787,10 @@ export default (state = {}, action) => {
                             selectedTaxonomy.descriptors = convertSDDtoJson(path.join(getTaxonomyDir(), element.sddPath)).items;
                         else if (action.model === MODEL_ANNOTATE)
                             selectedTaxonomy.descriptors = loadTaxonomy(element.id);
-                        selectedTaxonomy.id = element.id;
-                        selectedTaxonomy.name = element.name;
-                        selectedTaxonomy.model = element.model;
+                            selectedTaxonomy.id = element.id;
+                            selectedTaxonomy.name = element.name;
+                            selectedTaxonomy.model = element.model;
+                            selectedTaxonomy.relations = element.relations;
                     } else
                         selectedTaxonomy = null;
                 } else {
@@ -4040,11 +4083,11 @@ export default (state = {}, action) => {
 
         case CREATE_TARGET_DESCRIPTOR: {
             const counter = state.counter + 1;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 selectedTaxonomy.descriptors.push({
-                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
                 });
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -4052,18 +4095,185 @@ export default (state = {}, action) => {
             } else {
                 const descriptors = loadTaxonomy(taxonomyId);
                 descriptors.push({
-                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation
+                    id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, selectedRelations
                 });
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}
             }
         }
 
+        case CREATE_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations: newRelations } = action;
+
+            const taxonomies = state.taxonomies.map(taxon => {
+                if (taxon.id !== taxonomyId) return taxon;
+
+                const existingRelations = taxon.relations || [];
+                const updatedRelations = [
+                    ...existingRelations,
+                    ...newRelations.filter(r => !existingRelations.some(e => e.id === r.id))
+                ];
+
+                return { ...taxon, relations: updatedRelations };
+            });
+
+            const selectedTaxonomyRelations = state.selectedTaxonomy.relations || [];
+            const updatedSelectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: [
+                            ...selectedTaxonomyRelations,
+                            ...newRelations.filter(
+                                r => !selectedTaxonomyRelations.some(e => e.id === r.id)
+                            )
+                        ]
+                    }
+                    : state.selectedTaxonomy;
+
+            return {
+                ...state,
+                counter,
+                taxonomies,
+                selectedTaxonomy: updatedSelectedTaxonomy
+            };
+        }
+
+        case DELETE_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations: deletedRelations } = action;
+            const deletedIds = deletedRelations.map(r => r.id);
+
+            const filterOutDeleted = (relations) =>
+                (relations || []).filter(r => !deletedIds.includes(r.id));
+
+            const updateDescriptors = (descriptors = []) =>
+                descriptors.map(descriptor => ({
+                    ...descriptor,
+                    selectedRelations: filterOutDeleted(descriptor.selectedRelations)
+                }));
+
+            const taxonomies = state.taxonomies.map(taxon =>
+                taxon.id === taxonomyId
+                    ? {
+                        ...taxon,
+                        relations: filterOutDeleted(taxon.relations)
+                    }
+                    : taxon
+            );
+
+            const selectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: filterOutDeleted(state.selectedTaxonomy.relations),
+                        descriptors: updateDescriptors(state.selectedTaxonomy.descriptors)
+                    }
+                    : state.selectedTaxonomy;
+
+            const updatedRelationsByAnnotations = { ...state.relationsByAnnotations };
+            const taxonomyAnnotations = updatedRelationsByAnnotations[taxonomyId];
+
+            if (taxonomyAnnotations) {
+                const newAnnotations = {};
+
+                Object.entries(taxonomyAnnotations).forEach(([annotationId, pairs]) => {
+                    const cleanedPairs = pairs.filter(pair =>
+                        !deletedIds.includes(pair.relation.id)
+                    );
+
+                    if (cleanedPairs.length > 0) {
+                        newAnnotations[annotationId] = cleanedPairs;
+                    }
+                });
+
+                updatedRelationsByAnnotations[taxonomyId] = newAnnotations;
+            }
+
+            return {
+                ...state,
+                counter,
+                taxonomies,
+                selectedTaxonomy,
+                relationsByAnnotations: updatedRelationsByAnnotations
+            };
+        }
+
+
+        case MODIFY_TAXONOMY_RELATIONS: {
+            const counter = state.counter + 1;
+            const { taxonomyId, relations: modifiedRelations } = action;
+
+            const updateById = (targetList = []) =>
+                targetList.map(item => {
+                    const modified = modifiedRelations.find(r => r.id === item.id);
+                    return modified ? { ...item, ...modified } : item;
+                });
+
+            const updateDescriptors = (descriptors = []) =>
+                descriptors.map(descriptor => ({
+                    ...descriptor,
+                    selectedRelations: updateById(descriptor.selectedRelations)
+                }));
+
+            const taxonomies = state.taxonomies.map(taxon =>
+                taxon.id === taxonomyId
+                    ? {
+                        ...taxon,
+                        relations: updateById(taxon.relations)
+                    }
+                    : taxon
+            );
+
+            const selectedTaxonomy =
+                state.selectedTaxonomy.id === taxonomyId
+                    ? {
+                        ...state.selectedTaxonomy,
+                        relations: updateById(state.selectedTaxonomy.relations),
+                        descriptors: updateDescriptors(state.selectedTaxonomy.descriptors)
+                    }
+                    : state.selectedTaxonomy;
+
+            const existingAnnotations = state.relationsByAnnotations?.[taxonomyId] || {};
+            const updatedAnnotations = {};
+
+            Object.entries(existingAnnotations).forEach(([annotationId, pairs]) => {
+                updatedAnnotations[annotationId] = pairs.map(pair => {
+                    const modifiedRelation = modifiedRelations.find(r => r.id === pair.relation.id);
+                    if (modifiedRelation) {
+                        return {
+                            ...pair,
+                            relation: {
+                                ...pair.relation,
+                                ...modifiedRelation
+                            }
+                        };
+                    }
+                    return pair;
+                });
+            });
+
+            return {
+                ...state,
+                counter,
+                taxonomies,
+                selectedTaxonomy,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: updatedAnnotations
+                }
+            };
+        }
+
+
+
+
         case EDIT_TARGET_DESCRIPTOR: {
             const counter = state.counter + 1;
             if (!state.selectedTaxonomy)
                 return state;
-            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states} = action;
+            const {taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations} = action;
             if (state.selectedTaxonomy && taxonomyId === state.selectedTaxonomy.id) {
                 const selectedTaxonomy = {...state.selectedTaxonomy};
                 const target = selectedTaxonomy.descriptors.find((target, index) => target.id === id);
@@ -4075,6 +4285,7 @@ export default (state = {}, action) => {
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
                     target.states = states;
+                    target.selectedRelations = selectedRelations;
                 }
                 saveTaxonomy(selectedTaxonomy.id, selectedTaxonomy.descriptors);
                 return {...state, counter, selectedTaxonomy}
@@ -4089,6 +4300,7 @@ export default (state = {}, action) => {
                     target.annotationType = annotationType;
                     target.includeInCalculation = includeInCalculation;
                     target.states = states;
+                    target.selectedRelations = selectedRelations;
                 }
                 saveTaxonomy(taxonomyId, descriptors);
                 return {...state, counter}
@@ -4447,6 +4659,61 @@ export default (state = {}, action) => {
                 }
             };
         }
+
+        case SAVE_RELATIONS_ANNOTATIONS: {
+            const counter = state.counter + 1;
+            const { relationAnnotations, annotationId, annotationName, taxonomyId } = action;
+
+            const existingTaxonomy = state.relationsByAnnotations[taxonomyId] || {};
+            let newTaxonomy = { ...existingTaxonomy };
+
+            newTaxonomy[annotationId] = [...relationAnnotations];
+
+            Object.keys(newTaxonomy).forEach(key => {
+                if (key !== annotationId) {
+                    // Filter out any reversed relations pointing to annotationId
+                    newTaxonomy[key] = newTaxonomy[key].filter(
+                        rel => rel.annotation.id !== annotationId
+                    );
+                    // Remove key if no relations left (optional cleanup)
+                    if (newTaxonomy[key].length === 0) {
+                        delete newTaxonomy[key];
+                    }
+                }
+            });
+
+            relationAnnotations.forEach(({ relation, annotation }) => {
+                const reversed = {
+                    relation,
+                    annotation: { id: annotationId, name: annotationName }
+                };
+
+                if (!newTaxonomy[annotation.id]) {
+                    newTaxonomy[annotation.id] = [reversed];
+                } else {
+                    // Avoid duplicates
+                    const exists = newTaxonomy[annotation.id].some(
+                        r =>
+                            r.relation.id === reversed.relation.id &&
+                            r.annotation.id === reversed.annotation.id
+                    );
+                    if (!exists) {
+                        newTaxonomy[annotation.id] = [...newTaxonomy[annotation.id], reversed];
+                    }
+                }
+            });
+
+            return {
+                ...state,
+                counter,
+                relationsByAnnotations: {
+                    ...state.relationsByAnnotations,
+                    [taxonomyId]: newTaxonomy
+                }
+            };
+        }
+
+
 
         case UPDATE_PICTURE_DATE: {
             const counter = state.counter + 1;

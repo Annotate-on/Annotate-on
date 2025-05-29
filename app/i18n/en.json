@@ -281,7 +281,18 @@
         "dialog_title_edit_text": "Edit text",
         "lbl_coverage": "Coverage",
         "lbl_temporal": "Temporal",
-        "lbl_spatial": "Spatial"
+        "lbl_spatial": "Spatial",
+        "lbl_relations": "Relations",
+        "lbl_relations_modal_title": "related links",
+        "lbl_relations_modal_combo_relation": "Select a relation",
+        "lbl_relations_modal_combo_annotation": "Select an annotation",
+        "lbl_relations_modal_btn_add": "Add",
+        "lbl_relations_modal_msg_duplicate": "Relation already exists",
+        "lbl_relations_modal_tbl_relation": "Relation",
+        "lbl_relations_modal_tbl_annotation": "Annotation",
+        "lbl_relations_modal_tbl_action": "Action",
+        "lbl_relations_modal_btn_remove": "Remove"
+
       },
       "metadata": {
         "title_keywords": "Keywords",
@@ -776,6 +787,7 @@
         "table_column_annotation_type": "Annotation type",
         "table_column_number_of_measures": "Number of measures",
         "table_column_color": "Color",
+        "table_column_relations": "Relations",
         "dialog_title_save_in_sdd": "Save in SDD",
         "dialog_title_save": "Characters",
         "alert_message_data_exported_successfully_to_xper_database": "Data exported successfully to xper database!"
@@ -788,6 +800,7 @@
         "table_column_value": "Value",
         "table_column_character": "Character",
         "table_column_character_type": "Character type",
+        "table_column_relations": "Relations",
         "table_column_reference": "Reference",
         "table_column_tags": "Tags",
         "table_column_dpix": "dpiX",
@@ -980,6 +993,7 @@
         "table_column_character_group": "Character group",
         "table_column_annotation_type": "Annotation type",
         "table_column_color": "Color",
+        "table_column_relations": "Relations",
         "table_column_pairing": "Alignment with",
         "button_pairing": "Add alignment",
         "button_remove_alignement": "Remove alignment",
@@ -997,7 +1011,9 @@
           "alert_select_target_group_to_edit": "Please select target group you want to edit.",
           "alert_select_categorical_state_item_to_delete": "Please select enumeration value you want to delete.",
           "alert_select_categorical_state_item_to_edit": "Please select enumeration value you want to edit.",
-          "lbl_enum_states": "Enumeration states"
+          "lbl_enum_states": "Enumeration states",
+          "lbl_relations": "Relation(s)",
+          "btn_relations": "Relation(s) management"
         },
         "dialog_create_new_character_group": {
           "title": "Create new character group",
@@ -1017,6 +1033,18 @@
           "title": "Align Image Detect class",
           "select_class_combo": "Select Image Detect Class",
           "msg_duplicate_alignment": "Alignment for this class exists already"
+        },
+        "dialog_model_relations": {
+          "title": "Model relations management",
+          "lbl_add_relation": "No defined relations"
+        },
+        "dialog_edit_relation_item": {
+          "title": "Edit relation",
+          "lbl_relation_name": "Relation name",
+          "alert_relation_item_is_empty": "Relation name can't be empty!",
+          "alert_relation_already_exist": "Relation with the same name already exist!",
+          "alert_select_relation_item_to_edit": "Please select relation you want to edit",
+          "alert_select_relation_item_to_delete": "Veuillez sélectionner la liaison que vous souhaitez supprimer"
         }
       },
       "import_from_xper": {

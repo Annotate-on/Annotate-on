@@ -17,7 +17,7 @@ import {
 import lodash from 'lodash';
 import Chance from 'chance';
 import TableHeader from "./TableHeader";
-import {getTaxonomyDir, loadTaxonomy} from "../utils/config";
+import {getTaxonomyDir, loadTaxonomy, saveTaxonomy} from "../utils/config";
 import {CATEGORICAL, INTEREST, MODEL_ANNOTATE, MODEL_XPER, NUMERICAL, TEXTUAL} from "../constants/constants";
 import {convertSDDtoJson} from "../utils/sdd-processor";
 import path from 'path';
@@ -46,6 +46,8 @@ class TargetDescriptors extends PureComponent {
             modalTitle: 'New character',
             modalTitleEdit: 'Edit character group',
             categoricalStateItemModal: false,
+            relationsModal: false,
+            relationItemModal: false,
             imageDetectAlignmentModal: false,
             selectedImageDetectClass: null,
             selectedImageDetectClassGroup: null,
@@ -54,8 +56,9 @@ class TargetDescriptors extends PureComponent {
                 targetName: null,
                 targetType: null
             },
-            categoricalStateItemModalInEdit: false,
-            categoricalStateItemInput: '',
+            relationsModalInEdit: false,
+            relationItemModalInEdit: false,
+            relationItemEditInput: '',
             form: {
                 id: '',
                 targetName: '',
@@ -65,7 +68,12 @@ class TargetDescriptors extends PureComponent {
                 annotationType: '',
                 includeInCalculation: true,
                 categoricalStateItem: '',
-                categoryStates: []
+                categoryStates: [],
+                selectedRelations: []
+            },
+            formRelations: {
+                relations: [],
+                relationItem: ''
             },
             descriptors: sorted.descriptors,
             sortBy,
@@ -73,7 +81,8 @@ class TargetDescriptors extends PureComponent {
             sortedTargets: sorted.sortedTargets,
             model,
             imageDetectModel: this.props.imageDetectModel || [],
-            errorAlignment: false
+            errorAlignment: false,
+            selectedTaxonomy: this.props.taxonomyModel
         };
         this.toggle = this.toggle.bind(this);
         this.toggleTargetType = this.toggleTargetType.bind(this);
@@ -81,11 +90,14 @@ class TargetDescriptors extends PureComponent {
         this._saveTargetType = this._saveTargetType.bind(this);
         this.handleContextMenu = this.handleContextMenu.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleRelationsInputChange = this.handleRelationsInputChange.bind(this);
         this.handleTargetTypeInputChange = this.handleTargetTypeInputChange.bind(this);
         this.handleTargetTypeInputChangeForEdit = this.handleTargetTypeInputChangeForEdit.bind(this);
         this.handleCategoricalStateInputChangeForEdit = this.handleCategoricalStateInputChangeForEdit.bind(this);
+        this.handleRelationInputChangeForEdit = this.handleRelationInputChangeForEdit.bind(this);
         this.saveAlignment = this.saveAlignment.bind(this);
         this._removeAlignment = this._removeAlignment.bind(this);
+        this.saveTaxonomyRelations = this.saveTaxonomyRelations.bind(this);
     }
 
     componentDidMount() {
@@ -120,12 +132,14 @@ class TargetDescriptors extends PureComponent {
             }
         }
         const unsortedTargets = descriptors ? descriptors.map(target => {
+            const relationNames = target.selectedRelations?.map(r => r.name).join(', ') || '';
             return {
                 id: target.id,
                 name: target.targetName,
                 targetType: target.targetType,
                 color: target.targetColor,
-                annotationType: target.annotationType
+                annotationType: target.annotationType,
+                selectedRelations: relationNames
             }
         }) : [];
 
@@ -203,6 +217,30 @@ class TargetDescriptors extends PureComponent {
         this.setState({
             categoricalStateItemModal: !this.state.categoricalStateItemModal,
             categoricalStateItemModalInEdit: false,
+        });
+    };
+
+    toggleRelationItemModal = () => {
+        this.setState({
+            relationItemModal: !this.state.relationItemModal,
+            relationItemModalInEdit: false
+        });
+    };
+
+    toggleRelationsModal = () => {
+        this.setState({
+            relationsModal: !this.state.relationsModal,
+            relationsModalInEdit: false,
+        });
+    };
+
+    openRelationsModal = () => {
+        const relations = this.state.selectedTaxonomy.relations || [];
+        this.setState({
+            formRelations: {
+                relations: relations
+            },
+            relationsModal: true
         });
     };
 
@@ -300,6 +338,59 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
+       saveTaxonomyRelations = () => {
+        const taxonomyId = this.props.taxonomyModel.id;
+        const newRelations = this.state.formRelations.relations;
+        const oldRelations = this.state.selectedTaxonomy.relations || [];
+
+        const oldMap = new Map(oldRelations.map(r => [r.id, r]));
+        const newMap = new Map(newRelations.map(r => [r.id, r]));
+
+        const added = newRelations.filter(r => !oldMap.has(r.id));
+
+        const deleted = oldRelations.filter(r => !newMap.has(r.id));
+
+        const modified = newRelations.filter(r => {
+            const old = oldMap.get(r.id);
+            return old && r.name !== old.name;
+        });
+
+        if (added.length > 0) {
+            this.props.createTaxonomyRelations(taxonomyId, added);
+        }
+        if (deleted.length > 0) {
+            this.props.deleteTaxonomyRelations(taxonomyId, deleted);
+
+            setTimeout(() => {
+                saveTaxonomy(this.props.taxonomy.id, this.props.taxonomy.descriptors);
+                this.setState(
+                    {descriptors: this.props.taxonomy.descriptors}
+                )
+                this._resortTable();
+            }, 0);
+
+        }
+        if (modified.length > 0) {
+            this.props.modifyTaxonomyRelations(taxonomyId, modified);
+            setTimeout(() => {
+                saveTaxonomy(this.props.taxonomy.id, this.props.taxonomy.descriptors);
+                this.setState(
+                    {descriptors: this.props.taxonomy.descriptors}
+                )
+                this._resortTable();
+            }, 0);
+        }
+
+         this.setState({
+            selectedTaxonomy: {
+                ...this.state.selectedTaxonomy,
+                relations: newRelations
+            },
+            relationsModal: false
+        });
+    };
+
+
     toggleCategoricalStateItemEdit = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -313,6 +404,31 @@ class TargetDescriptors extends PureComponent {
             categoricalStateItemModalInEdit: true,
         }));
     };
+
+    toggleRelationItemEdit = () => {
+        const { t } = this.props;
+        const { formRelations, relationItemModal } = this.state;
+
+        const selectedRelationId = formRelations.relationItem;
+        if (!selectedRelationId) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_select_relation_item_to_edit'));
+            return;
+        }
+
+        const relationItem = formRelations.relations.find(rel => rel.id === selectedRelationId);
+        if (!relationItem) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_not_found'));
+            return;
+        }
+
+        this.setState({
+            relationItemModal: !relationItemModal,
+            relationItemInput: relationItem.name,
+            relationItemOriginalName: relationItem.name, // <-- store original
+            relationItemModalInEdit: true,
+        });
+    };
+
 
     _saveCategoricalStateItem = () => {
         const { t } = this.props;
@@ -351,6 +467,51 @@ class TargetDescriptors extends PureComponent {
         this.toggleCategoricalStateItemModal();
     };
 
+    _saveRelationItem = () => {
+        const { t } = this.props;
+        if(!this.state.relationItemInput) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_is_empty'));
+            return;
+        }
+        if (this.state.formRelations.relations.some(value => value.name === this.state.relationItemInput)) {
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_relation_item_already_exist'));
+            return;
+        }
+        if (this.state.relationItemModalInEdit) {
+            const updatedRelations = this.state.formRelations.relations.map(rel => {
+                if (rel.id === this.state.formRelations.relationItem) {
+                    return {
+                        ...rel,
+                        name: this.state.relationItemInput
+                    };
+                }
+                return rel;
+            });
+
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: updatedRelations
+                },
+                relationItemInput: ''
+            }));
+        }else {
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: [...prevState.formRelations.relations,
+                        {
+                            id: chance.guid(),
+                            name: prevState.relationItemInput
+                        }
+                    ]
+                },
+                relationItemInput: ''
+            }));
+        }
+        this.toggleRelationItemModal();
+    };
+
     _deleteCategoricalStateItem = () => {
         const { t } = this.props;
         if (!this.state.form.categoricalStateItem){
@@ -361,6 +522,21 @@ class TargetDescriptors extends PureComponent {
                     ...prevState.form,
                     categoryStates: prevState.form.categoryStates.filter(value => value.id !== this.state.form.categoricalStateItem),
                     categoricalStateItem: ''
+                }
+            }));
+        }
+    };
+
+    _deleteRelationItem = () => {
+        const { t } = this.props;
+        if (!this.state.formRelations.relationItem){
+            alert(t('models.target_descriptors.dialog_edit_relation_item.alert_select_relation_item_to_delete'));
+        } else {
+            this.setState(prevState => ({
+                formRelations: {
+                    ...prevState.formRelations,
+                    relations: prevState.formRelations.relations.filter(value => value.id !== this.state.formRelations.relationItem),
+                    relationItem: ''
                 }
             }));
         }
@@ -378,7 +554,9 @@ class TargetDescriptors extends PureComponent {
                     this.state.form.unit,
                     this.state.form.annotationType,
                     this.state.form.includeInCalculation,
-                    this.state.form.categoryStates);
+                    this.state.form.categoryStates,
+                    this.state.form.selectedRelations
+                    );
 
                 const descriptors = [...this.state.descriptors];
                 const desc = descriptors.find(target => target.id === this.state.form.id);
@@ -389,6 +567,7 @@ class TargetDescriptors extends PureComponent {
                 desc.annotationType = this.state.form.annotationType;
                 desc.includeInCalculation = this.state.form.includeInCalculation;
                 desc.states = this.state.form.categoryStates;
+                desc.selectedRelations = this.state.form.selectedRelations
                 this.setState({descriptors})
                 this.toggle();
                 this._cancel();
@@ -407,7 +586,8 @@ class TargetDescriptors extends PureComponent {
                         this.state.form.unit,
                         this.state.form.annotationType,
                         this.state.form.includeInCalculation,
-                        this.state.form.categoryStates
+                        this.state.form.categoryStates,
+                        this.state.form.selectedRelations
                     );
                     this.state.descriptors.push({
                         id: id,
@@ -417,7 +597,8 @@ class TargetDescriptors extends PureComponent {
                         unit: this.state.form.unit,
                         annotationType: this.state.form.annotationType,
                         includeInCalculation: this.state.form.includeInCalculation,
-                        states: this.state.form.categoryStates
+                        states: this.state.form.categoryStates,
+                        selectedRelations: this.state.form.selectedRelations
                     });
                     this.toggle();
                     this._cancel();
@@ -462,6 +643,12 @@ class TargetDescriptors extends PureComponent {
         });
     }
 
+    handleRelationInputChangeForEdit(event) {
+        this.setState({
+            relationItemInput: event.target.value
+        });
+    }
+
     handleInputChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -487,6 +674,16 @@ class TargetDescriptors extends PureComponent {
         this.forceUpdate();
     }
 
+    handleRelationsInputChange(event) {
+        const target = event.target;
+        let formRelations = this.state.formRelations;
+        formRelations.relationItem = target.selectedOptions[0].dataset["relationId"];
+        this.setState({
+            formRelations
+        });
+        this.forceUpdate();
+    }
+
     handleContextMenu = (e, data) => {
         const { t } = this.props;
         switch (data.action) {
@@ -502,7 +699,8 @@ class TargetDescriptors extends PureComponent {
                         unit: target.unit,
                         annotationType: target.annotationType,
                         includeInCalculation: target.includeInCalculation,
-                        categoryStates: target.states
+                        categoryStates: target.states,
+                        selectedRelations: target.selectedRelations
                     }
                 });
                 this.toggle();
@@ -524,6 +722,26 @@ class TargetDescriptors extends PureComponent {
         }
     };
 
+    handleEditButton = (targetId) => {
+        const { t } = this.props;
+        const target = this.state.descriptors.find(target => targetId === target.id);
+        this.setState({
+            modalTitle: t('models.target_descriptors.dialog_edit.title_edit_character'),
+            form: {
+                id: target.id,
+                targetName: target.targetName,
+                targetType: target.targetType,
+                targetColor: target.targetColor,
+                unit: target.unit,
+                annotationType: target.annotationType,
+                includeInCalculation: target.includeInCalculation,
+                categoryStates: target.states,
+                selectedRelations: target.selectedRelations
+            }
+        });
+        this.toggle();
+    }
+
     getImageDetectAlignments = () => this.props.imageDetectAlignments || [];
 
     characterIdExists = (characterId, groupId) => {
@@ -540,13 +758,6 @@ class TargetDescriptors extends PureComponent {
                         type: "Character"
                     };
                 }
-
-                // if (item.groupId === groupId && groupId !== undefined) {
-                //     return {
-                //         imageDetectClassId: item.imageDetectClassId,
-                //         type: "Group"
-                //     };
-                // }
             }
         }
 
@@ -566,6 +777,35 @@ class TargetDescriptors extends PureComponent {
             type: type
         }
         this.props.removeAlignmentObject(this.props.taxonomyModel.id, this.state.imageDetectModel.id, objectToDelete);
+    };
+
+    handleSelectedRelationsChange = (event) => {
+        const { checked, value } = event.target;
+        const name = event.target.getAttribute('data-relation-name');
+
+        const newRelation = { id: value, name };
+
+        this.setState((prevState) => {
+            const currentRelations = prevState.form.selectedRelations || [];
+
+            let updatedRelations;
+            if (checked) {
+                if (!currentRelations.some(rel => rel.id === value)) {
+                    updatedRelations = [...currentRelations, newRelation];
+                } else {
+                    updatedRelations = currentRelations;
+                }
+            } else {
+                updatedRelations = currentRelations.filter(rel => rel.id !== value);
+            }
+
+            return {
+                form: {
+                    ...prevState.form,
+                    selectedRelations: updatedRelations
+                }
+            };
+        });
     };
 
     render() {
@@ -596,7 +836,7 @@ class TargetDescriptors extends PureComponent {
                                      disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}
                                      onClick={this.toggle}
                             >{t('models.target_descriptors.btn_add_new_character')}</Button>
-
+                        <Button className="btn btn-primary mr-md-3" color="primary" onClick={this.openRelationsModal} disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}>{t('models.target_descriptors.dialog_edit.btn_relations')}</Button>
                         <Button  className="btn btn-primary mr-md-3" color="secondary"
                                  onClick={() => {
                                      this.props.goBack();
@@ -614,11 +854,14 @@ class TargetDescriptors extends PureComponent {
                                 <thead title={t('models.thead_tooltip_sort_order')}>
                                 <tr>
                                     <th>&nbsp;</th>
+                                    <TableHeader title="Actions" />
                                     <TableHeader title={t('models.target_descriptors.table_column_character_name')} sortKey="name"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_character_group')} sortKey="targetType"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_annotation_type')} sortKey="annotationType"
+                                                 sortedBy={this.state.sortBy} sort={this._sort}/>
+                                    <TableHeader title={t('models.target_descriptors.table_column_relations')} sortKey="relations"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('models.target_descriptors.table_column_color')} sortKey="color"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
@@ -631,10 +874,14 @@ class TargetDescriptors extends PureComponent {
                                 <tbody>
                                 {this.state.sortedTargets.map(target => {
                                     const alignObject= this.characterIdExists(target.id, target.targetType);
-debugger
                                     return (
                                         <tr key={key++} className={this.props.selectedId === target.id ? 'selected-item' : ''}>
                                             <th scope="row" >&nbsp;</th>
+                                            <td>
+                                            <Button className="btn-sm" onClick={() => this.handleEditButton(target.id)} disabled={(this.state.model == MODEL_XPER || (this.props.taxonomy && (this.props.taxonomyModel.id !== this.props.taxonomy.id)))}>
+                                                <i className="fa fa-pencil" aria-hidden="true"/> {t('global.edit')}
+                                            </Button>
+                                            </td>
                                             <td>
                                                 <ContextMenuTrigger id="target_context_menu"
                                                                     disable={this.state.model === MODEL_XPER}
@@ -658,6 +905,7 @@ debugger
                                                 </ContextMenuTrigger>
                                             </td>
                                             <td>{target.annotationType}</td>
+                                            <td>{target.selectedRelations}</td>
                                             <td><span style={{backgroundColor: target.color}}
                                                       className="color-circle"/>&nbsp;{target.color}</td>
                                             {this.state.imageDetectModel.length !== 0 && (
@@ -760,7 +1008,7 @@ debugger
                                         <Label for="categoricalStateItem">{t('models.target_descriptors.dialog_edit.lbl_enum_states')}</Label>
                                         <Row>
                                             <Col md={8}>
-                                                <Input type="select" multiple='multiple' name="categoricalStateItem" id="categoricalStateItem"
+                                                <Input type="select" size={4} name="categoricalStateItem" id="categoricalStateItem"
                                                        onChange={this.handleInputChange}>
                                                     {
                                                         this.state.form.categoryStates.map((type, index) => {
@@ -777,19 +1025,60 @@ debugger
                                         </Row>
                                     </FormGroup>
                                 }
-                                <FormGroup>
-                                    <Label for="unit">{t('models.target_descriptors.dialog_edit.lbl_unit')}</Label>
-                                    <Input type="select" name="unit" id="unit"
-                                           value={this.state.form.unit}
-                                           disabled={this.state.form.id || this.state.form.annotationType !== NUMERICAL}
-                                           onChange={this.handleInputChange}>
-                                        <option data-unit=""/>
-                                        <option data-unit="mm">mm</option>
-                                        <option data-unit="mm²">mm²</option>
-                                        <option data-unit="°">°</option>
-                                        <option data-unit="#">#</option>
-                                    </Input>
+                                {!(this.state.form.id || this.state.form.annotationType !== NUMERICAL) && (
+                                    <FormGroup>
+                                        <Label for="unit">
+                                            {t('models.target_descriptors.dialog_edit.lbl_unit')}
+                                        </Label>
+                                        <Input
+                                            type="select"
+                                            name="unit"
+                                            id="unit"
+                                            value={this.state.form.unit}
+                                            onChange={this.handleInputChange}
+                                        >
+                                            <option data-unit="" />
+                                            <option data-unit="mm">mm</option>
+                                            <option data-unit="mm²">mm²</option>
+                                            <option data-unit="°">°</option>
+                                            <option data-unit="#">#</option>
+                                        </Input>
+                                    </FormGroup>
+                                )}
+                                <FormGroup className="selected-relations-container">
+                                    <Label for="selectedRelations">
+                                        {t('models.target_descriptors.dialog_edit.lbl_relations')}
+                                    </Label>
+                                    <div className="relation-list-wrapper">
+                                        {
+                                            this.state.selectedTaxonomy.relations &&
+                                            this.state.selectedTaxonomy.relations.length > 0 ?
+                                            this.state.selectedTaxonomy.relations.map((relation, index) => (
+                                                <Row key={`rel_row_${index}`} className="relation-list-item">
+                                                    <Col md={1} className="d-flex justify-content-center align-items-center">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="selectedRelations"
+                                                            value={relation.id}
+                                                            data-relation-name={relation.name}
+                                                            checked={
+                                                                (this.state.form.selectedRelations || []).some(
+                                                                    (r) => r.id === relation.id
+                                                                )
+                                                            }
+                                                            onChange={this.handleSelectedRelationsChange}
+                                                        />
+                                                    </Col>
+                                                    <Col md={11} className="d-flex align-items-center">
+                                                        {relation.name}
+                                                    </Col>
+                                                </Row>
+                                            )):<div>{t('models.target_descriptors.dialog_model_relations.lbl_add_relation')}</div>
+
+                                        }
+                                    </div>
                                 </FormGroup>
+
                                 <FormGroup>
                                     <Label for="targetColor">{t('models.target_descriptors.dialog_edit.lbl_color')}</Label>
                                     <Row>
@@ -942,6 +1231,58 @@ debugger
                         <ModalFooter>
                             <Button color="primary" onClick={this.saveAlignment}>{t('global.save')}</Button>
                             <Button color="secondary" onClick={this.toggleImageDetectAlignmentModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.relationsModal} toggle={this.toggleRelationsModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleRelationsModal}>{t('models.target_descriptors.dialog_model_relations.title')}</ModalHeader>
+                        <ModalBody>
+                            <FormGroup className="relations-container">
+                                <Label for="relationItem">{t('models.target_descriptors.dialog_edit.lbl_relations')}</Label>
+                                <Row>
+                                    <Col md={8}>
+                                        <Input type="select" size={10}  name="relationItem" id="relationItem"
+                                               onChange={this.handleRelationsInputChange}>
+                                            {
+                                                this.state.formRelations.relations && this.state.formRelations.relations.length > 0
+                                                    ? this.state.formRelations.relations.map((type, index) => (
+                                                        <option key={`td_${index}`} data-relation-id={type.id}>{type.name}</option>
+                                                    ))
+                                                    : <option disabled>{t('models.target_descriptors.dialog_model_relations.lbl_add_relation')}</option>
+                                            }
+                                        </Input>
+                                    </Col>
+                                    <Col md={4} className='crud-icons-wrapper'>
+                                        <i className="fa fa-plus-square fa-lg crud-icons" aria-hidden="true" onClick={this.toggleRelationItemModal}/>
+                                        <i className="fa fa-pencil fa-lg  crud-icons" aria-hidden="true"  onClick={this.toggleRelationItemEdit} disabled={!this.state.formRelations.relationItem}/>
+                                        <i className="fa fa-trash fa-lg crud-icons" aria-hidden="true" onClick={this._deleteRelationItem} disabled={!this.state.formRelations.relationItem}/>
+                                    </Col>
+                                </Row>
+                            </FormGroup>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this.saveTaxonomyRelations}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleRelationsModal}>{t('global.cancel')}</Button>
+                        </ModalFooter>
+                    </Modal>
+                    <Modal isOpen={this.state.relationItemModal} toggle={this.toggleRelationItemModal}
+                           wrapClassName="bst rcn_targets">
+                        <ModalHeader toggle={this.toggleRelationItemModal}>{t('models.target_descriptors.dialog_edit_relation_item.title')}</ModalHeader>
+                        <ModalBody>
+                            <Form onSubmit={(e) => {
+                                e.preventDefault();
+                            }}>
+                                <FormGroup>
+                                    <Label for="relationItemEdit">{t('models.target_descriptors.dialog_edit_relation_item.lbl_relation_name')}</Label>
+                                    <Input type="text" name="relationItemEdit" id="relationItemEdit" value={this.state.relationItemInput}
+                                           onChange={this.handleRelationInputChangeForEdit}
+                                    />
+                                </FormGroup>
+                            </Form>
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={this._saveRelationItem}>{t('global.save')}</Button>
+                            <Button color="secondary" onClick={this.toggleRelationItemModal}>{t('global.cancel')}</Button>
                         </ModalFooter>
                     </Modal>
                 </div>

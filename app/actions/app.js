@@ -53,7 +53,7 @@ export const DELETE_ANNOTATION_CATEGORICAL = 'DELETE_ANNOTATION_CATEGORICAL';
 export const DELETE_ANNOTATION_RICHTEXT = 'DELETE_ANNOTATION_RICHTEXT';
 export const DELETE_ANNOTATION_CIRCLE_OF_INTEREST = 'DELETE_ANNOTATION_CIRCLE_OF_INTEREST';
 export const DELETE_ANNOTATION_POLYGON_OF_INTEREST = 'DELETE_ANNOTATION_POLYGON_OF_INTEREST';
-
+export const DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION = 'DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION';
 export const DELETE_TARGET_TYPE = 'DELETE_TARGET_TYPE';
 export const EDIT_TARGET_TYPE = 'EDIT_TARGET_TYPE';
 
@@ -121,6 +121,9 @@ export const CHANGE_TAXONOMY_STATUS = 'CHANGE_TAXONOMY_STATUS';
 export const SET_SELECTED_TAXONOMY = 'SET_SELECTED_TAXONOMY';
 export const CREATE_EDIT_TAXONOMY_DESCRIPTION = 'CREATE_EDIT_TAXONOMY_DESCRIPTION';
 export const CREATE_TARGET_DESCRIPTOR = 'CREATE_TARGET_DESCRIPTOR';
+export const CREATE_TAXONOMY_RELATIONS = 'CREATE_TAXONOMY_RELATIONS';
+export const DELETE_TAXONOMY_RELATIONS = 'DELETE_TAXONOMY_RELATIONS';
+export const MODIFY_TAXONOMY_RELATIONS = 'MODIFY_TAXONOMY_RELATIONS';
 export const EDIT_TARGET_DESCRIPTOR = 'EDIT_TARGET_DESCRIPTOR';
 export const DELETE_TARGET_DESCRIPTOR = 'DELETE_TARGET_DESCRIPTOR';
 export const SAVE_TARGET_TYPE = 'SAVE_TARGET_TYPE';
@@ -128,6 +131,7 @@ export const SAVE_ALIGNMENT_OBJECT = 'SAVE_ALIGNMENT_OBJECT';
 export const REMOVE_ALIGNMENT_OBJECT = 'REMOVE_ALIGNMENT_OBJECT';
 export const CREATE_TARGET_INSTANCE = 'CREATE_TARGET_INSTANCE';
 export const UPDATE_TAXONOMY_VALUES = 'UPDATE_TAXONOMY_VALUES';
+export const SAVE_RELATIONS_ANNOTATIONS = 'SAVE_RELATIONS_ANNOTATIONS';
 export const CREATE_CATEGORICAL_TARGET_INSTANCE = 'CREATE_CATEGORICAL_TARGET_INSTANCE';
 export const UPDATE_PICTURE_DATE = 'UPDATE_PICTURE_DATE';
 export const CREATE_CARTEL = 'CREATE_CARTEL';
@@ -521,6 +525,11 @@ export const deleteAnnotationPolygonOfInterest = (pictureId, annotationId) => ({
     pictureId,
     annotationId
 });
+export const deleteRelationAnnotationsByAnnotation = (taxonomyId, annotationId) => ({
+    type: DELETE_RELATION_ANNOTATIONS_BY_ANNOTATION,
+    taxonomyId,
+    annotationId
+});
 
 export const deleteTag = name => ({
     type: DELETE_TAG,
@@ -859,14 +868,29 @@ export const setSelectedTaxonomy = (id) => ({
     id
 });
 
-export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
+export const createTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => ({
     type: CREATE_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
 });
 
-export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => ({
+export const createTaxonomyRelations = (taxonomyId, relations) => ({
+    type: CREATE_TAXONOMY_RELATIONS,
+    taxonomyId, relations
+});
+
+export const deleteTaxonomyRelations = (taxonomyId, relations) => ({
+    type: DELETE_TAXONOMY_RELATIONS,
+    taxonomyId, relations
+});
+
+export const modifyTaxonomyRelations = (taxonomyId, relations) => ({
+    type: MODIFY_TAXONOMY_RELATIONS,
+    taxonomyId, relations
+});
+
+export const editTargetDescriptor = (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => ({
     type: EDIT_TARGET_DESCRIPTOR,
-    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states
+    taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations
 });
 
 export const deleteTargetDescriptor = (taxonomyId, id) => ({
@@ -910,6 +934,11 @@ export const editTargetType = (taxonomyId, name, newName) => ({
 export const createTargetInstance = (ofType, tabName, annotationId, descriptorId, value, oldDescriptorId) => ({
     type: ofType === NUMERICAL ? CREATE_TARGET_INSTANCE : CREATE_CATEGORICAL_TARGET_INSTANCE,
     tabName, annotationId, descriptorId, value, ofType, oldDescriptorId
+});
+
+export const saveRelationsAnnotations = (relationAnnotations, annotationId, annotationName, taxonomyId) => ({
+    type: SAVE_RELATIONS_ANNOTATIONS,
+    relationAnnotations, annotationId, annotationName, taxonomyId
 });
 
 export const updateTaxonomyValues = (tabName) => ({

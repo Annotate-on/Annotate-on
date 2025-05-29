@@ -10,7 +10,10 @@ import {
     saveTargetType,
     setSelectedTaxonomy,
     saveAlignmentObject,
-    removeAlignmentObject
+    removeAlignmentObject,
+    createTaxonomyRelations,
+    deleteTaxonomyRelations,
+    modifyTaxonomyRelations
 } from "../actions/app";
 import {push} from "connected-react-router";
 import {ee, EVENT_SELECT_TAB} from "../utils/library";
@@ -25,11 +28,20 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        createTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => {
-            dispatch(createTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states));
+        createTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => {
+            dispatch(createTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations));
         },
-        editTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states) => {
-            dispatch(editTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states));
+        createTaxonomyRelations: (taxonomyId, relations) => {
+            dispatch(createTaxonomyRelations(taxonomyId, relations));
+        },
+        deleteTaxonomyRelations: (taxonomyId, relations) => {
+            dispatch(deleteTaxonomyRelations(taxonomyId, relations));
+        },
+        modifyTaxonomyRelations: (taxonomyId, relations) => {
+            dispatch(modifyTaxonomyRelations(taxonomyId, relations));
+        },
+        editTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations) => {
+            dispatch(editTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, states, selectedRelations));
         },
         deleteTargetDescriptor: (taxonomyId, id) => {
             dispatch(deleteTargetDescriptor(taxonomyId, id));

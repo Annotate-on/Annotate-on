@@ -29,7 +29,7 @@ const mapStateToProps = (state, ownProps) => {
         projectName: state.app.selectedProjectName,
         taxonomyInstance: state.app.taxonomyInstance,
         tagsByPicture: state.app.tags_by_picture,
-
+        relationsByAnnotations: state.app.relationsByAnnotations
     };
 };
 

@@ -59,4 +59,28 @@
   .button_remove_alignement{
     float:right;
   }
+  .selected-relations-container{
+    margin-bottom: 10px;
+  }
+  .relation-list-wrapper {
+    max-height: calc(4 * 28px); /* Adjust height per row */
+    overflow-y: auto;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+
+  .relation-list-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 0.4rem 0;
+    margin: 0; /* Remove default Row margin */
+  }
+
+  .relation-list-item:last-child {
+    border-bottom: none;
+  }
+
+
 }

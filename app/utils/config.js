@@ -349,6 +349,10 @@ export const setWorkspace = (_, label) => {
                 console.log('project from previous version , adding imageDetectAlignments');
                 tmpState["imageDetectAlignments"] = [];
             }
+            if (!tmpState.hasOwnProperty("relationsByAnnotations")){
+                console.log('project from previous version , adding relationsByAnnotations');
+                tmpState["relationsByAnnotations"] = {};
+            }
             if (!tmpState.hasOwnProperty("xperMatchedResources")){
                 console.log('project from previous version , adding xperMatchedResources');
                 tmpState["xperMatchedResources"] = {};

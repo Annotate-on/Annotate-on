@@ -23,8 +23,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        createTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation) => {
-            dispatch(createTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation))},
+        createTargetDescriptor: (taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, selectedRelations) => {
+            dispatch(createTargetDescriptor(taxonomyId, id, targetName, targetType, targetColor, unit, annotationType, includeInCalculation, selectedRelations))},
         updateAnnotationValueInTaxonomyInstance: (annotations, taxonomyId , inPictureValues , sha1 , descriptorId) => {
             dispatch(updateAnnotationValueInTaxonomyInstance(annotations, taxonomyId , inPictureValues , sha1 , descriptorId));
         }
