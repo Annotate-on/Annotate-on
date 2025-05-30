@@ -407,7 +407,7 @@ export default class extends Component {
                             this.state.editedAnnotation.annotationType === ANNOTATION_CIRCLE_OF_INTEREST ||
                             this.state.editedAnnotation.annotationType === ANNOTATION_POLYGON_OF_INTEREST
                         ) {
-                            let color = '#ff0000';
+                            let color = this.state.editedAnnotation.color || '#ff0000';
                             if (targetType === INTEREST) {
                                 color = targetColor;
                                 this.props.createTargetInstance(INTEREST, this.props.tabName, this.state.editedAnnotation.id, targetId, customValue ? [customValue] : null);
