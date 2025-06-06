@@ -161,7 +161,7 @@ const _ItemSummarizedDescription = styled.div`
     overflow-y: auto;
     border: 1px solid #dee2e6;
     border-radius: 5px;
-    height: 200px;
+    height: 120px;
     padding: 5px;
 `;
 

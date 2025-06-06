@@ -1,0 +1,45 @@
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: inline-block;
+
+  &.status-inactive {
+    background-color: #ccc;
+    color: #444;
+  }
+
+  &.status-ready {
+    background-color: #007bff;
+    color: white;
+  }
+
+  &.status-running {
+    background-color: #ffc107;
+    color: black;
+    animation: pulse 1s infinite;
+  }
+
+  &.status-error {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  &.status-done {
+    background-color: #28a745;
+    color: white;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}

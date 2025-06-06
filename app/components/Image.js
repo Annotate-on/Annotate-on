@@ -55,7 +55,8 @@ import {
     EVENT_UNFOCUS_ANNOTATION,
     EVENT_CREATE_IMAGE_DETECT_ANNOTATION,
     EVENT_CREATE_PREDICT_CLASS_ANNOTATION,
-    EVENT_XPER_MATCH_RESOURCE
+    EVENT_XPER_MATCH_RESOURCE,
+    EVENT_CALL_IMAGE_DETECT_SERVICE
 } from "../utils/library";
 import VideoPlayer from "../containers/VideoPlayer";
 import EventController from "../containers/EventController";
@@ -66,6 +67,8 @@ import {findClosestColor} from "../utils/web-colors";
 import XperMonoFilter from "../containers/XperMonoFilter";
 import App from "../containers/App";
 import _3DViewer from "../containers/3DViewer";
+import ImageDetectModal from './ImageDetectModal';
+
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
@@ -145,6 +148,7 @@ class Image extends PureComponent {
             isEventRecordingLive: false,
             imageDetectModels: this.props.imageDetectModels,
             showXperMonoFilterPopup: false,
+            showImageDetectModal: false
         };
         this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
         this.makeAnnotationPointOfInterest = this.makeAnnotationPointOfInterest.bind(this);
@@ -169,6 +173,7 @@ class Image extends PureComponent {
         ee.on(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
         ee.on(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this._createPredictClassAnnotation);
         ee.on(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
+        ee.on(EVENT_CALL_IMAGE_DETECT_SERVICE, this.handleImageDetectEvent);
     }
 
     componentWillUnmount() {
@@ -177,6 +182,8 @@ class Image extends PureComponent {
         ee.removeListener(EVENT_CREATE_IMAGE_DETECT_ANNOTATION, this._createImageDetectAnnotation);
         ee.removeListener(EVENT_CREATE_PREDICT_CLASS_ANNOTATION, this._createPredictClassAnnotation);
         ee.removeListener(EVENT_XPER_MATCH_RESOURCE, this._xperMatchResource);
+        ee.removeListener(EVENT_CALL_IMAGE_DETECT_SERVICE, this.handleImageDetectEvent);
+
     }
 
     _updateEventRecordingStatus = (isEventRecording) => {
@@ -186,25 +193,37 @@ class Image extends PureComponent {
     }
 
     getAlignedCharacter = (classId) => {
-        const selectedTaxonomyValue = this.props.selectedTaxonomy;
-        const imageDetectAlignmentsValues = this.props.imageDetectAlignments;
-        const selectedImageDetectModelId = this.props.selectedImageDetectModel.id
+        const { selectedTaxonomy, selectedImageDetectModel, imageDetectAlignments } = this.props;
+
+        if (
+            !selectedTaxonomy ||
+            !selectedTaxonomy.id ||
+            !selectedTaxonomy.descriptors ||
+            !selectedImageDetectModel ||
+            !selectedImageDetectModel.id
+        ) {
+            return null;
+        }
+
+        const selectedTaxonomyValue = selectedTaxonomy;
+        const imageDetectAlignmentsValues = imageDetectAlignments;
+        const selectedImageDetectModelId = selectedImageDetectModel.id;
 
         const matchingEntry = imageDetectAlignmentsValues.find(
             (entry) =>
                 entry[selectedTaxonomyValue.id] &&
                 entry[selectedTaxonomyValue.id][selectedImageDetectModelId]
         );
+
         if (matchingEntry) {
             const alignments = matchingEntry[selectedTaxonomyValue.id][selectedImageDetectModelId];
 
             const matchingAlignment = alignments.find(
-                (alignment) => String(alignment.imageDetectClassId) == String(classId)
+                (alignment) => String(alignment.imageDetectClassId) === String(classId)
             );
 
             if (matchingAlignment) {
                 const characterId = matchingAlignment.characterId;
-                // const groupId = matchingAlignment.groupId;
 
                 const targetDescriptor = selectedTaxonomyValue.descriptors.find(
                     (descriptor) => descriptor.id === characterId
@@ -227,6 +246,34 @@ class Image extends PureComponent {
             }
         );
     }
+
+    handleImageDetectEvent = () => {
+        const { imageDetectModels } = this.props; // or this.state/options
+        let imageUrl = null;
+        let picture = this.state.currentPicture;
+        let sha1 = picture?.sha1;
+
+        if (!picture.erecolnatMetadata) {
+            const metadata = loadMetadata(sha1);
+            imageUrl = metadata?.naturalScienceMetadata?.reference;
+        } else if (picture.erecolnatMetadata.mediaurl) {
+            imageUrl = picture.erecolnatMetadata.mediaurl;
+        }
+
+        if (!imageUrl) {
+            remote.dialog.showErrorBox(i18next.t('global.info'), i18next.t('annotate.editor.alert_recolnat_image_no_url'));
+            return;
+        }
+
+        this.setState({
+            showImageDetectModal: true,
+            imageDetectModalProps: {
+                imageUrl,
+                pictureSha1: sha1,
+                imageDetectModels: imageDetectModels,
+            }
+        });
+    };
 
     _createImageDetectAnnotation = (pictureId, vertices, confidence, name, classId, counter) => {
         const id = chance.guid();
@@ -585,6 +632,13 @@ class Image extends PureComponent {
                             }}
                         />
                     }
+                    {this.state.showImageDetectModal && (
+                        <ImageDetectModal
+                            isOpen={this.state.showImageDetectModal}
+                            toggle={() => this.setState({ showImageDetectModal: false })}
+                            {...this.state.imageDetectModalProps}
+                        />
+                    )}
                 </div>
             </_Root>
         );

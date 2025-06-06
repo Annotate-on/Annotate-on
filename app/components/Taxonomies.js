@@ -100,7 +100,6 @@ export default class extends Component {
         this.handleModelClassNameInputChangeForEdit = this.handleModelClassNameInputChangeForEdit.bind(this);
         this.handleModelClassIdInputChangeForEdit = this.handleModelClassIdInputChangeForEdit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        //     id, 'IRD Image Detect', MODEL_IMAGE_DETECT, 0, 'https://plantai.ummisco.fr/image', '', '', 'Default service IRD', '50', [{"id":"0", "name":"leaf"}, {"id":"1", "name":"root"}, {"id":"2", "name":"stem"}, {"id":"3", "name":"flower"}, {"id":"4", "name":"fruit"}, {"id":"5", "name":"seed"}], 'IMAGE_DETECT_TYPE'
 
         const models = [
             {
@@ -109,7 +108,7 @@ export default class extends Component {
                 "isActive": true,
                 "model": "MODEL_IMAGE_DETECT",
                 "version": 0,
-                "url_service": "https://plantai.ummisco.fr/image",
+                "url_service": "http://imagedetect.presek-i.com:5666/organdetection/",
                 "user": "",
                 "password": "",
                 "description": "",
@@ -978,7 +977,7 @@ export default class extends Component {
                                                     </td>
                                                     <td>
                                                         {imageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
-                                                            <Label>Image detect</Label>
+                                                            <Label>Organ detection</Label>
                                                             :
                                                             <Label>Predict classification</Label>
                                                         }
