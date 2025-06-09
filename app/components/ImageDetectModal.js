@@ -107,6 +107,7 @@ class ImageDetectModal extends Component {
                             i
                         );
                     });
+                    this.props.leafletImage?.current?._drawAnnotations?.();
                 }
 
                 if (service.detectionType === "PREDICT_CLASS_TYPE") {

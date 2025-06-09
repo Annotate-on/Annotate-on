@@ -635,6 +635,7 @@ class Image extends PureComponent {
                     {this.state.showImageDetectModal && (
                         <ImageDetectModal
                             isOpen={this.state.showImageDetectModal}
+                            leafletImage={this.leafletImage}
                             toggle={() => this.setState({ showImageDetectModal: false })}
                             {...this.state.imageDetectModalProps}
                         />
