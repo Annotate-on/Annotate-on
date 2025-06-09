@@ -14,7 +14,7 @@ export const getPredictCLassAnnotations = (service_url, image_url, callback) => 
     const url = service_url;
     const payload = { image_url };
 
-    ee.emit(EVENT_SHOW_WAITING);
+    // ee.emit(EVENT_SHOW_WAITING);
 
     request(
         {
@@ -22,10 +22,10 @@ export const getPredictCLassAnnotations = (service_url, image_url, callback) => 
             url: url,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
-            timeout: 120000,
+            timeout: 20000,
         },
         function (error, response, body) {
-            ee.emit(EVENT_HIDE_WAITING);
+            // ee.emit(EVENT_HIDE_WAITING);
             if (error) {
                 console.error(error);
                 callback({ error: getErrorMessage(error) || error.message || 'Unknown error' });

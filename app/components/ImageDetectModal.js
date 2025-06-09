@@ -29,17 +29,28 @@ class ImageDetectModal extends Component {
                 status: s.isActive ? "Ready" : "Inactive",
                 errorMsg: null,
             })),
-            tooltips: {}, // track tooltip open state by URL
+            tooltips: {},
+            isRunning: false
         };
     }
 
     updateServiceStatus = (url_service, status, errorMsg = null) => {
-        this.setState((prevState) => ({
-            services: prevState.services.map((s) =>
+        this.setState((prevState) => {
+            const updatedServices = prevState.services.map((s) =>
                 s.url_service === url_service ? { ...s, status, errorMsg } : s
-            ),
-        }));
+            );
+
+            const stillRunning = updatedServices.some(
+                (s) => s.isActive && s.status === "Running"
+            );
+
+            return {
+                services: updatedServices,
+                isRunning: stillRunning,
+            };
+        });
     };
+
 
     toggleTooltip = (id) => {
         this.setState((prevState) => ({
@@ -51,6 +62,8 @@ class ImageDetectModal extends Component {
     };
 
     handleStart = () => {
+        this.setState({ isRunning: true });
+
         const { t } = i18next;
         const { imageUrl, pictureSha1 } = this.props;
         const { services } = this.state;
@@ -70,8 +83,10 @@ class ImageDetectModal extends Component {
             this.updateServiceStatus(service.url_service, "Running");
 
             getPredictCLassAnnotations(service.url_service, imageUrl, ({ result, error }) => {
+                if (!this.state.isRunning) return;
+
                 if (error || !result) {
-                    this.updateServiceStatus(service.url_service, "Error", error);
+                    this.updateServiceStatus(service.url_service, "Error", error || "Unknown error");
                     return;
                 }
 
@@ -107,10 +122,24 @@ class ImageDetectModal extends Component {
                 }
 
                 this.updateServiceStatus(service.url_service, "Done");
-                ee.emit(EVENT_HIDE_WAITING);
             });
+
         });
     };
+
+    handleCancel = () => {
+        this.setState({ isRunning: false });
+
+        // Optionally, you can also update statuses to "Cancelled"
+        this.setState((prevState) => ({
+            services: prevState.services.map((s) =>
+                s.status === "Running"
+                    ? { ...s, status: "Cancelled" }
+                    : s
+            )
+        }));
+    };
+
 
     render() {
         const { isOpen, toggle } = this.props;
@@ -159,7 +188,9 @@ class ImageDetectModal extends Component {
                                                                 ? "status-error"
                                                                 : service.status === "Done"
                                                                     ? "status-done"
-                                                                    : ""
+                                                                    : service.status === "Cancelled"
+                                                                        ? "status-cancelled"
+                                                                        : ""
                                             }`}
                                             data-tip={
                                                 service.status === "Error"
@@ -182,11 +213,17 @@ class ImageDetectModal extends Component {
                     </table>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={this.handleStart}>
-                        {t("Start Detection")}
-                    </Button>
+                    {this.state.isRunning ? (
+                        <Button color="danger" onClick={this.handleCancel}>
+                            {t("global.cancel")}
+                        </Button>
+                    ) : (
+                        <Button color="primary" onClick={this.handleStart}>
+                            {t("Start Detection")}
+                        </Button>
+                    )}
                     <Button color="secondary" onClick={toggle}>
-                        {t("global.cancel")}
+                        {t("global.close")}
                     </Button>
                 </ModalFooter>
             </Modal>
