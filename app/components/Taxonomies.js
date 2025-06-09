@@ -104,7 +104,7 @@ export default class extends Component {
         const models = [
             {
                 "id": "1116e545-6517-5d03-95f3-2dd4c32c1b9c",
-                "name": "IRD Image Detect",
+                "name": "PlantAI Organ detect ",
                 "isActive": true,
                 "model": "MODEL_IMAGE_DETECT",
                 "version": 0,
@@ -715,7 +715,7 @@ export default class extends Component {
                                 onClick={() => this.toggleTab('imageDetect')}
                                 className={this.state.activeTab === 'imageDetect' ? 'active' : ''}
                             >
-                                Image Detect Models
+                                {t('models.title_AI_detect')}
                             </NavLink>
                         </NavItem>
                     </Nav>
@@ -1156,9 +1156,9 @@ export default class extends Component {
                                                    value={this.state.form.detectionType || ''}
                                                    onChange={this.handleInputChange} disabled="">
                                                 <option value=''></option>
-                                                <option value={IMAGE_DETECT_TYPE}>Image detect</option>
-                                                <option value={PREDICT_CLASS_TYPE}>Predict classification</option>
-                                            </Input>
+                                                <option value={IMAGE_DETECT_TYPE}>t("annotate.editor.modal_image_detect_organ_detect")</option>
+                                                <option value={PREDICT_CLASS_TYPE}>t("annotate.editor.modal_image_detect_predict_classification")</option>
+                                              </Input>
                                         </Col>
                                     </FormGroup>
                                 </Form>
@@ -1246,9 +1246,9 @@ export default class extends Component {
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
                                             {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
-                                                <Label>Image detect</Label>
+                                                <Label>t("annotate.editor.modal_image_detect_organ_detect")</Label>
                                                 :
-                                                <Label>Predict classification</Label>
+                                                <Label>t("annotate.editor.modal_image_detect_predict_classification")</Label>
                                             }
                                         </Col>
                                     </FormGroup>

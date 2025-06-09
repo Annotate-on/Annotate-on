@@ -693,12 +693,19 @@
         "btn_tooltip_circle_of_interest": "Cercle d'intérêt",
         "btn_tooltip_polygon_of_interest": "Polygone d'intérêt",
         "btn_tooltip_chronotematic": "Annotation chronothematique",
-        "btn_tooltip_image_detect_service": "Annoter l'image avec le service Image Detect",
+        "btn_tooltip_image_detect_service": "Annoter l'image avec le service détection d'IA",
         "btn_tooltip_xper-match": "Annoter l'image avec le service Xper",
-        "alert_bad_image_detect_response": "Vérifiez votre URL de service Image Detect",
-        "alert_not_recolnat_image": "Le service Image Detect fonctionne uniquement avec les images eRecolnat.",
+        "alert_bad_image_detect_response": "Vérifiez votre URL de service détection d'IA",
+        "alert_not_recolnat_image": "Le service détection d'IA fonctionne uniquement avec les images eRecolnat.",
         "alert_recolnat_image_no_url": "Il y a un problème avec l'accès à la version en ligne de cette image.",
-        "alert_not_active_image_detect_service": "Il n’existe aucun service Image Detect actif. Veuillez vérifier la page de gestion des modèles Image Detect!"
+        "alert_not_active_image_detect_service": "Il n’existe aucun service détection d'IA actif. Veuillez vérifier la page de gestion des modèles détection d'IA!",
+        "modal_image_detect_title": "Services de détection d'IA",
+        "modal_image_detect_service": "Service",
+        "modal_image_detect_type": "Type",
+        "modal_image_detect_status": "Statut",
+        "modal_image_detect_organ_detect": "Détection d'organes",
+        "modal_image_detect_predict_classification": "Prédire la classification",
+        "modal_image_detect_btn_start": "Démarrage détection"
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "L'événement est près de sa fin, voulez-vous le prolonger de 30mn ?",
@@ -916,6 +923,7 @@
       "dropdown_item_export_to_sdd_file": "Export dans le fichier SDD"
     },
     "models": {
+      "title_AI_detect": "Modèles de détection d'IA",
       "title": "Modèles d'annotations",
       "btn_new_model": "Nouveau modèle",
       "btn_import_from_xper": "Importer depuis Xper",
@@ -926,7 +934,7 @@
       "thead_tooltip_sort_order": "Ordre croissant ou décroissant",
       "table_column_select": "Actif service",
       "table_column_model_name": "Nom du modèle",
-      "table_column_model_detectyon_type": "Type de modèle",
+      "table_column_model_detection_type": "Type de modèle",
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_align": "Alignement",
@@ -939,8 +947,8 @@
         "lbl_model_image_detect_user": "Utilisateur",
         "lbl_model_image_detect_pwd": "Mot de passe",
         "lbl_model_image_detect_desc": "Description",
-        "lbl_model_image_detect_confidence": "Confiance minimale",
-        "lbl_model_image_detect_title": "Image-detect modèle",
+        "lbl_model_image_detect_confidence": "Confiance minimale (%)",
+        "lbl_model_image_detect_title": "Modèle de détection d'IA",
         "lbl_model_image_detect_classes": "Classes",
         "lbl_model_image_detect_class_name": "Nom de la classe",
         "lbl_model_image_detect_class_id": "Id de la classe"
@@ -992,8 +1000,8 @@
           "lbl_group_name": "Nouveau nom de groupe"
         },
         "dialog_image_detect_alignment": {
-          "title": "Aligner la classe de Image Detect",
-          "select_class_combo": "Sélectionner la classe Image Detect",
+          "title": "Aligner la classe de détection d'IA",
+          "select_class_combo": "Sélectionner la classe détection d'IA",
           "msg_duplicate_alignment": "Couplage pour cette classe existe déjà"
         },
         "dialog_model_relations": {

@@ -68,6 +68,7 @@ import XperMonoFilter from "../containers/XperMonoFilter";
 import App from "../containers/App";
 import _3DViewer from "../containers/3DViewer";
 import ImageDetectModal from './ImageDetectModal';
+import i18next from "i18next";
 
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
@@ -248,7 +249,8 @@ class Image extends PureComponent {
     }
 
     handleImageDetectEvent = () => {
-        const { imageDetectModels } = this.props; // or this.state/options
+        const { t } = i18next;
+        const { imageDetectModels } = this.props;
         let imageUrl = null;
         let picture = this.state.currentPicture;
         let sha1 = picture?.sha1;
@@ -276,16 +278,44 @@ class Image extends PureComponent {
     };
 
     _createImageDetectAnnotation = (pictureId, vertices, confidence, name, classId, counter) => {
+        function isDuplicateAnnotation(existingAnnotations, newVertices) {
+            return existingAnnotations.some((a) =>
+                JSON.stringify(a.vertices) === JSON.stringify(newVertices)
+            );
+        }
+
         const id = chance.guid();
-        this.props.createImageDetectAnnotationRectangular(pictureId, vertices, id, confidence, name, counter);
-        const character =  this.getAlignedCharacter(classId);
-        if(character != null){
+
+        const existingAnnotations = this.props.annotationsRectangular?.[pictureId] || [];
+        const verticesToUse = [...vertices];
+        if (verticesToUse.length < 4) {
+            verticesToUse.push(verticesToUse[0]);
+        }
+
+        const isDuplicate = isDuplicateAnnotation(existingAnnotations, verticesToUse);
+
+        if (isDuplicate) {
+            return null;
+        }
+
+        this.props.createImageDetectAnnotationRectangular(
+            pictureId,
+            verticesToUse,
+            id,
+            confidence,
+            name,
+            counter
+        );
+
+        const character = this.getAlignedCharacter(classId);
+        if (character != null) {
             const characterId = character.characterId;
             const characterTargetColor = character.targetColor;
             this.props.createTargetInstance(CATEGORICAL, this.props.tabName, id, characterId, null, null);
             this._setAnnotationColor(id, characterTargetColor);
         }
-    }
+    };
+
     _createPredictClassAnnotation = (pictureId, confidence, className, classId, serviceName) => {
         const id = chance.guid();
 

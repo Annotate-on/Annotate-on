@@ -51,16 +51,6 @@ class ImageDetectModal extends Component {
         });
     };
 
-
-    toggleTooltip = (id) => {
-        this.setState((prevState) => ({
-            tooltips: {
-                ...prevState.tooltips,
-                [id]: !prevState.tooltips[id],
-            },
-        }));
-    };
-
     handleStart = () => {
         this.setState({ isRunning: true });
 
@@ -68,14 +58,10 @@ class ImageDetectModal extends Component {
         const { imageUrl, pictureSha1 } = this.props;
         const { services } = this.state;
 
-        if (!imageUrl) {
-            window.alert(t("annotate.editor.alert_recolnat_image_no_url"));
-            return;
-        }
-
         const activeServices = services.filter((s) => s.isActive);
         if (activeServices.length === 0) {
             window.alert(t("annotate.editor.alert_not_active_image_detect_service"));
+            this.setState({ isRunning: false });
             return;
         }
 
@@ -130,8 +116,6 @@ class ImageDetectModal extends Component {
 
     handleCancel = () => {
         this.setState({ isRunning: false });
-
-        // Optionally, you can also update statuses to "Cancelled"
         this.setState((prevState) => ({
             services: prevState.services.map((s) =>
                 s.status === "Running"
@@ -156,9 +140,9 @@ class ImageDetectModal extends Component {
                     <table className="table table-sm">
                         <thead>
                         <tr>
-                            <th>{t("Service")}</th>
-                            <th>{t("Type")}</th>
-                            <th>{t("Status")}</th>
+                            <th>{t("annotate.editor.modal_image_detect_service")}</th>
+                            <th>{t("annotate.editor.modal_image_detect_type")}</th>
+                            <th>{t("annotate.editor.modal_image_detect_status")}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -171,8 +155,8 @@ class ImageDetectModal extends Component {
                                     <td>
                                         <Label>
                                             {service.detectionType === IMAGE_DETECT_TYPE
-                                                ? "Organ detect"
-                                                : "Predict classification"}
+                                                ? t("annotate.editor.modal_image_detect_organ_detect")
+                                                : t("annotate.editor.modal_image_detect_predict_classification")}
                                         </Label>
                                     </td>
                                     <td>
@@ -220,7 +204,7 @@ class ImageDetectModal extends Component {
                         </Button>
                     ) : (
                         <Button color="primary" onClick={this.handleStart}>
-                            {t("Start Detection")}
+                            {t("annotate.editor.modal_image_detect_btn_start")}
                         </Button>
                     )}
                     <Button color="secondary" onClick={toggle}>

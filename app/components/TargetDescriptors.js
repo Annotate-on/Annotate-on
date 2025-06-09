@@ -824,7 +824,7 @@ class TargetDescriptors extends PureComponent {
                 <Row>
                     <Col  md={11}  className="text-md-left ml-5">
                         <p>Model Annotate: <strong>{this.props.taxonomyModel.name}</strong></p>
-                        <p>Model Image Detect: <strong>{(this.state.imageDetectModel?this.state.imageDetectModel.name:"none")}</strong></p>
+                        <p>{t("models.title_AI_detect")}: <strong>{(this.state.imageDetectModel?this.state.imageDetectModel.name:"none")}</strong></p>
                     </Col>
                 </Row>
                 <Row className="action-bar">

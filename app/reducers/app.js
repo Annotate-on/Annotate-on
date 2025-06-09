@@ -659,7 +659,6 @@ export default (state = {}, action) => {
         }
             break;
         case CREATE_IMAGE_DETECT_ANNOTATION_RECTANGULAR: {
-              // debugger
             function areVerticesEqual(vertices1, vertices2) {
                 return JSON.stringify(vertices1) === JSON.stringify(vertices2);
             }
@@ -688,7 +687,7 @@ export default (state = {}, action) => {
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
                             title: `IMDT-${counter}`,
-                            value: `${payload.name} (${payload.confidence})`,
+                            value: `${payload.name} (${(payload.confidence * 100).toFixed(2)}%)`,
                             color: "",
                         },
                         ...(state.annotations_rectangular[payload.pictureId] || [])
@@ -983,7 +982,7 @@ export default (state = {}, action) => {
                             creationDate: NOW_DATE,
                             creationTimestamp: NOW_TIMESTAMP,
                             title: payload.serviceName,
-                            value: `${payload.className} (${payload.confidence})`,
+                            value: `${payload.className} (${(payload.confidence * 100).toFixed(2)}%)`,
                             color: "",
                             vertices:[
                                 {

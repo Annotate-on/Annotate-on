@@ -716,13 +716,20 @@
         "btn_tooltip_circle_of_interest": "Circle of interest",
         "btn_tooltip_polygon_of_interest": "Polygon of interest",
         "btn_tooltip_chronotematic": "Annotation chronothematic",
-        "btn_tooltip_image_detect_service": "Annotate image with Image Detect service",
+        "btn_tooltip_image_detect_service": "Annotate image with AI detection service",
         "btn_tooltip_xper-match": "Annotate image with Xper service",
-        "alert_bad_image_detect_response": "Check your Image Detect service URL",
-        "alert_not_recolnat_image": "Image detect service works only with eRecolnat images.",
+        "alert_bad_image_detect_response": "Check your AI detection service URL",
+        "alert_not_recolnat_image": "AI detection service works only with eRecolnat images.",
         "alert_recolnat_image_no_url": "There is problem with accessing online version of this image.",
-        "alert_not_active_image_detect_service": "There is no active Image Detect service. Please check your Image Detect model page!",
-        "modal_image_detect_title": "PlantAI detect services"
+        "alert_not_active_image_detect_service": "There is no active AI detection service. Please check your AI services page!",
+        "modal_image_detect_title": "AI detection services",
+        "modal_image_detect_service": "Service",
+        "modal_image_detect_type": "Type",
+        "modal_image_detect_status": "Status",
+        "modal_image_detect_organ_detect": "Organ detection",
+        "modal_image_detect_predict_classification": "Predict classification",
+        "modal_image_detect_btn_start": "Start detection"
+
       },
       "event_timeline": {
         "dialog_event_to_expire_title": "The event is about to expire , do you want to extend this event for another 30min?",
@@ -949,6 +956,7 @@
       "dropdown_item_export_to_sdd_file": "Export to Sdd file"
     },
     "models": {
+      "title_AI_detect": "Models detection AI",
       "title": "Annotations models",
       "btn_new_model": "New model",
       "btn_import_from_xper": "Import from Xper",
@@ -959,7 +967,7 @@
       "thead_tooltip_sort_order": "Ascendant or descendant order",
       "table_column_select": "Active service",
       "table_column_model_name": "Model name",
-      "table_column_model_detectyon_type": "Model type",
+      "table_column_model_detection_type": "Model type",
       "table_column_type": "Type",
       "table_column_version": "Version",
       "table_column_date_imported_created": "Date imported/created",
@@ -968,12 +976,12 @@
         "title_create_model": "Create model",
         "lbl_model_name": "Model name",
         "lbl_model_type": "Model type",
-        "lbl_model_image_detect_title": "Image-detect model",
+        "lbl_model_image_detect_title": "Model detection AI",
         "lbl_model_image_detect_url": "Url of service",
         "lbl_model_image_detect_user": "User",
         "lbl_model_image_detect_pwd": "Password",
         "lbl_model_image_detect_desc": "Description",
-        "lbl_model_image_detect_confidence": "Minimum confidence",
+        "lbl_model_image_detect_confidence": "Minimum confidence (%)",
         "lbl_model_image_detect_classes": "Classes",
         "lbl_model_image_detect_class_name": "Class name",
         "lbl_model_image_detect_class_id": "Class id"
@@ -1031,8 +1039,8 @@
           "alert_categorical_state_item_already_exist": "Enumeration with the same value already exist!"
         },
         "dialog_image_detect_alignment": {
-          "title": "Align Image Detect class",
-          "select_class_combo": "Select Image Detect Class",
+          "title": "Align AI detection class",
+          "select_class_combo": "Select AI detection Class",
           "msg_duplicate_alignment": "Alignment for this class exists already"
         },
         "dialog_model_relations": {
