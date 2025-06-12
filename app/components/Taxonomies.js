@@ -1156,8 +1156,8 @@ export default class extends Component {
                                                    value={this.state.form.detectionType || ''}
                                                    onChange={this.handleInputChange} disabled="">
                                                 <option value=''></option>
-                                                <option value={IMAGE_DETECT_TYPE}>t("annotate.editor.modal_image_detect_organ_detect")</option>
-                                                <option value={PREDICT_CLASS_TYPE}>t("annotate.editor.modal_image_detect_predict_classification")</option>
+                                                <option value={IMAGE_DETECT_TYPE}>{t("annotate.editor.modal_image_detect_organ_detect")}</option>
+                                                <option value={PREDICT_CLASS_TYPE}>{t("annotate.editor.modal_image_detect_predict_classification")}</option>
                                               </Input>
                                         </Col>
                                     </FormGroup>
@@ -1246,9 +1246,9 @@ export default class extends Component {
                                         <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
                                         <Col sm={7}>
                                             {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
-                                                <Label>t("annotate.editor.modal_image_detect_organ_detect")</Label>
+                                                <Label>{t("annotate.editor.modal_image_detect_organ_detect")}</Label>
                                                 :
-                                                <Label>t("annotate.editor.modal_image_detect_predict_classification")</Label>
+                                                <Label>{t("annotate.editor.modal_image_detect_predict_classification")}</Label>
                                             }
                                         </Col>
                                     </FormGroup>
