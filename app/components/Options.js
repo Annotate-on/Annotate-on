@@ -256,6 +256,9 @@ export default class Options extends Component {
 
     _handleOnChangeColorChart = (event) => {
         updateColorChartSelection(event.target.value)
+        this.setState({
+            colorChartSettings: event.target.value
+        });
     };
     _toolsParamsFormChangeHandler = ( event ) => {
         const { name, value } = event.target;
