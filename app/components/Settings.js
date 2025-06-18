@@ -87,7 +87,10 @@ export default class extends PureComponent {
             workspace: getUserWorkspace(),
             showAction: null,
             showPathModal: false,
-            projectPath: null
+            projectPath: null,
+            showRestoreModal: false,
+            restoreBackups: [],
+            restoreProjectPath: ''
         };
     }
 
@@ -420,7 +423,10 @@ export default class extends PureComponent {
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
                                     <TableHeader title={t('projects.table_column_path')} sortKey="path"
                                                  sortedBy={this.state.sortBy} sort={this._sort}/>
-                                    <th/>
+                                    <th style={{textAlign: 'center'}}>
+                                        <span>{t('projects.table_column_backup')}</span>
+                                    </th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -601,7 +607,11 @@ export default class extends PureComponent {
                                                         {project.path}
                                                     </ContextMenuTrigger>
                                                 </td>
-                                                <td/>
+                                                <td style={{textAlign: 'center'}}>
+                                                    <Button size="sm" onClick={() => this._openRestoreModal(project.path)}>
+                                                        {t('projects.btn_restore')}
+                                                    </Button>
+                                                </td>
                                             </tr>
                                         );
                                     })}
@@ -699,7 +709,53 @@ export default class extends PureComponent {
                         <Button color="secondary" onClick={this._closeShowPathModal}>{t('global.close')}</Button>
                     </ModalFooter>
                 </Modal>
+                <Modal isOpen={this.state.showRestoreModal} toggle={this._closeRestoreModal} wrapClassName="bst" autoFocus={false}>
+                    <ModalHeader toggle={this._closeRestoreModal}>
+                        {t('projects.modal_backup.title')}
+                    </ModalHeader>
+                    <ModalBody>
+                        <Table hover size="sm">
+                            <thead>
+                            <tr>
+                                <th>{t('projects.modal_backup.type')}</th>
+                                <th>{t('projects.modal_backup.date')}</th>
+                                <th>{t('projects.modal_backup.action')}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.restoreBackups.map((backup, idx) => (
+                                <tr key={idx}>
+                                    <td>{backup.label}</td>
+                                    <td>{new Date(backup.mtime).toLocaleString()}</td>
+                                    <td>
+                                        <Button
+                                            size="sm"
+                                            color="primary"
+                                            onClick={() => {
+                                                const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
+                                                    type: 'warning',
+                                                    buttons: [t('global.yes'), t('global.no')],
+                                                    defaultId: 1,
+                                                    cancelId: 1,
+                                                    title: t('projects.modal_backup.confirm_title'),
+                                                    message: t('projects.modal_backup.confirm_message'),
+                                                    detail: `${t('projects.modal_backup.confirm_detail')} ${backup.label}`
+                                                });
+                                                if (result === 0) {
+                                                    this._performRestore(backup);
+                                                }
+                                            }}
+                                        >
+                                            {t('projects.modal_backup.button_restore')}
+                                        </Button>
 
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </Table>
+                    </ModalBody>
+                </Modal>
             </Container>
         );
     }
@@ -798,4 +854,91 @@ export default class extends PureComponent {
             workspace: getUserWorkspace(),
         });
     }
+
+    _openRestoreModal = (projectPath) => {
+        const backups = this._loadBackups(projectPath);
+        this.setState({
+            showRestoreModal: true,
+            restoreBackups: backups,
+            restoreProjectPath: projectPath
+        });
+    };
+
+    _closeRestoreModal = () => {
+        this.setState({
+            showRestoreModal: false,
+            restoreProjectPath: null,
+            availableBackups: []
+        });
+    };
+
+    _loadBackups = (projectPath) => {
+        const backupDir = path.join(projectPath, 'backups');
+        const intervals = ['hourly', 'daily', 'weekly'];
+        const backups = [];
+
+        intervals.forEach(interval => {
+            const dir = path.join(backupDir, interval);
+            if (fs.existsSync(dir)) {
+                const files = fs.readdirSync(dir);
+                if (files.length > 0) {
+                    backups.push({
+                        label: interval,
+                        path: dir,
+                        mtime: fs.statSync(path.join(dir, 'workspace.json')).mtime // you can also compare all 3 files if needed
+                    });
+                }
+            }
+        });
+
+        return backups;
+    };
+
+    _performRestore = (backup) => {
+        const { restoreProjectPath } = this.state;
+        const { t } = this.props;
+
+        try {
+            const files = ['workspace.json', 'project-info.json'];
+            const currentWorkFile = path.join(restoreProjectPath, 'collaboratoire-cache', 'current-work.json');
+
+            files.forEach(file => {
+                const src = path.join(backup.path, file);
+                const dest = path.join(restoreProjectPath, file);
+                if (fs.existsSync(src)) {
+                    fs.copyFileSync(src, dest);
+                }
+            });
+
+            const backupCurrentWork = path.join(backup.path, 'current-work.json');
+            if (fs.existsSync(backupCurrentWork)) {
+                fs.copyFileSync(backupCurrentWork, currentWorkFile);
+            }
+
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
+                type: 'info',
+                message: t('global.info'),
+                detail: `Backup from ${backup.label} was restored.`,
+            });
+
+        } catch (err) {
+            console.error('Restore failed:', err);
+            remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
+                type: 'error',
+                message: t('global.error'),
+                detail: err.message,
+            });
+        } finally {
+            this._closeRestoreModal();
+        }
+        this.state.projects.map((project, index) => {
+            if (project.active === true) {
+                this._setWorkspace(project.path);
+            }
+        })
+    };
+
+
+
+
 }

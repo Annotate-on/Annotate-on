@@ -3,7 +3,13 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import styled, {css} from 'styled-components';
 import path from 'path';
-import {getCacheDir, getThumbNailsDir, getUserWorkspace} from '../utils/config'
+import {
+    getCacheDir,
+    getProjectInfoFile,
+    getThumbNailsDir,
+    getUserWorkspace,
+    PROJECT_INFO_DESCRIPTOR
+} from '../utils/config'
 import {
     IMAGE_STORAGE_DIR,
     MAIN_NAV_BG,
@@ -186,7 +192,8 @@ export default class AppMenu extends Component {
             if (localCounter !== this.props.counter) {
                 const start = performance.now();
                 const file = path.join(getCacheDir(), 'current-work.json');
-                const currentState = {...this.props.appState};
+                const currentState = { ...this.props.appState };
+
                 const storagePathLength = path.join(getUserWorkspace(), IMAGE_STORAGE_DIR).length;
                 const thumbnailPathLength = getThumbNailsDir().length;
                 const pictures = {};
@@ -195,23 +202,48 @@ export default class AppMenu extends Component {
                         ...currentState.pictures[sha1],
                         file: escapePathString(currentState.pictures[sha1].file.slice(storagePathLength)),
                         thumbnail: escapePathString(currentState.pictures[sha1].thumbnail.slice(thumbnailPathLength))
-                    }
+                    };
                 }
                 currentState.pictures = pictures;
 
-                for(const tabName in currentState.open_tabs) {
+                for (const tabName in currentState.open_tabs) {
                     const tab = currentState.open_tabs[tabName];
-                    if('taxonomyInstance' in tab)
-                        delete tab.taxonomyInstance;
+                    if ('taxonomyInstance' in tab) delete tab.taxonomyInstance;
                 }
 
-                //TODO: check if file exists
                 fs.writeFileSync(file, JSON.stringify(currentState));
 
                 localCounter = this.props.counter;
-                console.log(`Save current work state done in ${performance.now() - start}ms.`)
+                console.log(`Save current work state done in ${performance.now() - start}ms.`);
+
+                const BACKUP_DIR = path.join(getUserWorkspace(), 'backups');
+                const HOURLY_DIR = path.join(BACKUP_DIR, 'hourly');
+                const DAILY_DIR = path.join(BACKUP_DIR, 'daily');
+                const WEEKLY_DIR = path.join(BACKUP_DIR, 'weekly');
+                const current_work_file = path.join(getCacheDir(), 'current-work.json');
+                const project_info_file = getProjectInfoFile();
+                const workspace_file = path.join(getUserWorkspace(), 'workspace.json');
+
+                const filesToBackup = [
+                    [current_work_file, 'current-work.json'],
+                    [project_info_file, 'project-info.json'],
+                    [workspace_file, 'workspace.json']
+                ];
+
+                if (this.isBackupDue(HOURLY_DIR, 60 * 60 * 1000)) {
+                    this.backupFiles(HOURLY_DIR, filesToBackup);
+                }
+
+                if (this.isBackupDue(DAILY_DIR, 24 * 60 * 60 * 1000)) {
+                    this.backupFiles(DAILY_DIR, filesToBackup);
+                }
+
+                if (this.isBackupDue(WEEKLY_DIR, 7 * 24 * 60 * 60 * 1000)) {
+                    this.backupFiles(WEEKLY_DIR, filesToBackup);
+                }
             }
         }, 2000);
+
 
         this._createSystemTags();
 
@@ -397,6 +429,30 @@ export default class AppMenu extends Component {
         this.setState({
             tabName: name
         });
+    }
+
+
+    ensureDir(dir) {
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    }
+
+    isBackupDue(dirPath, intervalMs) {
+        try {
+            const stats = fs.statSync(dirPath);
+            const age = Date.now() - stats.mtimeMs;
+            return age >= intervalMs;
+        } catch (err) {
+            return true;
+        }
+    }
+
+    backupFiles(targetDir, filesToBackup) {
+        this.ensureDir(targetDir);
+        for (const [src, filename] of filesToBackup) {
+            const dest = path.join(targetDir, filename);
+            fs.copyFileSync(src, dest);
+        }
+        console.log(`✔ Backup complete to ${targetDir}`);
     }
 
     render() {

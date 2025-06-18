@@ -570,6 +570,7 @@
       "table_column_images": "Images",
       "table_column_status": "Statut",
       "table_column_path": "Chemin",
+      "table_column_backup": "Sauvegarde",
       "alert_can_not_switch_to_corrupted_project": "impossible d'ouvrir le projet corrompu",
       "alert_project_is_locked": "Le projet est verrouillé par l'utilisateur  {{user}}",
       "lbl_new_project_name": "nom du nouveau projet",
@@ -618,7 +619,19 @@
       "btn_tooltip_import_projects_from_1x_version": "Importer des projets depuis les versions Annotate 1.x",
       "btn_import_projects_from_1x_version": "Importer des projets depuis les versions Annotate 1.x",
       "alert_import_projects_from_1x_version_message": "{{numberOfImportedProjects}} projet(s) ont été importés",
-      "alert_import_projects_from_1x_version_is_finished": "Import des projets terminé."
+      "alert_import_projects_from_1x_version_is_finished": "Import des projets terminé.",
+      "btn_restore": "Restaurer la sauvegarde",
+      "restore_message": "La sauvegarde de {{backup.label}} a été restaurée.",
+      "modal_backup": {
+        "title": "Restaurer les fichiers du projet à partir d'une sauvegarde",
+        "type": "Type",
+        "date": "Date",
+        "action": "Action",
+        "button_restore": "Restaurer",
+        "confirm_title": "Confirmation requise",
+        "confirm_message": "Ceci est une action irréversible. Veuillez noter qu'une fois la sauvegarde activée, les fichiers actuels du projet seront écrasés.",
+        "confirm_detail": "Les fichiers de sauvegarde suivants seront utilisés :"
+      }
     },
     "credits": {
       "lbl_citation": "Citation",
