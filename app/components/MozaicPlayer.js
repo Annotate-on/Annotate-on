@@ -120,7 +120,16 @@ export default class extends PureComponent {
                         </Row>
                     </div> :
                     <img className="img-panel"
+                         loading="lazy"
                          alt="img panel"
+                         key={this.state.picSrc}
+                         onLoad={() => {
+                             console.log('Image loaded:', this.props.pic.sha1);
+                             if (this.props.onImageLoad) this.props.onImageLoad();
+                         }}
+                         onError={(e) => {
+                             console.warn("Image failed to load:", e.target.src);
+                         }}
                          src={this.state.picSrc}
                          onDragStart={e => this.props.onDragStart(e, this.props.pic.sha1, this.props.index)}
                          style={{width: this.props.imageWidth}}
@@ -144,15 +153,15 @@ export default class extends PureComponent {
 
                          onDragLeave={e => this._onDragLeave(e)}
 
-                         onClick={() => {
-                             console.log('clicked.....')
-                             this.props.setPictureInSelection(this.props.pic.sha1, this.props.tabName);
+                         onClick={(e) => {
+                             if (e.detail === 1) {
+                                 this.props.setPictureInSelection(this.props.pic.sha1, this.props.tabName);
+                             } else if (e.detail === 2) {
+                                 this.props.setPictureInSelection(this.props.pic.sha1, this.props.tabName);
+                                 ee.emit(EVENT_SELECT_TAB, 'image')
+                             }
                          }}
 
-                         onDoubleClick={() => {
-                             this.props.setPictureInSelection(this.props.pic.sha1, this.props.tabName);
-                             ee.emit(EVENT_SELECT_TAB, 'image')
-                         }}
                     />
                 }
             </div>
