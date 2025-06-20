@@ -437,8 +437,9 @@ export default class AppMenu extends Component {
     }
 
     isBackupDue(dirPath, intervalMs) {
+        const filePath = path.join(dirPath, "project-info.json");
         try {
-            const stats = fs.statSync(dirPath);
+            const stats = fs.statSync(filePath);
             const age = Date.now() - stats.mtimeMs;
             return age >= intervalMs;
         } catch (err) {
