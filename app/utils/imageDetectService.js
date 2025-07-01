@@ -5,7 +5,7 @@ const getErrorMessage = (error, response, body) => {
     const {t} = i18next;
     const imageDetectParamsCheckMessage = !response || response.statusCode === 404 || response.statusCode === 401 ? t('annotate.editor.alert_bad_image_detect_response') : "";
     if(error) return `${error}. ${imageDetectParamsCheckMessage}`;
-    if(response) return `${response.statusMessage}. ${imageDetectParamsCheckMessage}`;
+    if(response) return `${response.statusMessage}.${response.body} ${imageDetectParamsCheckMessage}`;
     return t('annotate.editor.alert_bad_image_detect_response')
 }
 
