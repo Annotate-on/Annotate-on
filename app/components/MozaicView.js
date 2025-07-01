@@ -321,8 +321,9 @@ export default class extends PureComponent {
                         </div>
                     }
                 >
-                <div onMouseOut={(event) => this.stopVideo(event, pic.sha1)}
-                     onMouseOver={(event) => this.playVideo(event, pic.sha1)}
+                <div
+                    // onMouseOut={(event) => this.stopVideo(event, pic.sha1)}
+                    //  onMouseOver={(event) => this.playVideo(event, pic.sha1)}
                      data-tip data-for={'global_' + index} className='cardTitle'>{reduced_name}
                 </div>
                 </Tippy>

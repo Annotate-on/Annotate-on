@@ -1156,8 +1156,8 @@ export default class extends Component {
                                                    value={this.state.form.detectionType || ''}
                                                    onChange={this.handleInputChange} disabled="">
                                                 <option value=''></option>
-                                                <option value={IMAGE_DETECT_TYPE}>t("annotate.editor.modal_image_detect_organ_detect")</option>
-                                                <option value={PREDICT_CLASS_TYPE}>t("annotate.editor.modal_image_detect_predict_classification")</option>
+                                                <option value={IMAGE_DETECT_TYPE}>{t("annotate.editor.modal_image_detect_organ_detect")}</option>
+                                                <option value={PREDICT_CLASS_TYPE}>{t("annotate.editor.modal_image_detect_predict_classification")}</option>
                                               </Input>
                                         </Col>
                                     </FormGroup>
@@ -1195,61 +1195,117 @@ export default class extends Component {
                             </ModalFooter>
                         </Modal>
                         <Modal isOpen={this.state.modelClassItemModalView} toggle={this.toggleModelClassItemModalView} wrapClassName="bst" autoFocus={false}>
-                            <ModalHeader toggle={this.toggleModelClassItemModalView}>{t('models.dialog_create_model.lbl_model_image_detect_title')}</ModalHeader>
+                            <ModalHeader toggle={this.toggleModelClassItemModalView}>
+                                {t('models.dialog_create_model.lbl_model_image_detect_title')}
+                            </ModalHeader>
                             <ModalBody>
                                 <Form>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectName" sm={5}>{t('models.dialog_create_model.lbl_model_name')}</Label>
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectName">
+                                                {t('models.dialog_create_model.lbl_model_name')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.name}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.name}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectUrl" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_url')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectUrl">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_url')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.url_service}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.url_service}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectUser" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_user')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectUser">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_user')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.user}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.user}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectPwd" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_pwd')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectPwd">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_pwd')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.password}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.password}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectDesc" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_desc')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectDesc">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_desc')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.description}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.description}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelImageDetectConfidence" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_confidence')} (%)</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelImageDetectConfidence">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_confidence')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            <Label>{this.state.viewImageDetectModel.confidence}</Label>
+                                            <div >
+                                                {this.state.viewImageDetectModel.confidence}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label for="modelClassItem" sm={5}>{t('models.dialog_create_model.lbl_model_image_detect_classes')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold" for="modelClassItem">
+                                                {t('models.dialog_create_model.lbl_model_image_detect_classes')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            {this.state.viewImageDetectModel.modelClasses && this.state.viewImageDetectModel.modelClasses.map((type, index) => (
-                                                <span><Label key={`td_${index}`} className="mr-2">{type.name}</Label><br /></span>
-                                            ))}
+                                            <div >
+                                                {this.state.viewImageDetectModel.modelClasses &&
+                                                    this.state.viewImageDetectModel.modelClasses.map((type, index) => (
+                                                        <span key={`td_${index}`} className="d-block">{type.name}</span>
+                                                    ))}
+                                            </div>
                                         </Col>
                                     </FormGroup>
-                                    <FormGroup row>
-                                        <Label sm={5}>{t('models.dialog_create_model.lbl_model_type')}</Label>
+
+                                    <FormGroup row className="model-view-row">
+                                        <Col sm={5}>
+                                            <Label className="text-muted font-weight-bold">
+                                                {t('models.dialog_create_model.lbl_model_type')}
+                                            </Label>
+                                        </Col>
                                         <Col sm={7}>
-                                            {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE ?
-                                                <Label>t("annotate.editor.modal_image_detect_organ_detect")</Label>
-                                                :
-                                                <Label>t("annotate.editor.modal_image_detect_predict_classification")</Label>
-                                            }
+                                            <div >
+                                                {this.state.viewImageDetectModel.detectionType === IMAGE_DETECT_TYPE
+                                                    ? t("annotate.editor.modal_image_detect_organ_detect")
+                                                    : t("annotate.editor.modal_image_detect_predict_classification")}
+                                            </div>
                                         </Col>
                                     </FormGroup>
                                 </Form>
@@ -1258,6 +1314,8 @@ export default class extends Component {
                                 <Button color="secondary" onClick={this.toggleModelClassItemModalView}>Close</Button>
                             </ModalFooter>
                         </Modal>
+
+
                     </TabPane>
                     </TabContent>
                 </Container>);

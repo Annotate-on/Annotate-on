@@ -21,6 +21,7 @@ const mapStateToProps = state => {
         tagsByPicture: state.app.tags_by_picture,
         allPictures: state.app.pictures,
         tabData: state.app.open_tabs,
+        tabName: state.app.selected_tab
     };
 };
 
