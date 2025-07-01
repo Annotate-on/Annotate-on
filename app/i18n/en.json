@@ -593,6 +593,7 @@
       "table_column_images": "Images",
       "table_column_status": "Status",
       "table_column_path": "Path",
+      "table_column_backup": "Backup",
       "alert_can_not_switch_to_corrupted_project": "can not switch to corrupted project!",
       "alert_project_is_locked": "Project is locked by user {{user}}",
       "lbl_new_project_name": "new project name",
@@ -637,7 +638,19 @@
       "alert_projects_created_with_old_version_of_can_not_be_loaded": "Projects created with version of Annotate <1.7.0 can not be loaded.\nPaths to projects:\n\n",
       "alert_title_projects_created_with_old_version_of_can_not_be_loaded": "Found old config file '{{file_path}}'",
       "alert_there_is_no_project_on_path": "There is no project on path '{{file_path}}'",
-      "lbl_corrupted_project": "corrupted project"
+      "lbl_corrupted_project": "corrupted project",
+      "btn_restore": "Backup restore",
+      "restore_message": "Backup from {{backup.label}} was restored.",
+      "modal_backup": {
+        "title": "Restore project files from backup",
+        "type": "Type",
+        "date": "Date",
+        "action": "Action",
+        "button_restore": "Restore",
+        "confirm_title": "Confirmation needed",
+        "confirm_message": "This is irreversible action, please be aware that one you activate backup it will overwrite current project files.",
+        "confirm_detail": "Following type of backup files will be used:"
+      }
     },
     "credits": {
       "lbl_citation": "Citation",
@@ -842,6 +855,7 @@
         "table_column_catalog_number": "Catalog number",
         "table_column_collection_number": "Collection number",
         "table_column_path": "Path",
+        "table_column_backup": "Backup",
         "table_column_longitude_dd": "LongitudeDD",
         "table_column_latitude_dd": "LatitudeDD",
         "dialog_title_save": "Save collection to",

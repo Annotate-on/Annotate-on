@@ -1,17 +1,20 @@
 import classnames from "classnames";
-import { remote } from "electron";
+import {remote} from "electron";
 import lodash from "lodash";
 import moment from 'moment';
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import ToggleButton from 'react-toggle-button';
-import ReactTooltip from 'react-tooltip';
-import { SortDirection } from 'react-virtualized';
-import { Input } from 'reactstrap';
+import {SortDirection} from 'react-virtualized';
+import {Input} from 'reactstrap';
 import {MANUAL_ORDER, RESOURCE_TYPE_EVENT, RESOURCE_TYPE_OBJECT3D, RESOURCE_TYPE_VIDEO} from "../constants/constants";
 import Inspector from "../containers/Inspector";
-import { EVENT_SHOW_ALERT, ee } from "../utils/library";
+import {EVENT_SHOW_ALERT, ee} from "../utils/library";
 import MozaicPlayer from "./MozaicPlayer";
 import MAP from "./pictures/map-location-dot-solid.svg";
+import {VariableSizeGrid as Grid} from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
 const MOZAIC_WHITE = require('./pictures/mozaic_white_icon.svg');
 const LIST = require('./pictures/list_icon.svg');
@@ -21,10 +24,14 @@ const SELECT_ALL = require('./pictures/select_all.svg');
 const DELETE_IMAGE = require('./pictures/delete-image.svg');
 const DELETE_IMAGE_GRAY = require('./pictures/delete-image-gray.svg');
 
-
 export default class extends PureComponent {
     constructor(props) {
         super(props);
+        this.rowHeights = {};
+        this.rowHeightMeasurements = {};
+        this.gridRef = React.createRef();
+        this.playerRefs = {};
+        this.columnWidth = 250;
         this.state = {
             sortBy: props.sortBy,
             parentFolder: this.props.tabData.selected_folders[0],
@@ -34,6 +41,7 @@ export default class extends PureComponent {
         }
 
         this.mozaicParent = React.createRef();
+        this.getRowHeight = this.getRowHeight.bind(this);
     }
 
     componentDidMount() {
@@ -46,7 +54,7 @@ export default class extends PureComponent {
 
     _startManualOrder = (lock) => {
         let order = undefined;
-        const { t } = this.props;
+        const {t} = this.props;
         if (lock) {
             const result = remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'question',
@@ -67,10 +75,8 @@ export default class extends PureComponent {
     };
 
     _manualOrder = (value) => {
-        const { t } = this.props;
-        // Workaround for component update when currentPictureIndexInSelection changes.
+        const {t} = this.props;
         this.props.skipReSort(true);
-        // ask user to revert previous manual order
         this._startManualOrder(!value);
         if (value)
             ee.emit(EVENT_SHOW_ALERT, t('library.mozaic_view.alert_selection_and_order_saved'));
@@ -150,16 +156,16 @@ export default class extends PureComponent {
         }
     };
 
-    playVideo = (event , id) => {
-        this.refs[id]._play(event);
+    playVideo = (event, id) => {
+        this.playerRefs[id]._play(event);
     }
 
-    stopVideo = (event , id) => {
-        this.refs[id]._stop(event);
+    stopVideo = (event, id) => {
+        this.playerRefs[id]._stop(event);
     }
 
     _navigationHandler = (e, callAction) => {
-        const { t } = this.props;
+        const {t} = this.props;
         if (this.state.calibrationActive) {
             remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), {
                 type: 'info',
@@ -172,8 +178,216 @@ export default class extends PureComponent {
         }
     }
 
+    getRowHeight = (rowIndex) => {
+        const height = this.rowHeights[rowIndex];
+        return typeof height === 'number' && height > 0 ? height : 300;
+    };
+
+    setRowHeightIfReady = (rowIndex, measuredHeight) => {
+        // Optional: track multiple columns per row
+        if (!this.rowHeightMeasurements[rowIndex]) {
+            this.rowHeightMeasurements[rowIndex] = [];
+        }
+
+        this.rowHeightMeasurements[rowIndex].push(measuredHeight);
+
+        const expectedColumnCount = this.columnCount || 3;
+        if (this.rowHeightMeasurements[rowIndex].length >= expectedColumnCount) {
+            const maxHeight = Math.max(...this.rowHeightMeasurements[rowIndex]);
+            if (this.rowHeights[rowIndex] !== maxHeight) {
+                this.rowHeights[rowIndex] = (maxHeight + 10);
+
+                if (this.gridRef.current) {
+                    this.gridRef.current.resetAfterRowIndex(rowIndex);
+                }
+            }
+        }
+    };
+
+    onCardReady = (index, rowIndex) => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                const card = document.getElementById(`card-${index}`);
+                if (card) {
+                    const height = card.offsetHeight;
+                    if (height > 0) {
+                        this.setRowHeightIfReady(rowIndex, height);
+                    }
+                }
+            });
+        });
+    };
+
+    renderCell = (columnCount) => ({rowIndex, columnIndex, style}) => {
+        const index = rowIndex * columnCount + columnIndex;
+        const pic = this.props.pictures[index];
+        const {t} = this.props;
+        if (!pic) return null;
+        const tags = [];
+
+
+        if (this.props.tagsByPicture.hasOwnProperty(pic.sha1)) {
+            tags.push(...this.props.tagsByPicture[pic.sha1]);
+        }
+        const maxLength = 35;
+        let reduced_name = '';
+        const origin_name = pic.resourceType === RESOURCE_TYPE_EVENT
+            ? pic.name
+            : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber
+                ? pic.erecolnatMetadata.catalognumber
+                : pic.file_basename;
+
+        if (origin_name.length > maxLength) {
+            reduced_name = "..." + origin_name.slice(-maxLength + 3);
+        } else {
+            reduced_name = origin_name;
+        }
+
+        const name = reduced_name;
+
+        let resourceClass = 'fa fa-2x fas fa-image'
+        if (pic.resourceType === RESOURCE_TYPE_OBJECT3D) resourceClass = 'fa fa-2x fas fa-cubes'
+        if (pic.resourceType === RESOURCE_TYPE_VIDEO) resourceClass = 'fa fa-2x fas fa-video-camera'
+
+
+        const dateP = moment(pic.sort_modified);
+        const dateModif = dateP.format('DD/MM/YYYY');
+
+        let cartel, catalognumber, scientificname, author, title;
+        if ('erecolnatMetadata' in pic) {
+            if ('catalognumber' in pic.erecolnatMetadata)
+                catalognumber = pic.erecolnatMetadata.catalognumber;
+            if ('scientificname' in pic.erecolnatMetadata)
+                scientificname = pic.erecolnatMetadata.scientificname;
+            // if('identifiedby' in pic.erecolnatMetadata.)
+        }
+        if (pic.sha1 in this.props.cartels)
+            cartel = this.props.cartels[pic.sha1].value;
+
+        return (
+        <div
+            style={{
+                ...style,
+                padding: 8,
+                boxSizing: 'border-box',
+            }}
+        >
+            <div
+                // ref={measureRef}
+                key={index}
+                id={`card-${index}`}
+                // style={{ ...style, padding: 10, boxSizing: 'border-box' }}
+                className={classnames('card', {
+                    'selected': this.props.currentPictureSelection?.sha1 === pic.sha1
+                })}
+            >
+            <div className="cardHeader">
+            <span className="mw-checkbox-span">
+                <input type="checkbox"
+                       checked={this.state.selectedPictures.indexOf(pic.sha1) !== -1}
+                       onChange={(e) => {
+                           const index = this.state.selectedPictures.indexOf(pic.sha1);
+                           if (e.target.checked && index === -1) {
+                               this.setState({
+                                   selectedPictures: [...this.state.selectedPictures, pic.sha1],
+                                   selectAll: false
+                               });
+                           } else {
+                               this.setState({
+                                   selectAll: false,
+                                   selectedPictures: [
+                                       ...this.state.selectedPictures.slice(0, index),
+                                       ...this.state.selectedPictures.slice(index + 1)
+                                   ]
+                               });
+                           }
+                       }}/>
+            </span>
+            {pic.resourceType === RESOURCE_TYPE_EVENT ?
+                <div data-tip data-for={'global_' + index} className='eventTitle'>{name} </div> :
+                <Tippy
+                    interactive={true}
+                    placement="top"
+                    theme="dark"
+                    delay={[300, 100]}
+                    content={
+                        <div style={{ whiteSpace: 'normal' }}>
+                            <span>{t('global.height')}: {pic.height}</span><br />
+                            <span>{t('global.width')}: {pic.width}</span><br />
+                            <span>{t('library.mozaic_view.tooltip_lbl_exif_date')}: {pic.exifDate}</span><br />
+                            <span>{t('library.mozaic_view.tooltip_lbl_exif_place')}: {pic.exifPlace}</span><br />
+                            <span>{t('library.mozaic_view.tooltip_lbl_sort_family')}: {pic.sort_family}</span><br />
+                            <span>{t('library.mozaic_view.tooltip_lbl_sort_modified')}: {dateModif}</span>
+                        </div>
+                    }
+                >
+                <div
+                    // onMouseOut={(event) => this.stopVideo(event, pic.sha1)}
+                    //  onMouseOver={(event) => this.playVideo(event, pic.sha1)}
+                     data-tip data-for={'global_' + index} className='cardTitle'>{reduced_name}
+                </div>
+                </Tippy>
+
+            }
+                    <span className="resourceIcon">
+                      {pic.resourceType === RESOURCE_TYPE_EVENT
+                          ? <div className="event"></div>
+                          : <i className={resourceClass}></i>}
+                    </span>
+                </div>
+                <MozaicPlayer
+                    pic={pic}
+                    ref={(el) => { this.playerRefs[pic.sha1] = el; }}
+                    setPictureInSelection={this._handleSetPictureInSelection}
+                    tabName={this.props.tabName}
+                    onDragEnd={this._onDragEnd}
+                    onDrop={this._onDrop}
+                    onDragStart={this._onDragStart}
+                    index={index}
+                    onImageLoad={() => this.onCardReady(index, rowIndex)}
+                />
+                <div className="tags-panel">
+                    {tags.map((tag, i) => (
+                        <div key={`tag_${i}`} className="annotation-tag" title={tag}>
+                            <span className="tagName">{tag}&nbsp;</span>
+                            <img src={REMOVE_TAG} className="delete-tag"
+                                 alt="delete tag"
+                                 onClick={() => this.props.untagPicture(pic.sha1, tag)}/>
+                        </div>
+                    ))}
+                </div>
+                {this.props.tabData.showMozaicCollection ?
+                    pic.resourceType === RESOURCE_TYPE_EVENT ?
+                        <div className="collection-metadata">
+                            {t('library.mozaic_view.lbl_event_details')} :
+                            <div>{t('library.mozaic_view.lbl_title')}: <span>{pic.name}</span></div>
+                            <div>{t('library.mozaic_view.lbl_description')}: <span>{pic.description}</span></div>
+                            <div>{t('library.mozaic_view.lbl_serie')}: <span>{pic.serie}</span></div>
+                            <div>{t('library.mozaic_view.lbl_person')}: <span>{pic.person}</span></div>
+                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace + ')') : ''}</span>
+                            </div>
+                        </div> :
+                        <div className="collection-metadata">
+                            {t('library.mozaic_view.lbl_collection_metadata')} :
+                            <div>{t('library.mozaic_view.lbl_title')}: <span>{title}</span></div>
+                            <div>{t('library.mozaic_view.lbl_catalog')}: <span>{catalognumber}</span></div>
+                            <div>{t('library.mozaic_view.lbl_scientific_name')}: <span>{scientificname}</span></div>
+                            <div>{t('library.mozaic_view.lbl_author')}: <span>{author}</span></div>
+                            <div>{t('library.mozaic_view.lbl_cartel')}:
+                                <div className="align-left">
+                                    <span dangerouslySetInnerHTML={{__html: cartel}}/>
+                                </div>
+                            </div>
+                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace + ')') : ''}</span>
+                            </div>
+                        </div> : ''}
+            </div>
+        </div>
+
+        );
+    };
     render() {
-        const { t } = this.props;
+        const {t} = this.props;
         let key = 0;
         return (
             <div className="bst rcn_mozaic lib-wrap">
@@ -212,7 +426,8 @@ export default class extends PureComponent {
                                           }}/>
                         </div>
                         <div className="toggle-div">
-                            <div className="mw-toggle-div-menu">{t('library.mozaic_view.lbl_display_resource_metadata')}</div>
+                            <div
+                                className="mw-toggle-div-menu">{t('library.mozaic_view.lbl_display_resource_metadata')}</div>
                             <ToggleButton value={this.props.tabData.showMozaicCollection || false}
                                           onToggle={() => {
                                               this.props.updateToggle(this.props.tabName,
@@ -221,12 +436,12 @@ export default class extends PureComponent {
                                           }}/>
                         </div>
                     </div>
-
                     <Input className='action-bar-item' type="select" bsSize="md" value={this.props.sortBy}
                            disabled={this.props.tabData.manualOrderLock || false}
                            onChange={(e) => this._handleOnSortChange(e, 'sortBy')}>
                         <option value={MANUAL_ORDER}>{t('library.mozaic_view.select_order_by_manuel_order')}</option>
-                        <option value="sort_catalognumber">{t('library.mozaic_view.select_order_by_name_catalog_number')}</option>
+                        <option
+                            value="sort_catalognumber">{t('library.mozaic_view.select_order_by_name_catalog_number')}</option>
                         <option value="sort_family">{t('library.mozaic_view.select_order_by_family')}</option>
                         <option value="sort_modified">{t('library.mozaic_view.select_order_by_date')}</option>
                         <option value="sort_tags">{t('library.mozaic_view.select_order_by_number_of_keywords')}</option>
@@ -260,7 +475,7 @@ export default class extends PureComponent {
                     <img className='select-all'
                          alt="select all"
                          src={this.state.selectedPictures.length === 0 ? DELETE_IMAGE_GRAY : DELETE_IMAGE}
-                         onClick={ () => {
+                         onClick={() => {
                              if (this.state.selectedPictures.length === 0) {
                                  return;
                              }
@@ -273,11 +488,11 @@ export default class extends PureComponent {
                              });
                              if (result === 0) {
                                  lodash.forEach(this.state.selectedPictures, sha1 => {
-                                     const type = this.props.pictures.find( resource => resource.sha1 === sha1).resourceType;
-                                     if (type === RESOURCE_TYPE_EVENT){
+                                     const type = this.props.pictures.find(resource => resource.sha1 === sha1).resourceType;
+                                     if (type === RESOURCE_TYPE_EVENT) {
                                          this.props.deleteAnnotateEvent(sha1);
                                          this.props.selectFolderGlobally(this.state.parentFolder);
-                                     }else{
+                                     } else {
                                          this.props.deletePicture(sha1);
                                      }
                                  });
@@ -288,151 +503,30 @@ export default class extends PureComponent {
                              });
                          }}/>
                 </div>
-
                 <div className="page-content">
                     <div className="wrapper" id="rootMozaic" ref={this.mozaicParent}>
-                        {this.props.pictures.map((pic, index) => {
-                            const tags = [];
-                            if (this.props.tagsByPicture.hasOwnProperty(pic.sha1)) {
-                                tags.push(...this.props.tagsByPicture[pic.sha1]);
-                            }
-                            const maxLength = 35;
-                            let reduced_name = '';
-                            const origin_name = pic.resourceType === RESOURCE_TYPE_EVENT
-                              ? pic.name
-                              : pic.erecolnatMetadata && pic.erecolnatMetadata.catalognumber
-                              ? pic.erecolnatMetadata.catalognumber
-                              : pic.file_basename;
-                            
-                            if (origin_name.length > maxLength) {
-                              reduced_name = "..." + origin_name.slice(-maxLength + 3);
-                            } else {
-                              reduced_name = origin_name;
-                            }
-                            
-                            const name = reduced_name; 
-                            
-
-                            //TODO choose between fa-lg and fa-2x
-                            // const resourceClass =  pic.type === 'image' ? 'fa fa-2x fas fa-image' : 'fa fa-lg fas fa-video-camera';
-                            let resourceClass = 'fa fa-2x fas fa-image'
-                            if(pic.resourceType === RESOURCE_TYPE_OBJECT3D) resourceClass = 'fa fa-2x fas fa-cubes'
-                            if(pic.resourceType === RESOURCE_TYPE_VIDEO) resourceClass = 'fa fa-2x fas fa-video-camera'
-
-
-                            const dateP = moment(pic.sort_modified);
-                            //rowData.sort_modified = date.valueOf();
-                            const dateModif = dateP.format('DD/MM/YYYY');
-
-
-                            let cartel, catalognumber, scientificname, author, title;
-                            if ('erecolnatMetadata' in pic) {
-                                if ('catalognumber' in pic.erecolnatMetadata)
-                                    catalognumber = pic.erecolnatMetadata.catalognumber;
-                                if ('scientificname' in pic.erecolnatMetadata)
-                                    scientificname = pic.erecolnatMetadata.scientificname;
-                                // if('identifiedby' in pic.erecolnatMetadata.)
-                            }
-                            if (pic.sha1 in this.props.cartels)
-                                cartel = this.props.cartels[pic.sha1].value;
-
-                            return <div key={key++}
-                                        className={classnames('card', {'selected': this.props.currentPictureSelection?.sha1 === pic.sha1})}>
-                                <div className="cardHeader">
-                                    {/*TODO add vertical align top*/}
-
-                                    <span className="mw-checkbox-span">
-                                        <input type="checkbox"
-                                               checked={this.state.selectedPictures.indexOf(pic.sha1) !== -1}
-                                               onChange={(e) => {
-                                                   const index = this.state.selectedPictures.indexOf(pic.sha1);
-                                                   if (e.target.checked && index === -1) {
-                                                       this.setState({
-                                                           selectedPictures: [...this.state.selectedPictures, pic.sha1],
-                                                           selectAll: false
-                                                       });
-                                                   } else {
-                                                       this.setState({
-                                                           selectAll: false,
-                                                           selectedPictures: [
-                                                               ...this.state.selectedPictures.slice(0, index),
-                                                               ...this.state.selectedPictures.slice(index + 1)
-                                                           ]
-                                                       });
-                                                   }
-                                               }}/>
-                                    </span>
-                                    {pic.resourceType === RESOURCE_TYPE_EVENT ?
-                                        <div data-tip data-for={'global_' + key} className='eventTitle'>{name} </div> :
-                                        <div onMouseOut={(event) => this.stopVideo(event, pic.sha1)}
-                                             onMouseOver={(event) => this.playVideo(event, pic.sha1)}
-                                             data-tip data-for={'global_' + key} className='cardTitle'>{reduced_name}
-                                        </div>
-                                    }
-
-                                    <span className="resourceIcon">
-                                        {pic.resourceType === RESOURCE_TYPE_EVENT ? <div className="event"></div> : <i className={resourceClass}></i>}
-                                    </span>
-
-                                    { pic.resourceType === RESOURCE_TYPE_EVENT ? null :
-                                        <ReactTooltip multiline={true} type="dark" effect="solid" id={'global_' + key}
-                                                      aria-haspopup='true' role='example'>
-                                            <span>{t('global.height')}: {pic.height}</span><br/>
-                                            <span>{t('global.height')}: {pic.width}</span><br/>
-                                            <span>{t('library.mozaic_view.tooltip_lbl_exif_date')}: {pic.exifDate}</span><br/>
-                                            <span>{t('library.mozaic_view.tooltip_lbl_exif_place')}: {pic.exifPlace}</span><br/>
-                                            <span>{t('library.mozaic_view.tooltip_lbl_sort_family')}: {pic.sort_family}</span><br/>
-                                            <span>{t('library.mozaic_view.tooltip_lbl_sort_modified')}: {dateModif}</span>
-                                        </ReactTooltip>
-                                    }
-                                </div>
-                                <MozaicPlayer pic={pic}
-                                              ref={pic.sha1}
-                                              setPictureInSelection={this._handleSetPictureInSelection}
-                                              tabName={this.props.tabName}
-                                              onDragEnd={this._onDragEnd}
-                                              onDrop={this._onDrop}
-                                              onDragStart={this._onDragStart}
-                                              index={index}
-                                />
-                                <div className="tags-panel">
-                                    {tags.map((tag, index) => {
-                                        return <div key={`tag_${index}`} className="annotation-tag" title={tag}>
-                                            <span className="tagName">{tag}&nbsp;</span>
-                                            <img src={REMOVE_TAG} className="delete-tag"
-                                                 alt="delete tag"
-                                                 onClick={() => {
-                                                     this.props.untagPicture(pic.sha1, tag);
-                                                 }}/>
-                                        </div>
-
-                                    })}
-                                </div>
-                                {this.props.tabData.showMozaicCollection ?
-                                    pic.resourceType === RESOURCE_TYPE_EVENT ?
-                                        <div className="collection-metadata">
-                                            {t('library.mozaic_view.lbl_event_details')} :
-                                            <div>{t('library.mozaic_view.lbl_title')}: <span>{pic.name}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_description')}: <span>{pic.description}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_serie')}: <span>{pic.serie}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_person')}: <span>{pic.person}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
-                                        </div> :
-                                        <div className="collection-metadata">
-                                            {t('library.mozaic_view.lbl_collection_metadata')} :
-                                            <div>{t('library.mozaic_view.lbl_title')}: <span>{title}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_catalog')}: <span>{catalognumber}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_scientific_name')}: <span>{scientificname}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_author')}: <span>{author}</span></div>
-                                            <div>{t('library.mozaic_view.lbl_cartel')}:
-                                                <div className="align-left">
-                                                    <span dangerouslySetInnerHTML={{__html: cartel}}/>
-                                                </div>
-                                            </div>
-                                            <div>{t('library.mozaic_view.lbl_location')}: <span>{pic.placeName} {pic.exifPlace ? ('(' + pic.exifPlace +')') : ''}</span></div>
-                                        </div> : ''}
-                            </div>
-                        })}
+                        <div style={{height: '100%', width: '100%'}}>
+                            <AutoSizer>
+                                {({height, width}) => {
+                                    const columnCount = Math.max(1, Math.floor(width / this.columnWidth));
+                                    const rowCount = Math.ceil(this.props.pictures.length / columnCount);
+                                    this.columnCount = columnCount; // save to use in renderCell & rowHeight
+                                    return (
+                                        <Grid
+                                            ref={this.gridRef}
+                                            columnCount={columnCount}
+                                            columnWidth={() => this.columnWidth}
+                                            height={height}
+                                            rowCount={rowCount}
+                                            rowHeight={this.getRowHeight}
+                                            width={width}
+                                        >
+                                            {(cellProps) => this.renderCell(columnCount)(cellProps)}
+                                        </Grid>
+                                    );
+                                }}
+                            </AutoSizer>
+                        </div>
                     </div>
 
                     {this.props.tabData.showMozaicDetails ?
