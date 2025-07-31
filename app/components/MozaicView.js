@@ -229,7 +229,7 @@ export default class extends PureComponent {
         if (this.props.tagsByPicture.hasOwnProperty(pic.sha1)) {
             tags.push(...this.props.tagsByPicture[pic.sha1]);
         }
-        const maxLength = 35;
+        const maxLength = 25;
         let reduced_name = '';
         const origin_name = pic.resourceType === RESOURCE_TYPE_EVENT
             ? pic.name
@@ -312,6 +312,7 @@ export default class extends PureComponent {
                     delay={[300, 100]}
                     content={
                         <div style={{ whiteSpace: 'normal' }}>
+                            <span>{t('inspector.metadata.lbl_file_name')}: <span style={{color:'yellowgreen'}}>{origin_name}</span></span><br />
                             <span>{t('global.height')}: {pic.height}</span><br />
                             <span>{t('global.width')}: {pic.width}</span><br />
                             <span>{t('library.mozaic_view.tooltip_lbl_exif_date')}: {pic.exifDate}</span><br />
