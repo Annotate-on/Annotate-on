@@ -71,7 +71,11 @@ export default class extends Component {
             formSaved: true ,
             errors: {
                 location: '',
-            }
+            },
+            editing: false,
+            editedMetadata: props.picture.erecolnatMetadata
+                ? JSON.parse(JSON.stringify(props.picture.erecolnatMetadata))
+                : {}
         };
     }
 
@@ -275,8 +279,67 @@ export default class extends Component {
         return valid;
     };
 
+    handleToggleEdit = () => {
+        this.setState(prevState => ({
+            editing: !prevState.editing,
+            editedMetadata: JSON.parse(JSON.stringify(this.props.picture.erecolnatMetadata)) // reset edits when toggling
+        }));
+    };
+
+    handleFieldChange = (field, value) => {
+        this.setState(prevState => ({
+            editedMetadata: {
+                ...prevState.editedMetadata,
+                [field]: value
+            }
+        }));
+    };
+
+    handleDeterminationFieldChange = (index, field, value) => {
+        const newDeterminations = [...this.state.editedMetadata.determinations];
+        newDeterminations[index] = {
+            ...newDeterminations[index],
+            [field]: value
+        };
+        this.setState(prevState => ({
+            editedMetadata: {
+                ...prevState.editedMetadata,
+                determinations: newDeterminations
+            }
+        }));
+    };
+
+    handleSave = () => {
+        const { editedMetadata, editedDeterminations } = this.state;
+
+        const metadata = this.props.picture.erecolnatMetadata;
+
+        Object.assign(metadata, editedMetadata);
+
+        if (editedDeterminations && Array.isArray(editedDeterminations)) {
+            metadata.determinations = editedDeterminations;
+        }
+
+        console.log('Saved metadata:', metadata);
+
+        if (this.props.onMetadataUpdate) {
+            this.props.onMetadataUpdate(metadata);
+        }
+
+        this.setState({ editing: false });
+    };
+
+    handleCancel = () => {
+        this.setState({
+            editing: false,
+            editedMetadata: {},
+            errors: {}
+        });
+    };
+
     render() {
-        const {errors} = this.state;
+        const {errors, editing, editedMetadata} = this.state;
+        const metadata = this.props.picture.erecolnatMetadata;
         const { t } = this.props;
         return <Container className="metadata-pane">
             <Row>
@@ -589,49 +652,95 @@ export default class extends Component {
                     <br/>
                     <br/>
                 </div>}
-            {this.props.picture.erecolnatMetadata &&
-            Object.keys(METADATA_TITLES).map(_ => {
-                if (_ === 'determinations') {
-                } else {
-                    return (
-                        <Row key={'erecolnat_metadata' + _}>
-                            <Col sm={12} md={12} lg={12} className="metadata-title">
-                                {METADATA_TITLES[_]}
-                            </Col>
-                            <Col sm={12} md={12} lg={12} className="metadata-value">
-                                {this.props.picture.erecolnatMetadata[_]}
-                            </Col>
-                        </Row>
-                    );
-                }
-            })}
+            {metadata && (
+                <>
+                    <Row>
+                        <Col sm={12}>
+                            {editing ? (
+                                <>
+                                    <Button
+                                        color="success"
+                                        onClick={this.handleSave}
+                                        className="mr-2"
+                                    >
+                                        {t('global.save')}
+                                    </Button>
+                                    <Button
+                                        color="secondary"
+                                        onClick={this.handleCancel}
+                                    >
+                                        {t('global.cancel')}
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button
+                                    color="primary"
+                                    onClick={this.handleToggleEdit}
+                                >
+                                    {t('global.edit')}
+                                </Button>
+                            )}
+                        </Col>
+                    </Row>
 
-            {this.props.picture.erecolnatMetadata &&
-            this.props.picture.erecolnatMetadata.determinations &&
-            this.props.picture.erecolnatMetadata.determinations.length > 0 && (
-                <Row key={'erecolnat_metadata_determinations'}>
-                    <Col sm={12} md={12} lg={12}
-                         className="metadata-title">{`${METADATA_TITLES.determinations} (${
-                        this.props.picture.erecolnatMetadata.determinations.length
-                    })`}</Col>
-                    <ul className="metadata-list">
-                        {this.props.picture.erecolnatMetadata.determinations.map(determination => {
-                            return (
-                                <li key={Math.random()}>
-                                    {Object.keys(METADATA_DETERMINATIONS_TITLES).map(_ => {
-                                        return (
-                                            <div
-                                                key={'erecolnat_metadata_determination_' + _}>
-                                                <div style={{color: '#999'}}>{METADATA_DETERMINATIONS_TITLES[_]}</div>
-                                                <div className="metadata-value">{determination[_]}</div>
+                    {Object.keys(METADATA_TITLES).map(key => {
+                        if (key === 'determinations') return null;
+
+                        return (
+                            <Row key={'erecolnat_metadata_' + key}>
+                                <Col sm={12} className="metadata-title">
+                                    {METADATA_TITLES[key]}
+                                </Col>
+                                <Col sm={12} className="metadata-value">
+                                    {editing ? (
+                                        <input
+                                            type="text"
+                                            value={editedMetadata[key] || ''}
+                                            onChange={e => this.handleFieldChange(key, e.target.value)}
+                                            className="form-control"
+                                        />
+                                    ) : (
+                                        metadata[key]
+                                    )}
+                                </Col>
+                            </Row>
+                        );
+                    })}
+                    {metadata.determinations && metadata.determinations.length > 0 && (
+                        <Row key={'erecolnat_metadata_determinations'}>
+                            <Col sm={12} className="metadata-title">
+                                {`${METADATA_TITLES.determinations} (${metadata.determinations.length})`}
+                            </Col>
+                            <ul className="metadata-list">
+                                {metadata.determinations.map((_, index) => (
+                                    <li key={index}>
+                                        {Object.keys(METADATA_DETERMINATIONS_TITLES).map(field => (
+                                            <div key={`erecolnat_metadata_determination_${field}_${index}`}>
+                                                <div style={{ color: '#999' }}>
+                                                    {METADATA_DETERMINATIONS_TITLES[field]}
+                                                </div>
+                                                <div className="metadata-value">
+                                                    {editing ? (
+                                                        <input
+                                                            type="text"
+                                                            value={editedMetadata.determinations?.[index]?.[field] || ''}
+                                                            onChange={e =>
+                                                                this.handleDeterminationFieldChange(index, field, e.target.value)
+                                                            }
+                                                            className="form-control"
+                                                        />
+                                                    ) : (
+                                                        metadata.determinations[index][field]
+                                                    )}
+                                                </div>
                                             </div>
-                                        );
-                                    })}
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </Row>
+                                        ))}
+                                    </li>
+                                ))}
+                            </ul>
+                        </Row>
+                    )}
+                </>
             )}
         </Container>
     }

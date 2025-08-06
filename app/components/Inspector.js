@@ -521,12 +521,23 @@ export default class extends Component {
                 </Nav>
                 <TabContent activeTab={this.state.selectedTab}>
                     <TabPane tabId={TAB_METADATA}>
-                        {this.state.selectedTab === TAB_METADATA && <Metadata
-                            readOnly={this.props.readOnly}
-                            picture={this.props.picture}
-                            tags={this.props.tags}
-                        />}
+                        {this.state.selectedTab === TAB_METADATA && (
+                            <Metadata
+                                readOnly={this.props.readOnly}
+                                picture={this.props.picture}
+                                tags={this.props.tags}
+                                onMetadataUpdate={(updatedMetadata) => {
+                                    this.setState((prevState) => ({
+                                        picture: {
+                                            ...prevState.picture,
+                                            erecolnatMetadata: updatedMetadata
+                                        }
+                                    }));
+                                }}
+                            />
+                        )}
                     </TabPane>
+
                     <TabPane tabId={TAB_ANNOTATIONS}>
                         {this.state.selectedTab === TAB_ANNOTATIONS && (
                             <div className="annotations-tab"
