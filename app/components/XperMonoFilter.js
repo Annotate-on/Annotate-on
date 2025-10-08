@@ -601,7 +601,7 @@ export default class extends Component {
     _onSearchXper = () => {
         this.props.xperMatchResources(null, null, null);
         searchKb({
-            q: this.state.searchTerm,
+            q: encodeURIComponent(this.state.searchTerm),
             lang: this.state.selectedLanguage,
             taxonomy: this.state.searchTaxonomy,
             stratigraphy: this.state.searchStratigraphy,
