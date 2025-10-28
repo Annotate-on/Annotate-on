@@ -69,7 +69,8 @@ import App from "../containers/App";
 import _3DViewer from "../containers/3DViewer";
 import ImageDetectModal from './ImageDetectModal';
 import i18next from "i18next";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faCopy, faCheckSquare} from '@fortawesome/free-solid-svg-icons';
 
 const MAP_IMAGE_CONTEXT = require('./pictures/map-regular.svg');
 const TIME_IMAGE_CONTEXT = require('./pictures/clock-regular.svg');
@@ -149,7 +150,8 @@ class Image extends PureComponent {
             isEventRecordingLive: false,
             imageDetectModels: this.props.imageDetectModels,
             showXperMonoFilterPopup: false,
-            showImageDetectModal: false
+            showImageDetectModal: false,
+            copied: false,
         };
         this.completeAnnotationMeasureLinear = this.completeAnnotationMeasureLinear.bind(this);
         this.makeAnnotationPointOfInterest = this.makeAnnotationPointOfInterest.bind(this);
@@ -374,6 +376,16 @@ class Image extends PureComponent {
         })
     }
 
+     handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(this.state.catalognumber);
+            this.setState({ copied: true });
+            setTimeout(() => this.setState({ copied: false }), 1500); // reset icon
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    };
+
     render() {
         const {t} = this.props;
         const toolbarConfig = {
@@ -509,8 +521,20 @@ class Image extends PureComponent {
                                                 </div>
                                             </div>
                                             {this.state.catalognumber &&
-                                                <div title={this.state.catalognumber} className="cat-number">
-                                                    {this.state.catalognumber}
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                    <div title={this.state.catalognumber} className="cat-number">
+                                                        {this.state.catalognumber}
+                                                    </div>
+                                                    <button
+                                                        onClick={this.handleCopy}
+                                                        title="Copy to clipboard"
+                                                        className="copy-btn"
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={this.state.copied ? faCheckSquare : faCopy}
+                                                            color={this.state.copied ? 'green' : 'black'}
+                                                        />
+                                                    </button>
                                                 </div>
                                             }
                                             <div className="map-timeline-indicators-container">
